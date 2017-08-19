@@ -61,8 +61,8 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
  * This command handles requests for Stack objects.
- * Specifically, it handles a Query-Request, a Generate-Request, an Update-
- * Request, and a Delete-Request for this object with the following high-level 
+ * Specifically, it handles a Query-Request, a Generate-Request, an Update-Request,
+ * and a Delete-Request for this object with the following high-level 
  * logic:
  * <P>
  * <OL>
