@@ -33,10 +33,7 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  * @version 1.0 - 21 May 2017
  */
 public interface Step {
-	 /**
-     * 
-     * <P>
-     * 
+	/**
      * @param AppConfig, an AppConfig object with all this step needs.
      *            <P>
      * @throws StepException with details of the initialization error.
@@ -49,67 +46,43 @@ public interface Step {
      * 
      * <P>
      * 
-     * @param StackQuerySpecficiation, the query parameter.
-     * @return List, a list of matching Stack objects.
+     * @return List, a list of execution result properties.
      *         <P>
-     * @throws ProviderException
-     *             with details of the providing the list.
+     * @throws StepException, with details of the error executing the step.
      */
     public List<Property> execute() throws StepException;  
-
     /**
      * 
      * <P>
-     * 
-     * @param StackRequisition, the generate parameter.
-     * @return Stack, a generated Stack for the requisition.
-     *         <P>
-     * @throws ProviderException with details of the error generating the stack.
+     *
+     * @throws StepException, with details of the error rolling back the step.
      */
     public void rollback() throws StepException;
     /**
-     * 
-     * <P>
-     * 
-     * @param StackRequisition, the generate parameter.
-     * @return Stack, a generated Stack for the requisition.
-     *         <P>
-     * @throws ProviderException with details of the error generating the stack.
+     * @return String, the step ID.
      */
     public String getStepId();
     /**
      * 
-     * <P>
-     * 
-     * @param StackRequisition, the generate parameter.
-     * @return Stack, a generated Stack for the requisition.
-     *         <P>
-     * @throws ProviderException with details of the error generating the stack.
+     * @return String, the step type
      */
     public String getType();
     /**
-     * 
-     * <P>
-     * 
-     * @param StackRequisition, the generate parameter.
-     * @return Stack, a generated Stack for the requisition.
-     *         <P>
-     * @throws ProviderException with details of the error generating the stack.
+     * @return String, the step description
      */
     public String getDescription();
     /**
-     * 
-     * <P>
-     * 
-     * @param StackRequisition, the generate parameter.
-     * @return Stack, a generated Stack for the requisition.
-     *         <P>
-     * @throws ProviderException with details of the error generating the stack.
+     * @return String, the step result
      */
     public String getResult();
-    
+    /**
+     * @param String, step status
+     * @param String, step result
+     * @param List, step properties
+     * <P>
+     * @return String, the step result
+     * @throws StepException 
+     */
     public void update(String status, String result, List props) 
     	throws StepException;
-    
-    
 }
