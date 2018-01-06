@@ -1,0 +1,947 @@
+/*******************************************************************************
+ $Source: $
+ $Revision: $
+ *******************************************************************************/
+
+/******************************************************************************
+ This file is part of the Emory AWS Account Service.
+
+ Copyright (C) 2017 Emory University. All rights reserved. 
+ ******************************************************************************/
+
+package edu.emory.awsaccount.service.provider;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+// Java utilities
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Properties;
+import java.util.Random;
+import java.util.StringTokenizer;
+
+import javax.jms.JMSException;
+
+import org.apache.commons.io.IOUtils;
+// Log4j
+import org.apache.log4j.Category;
+
+// JDOM
+import org.jdom.Document;
+import org.jdom.Element;
+
+// OpenEAI foundation
+import org.openeai.OpenEaiObject;
+import org.openeai.config.AppConfig;
+import org.openeai.config.EnterpriseConfigurationObjectException;
+import org.openeai.config.EnterpriseFieldException;
+import org.openeai.config.PropertyConfig;
+import org.openeai.jms.producer.PointToPointProducer;
+import org.openeai.jms.producer.ProducerPool;
+import org.openeai.layouts.EnterpriseLayoutException;
+import org.openeai.moa.EnterpriseObjectCreateException;
+import org.openeai.moa.EnterpriseObjectGenerateException;
+import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.EnterpriseObjectUpdateException;
+import org.openeai.moa.XmlEnterpriseObjectException;
+import org.openeai.moa.objects.resources.Result;
+import org.openeai.moa.objects.resources.v1_0.QueryLanguage;
+import org.openeai.threadpool.ThreadPool;
+import org.openeai.threadpool.ThreadPoolException;
+import org.openeai.transport.RequestService;
+import org.openeai.utils.filetransfer.handlers.TransferHandlerException;
+import org.openeai.utils.lock.Key;
+import org.openeai.utils.lock.Lock;
+import org.openeai.utils.lock.LockAlreadySetException;
+import org.openeai.utils.lock.LockException;
+import org.openeai.utils.sequence.Sequence;
+import org.openeai.utils.sequence.SequenceException;
+import org.openeai.xml.XmlDocumentReader;
+import org.openeai.xml.XmlDocumentReaderException;
+
+import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
+
+//AWS Message Object API (MOA)
+
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
+import com.amazon.aws.moa.objects.resources.v1_0.Output;
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
+import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
+import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+
+import edu.emory.awsaccount.service.provider.step.Step;
+import edu.emory.awsaccount.service.provider.step.StepException;
+import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.jmsobjects.identity.v2_0.Person;
+import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
+import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
+import edu.emory.moa.objects.resources.v1_0.CidrRequisition;
+import edu.emory.moa.objects.resources.v2_0.PersonQuerySpecification;
+
+/**
+ *  A provider that maintains provisions AWS accounts and VPC
+ *  in Emory infrastructure and AWS.
+ *
+ * @author Steve Wheat (swheat@emory.edu)
+ *
+ */
+public class  EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject 
+implements VirtualPrivateCloudProvisioningProvider {
+
+	private Category logger = OpenEaiObject.logger;
+	private AppConfig m_appConfig;
+	private String m_primedDocUrl = null;
+	private boolean m_verbose = false;
+	private Sequence m_provisioningIdSequence = null;
+	private ProducerPool m_awsAccountServiceProducerPool = null;
+	private ThreadPool m_threadPool = null;
+	private int m_threadPoolSleepInterval = 1000;
+	private String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider] ";
+	protected String COMPLETED_STATUS = "completed";
+	protected String PENDING_STATUS = "pending";
+	protected String ROLLBACK_STATUS = "rolled back";
+	protected String SUCCESS_RESULT = "success";
+	protected String FAILURE_RESULT = "failure";
+	
+	/**
+	 * @see VirtualPrivateCloudProvisioningProvider.java
+	 */
+	@Override
+	public void init(AppConfig aConfig) throws ProviderException {
+		logger.info(LOGTAG + "Initializing...");
+		setAppConfig(aConfig);
+
+		// Get the provider properties
+		PropertyConfig pConfig = new PropertyConfig();
+		try {
+			pConfig = (PropertyConfig)aConfig
+				.getObject("VirtualPrivateCloudProvisioningProviderProperties");
+		} 
+		catch (EnterpriseConfigurationObjectException eoce) {
+			String errMsg = "Error retrieving a PropertyConfig object from "
+					+ "AppConfig: The exception is: " + eoce.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, eoce);
+		}
+		
+		Properties props = pConfig.getProperties();
+		setProperties(props);
+		logger.info(LOGTAG + getProperties().toString());
+		
+		// Set the verbose property.
+		setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
+		logger.info(LOGTAG + "Verbose property is: " + getVerbose());
+		
+		// Set the primed doc URL for a template provisioning object.
+		String primedDocUrl = getProperties().getProperty("primedDocumentUri");
+		setPrimedDocumentUrl(primedDocUrl);
+		logger.info(LOGTAG + "primedDocumentUrl property is: " + primedDocUrl);
+		
+		// Get the sequence to use.
+		// This provider needs a sequence to generate a unique ProvisioningId
+		// for each transaction in multiple threads and multiple instances.
+		Sequence seq = null;
+		try {
+			seq = (Sequence)getAppConfig().getObject("ProvisioningIdSequence");
+			setProvisioningIdSequence(seq);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		// This provider needs to send messages to the AWS account service
+		// to initialize provisioning transactions.
+		ProducerPool p2p1 = null;
+		try {
+			p2p1 = (ProducerPool)getAppConfig()
+				.getObject("AwsAccountServiceProducerPool");
+			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+				
+		// Get the ThreadPool pool to use. 
+		// This provider needs a thread pool in which to process concurrent
+		// provisioning transactions.
+		ThreadPool tp = null;
+		try {
+			tp = (ThreadPool)getAppConfig().getObject("VpcProcessingThreadPool");
+			setThreadPool(tp);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		logger.info(LOGTAG + "Initialization complete.");
+	}
+
+	/**
+	 * @see VirtualPrivateCloudProvisioningProvider.java
+	 * 
+	 * This method proxys a query to an RDBMS command that handles it. The 
+	 * purpose of including this operation in this command (and not just the
+	 * generate) operations is that it will give us one command that should
+	 * handle all broad access to the VirtualPrivateCloudProvisioining service
+	 * operations. In general, applications and clients will only need to 
+	 * perform the query and generate operations and the create, update, and
+	 * delete operations will be handled by and RDBMS connector deployment
+	 * and accessed by this command and administrative applications like the
+	 * VPCP web application.
+	 */
+	public List<VirtualPrivateCloudProvisioning> 
+		query(VirtualPrivateCloudProvisioningQuerySpecification querySpec)
+			throws ProviderException {
+			logger.info(LOGTAG + "Querying for VPCP with ProvisioningId: " + 
+					querySpec.getProvisioningId());
+		
+			// Get a configured VirtualPrivateCloudProvisioning object to use.
+			VirtualPrivateCloudProvisioning vpcp = new VirtualPrivateCloudProvisioning();
+			try {
+				vpcp = (VirtualPrivateCloudProvisioning)getAppConfig()
+					.getObjectByType(vpcp.getClass().getName());
+			}
+			catch (EnterpriseConfigurationObjectException ecoe) {
+				String errMsg = "An error occurred getting an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException();
+			}
+
+			// Get a RequestService to use for this transaction.
+			RequestService rs = null;
+			try {
+				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a request service to use " +
+					"in this transaction. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, jmse);
+			}
+			// Create the VirtualPrivateCloudProvisioningObject.
+			List results = null;
+			try {
+				logger.info(LOGTAG + "Querying for the VPCP...");
+				long startTime = System.currentTimeMillis();
+				results = vpcp.query(querySpec, rs);
+				long time = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for VirtualPrivateCloudProvisioning " +
+					"objects in " + time + " ms.");
+			}
+			catch (EnterpriseObjectQueryException eoce) {
+				String errMsg = "An error occurred querying the VirtualPrivate" +
+						"CloudProvisioning object The exception is: " + 
+						eoce.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, eoce);
+			}
+			// In any case, release the producer back to the pool.
+			finally {
+				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+			}
+			
+			return results;
+	}
+	
+	/**
+	 * @see VirtualPrivateCloudProvisioningProvider.java
+	 */
+	public void create(VirtualPrivateCloudProvisioning vpcp) throws ProviderException {
+		String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.create] ";
+		
+		// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Create the VirtualPrivateCloudProvisioningObject.
+		try {
+			long startTime = System.currentTimeMillis();
+			vpcp.create(rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Created VirtualPrivateCloudProvisioning " +
+				"object in " + time + " ms.");
+		}
+		catch (EnterpriseObjectCreateException eoce) {
+			String errMsg = "An error occurred creating the VirtualPrivate" +
+					"CloudProvisioning object The exception is: " + 
+					eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+		}
+	}
+
+	/**
+	 * @see VirtualPrivateCloudProvisioningProvider.java
+	 */
+	public VirtualPrivateCloudProvisioning generate(VirtualPrivateCloudRequisition vpcr)
+			throws ProviderException {
+
+		// Read the VirtualPrivateCloudProvisioning object out of a template 
+	  	// Response-Reply message so we can manage the process steps and their
+		// descriptions externally.
+	  	XmlDocumentReader xmlReader = new XmlDocumentReader();
+	    Document replyDoc = null;
+	    
+	    try {
+	    	if (getVerbose()) logger.info(LOGTAG + "Reading primed document for template object...");
+	    	replyDoc = xmlReader.initializeDocument(getPrimedDocumentUrl(), false);
+	    	if (getVerbose()) logger.info(LOGTAG + "Read primed document for template object.");
+	    }
+	    catch (XmlDocumentReaderException xdre) {
+	    	String errMsg = "An error occurred reading the XML document. The " +
+	    		"exception is: " + xdre.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new ProviderException(errMsg, xdre);
+	    }
+	    
+	    logger.info(LOGTAG + "primedDoc: " + replyDoc.toString());
+	    
+	    Element e = replyDoc.getRootElement().getChild("DataArea")
+	    	.getChild("VirtualPrivateCloudProvisioning");
+	       
+	     
+	    // Get a configured VirtualPrivateCloudProvisioning object from AppConfig
+	    VirtualPrivateCloudProvisioning vpcp = 
+	    	new VirtualPrivateCloudProvisioning();
+	    try {
+	    	vpcp = (VirtualPrivateCloudProvisioning)m_appConfig
+	    		.getObjectByType(vpcp.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new ProviderException(errMsg, ecoe);
+	    }
+	    	
+	    // Build the VirtualPrivateCloudProvisioning object from the XML element.	
+	    try {
+	    	vpcp.buildObjectFromInput(e);
+	    }
+	    catch (EnterpriseLayoutException ele) {
+	    	String errMsg = "An error occurred building the object from " +
+	    	  "the XML element. The exception is: " + ele.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new ProviderException(errMsg, ele);
+	    }
+	    
+	    // Get the next sequence number to identify the VPCP.
+	    String seq = null;
+	    try {
+	    	seq = getProvisioningIdSequence().next();
+	    }
+	    catch (SequenceException se) {
+	    	String errMsg = "An error occurred getting the next value " +
+  	    	  "from the ProvisioningId sequence. The exception is: " + 
+  	    	  se.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new ProviderException(errMsg, se);
+	    }
+
+		// Set the values of the VPCP.	
+		try {
+			vpcp.setProvisioningId("emory-vpcp-" + seq);
+			vpcp.setVirtualPrivateCloudRequisition(vpcr);
+			vpcp.setStatus(PENDING_STATUS);
+			vpcp.setCreateUser("AwsAccountService");
+			vpcp.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"VirtualPrivateCloud object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+		
+		// Set the ProvisioningId on all of the process steps.
+		List steps = vpcp.getProvisioningStep();
+		ListIterator stepIterator = steps.listIterator();
+		while (stepIterator.hasNext()) {
+			ProvisioningStep step = (ProvisioningStep)stepIterator.next();
+			try {
+				step.setProvisioningId(vpcp.getProvisioningId());
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting the field values " +
+					"of a ProvisinoingStep. The exception is: " +
+					efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg);
+			}
+		}
+		
+		// Create the VPCP.
+		try {
+			create(vpcp);
+		}
+		catch (ProviderException pe) {
+			String errMsg = "An error occurred performing the VPCP create. " +
+				"The exception is: " + pe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, pe);
+		} 
+		
+		// Add the VPCP to the ThreadPool for processing.
+		// If this thread pool is set to check for available threads before
+		// adding jobs to the pool, it may throw an exception indicating it
+		// is busy when we try to add a job. We need to catch that exception
+		// and try to add the job until we are successful.
+		boolean jobAdded = false;
+		while (jobAdded == false) {
+			try {
+				logger.info(LOGTAG + "Adding job to threadpool for " +
+					"ProvisioningId: " + vpcp.getProvisioningId());
+				getThreadPool().addJob(new VirtualPrivateCloudProvisioningTransaction(vpcp.getProvisioningId()));
+				jobAdded = true;
+			}
+			catch (ThreadPoolException tpe) {
+				// The thread pool is busy. Log it and sleep briefly to try to
+				// add the job again later.
+				String msg = "The thread pool is busy. Sleeping for " + 
+						getSleepInterval() + " milliseconds.";
+				logger.debug(LOGTAG + msg);
+				try { Thread.sleep(getSleepInterval()); }
+				catch (InterruptedException ie) {
+					// An error occurred while sleeping to allow threads in the pool
+					// to clear for processing. Log it and throw and exception.
+					String errMsg = "An error occurred while sleeping to allow " +
+							"threads in the pool to clear for processing. The exception " +
+							"is " + ie.getMessage();
+					logger.fatal(LOGTAG + errMsg);
+					throw new ProviderException(errMsg);
+				}
+			}
+		}
+
+		// Return the object.
+		return vpcp;
+	}
+
+	/**
+	 * @see VirtualPrivateCloudProvider.java
+	 */
+	public void update(VirtualPrivateCloudProvisioning vpcp) throws ProviderException {		
+		String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.update] ";
+		
+		// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Create the VirtualPrivateCloudProvisioningObject.
+		try {
+			long startTime = System.currentTimeMillis();
+			vpcp.create(rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Updated VirtualPrivateCloudProvisioning " +
+				"object in " + time + " ms.");
+		}
+		catch (EnterpriseObjectCreateException eoce) {
+			String errMsg = "An error occurred updating the VirtualPrivate" +
+					"CloudProvisioning object The exception is: " + 
+					eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+		}
+	}
+	
+	/**
+	 * @see VirtualPrivateCloudProvider.java
+	 */
+	public void delete(VirtualPrivateCloudProvisioning vpcp) throws ProviderException {		
+		String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.delete] ";
+		
+		// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Create the VirtualPrivateCloudProvisioningObject.
+		try {
+			long startTime = System.currentTimeMillis();
+			vpcp.create(rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Updated VirtualPrivateCloudProvisioning " +
+				"object in " + time + " ms.");
+		}
+		catch (EnterpriseObjectCreateException eoce) {
+			String errMsg = "An error occurred updating the VirtualPrivate" +
+					"CloudProvisioning object The exception is: " + 
+					eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+		}
+	}
+		
+	/**
+	 * @param boolean, the verbose logging property
+	 * <P>
+	 * This method sets the verbose logging property
+	 */
+	private void setVerbose(boolean verbose) {
+		m_verbose = verbose;
+	}
+
+	/**
+	 * @return boolean, the verbose logging property
+	 * <P>
+	 * This method returns the verbose logging property
+	 */
+	private boolean getVerbose() {
+		return m_verbose;
+	}
+	
+	/**
+     * @param Sequence, the ProvisinoingId sequence.
+     *            <P>
+     *            This method sets the ProvisioningId sequence.
+     */
+    private void setProvisioningIdSequence(Sequence seq) {
+        m_provisioningIdSequence = seq;
+    }
+
+    /**
+     * @return Sequence, the ProvisioningId sequence.
+     *         <P>
+     *         This method returns a reference to the ProvisioningId sequence.
+     */
+    private Sequence getProvisioningIdSequence() {
+        return  m_provisioningIdSequence;
+    }
+	
+    /**
+     * @param ProducerPool, the AWS account service producer pool.
+     *            <P>
+     *            This method sets the producer pool to use to send 
+     *            messages to the AWS Account Service.
+     */
+    private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+        m_awsAccountServiceProducerPool = pool;
+    }
+
+    /**
+     * @return ProducerPool, the AWS account service producer pool.
+     *         <P>
+     *         This method returns a reference to the producer pool to use to
+     *         send messages to the AWS account service.
+     */
+    private ProducerPool getAwsAccountServiceProducerPool() {
+        return m_awsAccountServiceProducerPool;
+    }
+    
+	/**
+	 * This method gets the thread pool.
+	 */
+	public final ThreadPool getThreadPool() {
+		return m_threadPool;
+	}
+
+	/**
+	 * This method sets the thread pool.
+	 */
+	private final void setThreadPool(ThreadPool tp) {
+		m_threadPool = tp;
+	}
+	
+	/**
+	 * This method gets the value of the threadPoolSleepInteval.
+	 */
+	public final int getSleepInterval() {
+		return m_threadPoolSleepInterval;
+	}
+	
+    /**
+     * @param AppConfig
+     *            , the AppConfig object of this provider.
+     *            <P>
+     *            This method sets the AppConfig object for this provider to
+     *            use.
+     */
+    private void setAppConfig(AppConfig aConfig) {
+        m_appConfig = aConfig;
+    }
+
+    /**
+     * @return AppConfig, the AppConfig of this provider.
+     *         <P>
+     *         This method returns a reference to the AppConfig this provider is
+     *         using.
+     */
+    private AppConfig getAppConfig() {
+        return m_appConfig;
+    }
+    
+    private String vpcpToXmlString(VirtualPrivateCloudProvisioning vpcp) {
+    	String sVpcp = null;
+    	try {
+    		sVpcp = vpcp.toXmlString();
+    	}
+    	catch (XmlEnterpriseObjectException xeoe) {
+    		logger.error(xeoe.getMessage());
+    	}
+    	return sVpcp;
+    }
+    
+	/**
+	 * @param String, the URL to a primed document containing a
+	 * sample object.
+	 * <P>
+	 * This method sets the primed document URL property
+	 */
+	private void setPrimedDocumentUrl(String primedDocUrl) throws ProviderException {
+		if (primedDocUrl == null) {
+			String errMsg = "primedDocUrl is null. It is a required property.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		m_primedDocUrl = primedDocUrl;
+	}
+	
+	/**
+	 * @return String, the URL to a primed document containing a
+	 * sample object
+	 * <P>
+	 * This method returns the value of the primed document URL property
+	 */
+	private String getPrimedDocumentUrl() {
+		return m_primedDocUrl;
+	}
+	
+	private VirtualPrivateCloudProvisioningProvider getVirtualPrivateCloudProvisioningProvider() {
+		return this;
+	}
+	
+	/**
+	 * A transaction to process virtual private cloud provisioning.
+	 */
+	private class VirtualPrivateCloudProvisioningTransaction implements java.lang.Runnable {
+
+		String m_provisioningId = null;
+
+		public VirtualPrivateCloudProvisioningTransaction(String provisioningId) {
+			logger.info(LOGTAG + "Initializing provisioning process for " +
+				"ProvisioningId: " + provisioningId);
+			m_provisioningId = provisioningId;
+		}
+		
+		public void run() {
+			String LOGTAG = "[VirtualPrivateCloudProvisioningTransaction{" + 
+				m_provisioningId + "}] ";
+			logger.info(LOGTAG +  "Processing ProvisioningId number: " 
+				+ m_provisioningId);
+			
+			// Get a list of all step properties.
+			List<PropertyConfig> stepPropConfigs = null;
+			try {
+				stepPropConfigs = getAppConfig().getObjectsLike("ProvisioningStep");
+			}
+			catch (EnterpriseConfigurationObjectException eoce) {
+				String errMsg = "An error occurred getting ProvisioningStep " +
+					"properties from AppConfig. The exception is: " +
+					eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				return;
+			}
+			logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
+			
+			// Convert property configs to properties
+			List<Properties> stepProps = new ArrayList<Properties>();
+			ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
+			while (stepPropConfigsIterator.hasNext()) {
+				PropertyConfig pConfig = (PropertyConfig)stepPropConfigsIterator.next();
+				Properties stepProp = pConfig.getProperties();
+				stepProps.add(stepProp);
+			}
+			
+			// Sort the list by stepId integer.
+			stepProps.sort(new StepPropIdComparator(1));
+			
+			// For each property instantiate the step, call the execute
+			// method, and if successful, place it in the map of 
+			// completed steps.
+			List<Step> completedSteps = new ArrayList();
+			ListIterator stepPropsIterator = stepProps.listIterator();
+			int i = 0;
+			while (stepPropsIterator.hasNext()) {
+				i++;
+				Properties props = (Properties)stepPropsIterator.next();
+				String className = props.getProperty("className");
+				if (className != null) {
+					// Instantiate the step
+					Step step = null;
+					try {
+						Class stepClass = Class.forName(className);
+						step = (Step)stepClass.newInstance();
+						logger.info(LOGTAG + "Initializing step " + i + ".");
+						step.init(m_provisioningId, props, getAppConfig(), 
+							getVirtualPrivateCloudProvisioningProvider());
+					}
+					catch (ClassNotFoundException cnfe) {
+						String errMsg = "An error occurred instantiating " +
+							"a step. The exception is: " + cnfe.getMessage();
+						logger.error(LOGTAG + errMsg);
+						rollbackCompletedSteps(completedSteps);
+						return;
+					}
+					catch (IllegalAccessException iae) {
+						String errMsg = "An error occurred instantiating " +
+							"a step. The exception is: " + iae.getMessage();
+						logger.error(LOGTAG + errMsg);
+						rollbackCompletedSteps(completedSteps);
+						return;
+					}
+					catch (InstantiationException ie) {
+						String errMsg = "An error occurred instantiating " +
+							"a step. The exception is: " + ie.getMessage();
+						logger.error(LOGTAG + errMsg);
+						rollbackCompletedSteps(completedSteps);
+						return;
+					}
+					catch (StepException se) {
+						String errMsg = "An error occurred instantiating " +
+							"a step. The exception is: " + se.getMessage();
+						logger.error(LOGTAG + errMsg);
+						rollbackCompletedSteps(completedSteps);
+						return;
+					}
+					
+					// Execute the step
+					List<Property> resultProps = null;
+					try {
+						logger.info(LOGTAG + "Executing Step " + 
+								step.getStepId() + ": " + 
+								step.getDescription());
+						long startTime = System.currentTimeMillis();
+						resultProps = step.execute();
+						long time = System.currentTimeMillis() - startTime;
+						logger.info(LOGTAG + "Completed Step " + 
+							step.getStepId() + " with result " + 
+							step.getResult() + " in " + time + " ms.");
+						logger.info(LOGTAG + "Step result properties are: " + 
+							resultPropsToXmlString(resultProps));
+						completedSteps.add(step);
+						
+						// If the result of the step is failure, roll back
+						// all completed steps and return.
+						if (step.getResult().equals(FAILURE_RESULT)) {
+							logger.info(LOGTAG + "Step " + step.getStepId() +
+								"failed. Rolling back all completed steps.");
+							rollbackCompletedSteps(completedSteps);
+							return;
+						}
+					}
+					catch (StepException se) {
+						// An error occurred executing the step.
+						// Log it and roll back all preceding steps.
+						String errMsg = "An error occurred executing Step " + 
+							step.getStepId() + "The exception is: " + se.getMessage();
+						logger.error(LOGTAG + errMsg);
+						try {
+							step.update(COMPLETED_STATUS, FAILURE_RESULT, resultProps);
+						}
+						catch (StepException se2) {
+							String errMsg2 = "An error occurred updating the " +
+								"status to indicate failure. The exception " +
+								"is: " + se2.getMessage();
+							logger.error(LOGTAG + errMsg2);
+						}
+						rollbackCompletedSteps(completedSteps);
+						return;
+					}
+				}
+				else {
+					String errMsg = "An error occurred instantiating " +
+						"a step. The className property is null.";
+					logger.error(LOGTAG + errMsg);
+					rollbackCompletedSteps(completedSteps);
+					return;
+				}
+			}
+			
+			// If the step fails, log it, sort the list of successful steps from
+			// last to first, and iterate over the list calling the rollback
+			// method of each step.
+			
+			
+		}
+		
+		private class StepPropIdComparator implements Comparator<Properties> {
+
+			int m_order = 1;
+			
+			public StepPropIdComparator(int order) {
+				m_order = order;
+			}
+			
+		    public int compare(Properties prop1, Properties prop2) {
+		        int returnVal = 0;
+		        
+		        // Convert stepIds to integers
+		        int stepId1 = Integer.valueOf(prop1.getProperty("stepId"));
+		        int stepId2 = Integer.valueOf(prop2.getProperty("stepId"));
+		        
+		        // Compare integer stepIds.
+		        if (stepId1 < stepId2) {
+		        	returnVal =  -1;
+		        }
+		        else if (stepId1 > stepId2) {
+		        	returnVal =  1;
+		        }
+		        else if (stepId1 == stepId2) {
+		        	returnVal =  0;
+		        }
+		        return (returnVal * m_order);
+		    }
+		}
+		
+		private class StepIdComparator implements Comparator<Step> {
+
+			int m_order = 1;
+			
+			public StepIdComparator(int order) {
+				m_order = order;
+			}
+			
+		    public int compare(Step step1, Step step2) {
+		        int returnVal = 0;
+		        
+		        // Convert stepIds to integers
+		        int stepId1 = Integer.valueOf(step1.getStepId());
+		        int stepId2 = Integer.valueOf(step2.getStepId());
+		        
+		        // Compare integer stepIds.
+		        if (stepId1 < stepId2) {
+		        	returnVal =  -1;
+		        }
+		        else if (stepId1 > stepId2) {
+		        	returnVal =  1;
+		        }
+		        else if (stepId1 == stepId2) {
+		        	returnVal =  0;
+		        }
+		        return (returnVal * m_order);
+		    }
+		}
+		
+		private void rollbackCompletedSteps(List<Step> completedSteps) {
+			logger.info(LOGTAG + "Starting rollback of completed steps...");
+			
+			// Reverse the order of the completedSteps list.
+			completedSteps.sort(new StepIdComparator(-1));
+			
+			ListIterator completedStepsIterator = completedSteps.listIterator();
+			long startTime = System.currentTimeMillis();
+			while (completedStepsIterator.hasNext()) {
+				Step completedStep = (Step)completedStepsIterator.next();
+				try {
+					completedStep.rollback();
+				}
+				catch (StepException se) {
+					String errMsg = "An error occurred rolling back step " +
+						completedStep.getStepId() + ": " + 
+						completedStep.getType() + ". The exception is: " +
+						se.getMessage();
+					logger.error(LOGTAG + errMsg);
+				}
+			}
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Provisioning rollback complete in " + time + " ms.");
+			
+			// The the provider is configured to create an incident
+			// in ServiceNow upon failure, create an incident.
+			if (false) {
+				logger.info(LOGTAG + "Creating an Incident " +
+					"in ServiceNow...");
+				//TODO: create an incident.
+			}
+			else {
+				logger.info(LOGTAG + "createIncidentOnFailure is " 
+					+ "false. Will not create an incident in " 
+					+ "ServiceNow.");
+			}
+		}
+		
+		private String resultPropsToXmlString(List<Property> resultProps) {
+			String stringProps = "";
+			
+			ListIterator li = resultProps.listIterator();
+			while (li.hasNext()) {
+				Property prop = (Property)li.next();
+				String stringProp = "";
+				try {
+					stringProp = prop.toXmlString();
+					stringProps = stringProps + stringProp;
+				}
+				catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing a Property "
+						+ "object to an XML string.";
+					logger.error(LOGTAG + errMsg);
+				}
+			}
+			
+			return stringProps;
+		}
+		
+	}
+	
+		
+}		
+	
