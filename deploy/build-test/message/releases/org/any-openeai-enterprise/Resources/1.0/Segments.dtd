@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!--	$Revision: 3898 $
+		$Date: 2013-12-30 11:52:13 -0500 (Mon, 30 Dec 2013) $
+		$Source$
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2002 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Segments.dtd is a file where definitions of all elements with 
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+		01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+-->
+<!--	Notes:
+		Comments for each element should provide the initial context for which
+		the element was added and the date when it was added.
+-->
+<!-- ====================================================================== -->
+<!-- Elements - Segments
+-->
+<!--AccessLog added 12/27/2013 for Common Logging Service-->
+<!ELEMENT AccessLog (LogId?,AccessLogEntry*)>
+<!ELEMENT AccessLogQuerySpecification (Comparison*,LogEntryId?, StartAccessDatetime?, EndAccessDatetime?, StartLogDatetime?, EndLogDatetime?, ApplicationName?, PersonPrincipalName?, IpNumber?, AccessType?, AccessStatus?, AccessTarget?, Description?)>
+<!--AccessLogEntry added 12/27/2013 for Common Logging Service-->
+<!ELEMENT AccessLogEntry (LogEntryId?, Tag*, Comment*, AccessDatetime, LogDatetime?, ApplicationName, PersonPrincipalName, IpNumber, AccessType, AccessStatus, AccessTarget, Description)>
+<!ELEMENT AccessLogEntryQuerySpecification (LogEntryId)>
+<!-- Address added 09/20/2008 for Services/NetworkLocation -->
+<!ELEMENT Address (Street1, Street2?, Street3?, CityOrLocality, County?, StateOrProvince?, Nation?, ZipOrPostalCode?)>
+<!--AcceptorStatus added 10/18/2004-->
+<!ELEMENT AcceptorStatus (StartDatetime, LastConnectionDatetime?, StopDatetime?, ThreadPool, Command+)>
+<!ATTLIST AcceptorStatus
+	name CDATA #REQUIRED
+	status CDATA #REQUIRED
+	portNumber CDATA #REQUIRED
+	acceptorObjectClassName CDATA #REQUIRED
+	sessionObjectClassName CDATA #REQUIRED
+	connectionCount CDATA #REQUIRED
+	sessionCount CDATA #REQUIRED
+	absoluteCommandName CDATA #IMPLIED
+>
+<!--AdHoc added 03/22/2004-->
+<!ELEMENT AdHoc (Field+)>
+<!ATTLIST AdHoc
+	name CDATA #IMPLIED
+>
+<!--AdHocQueryObject added 03/22/2004-->
+<!ELEMENT AdHocQueryObject (Field+)>
+<!ATTLIST AdHocQueryObject
+	name CDATA #IMPLIED
+>
+<!--ApplicationSession added 09/10/2002 for CoreApplicationApplicationSessionCreate/DataArea/ApplicationSession-->
+<!ELEMENT ApplicationSession (EnterpriseSession, ApplicationSessionId, StartDatetime, LastActivityDatetime?, EndDatetime?, SessionEnvironment?)>
+<!--ApplicationLog added 12/27/2013 for Common Logging Service-->
+<!ELEMENT ApplicationLog (LogId?,ApplicationLogEntry*)>
+<!ELEMENT ApplicationLogQuerySpecification (Comparison*,LogEntryId?, LogMessageType, StartLogMessageDatetime?, EndLogMessageDatetime?, StartLogDatetime?, EndLogDatetime?, ApplicationName?, LogMessage?, LogMessageContext?, Remediation?)>
+<!--ApplicationLogEntry added 12/27/2013 for Common Logging Service-->
+<!ELEMENT ApplicationLogEntry (LogEntryId?, Tag*, Comment*, LogMessageType, LogMessageDatetime, LogDatetime?, ApplicationName, LogMessageText, LogMessageContext?, Remediation?)>
+<!ELEMENT ApplicationLogEntryQuerySpecification (LogEntryId)>
+<!-- Authentication added 11/11/2010 -->
+<!ELEMENT UserAuthentication (Principal)>
+<!ATTLIST UserAuthentication
+	isAuthentic CDATA #REQUIRED	
+>
+<!-- AuthenticationQuerySpecification added 11/11/2010 -->
+<!ELEMENT UserAuthenticationQuerySpecification (Principal, Credential)>
+<!--AuthenticationAttempt added 9/25/2007 -->
+<!ELEMENT AuthenticationAttempt (AttemptId, AttemptDatetime, UserIdentifier, Hostname, ClientIp, AttemptStatus, AuthenticationStatus, Message?)>
+<!--AuthenticationAttemptQuerySpecification added 9/25/2007 -->
+<!ELEMENT AuthenticationAttemptQuerySpecification (AttemptId?, UserIdentifier?, Hostname?, ClientIp?)>
+<!--AuthenticationAttemptValidation added 9/25/2007 -->
+<!ELEMENT AuthenticationAttemptValidation (AuthenticationAttempt)>
+<!--AuthenticationAttemptValidationQuerySpecification added 9/25/2007 -->
+<!ELEMENT AuthenticationAttemptValidationQuerySpecification (UserIdentifier, Hostname, ClientIp)>
+<!--Added AuthenticationStatus 09/27/07 for UserAuthentication -->
+<!ELEMENT AuthenticationStatus (StatusCode, Description, Explanation)>
+<!-- Authorization added 07/30/2010 -->
+<!ELEMENT Authorization (Principal, Permission, TestRequest?)>
+<!ATTLIST Authorization
+	isAuthorized CDATA #REQUIRED	
+>
+<!-- AuthorizationQuerySpecification added 07/30/2010 -->
+<!ELEMENT AuthorizationQuerySpecification (Principal, Permission)>
+<!--BrokerStatus added 11/17/2004-->
+<!ELEMENT BrokerStatus (Metric+)>
+<!ATTLIST BrokerStatus
+	name CDATA #REQUIRED
+	type CDATA #REQUIRED
+	status CDATA #REQUIRED
+>
+<!--Command added 10/18/2004-->
+<!ELEMENT Command (Description)>
+<!ATTLIST Command
+	name CDATA #REQUIRED
+	className CDATA #REQUIRED
+	type CDATA #REQUIRED
+	isAbsolute CDATA #REQUIRED
+>
+<!-- Conversion added 10/29 for the conversion service -->
+<!ELEMENT Conversion (InputText, OutputText)>
+<!-- ConversionSpecificaton added 10/29 for the conversion service --> 
+<!ELEMENT ConversionSpecification (InputText)>
+<!ATTLIST ConversionSpecification
+	inputFormat CDATA #REQUIRED
+	outputFormat CDATA #REQUIRED
+>
+<!--SessionEnvironment added 09/10/2002 for CoreApplicationEnterpriseSessionCreate/DataArea/EnterpriseSession-->
+<!ELEMENT SessionEnvironment (EnvironmentVariable+)>
+<!--EmailMessage added 07/20/2009 for Email Service-->
+<!ELEMENT EmailMessage (From, To+, CC*, BCC*, Subject, Body, Status)>
+<!ELEMENT EnterpriseLogEntry (ApplicationSessionId, Datetime, LogMessageCode, LogMessageText)>
+<!ATTLIST EnterpriseLogEntry
+	action CDATA #REQUIRED
+	level CDATA #REQUIRED
+>
+<!--EnterpriseGroup added 10/15/2003 for CoreApplicationEnterpriseGroupProvide/DataArea/EnterpriseGroup-->
+<!ELEMENT EnterpriseGroup (Description?, EnterpriseUser+, EnterprisePermission*)>
+<!ATTLIST EnterpriseGroup
+	id CDATA #IMPLIED
+	name CDATA #REQUIRED
+	displayName CDATA #IMPLIED
+>
+<!--EnterprisePassword added 03/18/2004-->
+<!ELEMENT EnterpriseUserPassword (EnterpriseUser, Password)>
+<!--Field added 03/22/2004-->
+<!ELEMENT Field EMPTY>
+<!ATTLIST Field
+	name CDATA #REQUIRED
+	value CDATA #REQUIRED
+>
+<!--Geocode added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Geocode (Longitide, Latitide, Altitude?)>
+<!--Metric added 11/17/2004 for BrokerStatus-->
+<!ELEMENT Metric EMPTY>
+<!ATTLIST Metric
+	name CDATA #REQUIRED
+	value CDATA #REQUIRED
+	units CDATA #REQUIRED
+	description CDATA #IMPLIED
+>
+<!--NetworkLocation added 09/20/2008-->
+<!ELEMENT NetworkLocation (Node, Building?, Address?, Floor?, Room?, Geocode?)>
+<!--Password added 03/18/2004 added 03/18/2004 for CoreApplication/EnterpriseUserPassword-->
+<!ELEMENT Password EMPTY>
+<!ATTLIST Password
+	type CDATA #REQUIRED
+	encryption CDATA #REQUIRED
+	value CDATA #REQUIRED
+>
+<!--EnterprisePermission added 10/15/2003 for CoreApplicationEnterpriseGroupProvide/DataArea/EnterpriseGroup-->
+<!ELEMENT EnterprisePermission (Description?)>
+<!ATTLIST EnterprisePermission
+	id CDATA #IMPLIED
+	name CDATA #REQUIRED
+	displayName CDATA #IMPLIED
+>
+<!--EnterpriseUser added 07/31/2001 for CoreApplicationEnterpriseUserCreate/DataArea/EnterpriseUser-->
+<!ELEMENT EnterpriseUser (NetId+, LightweightPerson, Property*)>
+<!--EnterpriseUserRole added 9/12/2002 for CoreApplicationEnterpriseUserRoleQuery/DataArea/EnterpriseUserRole-->
+<!ELEMENT EnterpriseUserPermission (EnterpriseUser, EnterprisePermissionName)>
+<!--EnterpriseSession added 09/10/2002 for CoreApplicationEnterpriseSessionCreate/DataArea/EnterpriseSession-->
+<!ELEMENT EnterpriseSession (EnterpriseUser, EnterpriseSessionId, ClientIp, StartDatetime, LastActivityDatetime?, EndDatetime?, SessionEnvironment)>
+<!--EnterpriseSessionGenerateSpecification added 09/28/2007 for CoreApplicationEnterpriseSessionCreate/DataAreaEnterpriseSessionGenerateSpecification -->
+<!ELEMENT EnterpriseSessionGenerateSpecification (EnterpriseUser, ClientIp, SessionEnvironment)>
+<!--EnvironmentVariable added 09/10/2002 for CoreApplicationEnterpriseSessionCreate/DataArea/EnterpriseSession/SessionEnvironment-->
+<!ELEMENT EnvironmentVariable (VariableName, VariableValue)>
+<!--Generator added 03/04/2004 for CoreApplicationNetIdGenerate/NetIdSeed-->
+<!ELEMENT Generator (Property*)>
+<!ATTLIST Generator
+	name CDATA #REQUIRED
+>
+<!--Greetee added 09/25/2003 for CoreApplication.Greeting.GenerateRequest-->
+<!ELEMENT Greetee (FullName)>
+<!--Greeting added 09/25/2003 for CoreApplication.Greeting.Response-Reply-->
+<!ELEMENT Greeting (Text)>
+<!--Identifier added 10/21/2002 for CoreApplicationEnterpriseSessionCreate/DataArea/EnterpriseSession/SessionEnvironment-->
+<!ELEMENT Identifier EMPTY>
+<!ATTLIST Identifier
+	type CDATA #REQUIRED
+	value CDATA #REQUIRED
+>
+<!-- InstitutionalIdentity added 10/24/02 for CoreApplicationNetIdAssignmentCreate/DataArea/NetIdAssignment -->
+<!ELEMENT InstitutionalIdentity (InstitutionalId, UnknownPerson)>
+<!-- LightweightPerson added 10/24/2002 for EnterpriseUser/LightweightPerson  -->
+<!ELEMENT LightweightPerson (Name?, InstitutionalId)>
+<!-- Name added 10/24/2002 for InstitutionalIdentity/UnknownPerson  -->
+<!ELEMENT Name (LastName, FirstName, MiddleName?, Prefix?, Suffix?, LegalName?, PreferredFirstName?)>
+<!ATTLIST Name
+	current CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--NetId added 09/10/2002 for PersonNetIdCreate/DataArea/NetId-->
+<!ELEMENT NetId (Principal, Domain)>
+<!--NetIdAssignment added 09/10/2002 for CoreApplicationNetIdAssignmentCreate/DataArea/NetId-->
+<!ELEMENT NetIdAssignment (NetId, InstitutionalIdentity, StartDate, EndDate?)>
+<!--NetIdHold added 09/10/2002 for CoreApplicationNetIdHoldCreate/DataArea/NetId-->
+<!ELEMENT NetIdHold (NetId, StartDate, EndDate)>
+<!--NetIdList added 01/23/2004 for CoreApplicationNetIdListProvide/DataArea-->
+<!ELEMENT NetIdList (NetId*)>
+<!--NetIdSeed added 03/04/2004 for CoreApplicationNetIdGenerate-->
+<!ELEMENT NetIdSeed (Generator, InstitutionalIdentity)>
+<!--NetworkLocationQuerySpecification added 09/20/2008 -->
+<!ELEMENT NetworkLocationQuerySpecification (IpNumber?, Hostname?)>
+<!--PersonalIdentificationNumber added 8/11/2007 -->
+<!ELEMENT PersonalIdentificationNumber (Value)>
+<!ATTLIST PersonalIdentificationNumber
+	ownerId CDATA #REQUIRED
+	type CDATA #REQUIRED
+	status CDATA #REQUIRED
+>
+<!-- Ping added 12/19/2009 for the category Monitoring -->
+<!ELEMENT Ping (Text)>
+<!-- PingQuerySpecification added 12/19/2009 for the category Monitoring object Ping -->
+<!ELEMENT PingQuerySpecification (Value?)>
+<!--PinGenerateSpecification added 08/24/2007 -->
+<!ELEMENT PinGenerateSpecification (InstitutionalId, Type)>
+<!--PinQuerySpecification added 08/22/2007 -->
+<!ELEMENT PinQuerySpecification (InstitutionalId?, Type?, Status?)>
+<!--PinValidation added 8/11/2007 -->
+<!ELEMENT PinValidation (ValidationStatus+)>
+<!--PortalKey added 06/09/2007 for uPortal to I2Service cross reference-->
+<!ELEMENT PortalKey (PortalId)>
+<!--PortalI2Map added 06/06/2007 for uPortal to I2Service cross reference-->
+<!ELEMENT PortalIIMap (PortalKey, EnterpriseId, UnknownPerson)><!--Property added 03/04/2004 for CoreApplicationNetIdGenerate/NetIdSeed-->
+<!ELEMENT Property (PropertyName, PropertyValue)>
+<!--QueryFilter added 10/16/2003 for CoreMessaging/EnterpriseGroup-->
+<!ELEMENT QueryFilter EMPTY>
+<!ATTLIST QueryFilter
+	type CDATA #IMPLIED
+	value CDATA #REQUIRED
+>
+<!--Report added 5/24/2005-->
+<!ELEMENT Report (Description, Parameter*, GenerationTime, URI)>
+<!ATTLIST Report
+	name CDATA #REQUIRED
+>
+<!--ReportSpecification added 5/24/2005-->
+<!ELEMENT ReportSpecification (ReportName, Description, Parameter*, Modality, EstimatedGenerationTime, OutputFormat)>
+<!--SecurityQuestion added 08/10/2007 -->
+<!ELEMENT SecurityQuestion (QuestionId, Text)>
+<!ATTLIST SecurityQuestion
+	type CDATA #REQUIRED
+	status CDATA #REQUIRED
+>
+<!--SecurityQuestionQuerySpecification added 08/11/2007 -->
+<!ELEMENT SecurityQuestionQuerySpecification (Type?, QuestionId?)>
+<!--UserAuthentication added 09/27/2007 -->
+<!--<!ELEMENT UserAuthentication (AuthenticationStatus+)>-->
+<!--UserAuthenticationQuerySpecification added 09/27/2007 -->
+<!--<!ELEMENT UserAuthenticationQuerySpecification (NetId, Password)>-->
+<!--UserSecurityQuestion added 08/10/2007 -->
+<!ELEMENT UserSecurityQuestion (SecurityQuestion, SecurityAnswer)>
+<!ATTLIST UserSecurityQuestion
+	ownerId CDATA #REQUIRED
+	status CDATA #REQUIRED
+>
+<!--UserSecurityQuestionQuerySpecification added 08/11/2007 -->
+<!ELEMENT UserSecurityQuestionQuerySpecification (InstitutionalId?, QuestionId?)>
+<!--SecurityAnswer added 08/10/2007 -->
+<!ELEMENT SecurityAnswer (Text)>
+<!--SecurityAnswerValidation added 08/10/2007 -->
+<!ELEMENT SecurityAnswerValidation (ValidationStatus+)>
+<!--StockQuote added 10/16/2007 -->
+<!ELEMENT StockQuote (StockSymbol, StockName, LastPrice, TimeStampDatetime, PriceChange, OpenPrice, HighPrice, LowPrice, TradingVolume, PreviousClosingPrice)>
+<!ATTLIST StockQuote
+	StockQuoteService CDATA #IMPLIED
+>
+<!--StockQuoteQuerySpecification added 10/16/2007 -->
+<!ELEMENT StockQuoteQuerySpecification (StockSymbol, StockQuoteService)>
+<!--ThreadPool added 10/18/2004 for Monitoring/AcceptorStatus-->
+<!ELEMENT ThreadPool EMPTY>
+<!ATTLIST ThreadPool
+	maxThreads CDATA #REQUIRED
+	minThreads CDATA #REQUIRED
+	maxIdleTime CDATA #REQUIRED
+	threads CDATA #REQUIRED
+	pendingJobs CDATA #REQUIRED
+	jobsInProgress CDATA #REQUIRED
+	checkBeforeProcessing CDATA #REQUIRED
+>
+<!--TransferFile added 04/22/2002 for Utility/File-->
+<!ELEMENT TransferFile (Path, Line*)>
+<!--TemporarySsn added 05/03/2002 for PersonTempoarySsnResponse/DataArea/TemporarySsn-->
+<!-- UnknownPerson added 10/24/02 for CoreApplicationNetIdAssignmentCreate/DataArea/NetIdAssignment/InstitutionalIdentity -->
+<!ELEMENT UnknownPerson (SocialSecurityNumber?, Name, BirthDate, Gender)>
+<!--  Added ValidationStatus 08/11/07 for Address Validation Service -->
+<!ELEMENT ValidationStatus (StatusCode, Description, Explanation)>
+
+
+
+
+

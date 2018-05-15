@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.AppSettings.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<org.openeai.toolkit.Console.AppSettings.Delete>
+	<ControlAreaRequest messageCategory="org.openeai.toolkit.Console" messageObject="AppSettings"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
+				<MessageSeq>2734</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>MyLog</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<AppSettings>
+                <RowId>1</RowId>
+				<JvmOptions>optoins</JvmOptions>
+				<ClassPath>/opt/</ClassPath>
+				<JavaHome>/javahome</JavaHome>				
+				<CreateUser>gwang28</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+			</AppSettings>
+		</DeleteData>
+	</DataArea>
+</org.openeai.toolkit.Console.AppSettings.Delete>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.SyncError.Create SYSTEM "../dtd/Create-Request.dtd">
+<org.openeai.toolkit.Console.SyncError.Create>
+	<ControlAreaRequest messageCategory="org.openeai.toolkit.Console" messageObject="SyncError" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>5</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<SyncError>
+				<SyncErrorMsgId>1</SyncErrorMsgId>
+				<ErrorType>application</ErrorType>
+				<ErrorNumber>MSG-1003</ErrorNumber>
+				<ErrorDesc>"Exception occurred Updating the PurchaseOrder Java object in the database.  Exception: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+"</ErrorDesc>
+				<CreateUser>ESB30</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+			</SyncError>
+		</NewData>
+	</DataArea>
+</org.openeai.toolkit.Console.SyncError.Create>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Provide SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/InstitutionalIdentity/1.0/dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="InstitutionalIdentity" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.InstitutionalIdentityService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>5e2543c7-2648-47f5-9acf-90b820a89f66</ProducerId>
+				<MessageSeq>6232</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<InstitutionalIdentity>
+			<InstitutionalId>656613875</InstitutionalId>
+			<UnknownPerson>
+				<Name current="Yes">
+					<LastName>Chong</LastName>
+					<FirstName>Robert</FirstName>
+				</Name>
+				<BirthDate>
+					<Month>8</Month>
+					<Day>24</Day>
+					<Year>1970</Year>
+				</BirthDate>
+				<Gender>Male</Gender>
+			</UnknownPerson>
+		</InstitutionalIdentity>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Provide>

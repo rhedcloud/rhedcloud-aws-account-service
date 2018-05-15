@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.openeai.CoreMessaging.Generic.Response SYSTEM "http://xml.openeai.org/message/releases/org/openeai/CoreMessaging/Generic/1.0/dtd/Response-Reply.dtd">
+<org.openeai.CoreMessaging.Generic.Response>
+	<ControlAreaReply messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Banner</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>banner</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>31</Second>
+			<SubSecond>967</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Create" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uillinois.uihr.NessieApplication</SenderAppId>
+				<ProducerId>e0da7013-c27c-47eb-9192-1fa74382bb9a</ProducerId>
+				<MessageSeq>17</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+</org.openeai.CoreMessaging.Generic.Response>

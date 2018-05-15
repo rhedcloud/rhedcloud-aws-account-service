@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 1.1 $
+		$Date: 2008/12/03 21:56:59 $
+		$Source: /cvs/repositories/openii3/project/message/releases/edu/emory/Resources/1.0/Fields.dtd,v $
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2008 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Fields.dtd is a file where definitions of all elements without 
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+
+				01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+-->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+-->
+<!-- ================================================== -->
+<!-- AcademicGroup added 2/16/2012 for LmsXControlPanel -->
+<!ELEMENT AcademicGroup %STRDOM;>
+<!-- AcadProgram added 12/18/2009 for Identity/StudentCareer -->
+<!ELEMENT AcadProgram %STRDOM;>
+<!-- AccessKeyId added 4/19/2018 for TKI Service -->
+<!ELEMENT AccessKeyId %STRDOM;>
+<!-- Account added 01/31/2009 for Finance/AccountCategory -->
+<!ELEMENT Account %STRDOM;>
+<!-- AccountId added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT AccountId %STRDOM;>
+<!-- AccountDescription added 01/31/2009 for Finance/AccountCategory -->
+<!ELEMENT AccountDescription %STRDOM;>
+<!-- AccountType added 01/31/2009 for Finance/AccountCategory -->
+<!ELEMENT AccountType %STRDOM;>
+<!-- Accuracy added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Accuracy %STRDOM;>
+<!--  AceProcessedDate added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT AceProcessedDate %DATE;>
+<!-- ActivityId added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ActivityId %STRDOM;>
+<!-- Action added 3/14/12 for LmsEnrollmentSynchronization-->
+<!ELEMENT Action %STRDOM; >
+<!-- AlternateId added 8/4/2009 for StudyParticipant-->
+<!ELEMENT AlternateId %STRDOM;>
+<!-- Altitude added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Altitude %STRDOM;>
+<!--  AppealCode added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT AppealCode %STRDOM;>
+<!-- ApplicationName added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT ApplicationName %STRDOM;>
+<!-- AreaCode added 04/16/2009 for Identity/Person -->
+<!ELEMENT AreaCode %STRDOM;>
+<!-- Arn added 4/19/2018 for TKI Service -->
+<!ELEMENT Arn %STRDOM;>
+<!-- ArrivalDatetime added 07/16/2009 for Clinical/Visit -->
+<!ELEMENT ArrivalDatetime %DATETIME;>
+<!-- Association added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!-- Association removed 12/16/2009 and replaced with version in Segments -->
+<!-- <!ELEMENT Association %STRDOM;>-->
+<!-- AssumedRoleId added 4/19/2018 for TKI Service -->
+<!ELEMENT AssumedRoleId %STRDOM;>
+<!-- Audience added 4/19/2018 for TKI Service -->
+<!ELEMENT Audience %STRDOM;>
+<!-- AuditDatetime added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT AuditDatetime %DATETIME;>
+<!-- AwardStatus added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT AwardStatus %STRDOM;>
+<!-- BirthCountry added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthCountry %STRDOM;>
+<!-- BirthDay added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthDay %STRDOM;>
+<!-- BirthMonth added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthMonth %STRDOM;>
+<!-- BirthYear added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthYear %STRDOM;>
+<!-- Building added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Building %STRDOM;>
+<!-- BuildingName added 06/13/2011 for Amcom Integration -->
+<!ELEMENT BuildingName %STRDOM;>
+<!-- BusinessUnit added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT BusinessUnit %STRDOM;>
+<!-- BusinessUnitPC added 12/10/2008 for Finance/SmartKey -->
+<!ELEMENT BusinessUnitPC %STRDOM;>
+<!-- Campus added 12/16/2009 for Identity/Location -->
+<!ELEMENT Campus %STRDOM;>
+<!--  Capability added 4/19/2018 for TKI Service -->
+<!ELEMENT Capability %STRDOM;>
+<!-- CapCode added 06/15/2011 for AMCOM integration -->
+<!ELEMENT CapCode %STRDOM;>
+<!-- CatalogNumber added 2/16/2012 for LmsXControlPanel -->
+<!ELEMENT CatalogNumber %STRDOM;>
+<!-- CgwIp1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT CgwIp1 %STRDOM;>
+<!-- CgwIp2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT CgwIp2 %STRDOM;>
+<!-- Chartfield1 added 12/10/2008 for Finance/SmartKey -->
+<!ELEMENT Chartfield1 %STRDOM;>
+<!-- ChosenFullName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT ChosenFullName %STRDOM;>
+<!-- ChosenName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT ChosenName %STRDOM;>
+<!-- CityOrLocality added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT CityOrLocality %STRDOM;>
+<!-- ClassField added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ClassField %STRDOM;>
+<!-- Classification added 5/18 for ConflictOfInterest -->
+<!ELEMENT Classification %STRDOM;>
+<!-- ClassificationCode added 5/18 for ConflictOfInterest -->
+<!ELEMENT ClassificationCode %STRDOM;>
+<!-- Code added 04/16/2009 for generic use -->
+<!ELEMENT Code %STRDOM;>
+<!-- CollectionDatetime added 7/16/2009 for Clinical/Sample -->
+<!ELEMENT CollectionDatetime %DATETIME;>
+<!-- CompositeName added 05/13/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT CompositeName %STRDOM;>
+<!-- Container added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT Container %STRDOM;>
+<!-- Count added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT Count %STRDOM;>
+<!-- Country added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Country %STRDOM;>
+<!-- CountryCode added 04/16/2009 for Identity/Person -->
+<!ELEMENT CountryCode %STRDOM;>
+<!-- County added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT County %STRDOM;>
+<!-- CourseId added 1/11/2010 for BlackBoard -->
+<!ELEMENT CourseId %STRDOM; >
+<!-- CourseOfferingNumber is one of the identifying values of a PeopleSoft Class. A Class (section) normally has one offering number, but occasionaly has 2 -->
+<!ELEMENT CourseOfferingNumber %STRDOM; >
+<!-- CreateDate added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT CreateDate %DATE; >
+<!-- CreateDatetime added 05/16/2012 for Logging/HipaaAuditLogEntry/Comment -->
+<!ELEMENT CreateDatetime %DATETIME; >
+<!ELEMENT CreateUser %STRDOM; >
+<!-- CreditHours added 1/12/2010 for BlackBoard --> 
+<!ELEMENT  CreditHours %STRDOM; >
+<!-- CryptoKeyring1 added 4/5/2018 for Network/VpnConnection --> 
+<!ELEMENT  CryptoKeyring1 %STRDOM; >
+<!-- CryptoKeyring2 added 4/5/2018 for Network/VpnConnection --> 
+<!ELEMENT  CryptoKeyring2 %STRDOM; >
+<!-- CurrentHireDate added 12/16/2009 for Identity/Employee -->
+<!ELEMENT CurrentHireDate %DATE;>
+<!-- DateEffective added temporarily for use by AccountCategory 4/6/09 Ament -->
+<!ELEMENT DateEffective %STRDOM;>
+<!--  DeliveredCount added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT DeliveredCount %STRDOM;>
+<!-- DepartmentId added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT DepartmentId %STRDOM;>
+<!-- DepartmentName added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT DepartmentName %STRDOM;>
+<!-- DeviceId added 4/19/2018 for TKI Service -->
+<!ELEMENT DeviceId %STRDOM;>
+<!-- DevicePriority added 06/15/2011 for AMCOM Integration -->
+<!ELEMENT DevicePriority %STRDOM;>
+<!-- Description added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT Description %STRDOM;>
+<!-- DirectoryLocation added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT DirectoryLocation %STRDOM;>
+<!-- DirectoryPhone added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT DirectoryPhone %STRDOM;>
+<!-- DisplayName added 4/19/2018 for TKI Service -->
+<!ELEMENT DisplayName %STRDOM;>
+<!-- DivisionName added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT DivisionName %STRDOM;>
+<!-- Domain added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Domain %STRDOM;>
+<!-- DurationSeconds added 04/19/2018 for for TKI Service -->
+<!ELEMENT DurationSeconds %STRDOM;>
+<!-- EduPrincipalPersonName added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT EduPrincipalPersonName %STRDOM;>
+<!-- EffectiveDate added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT EffectiveDate %DATE;>
+<!-- EffectiveStatus added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT EffectiveStatus %STRDOM;>
+<!-- ElasticIpId added 9/14/2017 for Network/ElasticIp -->
+<!ELEMENT ElasticIpId %STRDOM;>
+<!-- ElasticIpAddress added 9/14/2017 for Network/ElasticIp -->
+<!ELEMENT ElasticIpAddress %STRDOM;>
+<!-- ElasticIpAssignmentId added 9/14/2017 for Network/ElasticIpAssignment -->
+<!ELEMENT ElasticIpAssignmentId %STRDOM;>
+<!-- EmailAddress added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT EmailAddress %STRDOM;>
+<!-- EmailSource added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT EmailSource %STRDOM;>
+<!-- EmplId added 04/16/2009 for Identity/Person -->
+<!ELEMENT EmplId %STRDOM;>
+<!-- EmployeeStatus added 12/16/2009 for Identity/Employee -->
+<!ELEMENT EmployeeStatus %STRDOM;>
+<!-- EndDate added 04/14/2009 for Identity/EnterpriseIdentity -->
+
+<!-- EndEventDatetime added 5/21/2012 for HipaaAuditLogEntry-->
+<!ELEMENT EndEventDatetime %DATETIME;>
+<!-- EndAuditDatetime added 5/21/2012 for HipaaAuditLogEntry-->
+<!ELEMENT EndAuditDatetime %DATETIME;>
+
+<!ELEMENT EndDate %DATE;>
+<!ELEMENT EndDatetime %DATETIME;>
+<!-- EndTime added 3/1/2010 for BlackboardMobile  --> 
+<!ELEMENT EndTime %TIME; >
+<!-- Environment added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT Environment %STRDOM;>
+<!-- EstablishedDate added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT EstablishedDate %DATE;>
+<!-- EventDatetime added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT EventDatetime %DATETIME;>
+<!--  EventDate added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT EventDate %DATE;>
+<!-- EventStatus added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT EventStatus %STRDOM;>
+<!-- EventTarget added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT EventTarget %STRDOM;>
+<!-- EventType added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT EventType %STRDOM;>
+<!-- Expiration added 4/19/2018 for TKI Service -->
+<!ELEMENT Expiration %STRDOM;>
+<!-- ExtendedPrice added 05/12/2014 for Billing -->
+<!ELEMENT ExtendedPrice %STRDOM;>
+<!-- ExtensionNumber added 04/16/2009 for Identity/Person -->
+<!ELEMENT ExtensionNumber %STRDOM;>
+<!-- Fax added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT Fax %STRDOM;>
+<!-- FirstMiddle added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT FirstMiddle %STRDOM;>
+<!-- FirstName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT FirstName %STRDOM;>
+<!-- Floor added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Floor %STRDOM;>
+<!-- FullName added 3/25/2009 for Examples/Greeting -->
+<!-- FullName encumbered 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT FullName %STRDOM;>
+<!ELEMENT GwFullName %STRDOM;>  <!-- for exercise  by gwang28-->
+<!-- FundCode added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT FundCode %STRDOM;>
+<!-- FundingSource added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT FundingSource %STRDOM;>
+<!--GcrcId Added 8/04/2009 for StudyParticipant-->
+<!ELEMENT GcrcId %STRDOM;>
+<!-- Gender added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Gender %STRDOM;>
+<!-- GradingBasis added 1/12/2010 for BlackBoard --> 
+<!ELEMENT  GradingBasis %STRDOM; >
+<!-- GrantTitle added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT GrantTitle %STRDOM;>
+<!-- Hostname added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Hostname %STRDOM;>
+<!-- Identifier added 08/04/2009 for General Use -->
+<!ELEMENT Identifier %STRDOM;>
+<!--  IdNumber added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT IdNumber %STRDOM;>
+<!-- ImageUri added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT ImageUri %STRDOM;>
+<!-- IpNumber added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT IpNumber %STRDOM;>
+<!-- IpsecProfile1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT IpsecProfile1 %STRDOM;>
+<!-- IpsecProfile2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT IpsecProfile2 %STRDOM;>
+<!-- IpsecTransformSet1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT IpsecTransformSet1 %STRDOM;>
+<!-- IpsecTransformSet2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT IpsecTransformSet2 %STRDOM;>
+<!-- IRBNumber added 8/03/2009 for StudyDefinition -->
+<!ELEMENT IRBNumber %STRDOM;>
+<!-- IsakmpProfile1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT IsakmpProfile1 %STRDOM;>
+<!-- IsakmpProfile2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT IsakmpProfile2 %STRDOM;>
+<!-- Issuer added 4/19/2018 for TKI Service -->
+<!ELEMENT Issuer %STRDOM;>
+<!-- JobCode added 5/18 for ConflictOfInterest -->
+<!ELEMENT JobCode %STRDOM;>
+<!--  JobId added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT JobId %STRDOM;>
+<!-- JobTypeCode added 5/20/09 for ConflictOfInterest -->
+<!ELEMENT JobTypeCode %STRDOM;>
+<!-- JobName added 5/18 for ConflictOfInterest -->
+<!ELEMENT JobName %STRDOM;>
+<!-- Key added 12/16/2009 for Identity/Association -->
+<!ELEMENT Key %STRDOM;>
+<!-- LabReceiptDatetime added 7/16/2009 for Clinical/Sample -->
+<!ELEMENT LabReceiptDatetime %DATETIME;>
+<!-- LastName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT LastName %STRDOM;>
+<!ELEMENT LastUpdateUser %STRDOM;>
+<!ELEMENT LastUpdateDatetime %DATETIME;>
+<!-- LatestTerm added 05/20/2009 for Person/COI -->
+<!ELEMENT LatestTerm %STRDOM;>
+<!-- Latitude added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Latitude %STRDOM;>
+<!-- LegalName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT LegalName %STRDOM;>
+<!--  ListId added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT ListId %STRDOM;>
+<!-- LocId added 12/18/2009 for Identity/Location -->
+<!ELEMENT LocId %STRDOM;>
+<!-- LogEntryId added 05/16/2012 for Logging/HipaaLogEntry -->
+<!ELEMENT LogEntryId %STRDOM;>
+<!-- LoginEu added 05/29/2009 for Identity/Person -->
+<!ELEMENT LoginEu %STRDOM;>
+<!-- LoginHc added 05/29/2009 for Identity/Person -->
+<!ELEMENT LoginHc %STRDOM;>
+<!-- Longitude added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Longitude %STRDOM;>
+<!--  MailCode added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT MailCode %STRDOM;>
+<!-- MailStop added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT MailStop %STRDOM;>
+<!-- MfrCatalogNbr added 05/14/2014 for Billing.  -->
+<!ELEMENT MfrCatalogNbr %STRDOM; >
+<!-- MiddleName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT MiddleName %STRDOM;>
+<!-- Name added 04/16/2009 for generic use -->
+<!ELEMENT Name %STRDOM;>
+<!-- NameQualifier added 4/19/2018 for TKI Service -->
+<!ELEMENT NameQualifier %STRDOM;>
+<!-- NameSuffix added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT NameSuffix %STRDOM;>
+<!-- Nation added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Nation %STRDOM;>
+<!-- NetId added 04/17/2009 for Identity/Person -->
+<!ELEMENT NetId %STRDOM;>
+<!-- Node added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Node %STRDOM;>
+<!--  NoSolicitation added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT NoSolicitation %STRDOM;>
+<!--  NoSolicitationThisFiscalYear added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT NoSolicitationThisFiscalYear %STRDOM;>
+<!-- Number added 04/16/2009 for generic use -->
+<!ELEMENT Number %STRDOM;>
+<!--  OpenCount added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT OpenCount %STRDOM;>
+<!-- OperatingEntity added 5/20/2009 for ConflictOfInterest -->
+<!ELEMENT OperatingEntity %STRDOM;>
+<!-- OperatingUnit added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT OperatingUnit %STRDOM;>
+<!-- OrigHireDate added 12/16/2009 for Identity/Employee -->
+<!ELEMENT OrigHireDate %DATE;>
+<!-- PageRoute added 6/14/2011 for AMCOM Integration -->
+<!ELEMENT PageRoute %STRDOM;>
+<!-- PagerNumber added 6/14/2011 for AMCOM Integration -->
+<!ELEMENT PagerNumber %STRDOM;>
+<!-- ParticipantId added 7/16/2009 for Clinical/Visit -->
+<!ELEMENT ParticipantId %STRDOM;>
+<!-- PersonClassification added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT PersonClassification %STRDOM;>
+<!-- PersonClassificationHealthcare added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT PersonClassificationHealthcare %STRDOM;>
+<!-- PersonClassificationValue added 2009-05-18 for Person -->
+<!-- PersonClassificationValue xeo:desc="EU people codes {U,R,P,A,B,C,O,F,E,S}" -->
+<!ELEMENT PersonClassificationValue %STRDOM;>
+<!-- PersonClassificationValueHealthcare added 2009-05-18 for Person -->
+<!-- PersonClassificationValueHealthcare xeo:desc="EHc people codes {U,P,E,[space]}" -->
+<!ELEMENT PersonClassificationValueHealthcare %STRDOM;>
+<!-- PersonJobStatus added 5/18 for ConflictOfInterest -->
+<!ELEMENT PersonJobStatus %STRDOM;>
+<!-- PersonJobStatusCode added 5/18 for ConflictOfInterest -->
+<!ELEMENT PersonJobStatusCode %STRDOM;>
+<!-- PhoneNumber added 05/18/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT PhoneNumber %STRDOM;>
+<!-- PONumber added 05/12/2014 for Billing -->
+<!ELEMENT PONumber %STRDOM;>
+<!-- POLineNumber added 05/12/2014 for Billing -->
+<!ELEMENT POLineNumber %STRDOM;>
+<!-- Prefix added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Prefix %STRDOM;>
+<!-- Prsni added 04/22/2009 for Identity/Person -->
+<!ELEMENT Prsni %STRDOM;>
+<!-- ProductDescription added 05/12/2014 for Billing -->
+<!ELEMENT ProductDescription %STRDOM;>
+<!-- ProgramCode added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ProgramCode %STRDOM;>
+<!-- ProjectId added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ProjectId %STRDOM;>
+<!-- PropertyName added for Property -->
+<!ELEMENT PropertyName %STRDOM;>
+<!-- PropertyValue added for Property -->
+<!ELEMENT PropertyValue %STRDOM;>
+<!-- ProposalId added 04/16/2009 for SponsoredPrograms/ConflictOfInterest -->
+<!ELEMENT ProposalId %STRDOM;>
+<!-- ProposalStatus added 04/16/2009 for SponsoredPrograms/ConflictOfInterest -->
+<!ELEMENT ProposalStatus %STRDOM;>
+<!-- ProposalTitle added 04/16/2009 for SponsoredPrograms/ConflictOfInterest -->
+<!ELEMENT ProposalTitle %STRDOM;>
+<!-- ProtocolId added 08/04/2009 for Clinic/Visit -->
+<!ELEMENT ProtocolId %STRDOM;>
+<!-- PublicId added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT PublicId %STRDOM;>
+<!-- Quantity added 05/12/2014 for Billing -->
+<!ELEMENT Quantity %STRDOM;>
+<!-- Realm added 12/16/2009 for Identity/Association -->
+<!ELEMENT Realm %STRDOM;>
+<!--  Reason added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT Reason %STRDOM;>
+<!--  Region added 4/19/2018 for TKI Service -->
+<!ELEMENT Region %STRDOM;>
+<!-- RoleName added 08/19/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT RoleName %STRDOM;>
+<!-- Room added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Room %STRDOM;>
+<!-- SamlAssertion added 4/19/2018 for TKI Service -->
+<!ELEMENT SamlAssertion %STRDOM;>
+<!-- SampleId added 7/16/2009 for Clinical/Sample -->
+<!ELEMENT SampleId %STRDOM;>
+<!-- ScheduleParam added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT ScheduleParam %STRDOM;>
+<!-- SchoolCode added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT SchoolCode %STRDOM;>
+<!-- SchoolDivision added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT SchoolDivision %STRDOM;>
+<!-- SchoolName added 5/20/2009 for COI -->
+<!ELEMENT SchoolName %STRDOM;>
+<!-- SchoolOrUnitName added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT SchoolOrUnitName %STRDOM;>
+<!-- SearchString added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT SearchString %STRDOM;>
+<!-- Section added 1/11/2010 for BlackBoard
+moved to Segments on 2/16/2012 in order to include description
+<!ELEMENT Section %STRDOM; >
+-->
+<!-- Secret added 4/19/2018 for TKI Service -->
+<!ELEMENT Secret %STRDOM;>
+<!-- SecretAccessKey added 4/19/2018 for TKI Service -->
+<!ELEMENT SecretAccessKey %STRDOM;>
+<!--  SendDate added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT SendDate %DATE;>
+<!--  SentCount added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT SentCount %STRDOM;>
+<!-- SequenceNumber added 05/18/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT SequenceNumber %STRDOM;>
+<!-- SerialNumber added 06/15/2011 for AMCOM Integrationk -->
+<!ELEMENT SerialNumber %STRDOM;>
+<!-- ServiceDate added 12/16/2009 for Identity/Employee -->
+<!ELEMENT ServiceDate %DATE;>
+<!-- ServiceRequestNumber added 05/14/2014 for Billing.  -->
+<!ELEMENT ServiceRequestNumber %STRDOM; >
+<!-- SetId added 02/01/09 for Finance/SmartKey -->
+<!ELEMENT SetId %STRDOM;>
+<!-- SessionCode is one of the identifying fields for a PeopleSoft Class.  -->
+<!ELEMENT SessionCode %STRDOM;>
+<!-- SessionToken added 4/19/2018 for TKI Service -->
+<!ELEMENT SessionToken %STRDOM;>
+<!-- ShipToName added 05/14/2014 for Billing.  -->
+<!ELEMENT ShipToName %STRDOM; >
+<!-- ShipToContract added 05/14/2014 for Billing.  -->
+<!ELEMENT ShipToContract %STRDOM; >
+<!-- ShipToAddressLine added 05/14/2014 for Billing.  -->
+<!ELEMENT ShipToAddressLine %STRDOM; >
+<!-- ShipToCity added 05/14/2014 for Billing.  -->
+<!ELEMENT ShipToCity %STRDOM; >
+<!-- ShipToState added 05/14/2014 for Billing.  -->
+<!ELEMENT ShipToState %STRDOM; >
+<!-- ShipToPostalCode added 05/14/2014 for Billing.  -->
+<!ELEMENT ShipToPostalCode %STRDOM; >
+<!-- SKUCatalogNbr added 05/12/2014 for Billing -->
+<!ELEMENT SKUCatalogNbr %STRDOM;>
+
+<!-- SmartKeyValue added 01/30/2008 for Finance/SmartKey -->
+<!ELEMENT SmartKeyValue %STRDOM;>
+<!-- SponsorName added 05/27/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT SponsorName %STRDOM;>
+<!-- SSN added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT SSN %STRDOM;>
+<!-- StartDate added 05/18/2009 for general use -->
+<!ELEMENT StartDate %DATE;>
+<!-- StartDate added 08/18/2016 for general use -->
+<!ELEMENT StartDatetime %DATETIME;>
+<!--StartEventDatetime added 5/21/2012 for HipaaAuditLogEntry-->
+<!ELEMENT StartEventDatetime %DATETIME;>
+<!ELEMENT StartAuditDatetime %DATETIME;>
+
+
+<!-- StartTime added 3/1/2010 for BlackboardMobile  --> 
+<!ELEMENT StartTime %TIME; >
+<!-- State added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT State %STRDOM;>
+<!-- StateOrProvince added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT StateOrProvince %STRDOM;>
+<!-- StatusCode added 1/23/2018 for Email/EmailAddressValidation -->
+<!ELEMENT StatusCode %STRDOM;>
+<!-- StatusDescription added 1/23/2018 for Email/EmailAddressValidation -->
+<!ELEMENT StatusDescription %STRDOM;>
+<!-- Street1 added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Street1 %STRDOM;>
+<!-- Street2 added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Street2 %STRDOM;>
+<!-- Street3 added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Street3 %STRDOM;>
+<!-- StudentPhone added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT StudentPhone %STRDOM;>
+<!-- StudyIdentifier added 7/16/2009 for Clinical/StudyDefinition -->
+<!ELEMENT StudyIdentifier %STRDOM;>
+<!-- Subject added 2/16/2012 for LmsXControlPanel -->
+<!ELEMENT Subject %STRDOM;>
+<!-- SubjectType added 4/19/2018 for TKI Service -->
+<!ELEMENT SubjectType %STRDOM;>
+<!--  SubscriberId added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT SubscriberId %STRDOM;>
+<!--  SubscriberKey added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT SubscriberKey %STRDOM;>
+<!--  SubscriberStatus added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT SubscriberStatus %STRDOM;>
+<!-- Suffix added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Suffix %STRDOM;>
+<!-- Tag added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Tag %STRDOM;>
+<!-- Term added 12/18/2009 for Identity/StudentCareer -->
+<!ELEMENT Term %STRDOM;>
+<!-- Text added 03/25/2009 for Examples/Greeting -->
+<!ELEMENT Text %STRDOM;>
+<!-- Title added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT Title %STRDOM;>
+<!-- TransactionId added 02/02/2010 for Identity Query Specifications -->
+<!ELEMENT TransactionId %STRDOM;>
+<!-- TunnelInterface1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT TunnelInterface1 %STRDOM;>
+<!-- TunnelInterface2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT TunnelInterface2 %STRDOM;>
+
+
+<!-- Type added 09/21/2010 for Identity/DirectoryPerson -->
+<!ELEMENT Type %STRDOM;>
+<!--  UndeliveredCount added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT UndeliveredCount %STRDOM;>
+<!-- UnitPrice added 05/12/2014 for Billing -->
+<!ELEMENT UnitPrice %STRDOM;>
+<!--  UnsubscribedCount added 9/29/14 for Ace/ExactTarget -->
+<!ELEMENT UnsubscribedCount %STRDOM;>
+<!-- Upn added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT Upn %STRDOM;>
+<!--  ValidationProvider added 1/23/2018 for EmailValidationService -->
+<!ELEMENT ValidationProvider %STRDOM;>
+<!ELEMENT Value %STRDOM;>
+<!-- Volume added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT Volume %STRDOM;>
+<!-- VpcNet added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT VpcNet %STRDOM;>
+<!-- VpcNum added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT VpcNum %STRDOM;>
+<!-- Vpn1InsideIpCidr1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT Vpn1InsideIpCidr1 %STRDOM;>
+<!-- Vpn1InsideIpCidr2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT Vpn1InsideIpCidr2 %STRDOM;>
+<!-- Vpn2InsideIpCidr1 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT Vpn2InsideIpCidr1 %STRDOM;>
+<!-- Vpn2InsideIpCidr2 added 4/5/2018 for Network/VpnConnection -->
+<!ELEMENT Vpn2InsideIpCidr2 %STRDOM;>
+
+<!-- Volume added 5/13/2014 for WorkFlowCompletionDate -->
+<!ELEMENT WorkflowCompletionDate %DATE;>
+
+<!-- ZipOrPostalCode added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT ZipOrPostalCode %STRDOM;>
+
+
+
+<!-- added 2/6/2017 for Network/RoleAssignment -->
+<!ELEMENT ApproverDN %STRDOM;>
+<!ELEMENT CorrelationId %STRDOM;>
+<!ELEMENT DirectAssignOnly %STRDOM;>
+<!ELEMENT DistinguishedName %STRDOM;>
+<!ELEMENT EffectiveDatetime %DATETIME;>
+<!ELEMENT EntitlementDN %STRDOM;>
+<!ELEMENT EntitlementParameters %STRDOM;>
+<!ELEMENT EntityKey %STRDOM;>
+<!ELEMENT ExpirationDatetime %DATETIME;>
+<!ELEMENT IdentityDN %STRDOM;>
+<!ELEMENT IdentityType %STRDOM;>
+<!ELEMENT Justification %STRDOM;>
+<!ELEMENT OriginatorDN %STRDOM;>
+<!ELEMENT Level %STRDOM;>
+<!ELEMENT Quorum %STRDOM;>
+<!ELEMENT RequestDefition %STRDOM;>
+<!ELEMENT RevokeRequestDefinition %STRDOM;>
+<!ELEMENT RoleAssignmentActionType %STRDOM;>
+<!ELEMENT RoleAssignmentType %STRDOM;>
+<!ELEMENT RoleCategoryKey %STRDOM;>
+<!ELEMENT ResourceCategoryKey %STRDOM;>
+<!ELEMENT RoleDN %STRDOM;>
+<!ELEMENT Sequence %STRDOM;>
+<!ELEMENT SodDN %STRDOM;>
+<!ELEMENT SystemRole %STRDOM;>
+<!ELEMENT UserDN %STRDOM;>
+
+<!-- added 11/17/2017 for Role/Resource -->
+<!ELEMENT ResourceDN %STRDOM;>
+<!ELEMENT ResourceName %STRDOM;>
+<!ELEMENT ResourceDescription %STRDOM;>
+<!ELEMENT ResourceValue %STRDOM;>
+<!ELEMENT ServiceCode %STRDOM;>
+<!ELEMENT EntitlementGuid %STRDOM;>
+<!ELEMENT EntitlementApplication %STRDOM;>
+<!ELEMENT ResourceApplication %STRDOM;>
+<!ELEMENT RoleDescription %STRDOM;>
+<!ELEMENT RoleCategory %STRDOM;>
+
+<!-- added 6/4/2016 for Network/Cidr -->
+<!ELEMENT OwnerId %STRDOM;>
+<!ELEMENT Decription %STRDOM;>
+<!ELEMENT Purpose %STRDOM;>
+<!ELEMENT Network %STRDOM;>
+<!ELEMENT Bits %STRDOM;>
+<!ELEMENT RequestorNetId %STRDOM;>
+<!ELEMENT CidrId %STRDOM;>
+<!ELEMENT CidrAssignmentId %STRDOM;>
+
+
+<!-- added 1/25/2013 for EmoryBuilding -->
+<!ELEMENT PostalAddress %STRDOM;>
+<!ELEMENT Alias %STRDOM;>
+<!ELEMENT Image %STRDOM;>
+<!ELEMENT Keyword %STRDOM;>
+
+
+
+<!-- added 8/30/2011 for Account/Mapping -->
+<!-- TODO: temp for here, need to inserted alphabetically when stable -->
+<!ELEMENT EnterpriseUsername %STRDOM;>
+<!ELEMENT Username %STRDOM;>
+<!ELEMENT Password %STRDOM;>
+<!ELEMENT TargetAccountId %STRDOM;>
+<!ELEMENT TargetPropertyId %STRDOM;>
+
+<!--HelloHibernate Tutorials-->
+<!ELEMENT Id %STRDOM;>
+<!ELEMENT Message %STRDOM;>
+<!ELEMENT MessageNumber %STRDOM;>
+<!ELEMENT LastModifiedDatetime %DATETIME;>
+<!ELEMENT LastModifiedDate %DATE;>
+<!ELEMENT Principal %STRDOM;>
+
+<!-- LDS Service -->
+<!ELEMENT ou %STRDOM;>
+<!ELEMENT objectClass %STRDOM;>
+<!ELEMENT groupType %STRDOM;>
+<!ELEMENT instanceType %STRDOM;>
+<!ELEMENT objectCategory %STRDOM;>
+<!ELEMENT description %STRDOM;>
+<!ELEMENT distinguishedName %STRDOM;>
+<!ELEMENT dsCorePropagationData %STRDOM;>
+<!ELEMENT member %STRDOM;>
+<!ELEMENT name %STRDOM;>
+<!ELEMENT objectGUID %STRDOM;>
+<!ELEMENT objectSid %STRDOM;>
+<!ELEMENT uSNChanged %STRDOM;>
+<!ELEMENT uSNCreated %STRDOM;>
+<!ELEMENT whenChanged %STRDOM;>
+<!ELEMENT whenCreated %STRDOM;>
+<!ELEMENT createTimeStamp %STRDOM;>
+<!ELEMENT modifyTimeStamp %STRDOM;>
+<!ELEMENT structuralObjectClass %STRDOM;>
+<!ELEMENT subSchemaSubEntry %STRDOM;>
+
+<!-- added 4/11/2018 for Network Ops Service VpnConnection -->
+<!ELEMENT VpnId %STRDOM;>
+<!ELEMENT VpcId %STRDOM;>
+<!ELEMENT VpcCidr %STRDOM;>
+<!ELEMENT RemoteVpnIpAddress %STRDOM;>
+<!ELEMENT CustomerGatewayIpAdress %STRDOM;>
+<!ELEMENT VpnInsideIpCidr %STRDOM;>
+<!ELEMENT VirtualRouteForwarding %STRDOM;>
+<!ELEMENT Netmask %STRDOM;>
+<!ELEMENT Cipher %STRDOM;>
+<!ELEMENT Mode %STRDOM;>
+<!ELEMENT PerfectForwardSecrecy %STRDOM;>
+<!ELEMENT TcpMaximumSegmentSize %STRDOM;>
+<!ELEMENT AdministrativeState %STRDOM;>
+<!ELEMENT TunnelSource %STRDOM;>
+<!ELEMENT TunnelMode %STRDOM;>
+<!ELEMENT TunnelDestination %STRDOM;>
+<!ELEMENT IpVirtualReassembly %STRDOM;>
+<!ELEMENT Status %STRDOM;>
+<!ELEMENT Uptime %STRDOM;>
+<!ELEMENT OperationalStatus %STRDOM;>
+<!ELEMENT Sent %STRDOM;>
+<!ELEMENT Received %STRDOM;>
+<!ELEMENT IpAddress %STRDOM;>
+<!ELEMENT PresharedKey %STRDOM;>
+
+<!-- added 4/11/2018 for Network Ops Service StaticNat -->
+<!ELEMENT PublicIp %STRDOM;>
+<!ELEMENT PrivateIp %STRDOM;>
+
+<!-- ================================================== -->
+<!--  Changelog
+	04/14/2009	tsj	clean up
+	04/14/2009	tsj	Network/NetworkLocation
+	04/14/2009	tsj	Identity/EnterpriseIdentity
+	04/14/2009	tsj	Identity/NetworkIdentity
+	04/16/2009	tsj	SponsoredPrograms/PersonDemographic
+	04/16/2009	tsj	SponsoredPrograms/ExtramuralProposal
+	04/16/2009	tsj	SponsoredPrograms/ConflictOfInterest
+	04/17/2009	tsj	replace SponsoredPrograms/PersonDemographic with Identity/Person
+	05/18/2009	ssa	Changs for Conflict of Interest Person
+	07/19/2009	ssa	Clinical/StudyDefinition
+	07/19/2009	ssa	Clinical/Visit
+	08/04/2009  	ssa	Changes to Clinical Visit and StudyDefinition
+	08/19/2009  	tsj	add StudyStaff to SponsoredPrograms/ExtramuralProposal
+    12/16/2009    meb  remove Association, as it is now defined in Segments
+    12/18/2009    meb  Identity/Association
+    12/18/2009    meb  Identity/Employee
+    12/18/2009    meb  Identity/Location
+    12/18/2009    meb  Identity/StudentCareer
+    11/18/2010  jleon   added CourseOfferingNumber, SessionCode for Blackboard-Opus project
+    02/16/2012  jleon   added AcademicGroup, CatalogNumber, Subject, Term
+                        removed Section
+                        to support LmsXControlPanel Enrollment Synchronization project
+    3/5/2012    jleon  re-added Term field, and renamed Term segment to Semester so as not to conflict.
+    03/15/2012 jleon Updated Action to CourseSiteErrorLog for LmsXControlPanel enrollment synchronization project
+    09/29/2014 jleon Added fields for Ace/ExactTarget integration: AccountId, AceProcessedDate, AppealCode, DeliveredCount, EmaklSource,
+                          EventDate, IdNumber, JobId, ListId, MailCode, NoSolicitation, NoSolicitationThisFiscalYear, OpenCount, Reason, 
+                          SendDate, SentCount, SubscriberId, SubscriberKey, SubscriberStatus, UndeliveredCount, UnsubscribedCount
+-->

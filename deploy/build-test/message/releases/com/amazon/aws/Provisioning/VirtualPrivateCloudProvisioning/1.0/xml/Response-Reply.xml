@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE com.amazon.aws.Provisioning.VirtualPrivateCloudProvisioning.Response SYSTEM "../dtd/Response-Reply.dtd">
+<com.amazon.aws.Provisioning.VirtualPrivateCloudProvisioning.Response>
+	<ControlAreaReply messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloudProvisioning" messageAction="Response" messagePriority="9" messageType="Reply" messageRelease="1.0">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.tutorial.Samples.VirtualPrivateCloud</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>1</Month>
+			<Day>1</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>762</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>producer1</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<VirtualPrivateCloudProvisioning>
+			<ProvisioningId>emory-vpcp-23</ProvisioningId>
+			<VirtualPrivateCloudRequisition>
+				<AuthenticatedRequestorNetId>swheat</AuthenticatedRequestorNetId>
+				<AccountOwnerNetId>swheat</AccountOwnerNetId>
+				<FinancialAccountNumber>0000001536</FinancialAccountNumber>
+				<CustomerAdminNetId>swheat</CustomerAdminNetId>
+				<Type>1</Type>
+				<ComplianceClass>none</ComplianceClass>
+				<Purpose>test</Purpose>
+				<NotifyAdmins>false</NotifyAdmins>
+			</VirtualPrivateCloudRequisition>
+			<Status>pending</Status>
+			<AnticipatedTime>371197</AnticipatedTime>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>1</StepId>
+				<Type>DETERMINE_NEW_OR_EXISTING_AWS_ACCOUNT</Type>
+				<Description>Determine if the request is for a new VPC in a new AWS account from the
+					inventory or a new VPC in an account that is already in use.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>1</AnticipatedTime>
+				<CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>2</StepId>
+				<Type>RETRIEVE_ACCOUNT</Type>
+				<Description>Retrieve the AWS account information in which to create the requested
+					VPC.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>84</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>3</StepId>
+				<Type>AUTHORIZE_REQUESTOR</Type>
+				<Description>If the AWS account is new, the requestor is authorized. If the account
+					is already in use, compare the NetId of the AuthenticatedRequestorNetId with the
+					list of AccountAdminNetIds. If the AuthenticatedRequestorNetId is in the list,
+					the provisioning request is authorized.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>132</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>4</StepId>
+				<Type>UPDATE_ACCOUNT</Type>
+				<Description>Update the AWS account information to reflect the account owner if not
+					already present and to add any additional administrators in the requisition who
+					are not present.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>94</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>5</StepId>
+				<Type>DETERMINE_VPC_TYPE</Type>
+				<Description>Determine the VPC type with which to create the requested
+					VPC.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>1</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>6</StepId>
+				<Type>DETERMINE_VPC_COMPLIANCE_CLASS</Type>
+				<Description>Determine the VPC compliance class with which to create the requested
+					VPC.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>1</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>7</StepId>
+				<Type>DETERMINE_VPC_CIDR</Type>
+				<Description>Sends an edu.emory.Network.CidrAssignment.Generate-Request to get the
+					next available CIDR range for the requested type of VPC.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>179</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>8</StepId>
+				<Type>COMPUTE_SUBNETTING_PARAMETERS</Type>
+				<Description>Compute the subnetting parameters to pass with the appropriate
+					CloudFormation template.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>2</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>9</StepId>
+				<Type>DETERMINE_VPN_IP_ADDRESS</Type>
+				<Description>Determine the IP address of the VPN appliance at Emory.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>1</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>10</StepId>
+				<Type>CREATE_VPC_POLICIES_STACK</Type>
+				<Description>Send a com.amazon.aws.CloudFormation.Stack.Create-Request for the
+					appropriate VPC policies stack with appropriate parameters.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>61882</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>11</StepId>
+				<Type>CREATE_VPC_STRUCTURES_STACK</Type>
+				<Description>Send a com.amazon.aws.CloudFormation.Stack.Create-Request for the
+					appropriate VPC structures stack with appropriate parameters.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>306871</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>12</StepId>
+				<Type>CREATE_ROLE_ASSIGNMENTS</Type>
+				<Description>Send com.netiq.Identity.RoleAssignment.Create-Requests to the
+					IdmService to add each of the customer administrators of the new
+					account.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>558</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>13</StepId>
+				<Type>CREATE_SAML_PROVIDER</Type>
+				<Description>Sends a com.amazon.aws.Provisioning.SamlProvider.Create-Request to the
+					AwsAccountService to create a SAML provider in the new account.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>174</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>14</StepId>
+				<Type>CREATE_ACCOUNT_ALIAS</Type>
+				<Description>Sends a com.amazon.aws.Provisioning.AccountAlias.Create-Request to the
+					AwsAccountService to create an alias for the new account. The format of the
+					alias is emory-aws-n where n is the sequence number of the
+					account.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>205</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>15</StepId>
+				<Type>UPDATE_ACCOUNT_ORG</Type>
+				<Description>Sends a com.amazon.aws.Provisioning.AccountOrganization.Update-Request
+					to the AwsAccountService to change the organization of the account. If the
+					account is type 1 non-HIPAA the ou is research-type1. For type 1 HIPAA the ou is
+					research-type1-HIPAA. Type 2 organization have not yet been
+					specified.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>149</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>16</StepId>
+				<Type>CREATE_VPC_OBJECT</Type>
+				<Description>Sends a com.amazon.aws.Provisioning.VirtualPrivateCloud.Create-Request
+					to the AwsAccountService to create a VPC metadata entry in the Emory
+					provisioning database.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>203</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>17</StepId>
+				<Type>CREATE_CIDR_ASSIGNMENT_OBJECT</Type>
+				<Description>Sends a com.amazon.aws.Provisioning.VirtualPrivateCloud.Create-Request
+					to the AwsAccountService to create a VPC metadata entry in the Emory
+					provisioning database.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>156</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>18</StepId>
+				<Type>REQUEST_VPN_TUNNEL</Type>
+				<Description>Send a com.service_now.ServiceDesk.Incident.Generate-Request of type
+					service request to request that security administration establish a VPN
+					tunnel.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>163</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>19</StepId>
+				<Type>CREATE_VPC_SERVICE_REQUEST</Type>
+				<Description>Send a com.amazon.aws.Provisioning.ServiceRequest.Create-Request of
+					organization Emory and type Service Request to the AwsAccountService to register
+					the VPN tunnel creation request for subsequent status monitoring and
+					presentation in the VPCP app.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>137</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<ProvisioningStep>
+				<ProvisioningId>emory-vpcp-23</ProvisioningId>
+				<StepId>20</StepId>
+				<Type>NOTIFY_ADMINS</Type>
+				<Description>If NotifyAdmins is true, then send an e-mail notifications to the
+					admins listed on the account with the details of this provisioning
+					request.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>204</AnticipatedTime><CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ProvisioningStep>
+			<CreateUser>swheat</CreateUser>
+			<CreateDatetime>
+				<Year>2016</Year>
+				<Month>2</Month>
+				<Day>3</Day>
+				<Hour>4</Hour>
+				<Minute>5</Minute>
+				<Second>6</Second>
+				<SubSecond>0</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</CreateDatetime>
+		</VirtualPrivateCloudProvisioning>
+	</DataArea>
+</com.amazon.aws.Provisioning.VirtualPrivateCloudProvisioning.Response>

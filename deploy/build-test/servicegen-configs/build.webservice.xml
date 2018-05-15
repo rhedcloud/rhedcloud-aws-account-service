@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="all" name="automati generation of webservice from openeai service">
+    <target name="check"> </target>
+    <property name="template.dir" value="${template.webservice.dir}"/>
+    <property name="project.dir" value="${project.webservice.dir}"/>
+    <property name="wsdl.dir" value="${project.dir}/wsdl"/>
+    <path id="servicegen.runtime.path">
+        <pathelement location="${build/classes}"/>
+        <fileset dir="${runtimelib.dir}">
+            <patternset>
+                <include name="*.jar"/>
+                <include name="*.zip"/>
+            </patternset>
+        </fileset>
+        <fileset dir="${runtimelib.dir}/axis2">
+            <patternset>
+                <include name="*.jar"/>
+                <include name="*.zip"/>
+            </patternset>
+        </fileset>
+    </path>
+    <taskdef name="codegen" classname="org.apache.axis2.tool.ant.AntCodegenTask"
+        classpathref="servicegen.runtime.path"/>
+    <target name="clean">
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset dir="${project.dir}" includes="**/*" defaultexcludes="false"/>
+        </delete>
+        <delete dir="${project.dir}" failonerror="false"/>
+    </target>
+    <target name="prepare">
+        <mkdir dir="${project.dir}"/>
+    </target>
+    <target name="build" depends="prepare">
+        <echo message="copying project files..."/>
+        <copy todir="${project.dir}">
+            <fileset dir="${template.dir}"/>
+        </copy>
+        <copy todir="${wsdl.dir}" file="${project.dir}/../moas.xsd"/>
+    </target>
+    <target name="wsgen">
+        <!--unable to do this inside xsl by itself-->
+        <replace file="${project.dir}/wsdl/moas.wsdl.xsl" token="$${wsdl.id}" value="${wsdl.id}"/>
+        <replace file="${project.dir}/wsdl/moas.wsdl.xsl" token="$${project.key}"
+            value="${project.key}"/>
+        <!--transform moas.xml to moas.wsdl-->
+        <echo message="wsdl.address.local=${wsdl.address.local}"/>
+        <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/moas.wsdl"
+            style="${wsdl.dir}/moas.wsdl.xsl">
+            <param name="wsdl-address" expression="${wsdl.address.local}"/>
+            <outputproperty name="indent" value="yes"/>
+        </xslt>
+        <!--if distribution-->
+        <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/moas-dev.wsdl"
+            style="${wsdl.dir}/moas.wsdl.xsl">
+            <param name="wsdl-address" expression="${wsdl.address.dev}"/>
+            <outputproperty name="indent" value="yes"/>
+        </xslt>
+        <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/moas-devf5hold.wsdl"
+            style="${wsdl.dir}/moas.wsdl.xsl">
+            <param name="wsdl-address" expression="${wsdl.address.devf5hold}"/>
+            <outputproperty name="indent" value="yes"/>
+        </xslt>
+        <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/moas-qa.wsdl"
+            style="${wsdl.dir}/moas.wsdl.xsl">
+            <param name="wsdl-address" expression="${wsdl.address.qa}"/>
+            <outputproperty name="indent" value="yes"/>
+        </xslt>
+        <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/moas-prod.wsdl"
+            style="${wsdl.dir}/moas.wsdl.xsl">
+            <param name="wsdl-address" expression="${wsdl.address.prod}"/>
+            <outputproperty name="indent" value="yes"/>
+        </xslt>
+        <copy tofile="${project.dir}/../moas.wsdl" overwrite="true" file="${wsdl.dir}/moas.wsdl"/>
+        
+        <!--transform moas.xml to webservice.java
+        -->
+        <echo message="webservice.request.producer.name=${webservice.request.producer.name}"/>
+        <echo message="webservice.moa.version=${webservice.moa.version}"/>
+        <echo message="moa.queryspecification.suffix=${moa.queryspecification.suffix}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${service.name}"
+            value="${service.name}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${service.skeleton.name}"
+            value="${service.skeleton.name}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${moa.package.prefix}"
+            value="${moa.package.prefix}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${moa.package.category}"
+            value="${moa.package.category}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${package.webservice.name}"
+            value="${package.webservice.name}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${project.key}"
+            value="${project.key}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl" token="$${webservice.moa.version}"
+            value="${webservice.moa.version}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl"
+            token="$${webservice.request.producer.name}" value="${webservice.request.producer.name}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl"
+            token="$${webservice.sync.operation}" value="${webservice.sync.operation}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl"
+            token="$${moa.queryspecification.suffix}" value="${moa.queryspecification.suffix}"/>
+        <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/webservice.java"
+            style="${wsdl.dir}/webservice.java.xsl"> </xslt>
+        
+        <property file="${project.dir}/../queryspec.properties" prefix="projects."/>
+        <propertyselector property="projects" match="projects\.(.*)" select="\1"/>
+       
+        <property file="${project.dir}/../queryspec.properties" />
+        <for list="${projects}" param="project">
+            <sequential>
+            <echo message="@{project}=${@{project}}" />
+                <replace file="${project.dir}/wsdl/webservice.java"
+                    token="$${@{project}.queryspec}" value="${@{project}}"/>
+            </sequential>
+        </for>
+        <!--rename webservice.java into the right package and name-->
+        <!--       
+        <exec executable="sed" inputstring="${package.webservice.name}"
+            outputproperty="webservice.java.folder">
+            <arg value="s/\./\//g"/>
+        </exec>
+        -->
+        <move file="${wsdl.dir}/webservice.java"
+            tofile="${project.dir}/src/${webservice.java.folder}/${wsdl.id}.java"/>
+        <!--generate service stub-->
+        <codegen wsdlfilename="${project.dir}/wsdl/moas.wsdl" output="${project.dir}"
+            serverSide="true" generateServiceXml="true" testcase="true" syncOnly="true"
+            databindingName="adb" generateAllClasses="true" packageName="${package.webservice.name}" serviceName="${service.name}"/>
+        <replace file="${project.dir}/generate.sh" token="$${package.webservice.name}"
+            value="${package.webservice.name}"/>
+         <!--
+         <chmod file="${project.dir}/generate.sh" perm="755"/>
+        <exec executable="./generate.sh" dir="${project.dir}" vmlauncher="false"/>
+        wsdl2java.sh  -uri ./wsdl/moas.wsdl   -ss -sd -t -s -d adb -ap -p ${package.webservice.name}
+        -->
+        <echo message="webservice.application.id=${webservice.application.id}"/>
+        <replace file="${project.dir}/resources/services.xml">
+            <replacetoken><![CDATA[<messageReceivers>]]></replacetoken>
+            <replacevalue>
+                <![CDATA[
+                <Description>${service.name} ${webservice.version}</Description>
+                <messageReceivers>
+                ]]>
+            </replacevalue>
+        </replace>
+        <!--insert parameters into service.xml-->
+        <replace file="${project.dir}/resources/services.xml">
+            <replacetoken><![CDATA[<parameter name="modifyUserWSDLPortAddress">true</parameter>]]></replacetoken>
+            <replacevalue>
+                <![CDATA[<parameter name="modifyUserWSDLPortAddress">false</parameter>
+                <parameter name="openeaiDeploymentDescriptorUri">configs/messaging/Environments/Examples/Deployments/${service.name}.xml</parameter>
+                <parameter name="webServiceApplicationName">${webservice.application.id}</parameter>/>
+                <parameter name="docUriBase">@doc.uri.base@</parameter>/>]]>
+            </replacevalue>
+        </replace>
+        <replace file="${project.dir}/resources/services.xml" token="$${webservice.version}"
+            value="${webservice.version}"/>
+        <replace file="${project.dir}/resources/services.xml" token="$${service.name}"
+            value="${service.name}"/>
+        <replace file="${project.dir}/resources/services.xml" token="$${webservice.application.id}"
+            value="${webservice.application.id}"/>
+        <replace file="${project.dir}/resources/services.xml" token="${service.name}Skeleton"
+            value="${service.name}"/>
+        <!--
+        <replace file="${project.dir}/resources/services.xml">
+            <replacetoken><![CDATA[<serviceGroup>]]></replacetoken>
+            <replacevalue>
+                <![CDATA[<serviceGroup>
+                <module ref="openeai-authorization-module"/>]]>
+            </replacevalue>
+        </replace>
+        -->
+        <replace file="${project.dir}/build.xml" token="$${service.name}" value="${service.name}"/>
+    </target>
+    <target name="all" depends="check,build,wsgen"/>
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+    
+</project>

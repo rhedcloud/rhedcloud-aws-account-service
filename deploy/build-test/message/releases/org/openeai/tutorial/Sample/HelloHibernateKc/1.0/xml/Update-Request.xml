@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE org.openeai.tutorial.Samples.HelloHibernateKc.Update SYSTEM "../dtd/Update-Request.dtd">
+<org.openeai.tutorial.Samples.HelloHibernateKc.Update>
+	<ControlAreaRequest messageCategory="org.openeai.tutorial.Samples" messageObject="HelloHibernateKc" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>HelloHibernateKc</SenderAppId>
+				<ProducerId>5b9c7fb5-5f7a-4141-aee0-b5e21ef2b89d</ProducerId>
+				<MessageSeq>22</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>HelloHibernateKc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<HelloHibernateKc>
+				<Id>1</Id>
+				<Message>Hi2</Message>
+					<MessageNumber>1</MessageNumber>
+			<LastModifiedDatetime>
+					<Year>2011</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</LastModifiedDatetime>
+				<LastModifiedDate>
+					<Month>8</Month>
+					<Day>9</Day>
+					<Year>2012</Year>
+				</LastModifiedDate>
+			</HelloHibernateKc>
+		</NewData>
+		<BaselineData>
+			<HelloHibernateKc>
+				<Id>1</Id>
+				<Message>Hi</Message>
+					<MessageNumber>1</MessageNumber>
+			<LastModifiedDatetime>
+					<Year>2011</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</LastModifiedDatetime>
+				<LastModifiedDate>
+					<Month>8</Month>
+					<Day>9</Day>
+					<Year>2012</Year>
+				</LastModifiedDate>
+			</HelloHibernateKc>
+		</BaselineData>
+	</DataArea>
+</org.openeai.tutorial.Samples.HelloHibernateKc.Update>

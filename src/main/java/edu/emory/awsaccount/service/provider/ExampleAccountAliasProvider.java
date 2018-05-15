@@ -27,8 +27,6 @@ import org.openeai.config.PropertyConfig;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
 
 //AWS Message Object API (MOA)
-
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SamlProvider;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 
 /**
@@ -58,7 +56,7 @@ public class ExampleAccountAliasProvider extends OpenEaiObject implements Accoun
         // Get the provider properties
         PropertyConfig pConfig = new PropertyConfig();
         try {
-            pConfig = (PropertyConfig) aConfig.getObject("SamlProviderProviderProperties");
+            pConfig = (PropertyConfig) aConfig.getObject("AccountAliasProviderProperties");
         } catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving a PropertyConfig object from " + "AppConfig: The exception is: " + eoce.getMessage();
             logger.error(LOGTAG + errMsg);
@@ -103,9 +101,9 @@ public class ExampleAccountAliasProvider extends OpenEaiObject implements Accoun
     public void create(AccountAlias req) throws ProviderException {
 
         // Get a configured Stack object from AppConfig
-        SamlProvider stack = new SamlProvider();
+        AccountAlias stack = new AccountAlias();
         try {
-            stack = (SamlProvider) m_appConfig.getObjectByType(stack.getClass().getName());
+            stack = (AccountAlias) m_appConfig.getObjectByType(stack.getClass().getName());
         } catch (EnterpriseConfigurationObjectException ecoe) {
             String errMsg = "An error occurred retrieving an object from " + "AppConfig. The exception is: " + ecoe.getMessage();
             logger.error(LOGTAG + errMsg);

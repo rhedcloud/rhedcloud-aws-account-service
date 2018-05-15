@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 rel. 3 U (http://www.altova.com) by Tod Jackson (Open Integration Inc.) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.Report.Response SYSTEM "file:///openeai-examples-2015a/message/releases/org/any-openeai-enterprise/CoreApplication/Report/1.0/dtd/Response-Reply.dtd">
+-->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.Report.Response SYSTEM "../dtd/Response-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.Report.Response>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="Report" messageAction="Response" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.ReportService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>722</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>producer1</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Report name="">
+			<Description/>
+			<GenerationTime/>
+			<URI/>
+		</Report>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.Report.Response>

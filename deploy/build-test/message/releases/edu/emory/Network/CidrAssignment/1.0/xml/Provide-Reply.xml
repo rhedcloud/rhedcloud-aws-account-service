@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!DOCTYPE edu.emory.Network.CidrAssignment.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Network.CidrAssignment.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Network" messageObject="CidrAssignment" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>CidrAssignment</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af0675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>CidrAssignment</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>CidrAssignment</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<CidrAssignment>
+			<CidrAssignmentId>1</CidrAssignmentId>
+			<OwnerId>gwang28</OwnerId>
+			<Decription>For LITS Architecutre</Decription>
+			<Purpose>For POC use by Architecture</Purpose>
+			<Cidr>
+				<CidrId>1</CidrId>
+				<Network>10.64.40.0</Network>
+				<Bits>24</Bits>
+				<CreateUser>swheat@emory.edu</CreateUser>
+				<CreateDatetime>
+					<Year>2012</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</Cidr>
+			<CreateUser>swheat@emory.edu</CreateUser>
+			<CreateDatetime>
+				<Year>2012</Year>
+				<Month>5</Month>
+				<Day>17</Day>
+				<Hour>13</Hour>
+				<Minute>47</Minute>
+				<Second>30</Second>
+				<SubSecond>842</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</CreateDatetime>
+		</CidrAssignment>
+	</DataArea>
+</edu.emory.Network.CidrAssignment.Provide>

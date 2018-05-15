@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Monitoring.BrokerStatus.Provide SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/Monitoring/BrokerStatus/1.0/dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.Monitoring.BrokerStatus.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="NetIdList" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseApplicationService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>applsvc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>43</Second>
+			<SubSecond>432</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>974</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<BrokerStatus name="SonicMQ1" status="ok" type="clustered unit">
+			<Metric name="Memory Usage" value="99234987" units="bytes"/>
+			<Metric name="Physical Connections" value="273" units="connections"/>
+			<Metric name="Messages Received" value="92765" units="messages"/>
+			<Metric name="Messages Delivered" value="92765" units="messages"/>
+			<Metric name="Message Receipt Rate" value="18" units="messages per second"/>
+			<Metric name="Message Delivery Rate" value="18" units="messages per second"/>
+			<Metric name="Byte Receipt Rate" value="7622" units="bytes per second"/>
+		</BrokerStatus>
+	</DataArea>
+</org.any-openeai-enterprise.Monitoring.BrokerStatus.Provide>

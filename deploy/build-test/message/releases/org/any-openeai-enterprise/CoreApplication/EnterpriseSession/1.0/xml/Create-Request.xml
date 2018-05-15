@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseSession.Create SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterpriseSession/1.0/dtd/Create-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseSession.Create>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseSession" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseAuthenticationServlet</SenderAppId>
+				<ProducerId>4a4142e7-721d-46a4-8b4d-fe0ffe663955</ProducerId>
+				<MessageSeq>1003</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>authserv</AuthUserId>
+				<AuthUserSignature>8a1e9460-be8a-4d49-a3c2-b5d2fa08ca07</AuthUserSignature>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>04</Month>
+			<Day>06</Day>
+			<Hour>12</Hour>
+			<Minute>47</Minute>
+			<Second>34</Second>
+			<SubSecond>217</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<EnterpriseSession>
+				<EnterpriseUser>
+					<NetId>
+						<Principal>ziggy</Principal>
+						<Domain>any-openeai-enterprise.org</Domain>
+					</NetId>
+					<LightweightPerson>
+						<InstitutionalId>123456789</InstitutionalId>
+					</LightweightPerson>
+				</EnterpriseUser>
+				<EnterpriseSessionId>3129a611-6625-4d7b-b859-4c8cd8e3b932-130.126.239.69</EnterpriseSessionId>
+				<ClientIp>130.126.239.69</ClientIp>
+				<StartDatetime>
+					<Year>2002</Year>
+					<Month>9</Month>
+					<Day>11</Day>
+					<Hour>15</Hour>
+					<Minute>48</Minute>
+					<Second>32</Second>
+					<SubSecond>739</SubSecond>
+					<Timezone>7:00-GMT</Timezone>
+				</StartDatetime>
+				<LastActivityDatetime>
+					<Year>2002</Year>
+					<Month>9</Month>
+					<Day>11</Day>
+					<Hour>15</Hour>
+					<Minute>48</Minute>
+					<Second>32</Second>
+					<SubSecond>739</SubSecond>
+					<Timezone>7:00-GMT</Timezone>
+				</LastActivityDatetime>
+				<SessionEnvironment>
+					<EnvironmentVariable>
+						<VariableName>HTTPS</VariableName>
+						<VariableValue>ON</VariableValue>
+					</EnvironmentVariable>
+					<EnvironmentVariable>
+						<VariableName>HTTPS_KEYSIZE</VariableName>
+						<VariableValue>128</VariableValue>
+					</EnvironmentVariable>
+					<EnvironmentVariable>
+						<VariableName>HTTPS_SECRET_KEYSIZE</VariableName>
+						<VariableValue>128</VariableValue>
+					</EnvironmentVariable>
+					<EnvironmentVariable>
+						<VariableName>HTTP_REFERER</VariableName>
+						<VariableValue>whatever</VariableValue>
+					</EnvironmentVariable>
+					<EnvironmentVariable>
+						<VariableName>HTTP_COOKIE</VariableName>
+						<VariableValue>whatever</VariableValue>
+					</EnvironmentVariable>
+				</SessionEnvironment>
+			</EnterpriseSession>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseSession.Create>

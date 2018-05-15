@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="AuthenticationAttempt" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>applsvc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>48</Second>
+			<SubSecond>922</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1005</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<AuthenticationAttempt>
+			<AttemptId>123456789</AttemptId>
+			<AttemptDatetime>
+				<Year>2001</Year>
+				<Month>4</Month>
+				<Day>6</Day>
+				<Hour>12</Hour>
+				<Minute>50</Minute>
+				<Second>48</Second>
+				<SubSecond>922</SubSecond>
+				<Timezone>7:00-GMT</Timezone>
+			</AttemptDatetime>
+			<UserIdentifier>swheat</UserIdentifier>
+			<Hostname>host.admin.uillinois.edu</Hostname>
+			<ClientIp>123.123.123.123</ClientIp>
+			<AttemptStatus>denied</AttemptStatus>
+			<AuthenticationStatus>
+				<StatusCode>no attempt</StatusCode>
+				<Description>No attempt has been made.</Description>
+				<Explanation>It is possible that an attempt may be allowed, but that the user does not actually perform the attempt.</Explanation>
+			</AuthenticationStatus>
+			<Message>There have been too many attempts over a short period of time.  Please try again later.</Message>
+		</AuthenticationAttempt>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Provide>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.openeai.tutorial.Samples.Greeting.Create SYSTEM "../dtd/Create-Sync.dtd">
+<org.openeai.tutorial.Samples.Greeting.Create>
+	<ControlAreaSync messageCategory="org.openeai.tutorial.Samples" messageObject="Greeting" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseGreetingService</SenderAppId>
+				<ProducerId>51564b2c-c187-44a2-ad57-c3d183120ad7</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>egs</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>722</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<Greeting>
+				<Text>Hello World!</Text>
+			</Greeting>
+		</NewData>
+	</DataArea>
+</org.openeai.tutorial.Samples.Greeting.Create>

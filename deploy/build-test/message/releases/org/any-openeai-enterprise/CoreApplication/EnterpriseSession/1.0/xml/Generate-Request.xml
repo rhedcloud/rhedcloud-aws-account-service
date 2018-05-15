@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseSession.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseSession.Generate>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseSession" messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1005</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>eas</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>48</Second>
+			<SubSecond>184</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreApplication" messageObject="EnterpriseSession" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<EnterpriseSessionGenerateSpecification>
+			<EnterpriseUser>
+				<NetId>
+					<Principal>ziggy</Principal>
+					<Domain>any-openeai-enterprise.org</Domain>
+				</NetId>
+				<LightweightPerson>
+					<InstitutionalId>123456789</InstitutionalId>
+				</LightweightPerson>
+			</EnterpriseUser>
+			<ClientIp>130.126.239.69</ClientIp>
+			<SessionEnvironment>
+				<EnvironmentVariable>
+					<VariableName>HTTPS</VariableName>
+					<VariableValue>ON</VariableValue>
+				</EnvironmentVariable>
+				<EnvironmentVariable>
+					<VariableName>HTTPS_KEYSIZE</VariableName>
+					<VariableValue>128</VariableValue>
+				</EnvironmentVariable>
+				<EnvironmentVariable>
+					<VariableName>HTTPS_SECRET_KEYSIZE</VariableName>
+					<VariableValue>128</VariableValue>
+				</EnvironmentVariable>
+				<EnvironmentVariable>
+					<VariableName>HTTP_REFERER</VariableName>
+					<VariableValue>whatever</VariableValue>
+				</EnvironmentVariable>
+				<EnvironmentVariable>
+					<VariableName>HTTP_COOKIE</VariableName>
+					<VariableValue>whatever</VariableValue>
+				</EnvironmentVariable>
+			</SessionEnvironment>
+		</EnterpriseSessionGenerateSpecification>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseSession.Generate>

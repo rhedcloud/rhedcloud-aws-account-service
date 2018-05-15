@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!DOCTYPE org.any-openeai-enterprise.Monitoring.Ping.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.Monitoring.Ping.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.Monitoring" messageObject="Ping" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.any-openeai-enterprise.StudentInformationSystem</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>academyone</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2009</Year>
+			<Month>5</Month>
+			<Day>5</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>39</Second>
+			<SubSecond>231</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>com.academyone.AcademyOneTestSuiteApplication</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Ping>
+			<Text>13:47:39 up 114 days,  2:16, handled 1243 requests</Text>
+		</Ping>
+	</DataArea>
+</org.any-openeai-enterprise.Monitoring.Ping.Provide>

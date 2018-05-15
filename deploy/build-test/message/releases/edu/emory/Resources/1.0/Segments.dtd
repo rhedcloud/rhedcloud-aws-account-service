@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 1.1 $
+		$Date: 2008/12/03 21:56:59 $
+		$Source: /cvs/repositories/openii3/project/message/releases/edu/emory/Resources/1.0/Segments.dtd,v $
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2008 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Segments.dtd is a file where definitions of all elements with 
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+		01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+-->
+<!--	Notes:
+		Comments for each element should provide the initial context for which
+		the element was added and the date when it was added.
+-->
+<!-- ====================================================================== -->
+<!-- Elements - Segments
+-->
+<!--  AcademicCareer added 12/17/2009 -->
+<!ELEMENT AcademicCareer (Name, Code)> 
+<!-- AccountCategory added 01/29/2009 -->
+<!ELEMENT AccountCategory (SetId, Account, AccountType?, AccountDescription, DateEffective, EffectiveStatus)>
+<!-- AccountCategories added 12/03/2008 -->
+<!ELEMENT AccountCategories (AccountCategory*)>
+<!-- AccountCategoryQuery added 01/29/2009 -->
+<!ELEMENT AccountCategoryQuerySpecification (SetId?, Account?, AccountType?, AccountDescription?, EffectiveDate?, EffectiveStatus?)>
+<!-- AccountCategoryTransaction added 01/29/2009 -->
+<!ELEMENT AccountCategoryTransaction (TransactionMapping, SetId, Account, AccountType, AccountDescription, EffectiveDate, EffectiveStatus)>
+<!-- Address added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Address (Street1, Street2?, Street3?, CityOrLocality, County?, StateOrProvince?, Nation?, ZipOrPostalCode?)>
+<!-- AssignedPager added 06/14/2011 for AMCOM Integration -->
+<!ELEMENT AssignedPager (PublicId, PagerNumber, CapCode?, SerialNumber?, PageRoute?, SmartKeyValue?)>
+<!-- Association added 12/16/2009 for Identity/Identity -->
+<!ELEMENT Association (Name, Key?, Realm?)>
+<!-- AvailableDate added 1/11/2010 for BlackBoard 
+Available Date is the window of time that a CourseSite is available -->
+<!ELEMENT AvailableDate (StartDate, EndDate) >
+<!-- Schedule deleted 11/11/10 as part of Blackboard-opus project
+<!ELEMENT  Schedule (EnrollmentDate,  AvailableDate, DayOfWeekSchedule*)>
+ --> 
+ <!-- Classs added 3/03/2010 for BlackboardMobile. Three s's needed to avoid naming conflicts at java compile time 
+            added Description to Classs for BlackboardMobile 3/2/2010 
+            deleted 11/11/2010
+<!ELEMENT Classs (CourseId, Section, DepartmentName, Description, Term, CrossListedClass*, Location?, Schedule?)>
+-->
+<!--building added for Emory Building ESB service gwang28 01/25/2013 -->
+<!ELEMENT EmoryBuilding (PostalAddress?,Alias?,Campus?,Description?,Geocode?,Id?,Image?,Name?) >
+<!ELEMENT EmoryBuildingQuerySpecification (Id?,Keyword?) >
+
+<!--CidrAssignment added for the CidrService -->
+<!ELEMENT AssociatedCidr (Type, Network, Bits)>
+<!ELEMENT CidrAssignment (CidrAssignmentId?, OwnerId, Decription, Purpose, Cidr,CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?) >
+<!ELEMENT CidrAssignmentQuerySpecification (Comparison*, QueryLanguage?,CidrAssignmentId?, OwnerId?) >
+<!ELEMENT Cidr (CidrId, Network, Bits, AssociatedCidr*, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT CidrQuerySpecification (Comparison*, QueryLanguage?, CidrId?, RequestorNetId?, Purpose?, Description?, Network?, Bits?, Property*)>
+<!ELEMENT CidrRequisition (OwnerId, Purpose, Description, Bits)>
+
+<!-- Comment added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT Comment (CreateDatetime, EduPrincipalPersonName, Text)>
+<!-- ConflictOfInterest added 04/16/2009 -->
+<!ELEMENT ConflictOfInterest (ProposalId, ProposalTitle, ProposalStatus)>
+<!ATTLIST ConflictOfInterest
+	significantFinancialInterest (yes | no) #REQUIRED
+>
+<!--Contact added 05/12/2014 for Billing -->
+<!ELEMENT Contact (Text)>
+<!-- CourseSection added 11/11/2010 for Blackboard-Opus integration 
+CourseSection contains the five fields comprising the unique key of the com.oracle.peoplesoft.Student.PS_CLASS_TBL, in addition to other descriptive PS_CLASS_TBL data
+Deleted 1/5/2011. 
+Re-Added 2/16/2012 to support LmsXControlPanel-->
+<!ELEMENT CourseSection (Semester, CourseId, CourseOfferingNumber, Section, SessionCode, Subject, CatalogNumber, AcademicGroup) >
+
+<!-- CourseSite added 11/11/2010 for Blackboard-Opus integration
+A CourseSite is represents an Learning Management System course site and is used initially for Blackboard.
+Attribute isAfterEnrollmentWindow
+Deleted 1/5/2011. 
+Re-Added 2/16/2012 to support LmsXControlPanel-->
+<!ELEMENT CourseSite (CourseId, AvailableDate, EnrollmentDate, CourseSection*) > 
+<!ATTLIST CourseSite
+type (blackboard | itunesu) #IMPLIED
+isBeforeEnrollmentWindow (yes | no)  #REQUIRED
+>
+<!-- CourseSiteQuerySpecification added 02/22/2012 to support LmsXControlPanel enrollment reconcilliation and lms-scheduled-command 
+added SearchString field to support searching for all CourseSites for a given semester-->
+<!ELEMENT CourseSiteQuerySpecification (SearchString?, CourseId?)>
+<!ATTLIST CourseSiteQuerySpecification
+type (blackboard | itunesu) #IMPLIED
+isBeforeEnrollmentWindow (yes | no)  #IMPLIED
+>
+
+<!-- CourseSiteErrorLogQuerySpecification added 3/1/2012 LmsXControlPanel Enrollment Synchronization integration-->
+<!ELEMENT CourseSiteErrorLogQuerySpecification (CourseId)>
+<!ATTLIST CourseSiteErrorLogQuerySpecification
+type (blackboard | itunesu) #IMPLIED
+>
+
+<!-- CourseSiteErrorLog added 2/21/2012 for LmsXControlPanel Enrollment Synchronization integration 
+Returns errors since the last sync date -->
+<!ELEMENT CourseSiteErrorLog (CourseId, CreateDate?, Action?, Description?) >
+<!ATTLIST CourseSiteErrorLog
+type (error | sync) #IMPLIED
+>
+
+<!-- CrossListedClass added 1/11/2010 for BlackBoard 
+deleted 11/11/2010 
+<!ELEMENT CrossListedClass (Classs) >
+-->
+<!-- Department added 04/16/2009 for Identity/Person -->
+<!ELEMENT Department (Name?, Code?, Lead?)>
+<!ATTLIST Department
+	type CDATA #IMPLIED
+>
+<!--ElasticIpAssignment added for the ElasticIpService -->
+<!ELEMENT ElasticIpAssignment (ElasticIpAssignmentId?, OwnerId, Decription, Purpose, ElasticIp, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?) >
+<!ELEMENT ElasticIpAssignmentQuerySpecification (ElasticIpAssignmentId?, OwnerId?) >
+<!ELEMENT ElasticIp (ElasticIpId?, ElasticIpAddress, AssociatedIpAddress?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT ElasticIpQuerySpecification (ElasticIpId?, ElasticIpAddress?, AssociatedIpAddress?)>
+<!ELEMENT ElasticIpRequisition (OwnerId)>
+<!--  EmailAddressValidation added 1/23/2018 for AWS Account Provisioning -->
+<!ELEMENT EmailAddressValidation (ValidationProvider, EmailAddress, StatusCode, StatusDescription, Property*)>
+<!ELEMENT EmailAddressValidationQuerySpecification (EmailAddress, ValidationProvider?)>
+<!--  EmailListSend added 9/19/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailListSend (Account, JobId, ListId, Name?, Type?, SentCount?, DeliveredCount?, UndeliveredCount?, OpenCount?, UnsubscribedCount?, MailCode?) >
+<!--  EmailListSendQuerySpecification added 10/13/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailListSendQuerySpecification (Account?, JobId?, ListId?) >
+<!--  EmailMarketingAccount added 9/19/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailMarketingAccount (Account?, AccountId?, Name, EmailSource?) >
+<!ATTLIST EmailMarketingAccount
+type (ExactTarget) #IMPLIED>
+<!--  EmailMarketingAccountQuerySpecification added 10/3/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailMarketingAccountQuerySpecification (Account?, AccountId?, EmailSource?) >
+<!ATTLIST EmailMarketingAccountQuerySpecification
+type (ExactTarget) #IMPLIED>
+<!--  EmailSendJob added 9/19/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailSendJob (Account, JobId, SendDate?, AceProcessedDate?) >
+<!--  EmailSendJobQuerySpecification added 10/13/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailSendJobQuerySpecification (Account, JobId)>
+<!--  EmailSmsSubscriber added 9/19/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailSmsSubscriber (Account, SubscriberId, SubscriberKey, IdNumber?, Email?, MailCode?, AppealCode?, SubscriberStatus?, NoSolicitation?, NoSolicitationThisFiscalYear?, Reason?, AceProcessedDate)>
+<!--  EmailSmsSubscriberQuerySpecification added 10/13/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailSmsSubscriberQuerySpecification (Account?, SubscriberId?, SubscriberKey?)>
+<!--  EmailSendTrackingEvent added 9/19/2014 for Ace/ExactTarget -->
+<!ELEMENT EmailSendTrackingEvent (Account, JobId, SubscriberKey, Type, EventDate?, AceProcessedDate?) >
+<!-- EmailSendTrackingEventQuerySpecification added 2/9/2015 for Ace/ExactTarget -->
+<!ELEMENT EmailSendTrackingEventQuerySpecification (Account, Type?, StartDate?, EndDate?) >
+
+<!-- DirectoryPerson added 09/21/2010 for DirectoryService integration -->
+<!ELEMENT DirectoryPerson (DepartmentName?, Email?, Fax?, FirstMiddle?, FullName, Key, LastName?, DirectoryLocation?, MailStop?, DirectoryPhone?, SchoolDivision?, StudentPhone?, Suffix?, Title?, Type)>
+<!-- DirectoryPerson added 09/21/2010 for DirectoryService integration -->
+<!ELEMENT DirectoryPersonQuerySpecification (SearchString?, Key?, TestRequest?)>
+<!-- Division added 04/16/2009 for Identity/Person -->
+<!ELEMENT Division (Name?, Code?, Lead?)>
+<!-- DriversLicense added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT DriversLicense (Value, Country?, State?, ImageUri?)>
+<!-- Eligibility added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Eligibility (Value)>
+<!ATTLIST Eligibility
+	type CDATA #REQUIRED
+>
+<!-- Email added 04/17/2009 for Identity/Person -->
+<!ELEMENT Email (EmailAddress)>
+<!ATTLIST Email
+	type CDATA #REQUIRED
+>
+<!-- EmailList added 12/17/2009 for ServiceNow -->
+<!ELEMENT EmailList (Email+)>
+<!-- EmailListQuerySpecification added 12/18/2009 -->
+<!ELEMENT EmailListQuerySpecification (PublicId?)>
+<!-- EnrollmentContract added 1/12/2010 for BlackBoard 
+deleted 11/11/2010 
+<!ELEMENT EnrollmentContract (RoleName, GradingBasis?, CreditHours?) >
+-->
+<!-- EnrollmentDate added 1/11/2010 for BlackBoard 
+EnrollmentDate is the window of time enrollments may occur for a CourseSite -->
+<!ELEMENT EnrollmentDate (StartDate, EndDate)>
+<!-- EnterpriseIdentity added 04/14/2009 -->
+<!ELEMENT EnterpriseIdentity (PublicId, Individual)>
+<!-- EnterpriseIdentityGenerator added 04/14/2009 -->
+<!ELEMENT EnterpriseIdentityGenerator (Individual)>
+<!-- EnterpriseIdentityQuerySpecification added 04/14/2009 -->
+<!ELEMENT EnterpriseIdentityQuerySpecification (PublicId?, SSN?, BirthDay?, BirthMonth?, BirthYear?, BirthCountry?, DriversLicense?, NationalIdCard?, Gender?, Association?, Name?, PersonalName?)>
+<!ATTLIST EnterpriseIdentityQuerySpecification
+	current (true | false) #REQUIRED
+>
+<!-- ExtramuralProposal added 04/16/2009 -->
+<!ELEMENT ExtramuralProposal (Upn, SequenceNumber, GrantTitle, AwardStatus, Sponsor*, StudyStaff*, StartDate?, EndDate?, EmplId?, LastName, FirstName, MiddleName?, EmailAddress?, PhoneNumber?)>
+<!ATTLIST ExtramuralProposal
+	current (true | false) #REQUIRED
+>
+<!-- FallbackContact added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT FallbackContact (EstablishedDate, EmailAddress?)>
+<!--FulfillmentLine added 05/12/2014 for Billing -->
+<!ELEMENT FulfillmentLine (PONumber, POLineNumber, Quantity?, UnitPrice?, ExtendedPrice?, SKUCatalogNbr?,
+ProductDescription?, MfrCatalogNbr?, SmartKeyValue?, Account?, ServiceRequestNumber )>
+<!--FulfillmentLineQuerySpecification added 05/12/2014 for Billing -->
+<!ELEMENT FulfillmentLineQuerySpecification (PONumber, POLineNumber)>
+<!--Geocode added 04/14/2009 for Network/NetworkLocation-->
+<!ELEMENT Geocode (Longitude, Latitude, Altitude?, Accuracy?)>
+<!-- Greetee added 20090325 for Examples/Greeting-->
+<!ELEMENT Greetee (FullName)>
+
+<!-- Greeting added 20090325 for Examples/Greeting -->
+<!ELEMENT Greeting (Text)>
+<!ELEMENT GwGreetee (GwFullName)>  <!-- for exercise gwang28-->
+<!ELEMENT GwGreeting (Text)> <!-- for exercise gwang28-->
+<!-- Group added 02/07/2018 for LDS Service -->
+<!ELEMENT Group (objectClass+, groupType?, instanceType?, objectCategory?, cn?, description?, distinguishedName, dsCorePropagationData?, member*, name?, objectGUID?, objectSid?, uSNChanged?, uSNCreated?, whenChanged?, whenCreated?, createTimeStamp?, modifyTimeStamp?, structuralObjectClass+, subSchemaSubEntry)>
+<!ELEMENT GroupQuerySpecification (distinguishedName?)>
+<!-- HipaaAuditLog added 5/16/2012 -->
+<!ELEMENT HipaaAuditLog (LogId?,HipaaAuditLogEntry*)>
+<!ELEMENT HipaaAuditLogEntry (LogEntryId?, Tag*, Comment*, EventDatetime, AuditDatetime, ApplicationName, EduPrincipalPersonName, IpNumber, EventType, EventStatus, EventTarget, Description)>
+<!ELEMENT HipaaAuditLogEntryQuerySpecification (Comparison*,LogEntryId?, StartEventDatetime?, EndEventDatetime?, StartAuditDatetime?, EndAuditDatetime?, ApplicationName?, EduPrincipalPersonName?, IpNumber?, EventType?, EventStatus?, EventTarget?, Description?)>
+
+<!-- Individual updated 12/16/2009 added PublicId for Identity/EnterpriseIdentity -->
+<!-- NOTE: Individual implemented as Version 2.0 Person 01/12/2009 -->
+<!ELEMENT Individual (PublicId, PersonalName, LocalizedNameList?, SSN?, BirthDay?, BirthMonth?, BirthYear?, DriversLicense?, NationalIdCard*, Gender?, Association*, Eligibility*, Tag*, FallbackContact*)>
+<!-- IndividualQuerySpecification added 12/18/2009 -->
+<!ELEMENT IndividualQuerySpecification (PublicId?)>
+<!-- Job added 5/18 for ConflictOfInterest/Identity -->
+<!ELEMENT Job (SequenceNumber, CompositeName, OperatingEntity?, JobTypeCode?, Department?, JobCode?, JobName?, PersonJobStatus?, Classification?)>
+<!ATTLIST Job
+	primary (true | false) #IMPLIED
+	faculty (true | false) #IMPLIED
+	physician (true | false) #IMPLIED
+>
+<!-- Lead added 04/16/2009 for Identity/Person -->
+<!ELEMENT Lead (PublicId)>
+<!-- Location added 12/18/2009 -->
+<!ELEMENT Location (LocId, Campus?, Building?, Address?, Floor?, Room?, Geocode?)>
+<!-- LocationQuerySpecification added 12/18/2009 -->
+<!ELEMENT LocationQuerySpecification (LocId?)>
+<!-- LocalizedNameList added 05/13/2009 for Identity/Person -->
+<!ELEMENT LocalizedNameList (PersonalName+)>
+<!-- NationalIdCard added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT NationalIdCard (Value, Country?, ImageUri?)>
+<!-- NetworkIdentity updated 12/16/2009 -->
+<!ELEMENT NetworkIdentity (Value, PublicId?, CreateDate, EndDate?, Domain?, Tag*)>
+<!ATTLIST NetworkIdentity
+	type CDATA #REQUIRED
+	status (reserved | active | inactive) #REQUIRED
+	ancillary (true | false) "false"
+>
+<!-- NetworkIdentityGenerator added 04/14/2009 -->
+<!ELEMENT NetworkIdentityGenerator (PublicId, EndDate?, Domain?, Tag*)>
+<!ATTLIST NetworkIdentityGenerator
+	type CDATA #REQUIRED
+	status CDATA #IMPLIED
+	ancillary (true | false) #IMPLIED
+>
+<!-- NetworkIdentityQuerySpecification added 04/14/2009 -->
+<!ELEMENT NetworkIdentityQuerySpecification (Value?, PublicId?, Domain?)>
+<!ATTLIST NetworkIdentityQuerySpecification
+	type CDATA #IMPLIED
+	status (reserved | active | inactive) #IMPLIED
+	ancillary (true | false) #IMPLIED
+>
+<!--NetworkLocation added 04/14/2009 -->
+<!ELEMENT NetworkLocation (Node, Building?, Address?, Floor?, Room?, Geocode?)>
+<!--NetworkLocationQuerySpecification added 04/14/2009 -->
+<!ELEMENT NetworkLocationQuerySpecification (IpNumber?, Hostname?)>
+<!-- OrganizationalUnit added 02/07/2018 for LDS Service -->
+<!ELEMENT OrganizationalUnit (objectClass+, instanceType?, objectCategory?, ou?, description?, distinguishedName, dsCorePropagationData?, name?, objectGUID?, uSNChanged?, uSNCreated?, whenChanged?, whenCreated?, createTimeStamp?, modifyTimeStamp?, structuralObjectClass+, subSchemaSubEntry?)>
+<!ELEMENT OrganizationalUnitQuerySpecification (distinguishedName?)>
+<!-- OrgEntity added 12/16/2009 for OrgHierarchy -->
+<!ELEMENT OrgEntity (Name?, Code?, SetId?)>
+<!-- OrgHierarchy added 12/16/2009 -->
+<!ELEMENT OrgHierarchy (Department, WorkGroup?, Division, OrgEntity)>
+<!-- OrgHierarchyQuerySpecification added 12/18/2009 -->
+<!ELEMENT OrgHierarchyQuerySpecification (Department?)>
+<!-- Participant added 7/16/2009 for Clinical/StudyDefinition -->
+<!-- PersonalName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT PersonalName (LastName, FirstName, MiddleName?, NameSuffix?, Prefix?, Suffix?, CompositeName?)>
+<!ATTLIST PersonalName
+	type CDATA #REQUIRED
+	order (east | west) #IMPLIED
+	noFirstName (true | false) #IMPLIED
+>
+<!-- Person added 2009-04-17 xeo:comboKey="PublicId" -->
+<!-- Person updated 2009-05-31 -->
+<!ELEMENT Person (Prsni, PublicId, PersonalName, LocalizedNameList?, EmplId?, SchoolCode?, LatestTerm?, SchoolName?, Email?, Phone?, Department?, Division?, SchoolOrUnit?, PersonClassificationValue?, PersonClassificationValueHealthcare?, LoginEu?, LoginHc?, Job*)>
+<!ATTLIST Person
+	faculty (true | false) #IMPLIED
+	physician (true | false) #IMPLIED
+	activeStudent (true | false) #IMPLIED
+	healthCareManager (true | false) #IMPLIED
+>
+<!-- PersonQuerySpecification added 04/16/2009 -->
+<!ELEMENT PersonQuerySpecification (PublicId?, NetId?, EmplId?, Prsni?)>
+<!-- Phone added 04/16/2009 for Identity/Person -->
+<!ELEMENT Phone (CountryCode?, AreaCode?, Number, ExtensionNumber?)>
+<!ATTLIST Phone
+	type CDATA #IMPLIED
+>
+<!-- PhoneList added 12/17/2009 for ServiceNow -->
+<!ELEMENT PhoneList (Phone+)>
+<!-- PhoneListQuerySpecification added 12/18/2009 -->
+<!ELEMENT PhoneListQuerySpecification (PublicId?)>
+<!--ProcurementHeader added 05/12/2014 for Billing -->
+<!ELEMENT ProcurementHeader (PONumber, WorkflowCompletionDate?, NetId?, ShipTo*)>
+<!--ProcurementHeaderQuerySpecification added 05/12/2014 for Billing -->
+<!ELEMENT ProcurementHeaderQuerySpecification (PONumber)>
+<!--ProcurementLine added 05/12/2014 for Billing -->
+<!ELEMENT ProcurementLine (PONumber, POLineNumber, Quantity?, UnitPrice?, ExtendedPrice?, SKUCatalogNbr?,
+ProductDescription?, MfrCatalogNbr?, SmartKeyValue?, Account? )>
+<!--ProcurementLineQuerySpecification added 05/12/2014 for Billing -->
+<!ELEMENT ProcurementLineQuerySpecification (PONumber, POLineNumber)>
+<!-- Propery added 1/23/2018 for EmailValidationService -->
+<!ELEMENT  Property (PropertyName, PropertyValue)>
+<!-- Protocol added 7/16/2009 for Clinical/StudyDefinition -->
+<!--ProtocolId added 08/04/2009 for Clinical/StudyDefinition -->
+<!ELEMENT Protocol (ProtocolId, StudyVisit*)>
+
+
+   <!-- RoleAssignment added 7/7/2016 for AWS VPC Provisioning Process -->
+   <!--combined RoleAssignment and RoleAssignmentRequest object into RoleAssignment
+<!ELEMENT RoleAssignment (,RoleAssignmentType?, CauseIdentities?, EffectiveDatetime?, ExpirationDatetime?, ExplicitIdentities?, RoleDN?)>
+<!ELEMENT RoleAssignmentRequest (RoleAssignmentActionType?,RoleAssignmentType?, CorrelationId?,  EffectiveDatetime?, ExpirationDatetime?, Identity?,Originator?,Reason?,RoleDNs?,SodJustification*)>
+-->
+<!ELEMENT RoleAssignment (RoleAssignmentActionType?, RoleAssignmentType?, CorrelationId?, CauseIdentities?, EffectiveDatetime?, ExpirationDatetime?,IdentityDN?,OriginatorDN?,Reason?,RoleDNs?,SodJustification*,ExplicitIdentityDNs?, RoleDN?)>
+<!ELEMENT RoleAssignmentRequisition (RoleAssignmentActionType?, RoleAssignmentType?,IdentityDN?,Reason?,RoleDNs?)>
+
+
+<!-- Role and Resource related objects added 1/10/2018 for AWS VPC Provisioning Process -->
+<!-- Role represents a role in NetIQ, which is uniquely identified by RoleDN.  It can contain 0 or more NetIQ resources -->
+<!-- Role is an actionable object -->
+<!ELEMENT Role (RoleDN, RoleName, RoleDescription, RoleCategoryKey, Resource*)>
+<!ELEMENT RoleQuerySpecification (RoleDN)>
+<!ELEMENT RoleRequisition (RoleName, RoleDescription, RoleCategoryKey?, Resource*)>
+<!-- Resource represents a resource in NetIQ, which is uniquely identified by ResourceDN, and contains a NetIQ entitilement in a resource application -->  
+<!-- Resource is an actionable object -->
+<!ELEMENT Resource (ResourceDN?, ResourceName, ResourceDescription, ResourceCategoryKey, Entitlement) >
+<!ELEMENT ResourceQuerySpecification (ResourceDN)>
+<!ELEMENT ResourceRequisition (ResourceName, ResourceDescription, ResourceCategoryKey?, Entitlement)>
+<!-- Entitlement represents a group in LDS or EAD and is uniquely identified by EntitlementDN -->
+<!ELEMENT Entitlement (EntitlementDN, EntitlementGuid?, EntitlementApplication?) >
+<!--
+<!ELEMENT RoleAssignmentType (USER_TO_ROLE | GROUP_TO_ROLE | ROLE_TO_ROLE | CONTAINER_TO_ROLE | CONTAINER_WITH_SUBTREE_TO_ROLE) >
+<!ELEMENT RoleAssignmentActionType (GRANT | EXTEND | REVOKE) >
+<!ELEMENT IdentityType (USER | GRUOP | CONTAINER | ROLE) >
+-->
+<!ELEMENT CauseIdentities (IdentityTypeDnMap*)>
+<!ELEMENT IdentityTypeDnMap (DistinguishedName*, IdentityType)>
+<!ELEMENT ExplicitIdentityDNs (DistinguishedName*) >
+<!--createRoleRequest-->
+<!--
+<!ELEMENT Role (Approver*, AssociatedRoleDNs?, ChildRoleDNs?, Description?, Entitlement*, EntityKey?, ImplicitContainerDNs?, ImplicitGroupDNs?, Name?, OwnerDNs?, ParentRoleDNs?, Quorum?, RequestDefition?, RevokeRequestDefinition?, RoleAssignment*, RoleCategoryKey*, RoleLevel?, SystemRole?)>
+-->
+
+<!ELEMENT Approver (ApproverDN,Sequence) >
+<!ELEMENT RoleDNs (DistinguishedName*) >
+<!ELEMENT AssociatedRoleDNs (DistinguishedName*) >
+<!ELEMENT ChildRoleDNs (DistinguishedName*) >
+<!ELEMENT ImplicitContainerDNs (DistinguishedName*) >
+<!ELEMENT ImplicitGroupDNs (DistinguishedName*) >
+<!ELEMENT OwnerDNs (DistinguishedName*) >
+<!ELEMENT ParentRoleDNs (DistinguishedName*) >
+<!--
+<!ELEMENT Entitlement (EntitlementDN?,EntitlementParameters?) >
+-->
+<!ELEMENT RoleLevel (Name?,Level?,Description?,Container?) >
+<!ELEMENT SodJustification (Justification?,SodDN?) >
+
+
+
+<!-- Returned contain list of Ientity assigned to this RoleDN RoleAssignmentQuerySpecification added 7/7/2016 for AWS VPC Provisioning Process -->
+<!ELEMENT RoleAssignmentQuerySpecification (RoleDN?, IdentityType?, DirectAssignOnly?, UserDN?)>
+
+
+<!-- Sample added 7/16/2009 for Clinical/Visit -->
+<!ELEMENT Sample (SampleId, CollectionDatetime?, LabReceiptDatetime?)>
+<!ATTLIST Sample
+	type CDATA #REQUIRED
+	disposition (expected | observed) "expected"
+>
+<!-- Schedule added 1/11/2010 for Blackboard  -->
+<!ELEMENT Schedule (EnrollmentDate, AvailableDate)>
+<!-- SchoolOrUnit added 04/16/2009 for Identity/Person -->
+<!ELEMENT SchoolOrUnit (Name?, Code?, Lead?)>
+<!-- Section added 2/16/2012 for LmsXControlPanel -->
+<!ELEMENT Section (Identifier, Description)>
+<!--ShipTo added 05/12/2014 for Billing -->
+<!ELEMENT ShipTo (Name?, Contact*, Address*)>
+<!-- SmartKey added 01/29/2009 
+-->
+<!ELEMENT SmartKey (SetId, SmartKeyValue, Description?, EffectiveDate?, EffectiveStatus?, BusinessUnit?, OperatingUnit?, DepartmentId?, FundCode?, ClassField?, ProgramCode?, Chartfield1?, BusinessUnitPC?, ProjectId?, ActivityId?)>
+
+<!-- SmartKeyQuery added 01/29/2009
+Commented out 2/21/2012 due to being invalid and therefore also not implemented
+<!ELEMENT SmartKeyQuerySpecification (Setid?, SmartKeyValue?, Description?, EffectiveStatus?, EffectiveDate?, BusinessUnit?, OperatingUnit?, DepartmentId?, FundCode?, ClassField?, ProgramCode?, Chartfield1?, BusinessUnitPC?, ProjectId?, ActivityId?)>
+-->
+
+<!-- SmartKeyTransaction added 01/29/2009 
+Commented out 2/21/2012 due to being invalid and therefore also not implemented
+<!ELEMENT SmartKeyTransaction (TransactionMapping, Setid, SmartKeyValue, Description?, EffectiveStatus?, EffectiveDate?, BusinessUnit, OperatingUnit?, DepartmentId?, FundCode?, ClassField?, ProgramCode?, Chartfield1?, BusinessUnitPC?, ProjectId?, ActivityId?)>
+-->
+<!-- SmartKeys added 12/03/2008
+-->
+<!ELEMENT SmartKeys (SmartKey*)>
+
+<!-- Specialty added 06/15/2011 for AMCOM Integration -->
+<!-- Specialty modified 09/16/2011 - Name changed to optional field. mbell4  -->
+<!ELEMENT Specialty (PublicId, Code, Name?)>
+<!-- Sponsor added 05/27/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT Sponsor (SponsorName)>
+<!-- 1/6/10 Added OrgHierarchy - SponsoredPerson added 12/16/2009 -->
+<!ELEMENT SponsoredPerson (PublicId, OrgHierarchy)>
+<!ATTLIST SponsoredPerson
+	type CDATA #REQUIRED
+	active (true | false) #IMPLIED
+>
+<!-- SponsoredPersonQuerySpecification added 12/18/2009 -->
+<!ELEMENT SponsoredPersonQuerySpecification (PublicId?)>
+<!--  Static NAT added  4/4/2018 -->
+<!ELEMENT StaticNat (PublicIp,PrivateIp)>
+<!--  Static NAT Query Specification added  4/4/2018 -->
+<!ELEMENT StaticNatQuerySpecification (PublicIp)>
+<!-- Student added 12/16/2009 -->
+<!-- eligibleStudent added 1/25/2011 -->
+<!ELEMENT Student (EmplId, PublicId?, StudentCareer*, LatestTerm?, StudentLevel?)>
+<!ATTLIST Student
+	activeStudent (true | false) #IMPLIED
+	currentApplicant (true | false) #IMPLIED
+	eligibleStudent (true | false) #IMPLIED
+>
+<!-- StudentQuerySpecification added 12/18/2009 -->
+<!ELEMENT StudentQuerySpecification (EmplId?, PublicId?)>
+<!-- StudentCareer added 12/16/2009 for Identity/Student -->
+<!ELEMENT StudentCareer (AcademicCareer, Term?, AcadProgram?)>
+<!-- StudyDefinition added 7/16/2009 -->
+<!ELEMENT StudyDefinition (StudyIdentifier, IRBNumber?, Name?, Description?, Protocol*)>
+<!-- StudentLevel added 12/18/2009 for Identity/Student -->
+<!ELEMENT StudentLevel (Name, Code)>
+<!-- StudyParticipant added 8/04/2009 for Visit -->
+<!ELEMENT StudyParticipant (ParticipantId, GcrcId?, AlternateId?, CompositeName?)>
+<!-- StudySample added 7/16/2009 for Clinical/StudyDefinition -->
+<!-- Identifier added 8/04/2009 for Clinical/StudyDefinition -->
+<!ELEMENT StudySample (Identifier, ScheduleParam?, Container?, Volume?, Count?)>
+<!ATTLIST StudySample
+	type CDATA #REQUIRED
+>
+<!-- StudyStaff added 08/19/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT StudyStaff (PublicId?, EmplId?, LastName, FirstName, MiddleName?, EmailAddress?, PhoneNumber?, RoleName)>
+<!-- StudyVisit added 7/16/2009 for Clinical/StudyDefinition -->
+<!ELEMENT StudyVisit (ScheduleParam?, StudySample*)>
+<!ATTLIST StudyVisit
+	name CDATA #REQUIRED
+>
+<!-- Term Semester 2/16/2011 to support LmsXControlPanel messages -->
+<!ELEMENT Semester (Identifier, Description)>
+
+<!-- Visit added 7/16/2009  -->
+<!-- ParticipantId to StudyParticipant 8/04/2009-->
+<!ELEMENT Visit (StudyIdentifier?, ProtocolId?, StudyParticipant?, ArrivalDatetime?, Sample*)>
+<!-- Added identifier for Visit 08/04/2009-->
+<!ATTLIST Visit
+	identifier CDATA #REQUIRED
+	name CDATA #REQUIRED
+>
+<!-- VpnConnection added 3/15/2018 -->
+<!ELEMENT VpnConnectionRequisition (VpcId, VpcCidr, VpnId, VpnEndpoint+)>
+<!ELEMENT VpnEndpoint (RemoteVpnIpAddress, PresharedKey, CustomerGatewayIpAdress, VpnInsideIpCidr)>
+<!ELEMENT VpnConnection (VpnId, VpcId, CryptoKeyring, CryptoIsakmpProfile, CryptoIpsecTransformSet, CryptoIpsecProfile, TunnelInterface+)>
+<!ELEMENT CryptoKeyring (Name, Description, LocalAddress, PresharedKey)>
+<!ELEMENT LocalAddress (IpAddress, VirtualRouteForwarding)>
+<!ELEMENT CryptoIsakmpProfile (Name, Description, VirtualRouteForwarding, CryptoKeyring, MatchIdentity, LocalAddress)>
+<!ELEMENT MatchIdentity (IpAddress, Netmask, VirtualRouteForwarding)>
+<!ELEMENT CryptoIpsecTransformSet (Name, Cipher, Bits, Mode)>
+<!ELEMENT CryptoIpsecProfile (Name, Description, CryptoIpsecTransformSet, PerfectForwardSecrecy)>
+<!ELEMENT TunnelInterface (Name, Description, VirtualRouteForwarding, IpAddress, Netmask, TcpMaximumSegmentSize, AdministrativeState, TunnelSource, TunnelMode, TunnelDestination, CryptoIpsecProfile, IpVirtualReassembly, OperationalStatus, BgpState, BgpPrefixes)>
+<!ELEMENT BgpState (Status, Uptime)>
+<!ELEMENT BgpPrefixes (Sent, Received)>
+<!ELEMENT VpnConnectionQuerySpecification (VpnId?, VpcId?)>
+
+<!-- SecurityAssertion added 4/19/2018 for the TKI Service -->
+<!ELEMENT SecurityAssertion (Type, Principal, Device*, RoleName*, SamlAssertion?, Token?, CreateDatetime)>
+<!ELEMENT Device (DeviceId, Capability*, DisplayName, Name?, Number, Type)>
+<!ELEMENT SecurityAssertionRequsition (Type, Principal, Credential)>
+<!ELEMENT Credential (Type, Id?, Secret?)>
+<!ELEMENT SecurityAssertionQuerySpecificaiton (Principal)>
+
+<!-- RoleAssumption added 4/19/2018 for the TKI Service -->
+<!ELEMENT RoleAssumption (Audience, Issuer, NameQualifier, Subject, SubjectType, AssumedRoleUser, Credentials)>
+<!ELEMENT AssumedRoleUser (Arn, AssumedRoleId)>
+<!ELEMENT Credentials (AccessKeyId, Expiration, SecretAccessKey, SessionToken)>
+<!ELEMENT RoleAssumptionRequisition (Region, RoleName, SamlAssertion, DurationSeconds)>
+
+<!-- WorkGroup added 12/16/2009 for Identity/WorkGroup -->
+<!ELEMENT WorkGroup (Name?, Code?, SetId?)>
+
+<!-- added 8/30/2011 for Account/Mapping -->
+<!ELEMENT Mapping (EnterpriseUsername,TargetAccountId,TargetAccount)>
+<!ELEMENT TargetAccount (TargetProperty*,Username,Password)>
+<!ATTLIST TargetAccount
+  id CDATA #REQUIRED
+  >
+
+<!ELEMENT AccountProperty (TargetAccountId,TargetPropertyId)>
+
+<!ELEMENT TargetProperty EMPTY>
+<!ATTLIST TargetProperty
+  id CDATA #REQUIRED
+  name CDATA #REQUIRED
+  value CDATA #REQUIRED
+  >
+<!ELEMENT MappingQuerySpecification (EnterpriseUsername?,TargetAccountId?)>
+
+
+<!-- ####################the following are for testing or tutorial##################### -->
+<!-- for HelloHibernate tutorial gwang -->
+<!ELEMENT HelloHibernate (Id,Message?)>
+<!ELEMENT HelloHibernateQuerySpecification (Id?,Message?)>
+<!ELEMENT HelloHibernateMessage (Message?)>
+
+<!-- for OpenEai-ServiceGen example gwang -->
+<!ELEMENT HelloHibernateGw (Id,Message?,MessageNumber?,LastModifiedDatetime?,LastModifiedDate?)>
+<!ELEMENT HelloHibernateGwQuerySpecification (Comparison*, QueryLanguage?, Id?,Message?,LastModifiedDate?,LastModifiedDatetime?,StartDate?,EndDate?)>
+<!ELEMENT HelloHibernateGwMessage (Id?,Message?,LastModifiedDatetime?,LastModifiedDate?)>
+<!ELEMENT HelloHibernateGwCount (Value,LastModifiedDate?)>
+<!ELEMENT HelloHibernateGwCountQuerySpecification (Comparison*, QueryLanguage?,Id?,LastModifiedDate?,LastModifiedDatetime?,StartDate?,EndDate?)>
+
+
+<!-- for OpenEai-ServiceGen example gwang -->
+<!ELEMENT HelloHibernateKc (Id,Message?,MessageNumber?,LastModifiedDatetime?,LastModifiedDate?)>
+<!ELEMENT HelloHibernateKcQuerySpecification (Comparison*,Id?,Message?,LastModifiedDate?,LastModifiedDatetime?,StartDate?,EndDate?)>
+<!ELEMENT HelloHibernateKcMessage (Id?,Message?,LastModifiedDatetime?,LastModifiedDate?)>
+
+
+<!-- for HelloHibernateAdvancedQuerySpec tutorial gwang -->
+<!ELEMENT HelloHibernateAqs (Id,Message)>
+<!ELEMENT HelloHibernateAqsQuerySpecification (Logical?,Comparison*,Id?, Message?)>
+
+<!-- for TestMoa gwang -->
+<!-- moagen doesnot handle TmStarDate* definition (a repeating date object)
+<!ELEMENT TestMoa (Id,TmString,TmDate?,TmDatetime?,TmStar*,TmStarDate*,TmObject?,TmObjectStr*,TmStarSquare*)>
+-->
+
+
+<!-- CHANGELOG
+<!ELEMENT HelloHibernateAqsQuerySpecification (Logical?,Comparison*, Id?, Message?)>
+
+11/18/2010 jleon Clean-up for Blackboard-Opus project. Deleted elements that were never implemented 
+                  Deleted AcademicCareer, Schedule, Classs, CrossListedClass, EnrollmentContract
+                  Added CourseSite, CourseSection
+01/04/2010 jleon Clean-up for Blackboard-Opus project. Deleted elements that were never implemented.
+                  Deleted CourseSite, CourseSection
+02/16/2012 jleon Re-Added CourseSite, CourseSection, 
+                 Added Section, Term
+                 for LmsXControlPanel enrollment synchronization project
+02/21/2012 jleon Added ErrorLog for LmsXControlPanel enrollment synchronization project
+                 Modified CourseSite to include ErrorLog
+02/21/2012 jleon Removed SmartKey elements which were invalid and thereore not used:   
+02/22/2012 jleon Added CourseSiteQueryRequest for  LmsXControlPanel enrollment synchronization project
+02/25/2012 jleon Renamed ErrorLog to CourseSiteErrorLog and added CourseId to element for LmsXControlPanel enrollment synchronization project
+02/28/2012 jleon Removed CourseSiteErrorLog from CourseSite in order to support CourseSite Create-Request. The error log is not inherently a part of describing a CourseSite
+03/01/2012 jleon Added CourseSiteErrorLogQuerySpecification for LmsXControlPanel enrollment synchronization project
+3/5/2012   jleon Uncommentd out two Smartkey elements which weren't invalid and are used in the Amcom project, SmartKey and SmartKeys
+                 Renamed Term to Semester, so as not to conflict with field Term.
+03/15/2012 jleon Updated Action to CourseSiteErrorLog for LmsXControlPanel enrollment synchronization project
+05/31/2012 jleon Updated CourseSiteQuery to add SearchString to support existing requirements of searching by semester string
+02/12/2015 jleon Added DigitalMarketing elements in support of Ace/ExactTarget: 
+                 EmailMarketingAccount, EmailSendJob, EmailListSend, EmailSmsSubscriber, EmailSendTrackingEvent, EmailMarketingAccountQuerySpecification, 
+                 EmailListSendQuerySpecification, EmailSendJobQuerySpecification, EmailSmsSubscriberQuerySpecification,
+                 EmailSendTrackingEventQuerySpecification
+-->

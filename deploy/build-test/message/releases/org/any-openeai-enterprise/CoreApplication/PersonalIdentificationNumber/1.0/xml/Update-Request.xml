@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.PersonalIdentificationNumber.Update SYSTEM "../dtd/Update-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.PersonalIdentificationNumber.Update>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="PersonalIdentificationNumber" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1006</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>eas</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>39</Second>
+			<SubSecond>729</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<PersonalIdentificationNumber ownerId="123456789" status="inactive" type="EnterpriseIdPasswordClaiming">
+				<Value>1234</Value>
+			</PersonalIdentificationNumber>
+		</NewData>
+		<BaselineData>
+			<PersonalIdentificationNumber ownerId="123456789" status="active" type="EnterpriseIdPasswordClaiming">
+				<Value>1234</Value>
+			</PersonalIdentificationNumber>
+		</BaselineData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.PersonalIdentificationNumber.Update>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.Greeting.Response SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/Greeting/1.0/dtd/Response-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.Greeting.Response>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="Greeting" messageAction="Response" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseGreetingService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>egs</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>722</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>org.any-openeai-enterprise.GreetingApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Greeting>
+			<Text>Hello World!</Text>
+		</Greeting>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.Greeting.Response>

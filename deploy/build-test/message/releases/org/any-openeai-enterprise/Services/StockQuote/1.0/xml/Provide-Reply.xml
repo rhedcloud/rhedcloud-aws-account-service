@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.StockQuote.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.Services.StockQuote.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.Services" messageObject="StockQuote" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.anyapp</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>stock</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>org.any-openeai-enterprise.anyapp</SenderAppId>
+				<ProducerId>753f99bc-4917-472b-8c7e-a9bc3ce592e9</ProducerId>
+				<MessageSeq>32</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<StockQuote>
+			<StockSymbol>IBM</StockSymbol>
+			<StockName>INTL BUSINESS MAC</StockName>
+			<LastPrice>119.05</LastPrice>
+			<TimeStampDatetime>
+				<Year>2007</Year>
+				<Month>10</Month>
+				<Day>16</Day>
+				<Hour>10</Hour>
+				<Minute>10</Minute>
+				<Second>1</Second>
+				<SubSecond>0</SubSecond>
+				<Timezone>EST</Timezone>
+			</TimeStampDatetime>
+			<PriceChange>+1.02</PriceChange>
+			<OpenPrice>118.02</OpenPrice>
+			<HighPrice>119.27</HighPrice>
+			<LowPrice>117.85</LowPrice>
+			<TradingVolume>1099400</TradingVolume>
+			<PreviousClosingPrice>118.03</PreviousClosingPrice>
+		</StockQuote>
+	</DataArea>
+</org.any-openeai-enterprise.Services.StockQuote.Provide>

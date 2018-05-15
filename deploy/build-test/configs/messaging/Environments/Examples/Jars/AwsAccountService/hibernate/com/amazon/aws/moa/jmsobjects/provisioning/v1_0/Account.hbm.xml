@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.provisioning.v1_0">
+<class name="Account" table="ACCOUNT">
+<id name="AccountId" column="ACCOUNT_ID">
+<generator class="assigned"/>
+</id>
+<property name="AccountName" column="ACCOUNT_NAME"/>
+<property name="ComplianceClass" column="COMPLIANCE_CLASS"/>
+<property name="PasswordLocation" column="PASSWORD_LOCATION"/>
+<bag name="EmailAddress" table="ACCOUNT_EMAIL_ADDRESS">
+<key column="ACCOUNT_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.EmailAddress">
+<property name="Type" column="TYPE_"/>
+<property name="Email" column="EMAIL"/>
+</composite-element>
+</bag>
+<property name="AccountOwnerNetId" column="ACCOUNT_OWNER_NET_ID"/>
+<!--
+<bag name="CustomerAdminNetId" table="ACCOUNT_CSTMR_DMN_NT_D">
+<key column="ACCOUNT_ID" unique="false"/>
+<element type="string" column="CUSTOMER_ADMIN_NET_ID"/>
+</bag>
+-->
+<property name="FinancialAccountNumber" column="FINANCIAL_ACCOUNT_NUMBER"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>

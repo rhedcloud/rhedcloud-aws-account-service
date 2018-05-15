@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseUserPassword.Query SYSTEM "../dtd/Query-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseUserPassword.Query>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseUserPassword" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseIdActivationApplication</SenderAppId>
+				<ProducerId>ee7e1262-84ca-43f2-bbd1-66ee37fa7bac</ProducerId>
+				<MessageSeq>624</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>entidactiv</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>03</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>43</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseUserPassword" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<EnterpriseUser>
+			<NetId>
+				<Principal>wamozart</Principal>
+				<Domain>any-openeai-enterprise.org</Domain>
+			</NetId>
+			<LightweightPerson>
+				<InstitutionalId>123456789</InstitutionalId>
+			</LightweightPerson>
+		</EnterpriseUser>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseUserPassword.Query>

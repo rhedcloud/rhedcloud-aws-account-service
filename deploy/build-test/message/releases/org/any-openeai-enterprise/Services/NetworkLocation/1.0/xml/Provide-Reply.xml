@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.NetworkLocation.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.Services.NetworkLocation.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.Services" messageObject="NetworkLocation" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.anyapp</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>networkloc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>org.any-openeai-enterprise.anyapp</SenderAppId>
+				<ProducerId>753f99bc-4917-472b-8c7e-a9bc3ce592e9</ProducerId>
+				<MessageSeq>32</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<NetworkLocation>
+			<Node>Wap1OrWhateverTheHellItIs</Node>
+			<Building>1599 Building</Building>
+			<Address>
+				<Street1>1599 Clifton Road</Street1>
+				<CityOrLocality>Atlanta</CityOrLocality>
+				<StateOrProvince>GA</StateOrProvince>
+				<Nation>USA</Nation>
+				<ZipOrPostalCode>30322</ZipOrPostalCode>
+			</Address>
+			<Floor>5</Floor>
+			<Room>5A</Room>
+		</NetworkLocation>
+	</DataArea>
+</org.any-openeai-enterprise.Services.NetworkLocation.Provide>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseUserPermission.Provide SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterpriseUserPermission/1.0/dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseUserPermission.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseUserPermission" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseApplicationService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>applsvc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2002</Year>
+			<Month>9</Month>
+			<Day>12</Day>
+			<Hour>8</Hour>
+			<Minute>27</Minute>
+			<Second>18</Second>
+			<SubSecond>823</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uillinois.aits.PaymasterBatchErrorViewer</SenderAppId>
+				<ProducerId>c1447a47-156d-4ccb-9be2-876d96acdf63</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<EnterpriseUserPermission>
+			<EnterpriseUser>
+				<NetId>
+					<Principal>hemmings</Principal>
+					<Domain>uillinois.edu</Domain>
+				</NetId>
+				<LightweightPerson>
+					<InstitutionalId>987654321</InstitutionalId>
+				</LightweightPerson>
+			</EnterpriseUser>
+			<EnterprisePermissionName>edu.uillinois.ui-integrate.PaymasterBatchErrorViewer.viewListOfRuns</EnterprisePermissionName>
+		</EnterpriseUserPermission>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseUserPermission.Provide>

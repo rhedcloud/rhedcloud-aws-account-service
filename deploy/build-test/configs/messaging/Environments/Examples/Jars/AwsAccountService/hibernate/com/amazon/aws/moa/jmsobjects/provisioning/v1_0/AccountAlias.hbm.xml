@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.provisioning.v1_0">
+<class name="AccountAlias" table="ACCOUNT_ALIAS">
+<id name="AccountId" column="ACCOUNT_ID">
+<generator class="assigned"/>
+</id>
+<property name="Name" column="NAME"/>
+</class>
+</hibernate-mapping>

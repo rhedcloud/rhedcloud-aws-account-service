@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Defines a message that requests academic history information.
+-->
+<!-- AcademyOne AcademicHistory Web Service 
+	Copyright 2009 AcademyOne, Inc.
+-->
+<!--Release History (this information is manually updated when the message is released)
+	5/5/2009 - stephen.wheat@invivoit.com
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT com.academyone.Service.Statistics.Query (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (StatisticsQuerySpecification)>

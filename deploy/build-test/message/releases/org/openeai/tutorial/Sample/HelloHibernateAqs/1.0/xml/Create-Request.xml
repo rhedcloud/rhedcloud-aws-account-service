@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE org.openeai.tutorial.Sample.HelloHibernateAqs.Create SYSTEM "../dtd/Create-Request.dtd">
+<org.openeai.tutorial.Sample.HelloHibernateAqs.Create>
+	<ControlAreaRequest messageCategory="org.openeai.tutorial.Sample" messageObject="HelloHibernateAqs" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>HelloHibernateAqs</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>HelloHibernateAqs</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<HelloHibernateAqs>
+				<Id>1</Id>
+				<Message>Hi</Message>
+			</HelloHibernateAqs>
+		</NewData>
+	</DataArea>
+</org.openeai.tutorial.Sample.HelloHibernateAqs.Create>

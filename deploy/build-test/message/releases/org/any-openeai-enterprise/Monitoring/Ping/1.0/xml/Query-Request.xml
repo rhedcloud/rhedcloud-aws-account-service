@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!DOCTYPE org.any-openeai-enterprise.Monitoring.Ping.Query SYSTEM "../dtd/Query-Request.dtd">
+<org.any-openeai-enterprise.Monitoring.Ping.Query>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.Monitoring" messageObject="Ping" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>com.academyone.AcademyOneTestSuiteApplication</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AcademyOne</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2009</Year>
+			<Month>5</Month>
+			<Day>5</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>256</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.Monitoring" messageObject="Ping" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<PingQuerySpecification>
+			<Value>This is a test.</Value>
+		</PingQuerySpecification>
+	</DataArea>
+</org.any-openeai-enterprise.Monitoring.Ping.Query>

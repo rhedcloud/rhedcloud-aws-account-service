@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Query SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterprisePermission/1.0/dtd/Query-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Query>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterprisePermission" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.PaymasterBatchErrorViewer</SenderAppId>
+				<ProducerId>ee7e1262-84ca-43f2-bbd1-66ee37fa7bac</ProducerId>
+				<MessageSeq>624</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>PaymasterBatchErrorViewer</AuthUserId>
+				<AuthUserSignature>4b06488e-62b7-45ab-885d-62867f616b3f</AuthUserSignature>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>03</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>43</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterprisePermission" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<QueryFilter value="name=org.openeai.EnterprisePasswordResetters.access"/>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Query>

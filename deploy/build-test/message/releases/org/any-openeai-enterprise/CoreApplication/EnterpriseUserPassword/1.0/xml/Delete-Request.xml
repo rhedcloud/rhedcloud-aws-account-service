@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by David Hemmings (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseUserPassword.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseUserPassword.Delete>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseUserPassword" messageAction="Delete" messageRelease="1.0" messagePriority="1" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseIdActivationApplication</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>301</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>entuserserv</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>03</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<EnterpriseUserPassword>
+				<EnterpriseUser>
+					<NetId>
+						<Principal>wamozart</Principal>
+						<Domain>any-openeai-enterprise.org</Domain>
+					</NetId>
+					<LightweightPerson>
+						<InstitutionalId>123456789</InstitutionalId>
+					</LightweightPerson>
+				</EnterpriseUser>
+				<Password type="secure credential" encryption="cleartext" value="secret2"/>
+			</EnterpriseUserPassword>
+		</DeleteData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseUserPassword.Delete>

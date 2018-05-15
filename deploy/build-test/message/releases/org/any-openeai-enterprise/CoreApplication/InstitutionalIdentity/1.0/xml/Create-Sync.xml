@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Create SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/InstitutionalIdentity/1.0/dtd/Create-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Create>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="InstitutionalIdentity" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.InstitutionalIdentityService</SenderAppId>
+				<ProducerId>94c1b2db-121e-4fca-bb23-31f56697c24d</ProducerId>
+				<MessageSeq>927</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>10</Hour>
+			<Minute>34</Minute>
+			<Second>45</Second>
+			<SubSecond>342</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<InstitutionalIdentity>
+				<InstitutionalId>656613875</InstitutionalId>
+				<UnknownPerson>
+					<SocialSecurityNumber>343786523</SocialSecurityNumber>
+					<Name>
+						<LastName>Mozart</LastName>
+						<FirstName>Wolfgang</FirstName>
+						<MiddleName>A</MiddleName>
+					</Name>
+					<BirthDate>
+						<Month>1</Month>
+						<Day>27</Day>
+						<Year>1756</Year>
+					</BirthDate>
+					<Gender>Male</Gender>
+				</UnknownPerson>
+			</InstitutionalIdentity>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Create>

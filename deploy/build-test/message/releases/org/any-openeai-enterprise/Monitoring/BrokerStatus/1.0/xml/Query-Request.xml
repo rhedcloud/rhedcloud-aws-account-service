@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Monitoring.BrokerStatus.Query SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/Monitoring/BrokerStatus/1.0/dtd/Query-Request.dtd">
+<org.any-openeai-enterprise.Monitoring.BrokerStatus.Query>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="NetIdList" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>974</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>acccnetid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>04</Month>
+			<Day>06</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>42</Second>
+			<SubSecond>144</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.Monitoring" messageObject="BrokerStatus" messageAction="Provide" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<QueryFilter value="name=SonicMQ1"/>
+	</DataArea>
+</org.any-openeai-enterprise.Monitoring.BrokerStatus.Query>

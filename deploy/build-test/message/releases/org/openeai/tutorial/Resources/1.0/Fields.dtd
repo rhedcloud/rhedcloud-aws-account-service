@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--	$Revision: 1.4 $
+		$Date: 2006/12/20 00:45:42 $
+		$Source: /cvs/repositories/openii3/project/message/releases/com/openii/Resources/1.0/Fields.dtd,v $
+-->
+<!--	Elements with no child elements shared by all event messages.
+-->
+<!--
+	Copyright 2009 Emory University.  All Rights Reserved.
+
+	CONFIDENTIAL BUSINESS INFORMATION
+
+	THIS PROGRAM IS PROPRIETARY INFORMATION OF OPEN INTEGRATION INCORPORATED
+	CORPORATION AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
+	NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
+	WITHOUT THE WRITTEN PERMISSION OF OPEN INTEGRATION INCORPORATED
+-->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+-->
+<!-- ====================================================================== -->
+
+
+<!--HelloHibernate Tutorials-->
+<!ELEMENT Id %STRDOM;>
+<!ELEMENT EndDate %DATE;>
+<!ELEMENT GwFullName %STRDOM;>
+<!ELEMENT Message %STRDOM;>
+<!ELEMENT MessageNumber %STRDOM;>
+<!ELEMENT LastModifiedDatetime %DATETIME;>
+<!ELEMENT LastModifiedDate %DATE;>
+<!ELEMENT Principal %STRDOM;>
+<!ELEMENT Role %STRDOM;>
+<!ELEMENT StartDate %DATE;>
+<!ELEMENT Text %STRDOM;>
+
+
+
+<!--TestMoa-->
+<!ELEMENT TmString %STRDOM;>
+<!ELEMENT TmStar %STRDOM;>
+<!ELEMENT TmDate %DATE;>
+<!ELEMENT TmDatetime %DATETIME;>
+<!ELEMENT StartDatetime %DATETIME;>
+
+
+<!ELEMENT Value %STRDOM;>

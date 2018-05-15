@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.ProcessedMessage.Update SYSTEM "../dtd/Update-Request.dtd">
+<org.openeai.toolkit.Console.ProcessedMessage.Update>
+	<ControlAreaRequest messageCategory="org.openeai.toolkit.Console" messageObject="ProcessedMessage" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId>5b9c7fb5-5f7a-4141-aee0-b5e21ef2b89d</ProducerId>
+				<MessageSeq>22</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>swheat</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>05</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<ProcessedMessage>
+                                <RowId>1</RowId>
+				<ApplicationId>com.openii.SyncRouter-TransRouteConsumer</ApplicationId>
+				<ProcessedMessagedId>edu.emory.IdentityService-2b0c4e25-524a-45bc-b0bb-026b37c9f080-1</ProcessedMessagedId>
+				<CreateUser>ESB30</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+			</ProcessedMessage>
+		</NewData>
+		<BaselineData>
+			<ProcessedMessage>
+                                <RowId>1</RowId>
+				<ApplicationId>com.openii.SyncRouter-TransRouteConsumer</ApplicationId>
+				<ProcessedMessagedId>edu.emory.IdentityService-2b0c4e25-524a-45bc-b0bb-026b37c9f080-1</ProcessedMessagedId>
+				<CreateUser>ESB30</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+			</ProcessedMessage>
+		</BaselineData>
+	</DataArea>
+</org.openeai.toolkit.Console.ProcessedMessage.Update>

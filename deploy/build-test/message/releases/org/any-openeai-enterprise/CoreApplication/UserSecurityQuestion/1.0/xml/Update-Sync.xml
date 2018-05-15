@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.UserSecurityQuestion.Update SYSTEM "../dtd/Update-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.UserSecurityQuestion.Update>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="UserSecurityQuestion" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseApplicationService</SenderAppId>
+				<ProducerId>324e738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1011</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>acccnetid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>39</Second>
+			<SubSecond>729</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<UserSecurityQuestion ownerId="123456789">
+				<SecurityQuestion>
+					<QuestionId>1</QuestionId>
+					<Text>What is your favorite color?</Text>
+				</SecurityQuestion>
+				<SecurityAnswer>
+					<Text>Green</Text>
+				</SecurityAnswer>
+			</UserSecurityQuestion>
+		</NewData>
+		<BaselineData>
+			<UserSecurityQuestion ownerId="123456789">
+				<SecurityQuestion>
+					<QuestionId>1</QuestionId>
+					<Text>What is your favorite color?</Text>
+				</SecurityQuestion>
+				<SecurityAnswer>
+					<Text>Blue</Text>
+				</SecurityAnswer>
+			</UserSecurityQuestion>
+		</BaselineData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.UserSecurityQuestion.Update>

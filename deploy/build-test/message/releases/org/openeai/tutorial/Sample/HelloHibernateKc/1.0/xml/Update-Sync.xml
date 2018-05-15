@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE org.openeai.tutorial.Samples.HelloHibernateKc.Update SYSTEM "../dtd/Update-Sync.dtd">
+<org.openeai.tutorial.Samples.HelloHibernateKc.Update>
+	<ControlAreaSync messageCategory="org.openeai.tutorial.Samples" messageObject="HelloHibernateKc" messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+				<ProducerId>9c6ce634-5a4b-4959-be67-52ef3e82847f </ProducerId>
+				<MessageSeq>324</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>paymaster</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<HelloHibernateKc>
+				<Id>1</Id>
+				<Message>Hi2</Message>
+					<MessageNumber>1</MessageNumber>
+			<LastModifiedDatetime>
+					<Year>2011</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</LastModifiedDatetime>
+				<LastModifiedDate>
+					<Month>8</Month>
+					<Day>9</Day>
+					<Year>2012</Year>
+				</LastModifiedDate>
+			</HelloHibernateKc>
+		</NewData>
+		<BaselineData>
+			<HelloHibernateKc>
+				<Id>1</Id>
+				<Message>Hi</Message>
+					<MessageNumber>1</MessageNumber>
+			<LastModifiedDatetime>
+					<Year>2011</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</LastModifiedDatetime>
+				<LastModifiedDate>
+					<Month>8</Month>
+					<Day>9</Day>
+					<Year>2012</Year>
+				</LastModifiedDate>
+			</HelloHibernateKc>
+		</BaselineData>
+	</DataArea>
+</org.openeai.tutorial.Samples.HelloHibernateKc.Update>

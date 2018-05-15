@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!DOCTYPE edu.emory.Network.Cidr.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Network.Cidr.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Network" messageObject="Cidr"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>Cidr</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af0675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>Cidr</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Cidr</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Cidr>
+			<CidrId>1</CidrId>
+			<Network>10.65.0.0</Network>
+			<Bits>23</Bits>
+			<AssociatedCidr>
+				<Type>VpnInsideIpCidr</Type>
+				<Network>169.254.248.0</Network>
+				<Bits>30</Bits>
+			</AssociatedCidr>
+			<AssociatedCidr>
+				<Type>VpnInsideIpCidr</Type>
+				<Network>169.254.252.0</Network>
+				<Bits>30</Bits>
+			</AssociatedCidr>
+			<AssociatedCidr>
+				<Type>CustomerGatewayIpAddress</Type>
+				<Network>170.140.76.1</Network>
+				<Bits>32</Bits>
+			</AssociatedCidr>
+			<AssociatedCidr>
+				<Type>CustomerGatewayIpAddress</Type>
+				<Network>170.140.77.1</Network>
+				<Bits>32</Bits>
+			</AssociatedCidr>
+			<Property>
+				<PropertyName>vpnId</PropertyName>
+				<PropertyValue>1</PropertyValue>
+			</Property>
+			<CreateUser>swheat@emory.edu</CreateUser>
+			<CreateDatetime>
+				<Year>2012</Year>
+				<Month>5</Month>
+				<Day>17</Day>
+				<Hour>13</Hour>
+				<Minute>47</Minute>
+				<Second>30</Second>
+				<SubSecond>842</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</CreateDatetime>
+		</Cidr>
+	</DataArea>
+</edu.emory.Network.Cidr.Provide>

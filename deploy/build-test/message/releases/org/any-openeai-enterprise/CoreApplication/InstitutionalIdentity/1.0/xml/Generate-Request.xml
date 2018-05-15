@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Generate SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/InstitutionalIdentity/1.0/dtd/Generate-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Generate>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="InstitutionalIdentity" messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uiuc.cites.NetIdApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>citesid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="InstitutionalIdentity" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<UnknownPerson>
+			<SocialSecurityNumber>343786523</SocialSecurityNumber>
+			<Name>
+				<LastName>Mozart</LastName>
+				<FirstName>Wolfgang</FirstName>
+				<MiddleName>A</MiddleName>
+			</Name>
+			<BirthDate>
+				<Month>1</Month>
+				<Day>27</Day>
+				<Year>1756</Year>
+			</BirthDate>
+			<Gender>Male</Gender>
+		</UnknownPerson>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Generate>

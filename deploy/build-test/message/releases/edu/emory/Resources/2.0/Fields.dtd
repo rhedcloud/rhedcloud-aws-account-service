@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 1.1 $
+		$Date: 2008/12/03 21:56:59 $
+		$Source: /cvs/repositories/openii3/project/message/releases/edu/emory/Resources/1.0/Fields.dtd,v $
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2008 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Fields.dtd is a file where definitions of all elements without 
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+
+				01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+-->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+-->
+<!-- ================================================== -->
+<!-- AcadProgram added 12/18/2009 for Identity/StudentCareer -->
+<!ELEMENT AcadProgram %STRDOM;>
+<!-- Account added 01/31/2009 for Finance/AccountCategory -->
+<!ELEMENT Account %STRDOM;>
+<!-- AccountDescription added 01/31/2009 for Finance/AccountCategory -->
+<!ELEMENT AccountDescription %STRDOM;>
+<!-- AccountType added 01/31/2009 for Finance/AccountCategory -->
+<!ELEMENT AccountType %STRDOM;>
+<!-- Accuracy added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Accuracy %STRDOM;>
+<!-- ActivityId added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ActivityId %STRDOM;>
+<!-- AlternateId added 8/4/2009 for StudyParticipant-->
+<!ELEMENT AlternateId %STRDOM;>
+<!-- Altitude added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Altitude %STRDOM;>
+<!-- AreaCode added 04/16/2009 for Identity/Person -->
+<!ELEMENT AreaCode %STRDOM;>
+<!-- ArrivalDatetime added 07/16/2009 for Clinical/Visit -->
+<!ELEMENT ArrivalDatetime %DATETIME;>
+<!-- Association added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!-- Association removed 12/16/2009 and replaced with version in Segments -->
+<!-- <!ELEMENT Association %STRDOM;>-->
+<!-- AwardStatus added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT AwardStatus %STRDOM;>
+<!-- BirthCountry added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthCountry %STRDOM;>
+<!-- BirthDay added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthDay %STRDOM;>
+<!-- BirthMonth added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthMonth %STRDOM;>
+<!-- BirthYear added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT BirthYear %STRDOM;>
+<!-- Building added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Building %STRDOM;>
+<!-- BuildingName added 06/13/2011 for Amcom Integration -->
+<!ELEMENT BuildingName %STRDOM;>
+<!-- BusinessUnit added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT BusinessUnit %STRDOM;>
+<!-- BusinessUnitPC added 12/10/2008 for Finance/SmartKey -->
+<!ELEMENT BusinessUnitPC %STRDOM;>
+<!-- Campus added 12/16/2009 for Identity/Location -->
+<!ELEMENT Campus %STRDOM;>
+<!-- Chartfield1 added 12/10/2008 for Finance/SmartKey -->
+<!ELEMENT Chartfield1 %STRDOM;>
+<!-- ChosenFullName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT ChosenFullName %STRDOM;>
+<!-- ChosenName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT ChosenName %STRDOM;>
+<!-- CityOrLocality added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT CityOrLocality %STRDOM;>
+<!-- ClassField added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ClassField %STRDOM;>
+<!-- Classification added 5/18 for ConflictOfInterest -->
+<!ELEMENT Classification %STRDOM;>
+<!-- ClassificationCode added 5/18 for ConflictOfInterest -->
+<!ELEMENT ClassificationCode %STRDOM;>
+<!-- Code added 04/16/2009 for generic use -->
+<!ELEMENT Code %STRDOM;>
+<!-- CollectionDatetime added 7/16/2009 for Clinical/Sample -->
+<!ELEMENT CollectionDatetime %DATETIME;>
+<!-- CompositeName added 05/13/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT CompositeName %STRDOM;>
+<!-- Container added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT Container %STRDOM;>
+<!-- Count added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT Count %STRDOM;>
+<!-- Country added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Country %STRDOM;>
+<!-- CountryCode added 04/16/2009 for Identity/Person -->
+<!ELEMENT CountryCode %STRDOM;>
+<!-- County added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT County %STRDOM;>
+<!-- CourseId added 3/3/2010 for BlackBoardMobile -->
+<!ELEMENT CourseId %STRDOM; >
+<!-- CreateDate added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT CreateDate %DATE;>
+<!-- CreditHours added 3/3/2010 for BlackBoardMobile --> 
+<!ELEMENT  CreditHours %STRDOM; >
+<!-- CurrentHireDate added 12/16/2009 for Identity/Employee -->
+<!ELEMENT CurrentHireDate %DATE;>
+<!-- DateEffective added temporarily for use by AccountCategory 4/6/09 Ament -->
+<!ELEMENT DateEffective %STRDOM;>
+<!-- DepartmentId added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT DepartmentId %STRDOM;>
+<!-- DepartmentName added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT DepartmentName %STRDOM;>
+<!-- Description added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT Description %STRDOM;>
+<!-- DirectoryTitle added 11/15/2010 for BlackBoard Opus -->
+<!ELEMENT DirectoryTitle %STRDOM;>
+<!-- DivisionName added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT DivisionName %STRDOM;>
+<!-- Domain added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Domain %STRDOM;>
+<!-- EffectiveDate added 12/03/2008 for Finance/SmartKey -->
+<!-- EduPersonPrincipalName added 07/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT EduPersonPrincipalName %STRDOM;>
+<!ELEMENT EffectiveDate %DATE;>
+<!-- EffectiveStatus added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT EffectiveStatus %STRDOM;>
+<!-- EmailAddress added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT EmailAddress %STRDOM;>
+<!-- EmplId added 04/16/2009 for Identity/Person -->
+<!ELEMENT EmplId %STRDOM;>
+<!-- EmployeeStatus added 12/16/2009 for Identity/Employee -->
+<!ELEMENT EmployeeStatus %STRDOM;>
+<!-- EmployeeTime added 11/16/2010 for Identity/Employee/Job -->
+<!ELEMENT EmployeeTime %STRDOM;>
+<!-- EndDate added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT EndDate %DATE;>
+<!-- EndTime added 3/1/2010 for BlackboardMobile  --> 
+<!ELEMENT EndTime %TIME; >
+<!-- EstablishedDate added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT EstablishedDate %DATE;>
+<!-- ExtensionNumber added 04/16/2009 for Identity/Person -->
+<!ELEMENT ExtensionNumber %STRDOM;>
+<!-- FirstName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT FirstName %STRDOM;>
+<!-- Floor added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Floor %STRDOM;>
+<!-- FullEmailName added 3/19/2013 for Identity/ProvisionPerson -->
+<!ELEMENT FullEmailName %STRDOM;>
+<!-- FullName added 3/25/2009 for Examples/Greeting -->
+<!-- FullName encumbered 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT FullName %STRDOM;>
+<!-- FundCode added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT FundCode %STRDOM;>
+<!-- FundingSource added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT FundingSource %STRDOM;>
+<!--GcrcId Added 8/04/2009 for StudyParticipant-->
+<!ELEMENT GcrcId %STRDOM;>
+<!-- GradingBasis added 3/3/2010 for BlackboardMobile --> 
+<!ELEMENT  GradingBasis %STRDOM; >
+<!-- Gender added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Gender %STRDOM;>
+<!-- GrantTitle added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT GrantTitle %STRDOM;>
+<!-- Hostname added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Hostname %STRDOM;>
+
+<!-- Identifier added 08/04/2009 for General Use -->
+<!ELEMENT Identifier %STRDOM;>
+<!-- ImageUri added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT ImageUri %STRDOM;>
+<!-- InitialPassword added 01/31/2013 for Identity/NetworkIdentity -->
+<!ELEMENT InitialPassword %STRDOM;>
+<!-- IpNumber added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT IpNumber %STRDOM;>
+<!-- IRBNumber added 8/03/2009 for StudyDefinition -->
+<!ELEMENT IRBNumber %STRDOM;>
+<!-- JobCode added 5/18 for ConflictOfInterest -->
+<!ELEMENT JobCode %STRDOM;>
+<!-- JobTypeCode added 5/20/09 for ConflictOfInterest -->
+<!ELEMENT JobTypeCode %STRDOM;>
+<!-- JobName added 5/18 for ConflictOfInterest -->
+<!ELEMENT JobName %STRDOM;>
+<!-- Key added 12/16/2009 for Identity/Association -->
+<!ELEMENT Key %STRDOM;>
+<!-- LabReceiptDatetime added 7/16/2009 for Clinical/Sample -->
+<!ELEMENT LabReceiptDatetime %DATETIME;>
+<!-- LastName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT LastName %STRDOM;>
+<!-- LatestTerm added 05/20/2009 for Person/COI -->
+<!ELEMENT LatestTerm %STRDOM;>
+<!-- Latitude added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Latitude %STRDOM;>
+<!-- LegalName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT LegalName %STRDOM;>
+<!-- LocId added 12/18/2009 for Identity/Location -->
+<!ELEMENT LocId %STRDOM;>
+<!-- LoginEu added 05/29/2009 for Identity/Person -->
+<!ELEMENT LoginEu %STRDOM;>
+<!-- LoginHc added 05/29/2009 for Identity/Person -->
+<!ELEMENT LoginHc %STRDOM;>
+<!-- Longitude added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Longitude %STRDOM;>
+<!-- MiddleName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT MiddleName %STRDOM;>
+<!-- Name added 04/16/2009 for generic use -->
+<!ELEMENT Name %STRDOM;>
+<!-- NameSuffix added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT NameSuffix %STRDOM;>
+<!-- Nation added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Nation %STRDOM;>
+<!-- NetId added 04/17/2009 for Identity/Person -->
+<!ELEMENT NetId %STRDOM;>
+<!-- Node added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Node %STRDOM;>
+<!-- Number added 04/16/2009 for generic use -->
+<!ELEMENT Number %STRDOM;>
+<!-- OperatingEntity added 5/20/2009 for ConflictOfInterest -->
+<!ELEMENT OperatingEntity %STRDOM;>
+<!-- OperatingUnit added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT OperatingUnit %STRDOM;>
+<!-- OrigHireDate added 12/16/2009 for Identity/Employee -->
+<!ELEMENT OrigHireDate %DATE;>
+<!-- ParticipantId added 7/16/2009 for Clinical/Visit -->
+<!ELEMENT ParticipantId %STRDOM;>
+<!-- PersonClassification added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT PersonClassification %STRDOM;>
+<!-- PersonClassificationHealthcare added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT PersonClassificationHealthcare %STRDOM;>
+<!-- PersonClassificationValue added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT PersonClassificationValue %STRDOM;>
+<!-- PersonClassificationValueHealthcare added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT PersonClassificationValueHealthcare %STRDOM;>
+<!-- PersonJobStatus added 5/18 for ConflictOfInterest -->
+<!ELEMENT PersonJobStatus %STRDOM;>
+<!-- PersonJobStatusCode added 5/18 for ConflictOfInterest -->
+<!ELEMENT PersonJobStatusCode %STRDOM;>
+<!-- PhoneNumber added 05/18/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT PhoneNumber %STRDOM;>
+<!-- Prefix added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Prefix %STRDOM;>
+<!-- PrivateIp added 04/14/2018 for Network/StaticNat -->
+<!ELEMENT PrivateIp %STRDOM;>
+<!-- Prsni added 04/22/2009 for Identity/Person -->
+<!ELEMENT Prsni %STRDOM;>
+<!-- ProgramCode added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ProgramCode %STRDOM;>
+<!-- ProjectId added 12/03/2008 for Finance/SmartKey -->
+<!ELEMENT ProjectId %STRDOM;>
+<!-- ProposalId added 04/16/2009 for SponsoredPrograms/ConflictOfInterest -->
+<!ELEMENT ProposalId %STRDOM;>
+<!-- ProposalStatus added 04/16/2009 for SponsoredPrograms/ConflictOfInterest -->
+<!ELEMENT ProposalStatus %STRDOM;>
+<!-- ProposalTitle added 04/16/2009 for SponsoredPrograms/ConflictOfInterest -->
+<!ELEMENT ProposalTitle %STRDOM;>
+<!-- ProtocolId added 08/04/2009 for Clinic/Visit -->
+<!ELEMENT ProtocolId %STRDOM;>
+<!-- PublicId added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT PublicId %STRDOM;>
+<!-- PublicIp added 04/14/2018 for Network/StaticNat -->
+<!ELEMENT PublicIp %STRDOM;>
+<!-- Realm added 12/16/2009 for Identity/Association -->
+<!ELEMENT Realm %STRDOM;>
+<!-- RoleName added 08/19/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT RoleName %STRDOM;>
+<!-- Room added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Room %STRDOM;>
+<!-- SampleId added 7/16/2009 for Clinical/Sample -->
+<!ELEMENT SampleId %STRDOM;>
+<!-- ScheduleParam added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT ScheduleParam %STRDOM;>
+<!-- SchoolCode added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT SchoolCode %STRDOM;>
+<!-- SchoolName added 5/20/2009 for COI -->
+<!ELEMENT SchoolName %STRDOM;>
+<!-- SchoolOrUnitName added 5/18/2009 for ConflictOfInterest -->
+<!ELEMENT SchoolOrUnitName %STRDOM;>
+<!-- SequenceNumber added 05/18/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT SequenceNumber %STRDOM;>
+<!-- Section added 3/3/2010 for BlackBoardMobile -->
+<!ELEMENT Section %STRDOM; >
+
+<!-- ServiceDate added 12/16/2009 for Identity/Employee -->
+<!ELEMENT ServiceDate %DATE;>
+<!-- ServiceMatrixString added 01/31/2013 for Identity/ProvisionPerson -->
+<!ELEMENT ServiceMatrixString %STRDOM;>
+<!-- SetId added 02/01/09 for Finance/SmartKey -->
+<!ELEMENT SetId %STRDOM;>
+<!-- SmartKeyValue added 01/30/2008 for Finance/SmartKey -->
+<!ELEMENT SmartKeyValue %STRDOM;>
+<!-- SponsorName added 05/27/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT SponsorName %STRDOM;>
+<!-- SSN added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT SSN %STRDOM;>
+<!-- StartDate added 05/18/2009 for general use -->
+<!ELEMENT StartDate %DATE;>
+<!-- StartTime added 3/3/2010 for BlackboardMobile  --> 
+<!ELEMENT StartTime %TIME; >
+<!-- State added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT State %STRDOM;>
+<!-- StateOrProvince added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT StateOrProvince %STRDOM;>
+<!-- Street1 added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Street1 %STRDOM;>
+<!-- Street2 added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Street2 %STRDOM;>
+<!-- Street3 added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT Street3 %STRDOM;>
+<!-- StudyIdentifier added 7/16/2009 for Clinical/StudyDefinition -->
+<!ELEMENT StudyIdentifier %STRDOM;>
+<!-- Suffix added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Suffix %STRDOM;>
+<!-- Tag added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Tag %STRDOM;>
+<!-- Term added 12/18/2009 for Identity/StudentCareer -->
+<!ELEMENT Term %STRDOM;>
+<!-- TerminationDate added 3/5/2013 for Identity/Employee -->
+<!ELEMENT TerminationDate %DATE;>
+<!-- TransactionId added 02/02/2010 for Identity Query Specifications -->
+<!ELEMENT TransactionId %STRDOM;>
+<!-- Text added 03/25/2009 for Examples/Greeting -->
+<!ELEMENT Text %STRDOM;>
+<!-- Upn added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
+<!ELEMENT Upn %STRDOM;>
+
+<!-- Volume added 7/16/2009 for Clinical/StudySample -->
+<!ELEMENT Volume %STRDOM;>
+<!-- ZipOrPostalCode added 04/14/2009 for Network/NetworkLocation -->
+<!ELEMENT ZipOrPostalCode %STRDOM;>
+<!-- ================================================== -->
+<!--  Changelog
+	04/14/2009	tsj	clean up
+	04/14/2009	tsj	Network/NetworkLocation
+	04/14/2009	tsj	Identity/EnterpriseIdentity
+	04/14/2009	tsj	Identity/NetworkIdentity
+	04/16/2009	tsj	SponsoredPrograms/PersonDemographic
+	04/16/2009	tsj	SponsoredPrograms/ExtramuralProposal
+	04/16/2009	tsj	SponsoredPrograms/ConflictOfInterest
+	04/17/2009	tsj	replace SponsoredPrograms/PersonDemographic with Identity/Person
+	05/18/2009	ssa	Changs for Conflict of Interest Person
+	07/19/2009	ssa	Clinical/StudyDefinition
+	07/19/2009	ssa	Clinical/Visit
+	08/04/2009  	ssa	Changes to Clinical Visit and StudyDefinition
+	08/19/2009  	tsj	add StudyStaff to SponsoredPrograms/ExtramuralProposal
+    12/16/2009    meb  remove Association, as it is now defined in Segments
+    12/18/2009    meb  Identity/Association
+    12/18/2009    meb  Identity/Employee
+    12/18/2009    meb  Identity/Location
+    12/18/2009    meb  Identity/StudentCareer
+    03/03/2010  jleon Added Fields for BlackboardMobile 
+    03/05/2013    kjb Added TerminationDate for IdentityService
+-->
+<!--added for HipaaAuditLog 7/14/2014-->
+<!ELEMENT CreateDatetime %DATETIME;>
+<!ELEMENT EventDatetime %DATETIME;>
+<!ELEMENT AuditDatetime %DATETIME;>
+<!ELEMENT StartEventDatetime %DATETIME;>
+<!ELEMENT EndEventDatetime %DATETIME;>
+<!ELEMENT StartAuditDatetime %DATETIME;>
+<!ELEMENT EndAuditDatetime %DATETIME;>
+<!ELEMENT LogEntryId %STRDOM;>
+<!ELEMENT EventType %STRDOM;>
+<!ELEMENT EventStatus %STRDOM;>
+<!ELEMENT EventTarget %STRDOM;>
+<!ELEMENT ApplicationName %STRDOM;>
+
+<!--added for HalsReport 8/21/2015-->
+<!ELEMENT LogCount %STRDOM;>
+<!ELEMENT DistinctEppnCount %STRDOM;>
+<!ELEMENT DistinctIpCount %STRDOM;>
+<!ELEMENT DistinctEventTypeCount %STRDOM;>
+<!ELEMENT DistinctEventStatusCount %STRDOM;>
+<!ELEMENT LastEventDatetime %DATETIME;>
+<!ELEMENT LastAuditDatetime %DATETIME;>
+<!ELEMENT StartDatetime %DATETIME;>
+<!ELEMENT EndDatetime %DATETIME;>
+
+

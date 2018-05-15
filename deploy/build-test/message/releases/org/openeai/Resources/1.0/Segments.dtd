@@ -1,0 +1,493 @@
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Tod Jackson (University of Illinois) -->
+<!--	$Revision: 4038 $
+		$Date: 2015-09-10 16:37:25 -0400 (Thu, 10 Sep 2015) $
+		$Source$
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2002 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Segments.dtd is the file where definitions of all elements with
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from external
+						organizations.  For example, in their own
+						Resources.dtd, an enterprise will reference
+						the OpenEAI definitions, which give them the
+						ControlArea* definitions required by the OpenEAI
+						Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+						children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 		a file in which any custom data types are defined
+		
+		This approach was learned by observing constraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!-- Release History:
+
+		2002/07/01	1.0 (tod@openeai.org, steve@openeai.org)
+ -->
+<!--	Include OpenEAI Fields -->
+<!ENTITY % ORG.OPENEAI.RESOURCES.FIELDS SYSTEM "Fields.dtd">
+%ORG.OPENEAI.RESOURCES.FIELDS;
+<!--	Authentication added 01/09/2001 for */ControlArea/Sender/Authentication
+		
+		The Authentication element includes authentication information from the
+		application that produced the message.
+		
+		The AuthUserId element should contain a security principal of the online
+		user whose session activity caused the production of the message, if 
+		appropriate.  Alternately, this element may contain a security principal
+		indicative of the trusted application itself that produced the message.
+		
+		The optional AuthUserSignature element may contain a digital signature
+		or certificate for a user or application indicated in the AuthUserId
+		element, if the applications engaged in messaging can support this type
+		of authentication, and if such authentication is at all meaningful to
+		an enterprise.
+ -->
+<!ELEMENT Authentication (AuthUserId, AuthUserSignature?)>
+<!--	ControlAreaReply added 04/02/2001 for */ControlAreaReply
+
+		The ControlAreaReply element contains metadata for reply messages.
+		Here, the message is named with its fully-qualified name in the
+		messageCategory, messageObject, messageAction, and messageType
+		attributes.  The messageRelease attribute identifies the release
+		level of the message object named in the messageObject attribute.
+		The messagePriority attribute should contain the priority of the
+		message from 0-9, where 0 is the lowest priority and 9 is the 
+		highest priority.  Messaging foundation and applications may use
+		the value of this attribute to set the priority of the message
+		with the message transport when the message is sent.
+		
+		The optional SourceInfo element, if present, contains information
+		about the original source of the message, including the SourceId
+		element, which is the name of the source application, as well as
+		the original and appropriate ControlArea* element.  In the case
+		of a reply, this may be used when a reply is proxied by a messaging
+		infrastructure application or another messaging application.  An
+		example of such an application is the OpenEAI EnterpriseRequestProxy.
+		
+		The optional TargetInfo element, if present, consists of a TargetId
+		element, which identifies the target application by name.  This has
+		not been used for request/reply messaging in the past, but it is used
+		by messaging infrastructure applications that route synchronization
+		messages.  The optional TargetInfo element is present in the 
+		ControlAreaReply to maintain parallelism with the three ControlArea*
+		elements and because some scenarios for using the TargetInfo element
+		in request/reply messaging can be easily conceived.
+		
+		The required Sender element consists of a required MessageId and 
+		Authentication element.  The MessageId element uniquely identifies
+		the message.  See the description of the MessageId element for
+		details.  The Authentication element provides authentication
+		information for the application producing the message or for the
+		online user of the session of the application producing the message,
+		whichever is more relevant or supported by the applications involved
+		in the integration.
+		
+		The required Datetime element expresses the precise date and time
+		the message was produced with millisecond precision.  See the
+		description of the Datetime element for more details.
+		
+		The required Result element includes a ProcessedMessageId, which
+		is the MessageId of the processed request to which this is a reply.
+		The ProcessedMessageId can be used to correlate a reply to a request
+		for message transports that may not provide a mechanism to do
+		this more readily.  The Result element also includes zero or 
+		more Error elements that must contain precise information about
+		any errors encountered in processing the request for which this
+		message is a reply.  See the description of the Error element
+		for details. 
+ -->
+<!ELEMENT ControlAreaReply (SourceInfo?, TargetInfo?, Sender, Datetime, Result)>
+<!ATTLIST ControlAreaReply
+	messageCategory CDATA #REQUIRED
+	messageObject CDATA #REQUIRED
+	messageAction (Provide | Response) #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+	messageType (Reply) #REQUIRED
+>
+<!--	ControlAreaRequest added 04/02/2001 for */ControlAreaRequest
+
+		See the description of ControlAreaReply for a description of the
+		purpose and usage of ControlAreaRequest.  These elements are
+		very similar.  ControlAreaRequest has the following differences:
+		
+		The attribute ControlAreaRequest/@messageAction is constrained
+		to the list of valid request actions, where
+		ControlAreaReply/@messageAction is constrained to the valid list
+		of reply actions.
+		
+		ControlAreaRequest contains no Result element.  Instead, it 
+		contains a required ExpectedReplyFormat element.  The 
+		ExpectedReplyFormat element is an empty element with attributes
+		that specify the fully-qualified name of the reply that the
+		requesting application expects in response to this request.
+-->
+<!ELEMENT ControlAreaRequest (SourceInfo?, TargetInfo?, Sender, Datetime, ExpectedReplyFormat)>
+<!ATTLIST ControlAreaRequest
+	messageCategory CDATA #REQUIRED
+	messageObject CDATA #REQUIRED
+	messageAction (Assign | Query | Create | Delete | Generate | Update) #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+	messageType (Request) #REQUIRED
+>
+<!-- ControlAreaSync added 04/02/2001 for */ControlArea
+		
+		See the description of ControlAreaReply for a description of the
+		purpose and usage of ControlAreaSync.  These elements are very
+		similar.  ControlAreaSync has the following differences:
+		
+		The optional SourceInfo element is used frequently in
+		synchronization messages by messaging infrastructure applications.
+		For example, when a synchronization message is routed or transformed
+		by a messaging infrastructure application, that application in 
+		effect consumes a synchronization message from an authoritative
+		source and republishes one or more synchronization messages to
+		one or more subscribing applications.  The messaging infrastructure
+		application must populate the ControlAreaSync element of the 
+		SourceInfo element to identify the original source of the message 
+		and preserve the original ControlAreaSync information from the
+		original message, particularly the Datetime of the business event,
+		for use in the consumption of the message by the ultimate target
+		application.  This information is essential to properly order the
+		processing of synchronization messages.  An example of such a 
+		messaging infrastructure application is the OpenEAI
+		EnterpriseTransRouter application for routing enterprise
+		messages and translating their values.
+		
+		The optional TargetInfo element is similarly used by messaging
+		infrastructure applications.  In cases where a messaging infrastructure
+		application routes a synchronization message to a specific target
+		application, the infrastructure application should populate the 
+		TargetInfo/TargetId element with the official name of the application
+		to which the message is being routed.  This allows other messaging
+		infrastructure applications that log all synchronization messages
+		to record the target to which each message was published.  An example
+		of such a messaging infrastructure application is the OpenEAI 
+		EnterpriseSyncLogger.
+		
+		The required Datetime element must contain the precise date and time
+		of the business event that triggered the production of the 
+		synchronization message.  This is an important distinction between the
+		Datetime element in the ControlAreaRequest and the ControlAreaReply
+		versus the Datetime in the ControlAreaSync.  This distinction must
+		be made given the variety of ways that applications can be made to
+		publish synchronization messages.  Many application can be made to
+		publish synchronization messages within the bounds of the transaction
+		that actually changes the data of the message object at the
+		authoritative source.  In these cases the Datetime in the
+		ControlAreaSync is effectively the precise date and time the sync
+		message was published.  However, many applications may record changes
+		to enterprise data in the form of business events, which are read
+		at some interval to trigger the publication of sync messages.  This is
+		a polling strategy.  In these cases, the staged business events MUST
+		contain the precise date and time of the business event, so that
+		date and time can be used to populate the ControlAreaSync/Datetime
+		element.  This information is ABSOLUTELY REQUIRED for applications
+		that consume sync messages or for messaging infrastructure applications
+		to properly order the processing of synchronization messages.
+		
+		The optional Result element is used in a special synchronization message
+		in the org.openeai.CoreMessaging category called
+org.openeai.CoreMessaging.Sync.Error-Sync.  As described in the message
+processing behavior specified by the OpenEAI Message Protocol, whenever
+a sync-consuming application encounters a fatal error processing a
+synchronization message, that application MUST publish an
+org.openeai.CoreMessaging.Sync.Error-Sync message that can be consumed
+		by messaging infrastructure applications to record the error and alert
+		integration administrators.  An example of such a messaging infrastructure
+		application is the OpenEAI EnterpriseSyncErrorLogger.  The Result element
+		includes the ProcessedMessageId, which is the MessageId of the sync message
+		that was being processed when an error or errors were encountered.  The
+		optional Result element also contains zero or more Error elements with
+		details on the errors encountered consuming the synchronization message.
+		See the description of the Error element for more details.	
+ -->
+<!ELEMENT ControlAreaSync (SourceInfo?, TargetInfo?, Sender, Datetime, Result?)>
+<!ATTLIST ControlAreaSync
+	messageCategory CDATA #REQUIRED
+	messageObject CDATA #REQUIRED
+	messageAction (Assign | Create | Delete | Generate | Update | Error) #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+	messageType (Sync) #REQUIRED
+>
+<!--	Datetime added 12/15/2000 for */ControlArea/Datetime
+
+		Within ControlAreaRequest and ControlAreaReply, Datetime is the precise
+		date and time the message is produced.  Within a ControlAreaSync,
+		Datetime is the precise date and time of the change in state of the message
+		object or, in other words, the precise date and time of the business
+		event that triggers the sync message.  See the descriptions of 
+		ControlAreaRequest, ControlAreaReply, and ControlAreaSync for details.
+		
+		The prescribed format for Year, Month, Day, Hour, Minute, Second, and
+		SubSecond are unpadded numeric values within their appropriate ranges.
+		These should be evident for all values except SubSecond, which should
+		presently be implemented as a millisecond value between 0 and 999.  The
+		value of Timezone should be in the format of offset from universal time.
+		These formatting rules are illustrated by the following example.
+		
+		<Datetime>
+			<Year>2002</Year>
+			<Month>1</Month>
+			<Day>9</Day>
+			<Hour>9</Hour>
+			<Minute>11</Minute>
+			<Second>0</Second>
+			<SubSecond>475</SubSecond>
+			<Timezone>GMT-06:00</Timezone>
+		</Datetime>
+ -->
+<!ELEMENT Datetime (Year, Month, Day, Hour, Minute, Second, SubSecond, Timezone)>
+<!--	Error added 12/15/2000 for */ControlArea/Result
+
+		The Error element consists of a type attribute, which identifies
+		the error as either a system or application level error.  System
+		level errors are more technical or mechanical in nature such as
+		an exception as reported by the JDBC driver in connecting to or
+		communicating with a database.  An application level error is a 
+		business logic error of some kind.  The Error element also contains
+		an ErrorNumber element with an error number or other appropriate,
+		short-form identifier as well as an ErrorDescription element, which
+		is a clear, plain-language description of the error in the case of
+		and application level error, so that it can be displayed to end users,
+		and they will find it meaningful.  In the case of system level errors,
+		the description may be more technical such as a Java stack trace or
+		other technical trace information. 
+ -->
+<!-- DeleteAction added 01/11/2001 for DataArea/DeleteData
+
+		The DeleteAction element presently contains one attribute called
+		'type', which specifies the type of the delete action.  The OpenEAI 
+		Message Protocol specifies that a consuming application treat a
+		delete action of type 'delete' as a standard business transaction,
+		applying all appropriate business rules of the application.  In
+		other words, a delete action of type 'delete' is a standard delete.
+		A delete action of type 'purge' indicates that the object of the
+		message be removed completely from the application or truly
+		purged.  Support for delete action of type 'purge' can be very 
+		helpful in support of integration testing.
+
+ -->
+<!ELEMENT DeleteAction EMPTY>
+<!ATTLIST DeleteAction
+	type (Delete | Purge) #REQUIRED
+>
+<!ELEMENT Error (ErrorNumber, ErrorDescription)>
+<!ATTLIST Error
+	type (system | application) #REQUIRED
+>
+<!-- ExpectedReplyFormat added 04/02/2001 for */ControlAreaRequest 
+
+		The ExpectedReplyFormat element is an empty element, which consists of 
+		attributes to specify the fully-qualified name and release number of the
+		message object for the reply that the requesting application expects in
+		response to its request.
+ -->
+<!ELEMENT ExpectedReplyFormat EMPTY>
+<!ATTLIST ExpectedReplyFormat
+	messageCategory CDATA #REQUIRED
+	messageObject CDATA #REQUIRED
+	messageAction (Provide | Response) #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messageType (Reply) #REQUIRED
+>
+<!-- MessageId added 12/15/2000 for */ControlArea/Sender/MessageId
+		
+		The MessageId element uniquely identifies the message.  MessageIds must
+		be unique within an enterprise, and it is suggested they be absolutely
+		unique (world-wide, forever) to facilitate direct messaging using this
+		protocol between trading partners.  Precisely how the MessageId is
+		guaranteed to be unique is up to the implementer.  However, as with all
+		aspects of the OpenEAI Protocol, the OpenEAI Project provides a concrete
+		deployment pattern and foundation that implements this uniqueness that
+		implementers may choose to use.
+		
+		The MessageId element consists of the SenderAppId, ProducerId, and MessageSeq
+		elements.  The SenderAppId element is intended to represent the official name of the
+		application that produced the message.  This name should be fully qualified
+		with the reverse domain name of your enterprise to help ensure global
+		uniqueness of the MessageId.  The ProducerId element is the identifier of the
+		component of the application that produced the message.  This could be static
+		or dynamic.  For example, the OpenEAI Application Foundation message producers 
+		can invoke a servlet-exposed UUID generation servlet when they start to generate
+		a UUID that is used as the ProducerId.  These message producers can also
+		generate this UUID locally.  See the OpenEAI API Introduction document for more
+		details on the precise behavior of OpenEAI message producers.  The MessageSeq
+		element is the message sequence.  This is usually implemented as a count of
+		the number of messages produced by the producer.  Alternately,
+		if ProducerId is static, MessageSeq could be implemented as a total count of all
+		messages produced by an application.
+		
+		The following is an example of a MessageId element from a message published by
+		the University of Illinois' Paymaster system:
+		
+		<MessageId>
+			<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+			<ProducerId>34ce9c65-29f3-4944-ad5b-d77cb356ccbe</ProducerId>
+			<MessageSeq>1</MessageSeq>
+		</MessageId> 
+ -->
+<!ELEMENT MessageId (SenderAppId, ProducerId, MessageSeq)>
+<!--	ProcessedMessageId added 01/12/2001 for PersonEmergencyContactProvide/DataArea/Result
+
+		The ProcessedMessageId is merely a MessageId that appears in
+		the Result element of a ControlAreaReply or ControlAreaSync.
+		This is only named differently than the MessageId element,
+		because experience teaches that administrators frequently confuse
+		the MessageId of the processed request or sync with the real MessageId
+		of the reply or of the org.openeai.CoreMessaging.Sync.Error-Sync if two
+occurrences of a MessageId element appear as children of different elements in 
+		a control area.  Therefore, when a MessageId is used in this way, 
+		it is expressly called a ProcessedMessageId.  See the description
+		of the MessageId element for details on what comprises a MessageId.
+ -->
+<!ELEMENT ProcessedMessageId (SenderAppId, ProducerId, MessageSeq)>
+<!--	Result added for PersonEmergencyContactResponse/DataArea/Result on 01/09/2001 
+
+		The Result element is used to report errors encountered in processing
+		request and sync messages.  The Result element consists of a
+		ProcessedMessageId, which identifies the message that was being processed
+		when errors were encountered.  See the description of the
+		ProcessedMessageId element for details.  The Result element also 
+		consists of zero or more Error elements.  Each of these consist of an
+		ErrorNumber and ErrorDescription element.  See the description of the 
+		Error element for details.
+		
+ -->
+<!ELEMENT Result (ProcessedMessageId, Error*)>
+<!ATTLIST Result
+	action (Assign | Query | Create | Delete | Generate | Update) #REQUIRED
+	status (success | failure) #REQUIRED
+>
+<!--	Sender added 12/15/2000 for */ControlArea/Sender
+
+		The Sender element consists of a required MessageId element and a
+		required Authentication element, which identify the sending application
+		and provide authentication context from the sending application as well as
+		uniquely identify the message.  See the description of the MessageId and
+		Authentication elements for more details.
+ -->
+<!ELEMENT Sender (MessageId, TestId?, Authentication)>
+<!--	SourceInfo added 12/15/2000 for */ControlArea/SourceInfo
+
+		The SourceInfo element consists of a required ControlAreaSync,
+		ControlAreaRequest, or a ControlAreaReply.  This element is 
+		used by messaging infrastructure applications, which may route,
+		transform, or proxy messages but that still need to retain
+		some control information from the application that produced the
+		message originally.
+ -->
+<!ELEMENT SourceInfo (ControlAreaSync | ControlAreaRequest | ControlAreaReply)>
+<!--	TargetInfo added 12/15/2000 for */ControlArea/TargetInfo
+
+		The TargetInfo element consists of a required TargetAppName element.
+		The TargetAppName element is used by messaging infrastructure applications,
+		which may route, transform, or proxy messages to specific target
+		applications.  When these specific targets are known, such
+		infrastructure applications name the target by using the
+		TargetAppName element.
+ -->
+<!ELEMENT TargetInfo (TargetAppName)>
+<!-- TestId added 1/21/2003 for */ControlAreaRequest/Sender/TestId
+
+		The TestId element is used to correlate data specified in a TestSuite with 
+		message published by a gateway when requests are sent to that gateway 
+		to perform some action.  The gateway can pull the TestId element out of the
+		ControlArea of the request message it consumes and put it on any sync 
+		messages it publishes.  Then, the OpenEAI Test Suite Application can 
+		correlate that sync message to a TestSuite-TestSeries-TestCase-TestStep 
+		listed in the TestSuite document associated to the gateway being tested.
+-->
+<!ELEMENT TestId (TestSuiteName, TestSeriesNumber, TestCaseNumber, TestStepNumber)>
+
+
+
+<!-- TODO: (Comments needed), for added functionality of XXXQuerySpecification such that
+     the following dtd can be defined by OpenEAI users:
+     <!ELEMENT XXXQuerySpecification (Logical*,Comparison*,Yyy?,..?)>
+
+     //usage example:
+     <XXXQuerySpecification>
+        
+     </XXXQuerySpecification>
+
+
+     //currently this is used by HibernatePersistenceHelper
+-->
+<!ELEMENT Logical EMPTY>
+<!ATTLIST Logical operator CDATA #REQUIRED>
+<!ATTLIST Logical fields CDATA #REQUIRED>
+
+<!ELEMENT Comparison EMPTY>
+<!ATTLIST Comparison operator CDATA #REQUIRED>
+<!ATTLIST Comparison fields CDATA #REQUIRED>
+<!ATTLIST Comparison data CDATA #IMPLIED>
+
+<!ELEMENT QueryLanguage (SqlString?,Parameter*)>
+<!ATTLIST QueryLanguage type CDATA #REQUIRED>
+<!ATTLIST QueryLanguage name CDATA #IMPLIED>
+<!ATTLIST QueryLanguage value CDATA #IMPLIED>
+<!ATTLIST QueryLanguage max CDATA #IMPLIED>
+
+
+<!ELEMENT SqlString (Return*)>
+<!ATTLIST SqlString value CDATA #REQUIRED>
+<!ELEMENT Return EMPTY>
+<!ATTLIST Return name CDATA #REQUIRED>
+<!ATTLIST Return type CDATA #IMPLIED>
+
+
+<!ELEMENT Parameter EMPTY>
+<!ATTLIST Parameter name CDATA #REQUIRED>
+<!ATTLIST Parameter value CDATA #IMPLIED>
+<!ATTLIST Parameter type CDATA #IMPLIED>  <!-- value can be of 'list' -->
+<!-- todo: add type, value can be 'list'   this would be the same as parameterName ending with a list such as xyzList which is already implemented
+
+todo: add  scalarlist type to QueryLanguage type
+-->
+
+
+<!ELEMENT Scalar (ScalarValue?)>
+<!ELEMENT ScalarQuerySpecification (QueryLanguage?,Parameter*)>
+<!ATTLIST ScalarQuerySpecification name CDATA #IMPLIED>
+
+<!ELEMENT ScalarList (ScalarListValue?)>
+<!ELEMENT ScalarListQuerySpecification (QueryLanguage?,Parameter*)>
+<!ATTLIST ScalarListQuerySpecification name CDATA #IMPLIED>
+

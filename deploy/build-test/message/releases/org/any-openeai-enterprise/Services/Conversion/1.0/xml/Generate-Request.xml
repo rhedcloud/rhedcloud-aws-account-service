@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (InVivo IT) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.Conversion.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<org.any-openeai-enterprise.Services.Conversion.Generate>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.Services" messageObject="Conversion" messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>my.com.sains.MyCare2x</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>MyCare2x</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2009</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.Services" messageObject="Conversion" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<ConversionSpecification inputFormat="HL7-2.3.1" outputFormat="HAPI-XML">
+			<InputText><![CDATA[MSH|^~\&|HCLAB||HIS||20090605012149||ORU^R01|HCL00006270881|P|2.3||||||8859
+PID|1||760114125218B||^I/O SARAWUJAH BT SALLEH|||U
+OBR|1|260999|260999|PBF^Peripheral Blood Film|R|20090404004934||||||||20090404004952||00^N/A||PISO^Paediatric ISO/HDU||||20090605012149||||||PISO^Paediatric ISO/HDU
+OBX|1|ST|SMEAR^SMEAR||!||RNF|N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|2|ST|FBC^Full Blood Count||""||||||F
+OBX|3|ST|WBC^WBC||6.83|10\S\3/uL|3.99 - 10.00|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|4|ST|RBC^RBC||5.08|10\S\6/uL|4.04 - 6.13|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|5|ST|HGB^HGB||18.0|g/dL|12.2 - 18.1|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|6|ST|HCT^HCT||53.2|%|37.7 - 53.7|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|7|ST|MCV^MCV||104.7|fL|76.0 - 96.0|H|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|8|ST|MCH^MCH||35.4|pq|27.0 - 31.2|H|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|9|ST|MCHC^MCHC||33.8|q/dL|31.8 - 35.4|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|10|ST|PLT^PLT||77.0|10\S\3/uL|142 - 424|L|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|11|ST|RDW-CV^RDW-CV||17.2|%|11.6 - 14.8|H|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|12|ST|RDW-SD^RDW-SD||66.9|fL|37.0 - 54.0|H|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|13|ST|PDW^PDW||-|fL|0.0 - 99.9|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|14|ST|MPV^MPV||-|fL|0.0 - 99.9|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|15|ST|P-LCR^P-LCR||-|%|13.0 - 43.0|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|16|ST|PCT^PCT||-|%|0.17 - 0.35|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|17|ST|DC^Differential Count||""||||||F
+OBX|18|ST|LYMPH#^LYMPH#||1.95|10\S\3/uL|0.60 - 3.4|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|19|ST|MID#^MID#||!|10\S\3/uL||N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|20|ST|MXD#^MXD#||!|10\S\3/uL||N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|21|ST|GRAN#^GRAN#||!|10\S\3/uL||N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|22|ST|NEUT#^NEUT#||3.72|10\S\3/uL|2.00 - 6.90|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|23|ST|MONO#^MONO#||0.95|10\S\3/uL|0 - 0.90|H|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|24|ST|EO#^EO#||0.20|10\S\3/uL|0 - 0.70|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|25|ST|BASO#^BASO#||0.01|10\S\3/uL|0 - 0.20|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|26|ST|LYMPHp^LYMPH%||28.60|%|10.0 - 50.0|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|27|ST|MIDp^MID%||!|%||N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|28|ST|MXDp^MXD%||!|%||N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|29|ST|GRANp^GRAN%||!|%||N|||D|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|30|ST|NEUTp^NEUT%||54.50|%|37.0 - 80.0|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|31|ST|MONOp^MONO%||13.90|%|0 - 12.0|H|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|32|ST|EOp^EO%||2.9|%|0 - 7.0|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|33|ST|BASOp^BASO%||0.1|%|0 - 2.5|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|34|ST|RET^Reticulocyte Count||""||||||F
+OBX|35|ST|RETp^RET%||-|%|0.2 - 2.0|N|||F|||20090404123606|CTRLAB^CENTRAL LAB|ZAH^ZAHRENA BT JAIK
+OBX|36|FT|PBF1^Peripheral Blood Film||\.br\RBC MORPHOLOGY :\.br\Normal Hb level\.br\Normochromic normocytic picture\.br\Target cells\.br\Occasional polychromatic cell seen\.br\Many burr cells noted\.br\\.br\WBC MORPHOLOGY :\.br\Normal count and morphology\.br\Left shifted cells\.br\\.br\PLATELETS :\.br\Normal count and adequate in film\.br\\.br\Impression : 1. No evidence of hemolysis in this blood film.\.br\             2. Target cells to rule out liver immaturity.|||N|||F|||20090409161756|CTRLAB^CENTRAL LAB|DRWAN^DR WAN ASWANI
+]]></InputText>
+		</ConversionSpecification>
+	</DataArea>
+</org.any-openeai-enterprise.Services.Conversion.Generate>

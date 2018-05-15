@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.StockQuote.Create SYSTEM "../dtd/Create-Sync.dtd">
+<org.any-openeai-enterprise.Services.StockQuote.Create>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.Services" messageObject="StockQuote" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.anyapp</SenderAppId>
+				<ProducerId>4f5f7d44-5c19-40fb-bd2b-24c9d8b99ded</ProducerId>
+				<MessageSeq>937</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>stock</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<StockQuote>
+				<StockSymbol>IBM</StockSymbol>
+				<StockName>INTL BUSINESS MAC</StockName>
+				<LastPrice>119.05</LastPrice>
+				<TimeStampDatetime>
+					<Year>2007</Year>
+					<Month>10</Month>
+					<Day>16</Day>
+					<Hour>10</Hour>
+					<Minute>10</Minute>
+					<Second>1</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>EST</Timezone>
+				</TimeStampDatetime>
+				<PriceChange>+1.02</PriceChange>
+				<OpenPrice>118.02</OpenPrice>
+				<HighPrice>119.27</HighPrice>
+				<LowPrice>117.85</LowPrice>
+				<TradingVolume>1099400</TradingVolume>
+				<PreviousClosingPrice>118.03</PreviousClosingPrice>
+			</StockQuote>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.Services.StockQuote.Create>

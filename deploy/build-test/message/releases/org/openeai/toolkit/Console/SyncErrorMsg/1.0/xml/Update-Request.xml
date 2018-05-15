@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.SyncErrorMsg.Update SYSTEM "../dtd/Update-Request.dtd">
+<org.openeai.toolkit.Console.SyncErrorMsg.Update>
+	<ControlAreaRequest messageCategory="org.openeai.toolkit.Console" messageObject="SyncErrorMsg" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId>5b9c7fb5-5f7a-4141-aee0-b5e21ef2b89d</ProducerId>
+				<MessageSeq>22</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>swheat</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>05</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<SyncErrorMsg>
+				<SyncErrorMsgId>1</SyncErrorMsgId>
+				<ConsumingApplName>edu.emory.DataWarehouseConnector</ConsumingApplName>
+				<ConsumingProducerId>e8fb9681-b84b-4de6-bbaf-a55210547f56</ConsumingProducerId>
+				<ConsumingMsgSeq>1</ConsumingMsgSeq>
+				<ProducingApplName>com.openii.SyncRouter</ProducingApplName>
+				<ProducingProducerId>9383b983-d24d-4b66-a973-fb5d65e367e5</ProducingProducerId>
+				<ProducingMsgSeq>1</ProducingMsgSeq>
+				<ProducingMsgAction>Update</ProducingMsgAction>
+				<ProducingMsgCategory>com.sciquest.Procurement</ProducingMsgCategory>
+				<ProducingMsgObject>PurchaseOrder</ProducingMsgObject>
+				<ProducingMsgType>Sync</ProducingMsgType>
+				<ProducingMsgRelease>1.0</ProducingMsgRelease>
+				<Resolved>0</Resolved>
+				<Message><![CDATA[ 
+"<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) --><!DOCTYPE org.openeai.CoreMessaging.Sync.Error SYSTEM "file:///toolkit-examples-3.0/message/releases/org/openeai/CoreMessaging/Sync/1.0/dtd/Error-Sync.dtd">
+<org.openeai.CoreMessaging.Sync.Error>
+	
+<ControlAreaSync messageCategory="org.openeai.CoreMessaging" messageObject="Sync" messageAction="Error" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		
+		
+		
+	<Sender><MessageId><SenderAppId>edu.emory.DataWarehouseConnector</SenderAppId><ProducerId>e8fb9681-b84b-4de6-bbaf-a55210547f56</ProducerId><MessageSeq>13229</MessageSeq></MessageId><Authentication><AuthUserId>edu.emory.DataWarehouseConnector</AuthUserId><AuthUserSignature>edu.emory.DataWarehouseConnector</AuthUserSignature></Authentication></Sender><Datetime><Year>2013</Year><Month>1</Month><Day>20</Day><Hour>0</Hour><Minute>6</Minute><Second>29</Second><SubSecond>306</SubSecond><Timezone>Eastern Standard Time</Timezone></Datetime><Result action="Update" status="failure"><ProcessedMessageId><SenderAppId>com.openii.SyncRouter</SenderAppId><ProducerId>9383b983-d24d-4b66-a973-fb5d65e367e5</ProducerId><MessageSeq>23301</MessageSeq></ProcessedMessageId><Error type="application"><ErrorNumber>MSG-1003</ErrorNumber><ErrorDescription>Exception occurred Updating the PurchaseOrder Java object in the database.  Exception: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+</ErrorDescription></Error><Error type="system"><ErrorNumber>COMMAND-1001</ErrorNumber><ErrorDescription>Exception: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+
+java.sql.SQLException: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+
+	at edu.emory.it.connectors.dw.commands.PurchaseOrderSyncCommand.createPurchaseOrder(PurchaseOrderSyncCommand.java:1406)
+	at edu.emory.it.connectors.dw.commands.PurchaseOrderSyncCommand.updatePurchaseOrder(PurchaseOrderSyncCommand.java:329)
+	at edu.emory.it.connectors.dw.commands.PurchaseOrderSyncCommand.execute(PurchaseOrderSyncCommand.java:223)
+	at org.openeai.jms.consumer.MessageConsumer.handleSync(MessageConsumer.java:1095)
+	at org.openeai.jms.consumer.MessageConsumer$MessageTransaction.run(MessageConsumer.java:1012)
+	at org.openeai.threadpool.ThreadPoolImpl$PoolThread.run(ThreadPoolImpl.java:150)
+</ErrorDescription></Error></Result></ControlAreaSync></org.openeai.CoreMessaging.Sync.Error>
+"
+ ]]></Message>
+				<CreateUser>ESB30</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+			</SyncErrorMsg>
+		</NewData>
+		<BaselineData>
+			<SyncErrorMsg>
+				<SyncErrorMsgId>1</SyncErrorMsgId>
+				<ConsumingApplName>edu.emory.DataWarehouseConnector</ConsumingApplName>
+				<ConsumingProducerId>e8fb9681-b84b-4de6-bbaf-a55210547f56</ConsumingProducerId>
+				<ConsumingMsgSeq>1</ConsumingMsgSeq>
+				<ProducingApplName>com.openii.SyncRouter</ProducingApplName>
+				<ProducingProducerId>9383b983-d24d-4b66-a973-fb5d65e367e5</ProducingProducerId>
+				<ProducingMsgSeq>1</ProducingMsgSeq>
+				<ProducingMsgAction>Update</ProducingMsgAction>
+				<ProducingMsgCategory>com.sciquest.Procurement</ProducingMsgCategory>
+				<ProducingMsgObject>PurchaseOrder</ProducingMsgObject>
+				<ProducingMsgType>Sync</ProducingMsgType>
+				<ProducingMsgRelease>1.0</ProducingMsgRelease>
+				<Resolved>0</Resolved>
+				<Message><![CDATA[ 
+"<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) --><!DOCTYPE org.openeai.CoreMessaging.Sync.Error SYSTEM "file:///toolkit-examples-3.0/message/releases/org/openeai/CoreMessaging/Sync/1.0/dtd/Error-Sync.dtd">
+<org.openeai.CoreMessaging.Sync.Error>
+	
+<ControlAreaSync messageCategory="org.openeai.CoreMessaging" messageObject="Sync" messageAction="Error" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		
+		
+		
+	<Sender><MessageId><SenderAppId>edu.emory.DataWarehouseConnector</SenderAppId><ProducerId>e8fb9681-b84b-4de6-bbaf-a55210547f56</ProducerId><MessageSeq>13229</MessageSeq></MessageId><Authentication><AuthUserId>edu.emory.DataWarehouseConnector</AuthUserId><AuthUserSignature>edu.emory.DataWarehouseConnector</AuthUserSignature></Authentication></Sender><Datetime><Year>2013</Year><Month>1</Month><Day>20</Day><Hour>0</Hour><Minute>6</Minute><Second>29</Second><SubSecond>306</SubSecond><Timezone>Eastern Standard Time</Timezone></Datetime><Result action="Update" status="failure"><ProcessedMessageId><SenderAppId>com.openii.SyncRouter</SenderAppId><ProducerId>9383b983-d24d-4b66-a973-fb5d65e367e5</ProducerId><MessageSeq>23301</MessageSeq></ProcessedMessageId><Error type="application"><ErrorNumber>MSG-1003</ErrorNumber><ErrorDescription>Exception occurred Updating the PurchaseOrder Java object in the database.  Exception: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+</ErrorDescription></Error><Error type="system"><ErrorNumber>COMMAND-1001</ErrorNumber><ErrorDescription>Exception: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+
+java.sql.SQLException: ORA-00001: unique constraint (WHS.SCI_PO_HDR_PK) violated
+
+	at edu.emory.it.connectors.dw.commands.PurchaseOrderSyncCommand.createPurchaseOrder(PurchaseOrderSyncCommand.java:1406)
+	at edu.emory.it.connectors.dw.commands.PurchaseOrderSyncCommand.updatePurchaseOrder(PurchaseOrderSyncCommand.java:329)
+	at edu.emory.it.connectors.dw.commands.PurchaseOrderSyncCommand.execute(PurchaseOrderSyncCommand.java:223)
+	at org.openeai.jms.consumer.MessageConsumer.handleSync(MessageConsumer.java:1095)
+	at org.openeai.jms.consumer.MessageConsumer$MessageTransaction.run(MessageConsumer.java:1012)
+	at org.openeai.threadpool.ThreadPoolImpl$PoolThread.run(ThreadPoolImpl.java:150)
+</ErrorDescription></Error></Result></ControlAreaSync></org.openeai.CoreMessaging.Sync.Error>
+"
+ ]]></Message>
+				<CreateUser>ESB30</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+			</SyncErrorMsg>
+		</BaselineData>
+	</DataArea>
+</org.openeai.toolkit.Console.SyncErrorMsg.Update>

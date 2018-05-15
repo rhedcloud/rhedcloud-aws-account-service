@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!--		$Revision: 1.57 $
+		$Date: 2007/01/22 16:58:37 $
+		$Source: /cvs/repositories/openii3/project/distributions/materials/openeai-examples/configs/messaging/Environments/Examples/Deployments/AnyOpenEaiEnterprise.xml,v $
+-->
+<!--This file is part of the OpenEAI sample, reference implementation,
+and deployment management suite created by Tod Jackson
+(tod@openeai.org) and Steve Wheat (steve@openeai.org) at 
+the University of Illinois Urbana-Champaign.
+
+Copyright (C) 2002-2006 The OpenEAI Software Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+For specific licensing details and Examples of how this software
+can be used to implement integrations for your enterprise, visit
+http://www.OpenEai.org/licensing.-->
+<!--Release History
+		- Initial Version
+-->
+<!DOCTYPE Deployment SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/Deployment.dtd">
+<Deployment name="AWS Account Service" type="development" status="deployed" baseURI="none">
+    <Application id="edu.emory.TestSuiteApplication-GreetingService">
+        <FullName>Test suite application.</FullName>
+        <Description>Test suite application that tests the functionality of the GreetingService.</Description>
+        <Configuration>
+            <LoggerConfigs>
+                <LoggerConfig name="Logger">
+                    <ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
+                    <Property>
+                        <PropertyName>log4j.rootCategory</PropertyName>
+                        <PropertyValue>INFO, stdout</PropertyValue>
+                    </Property>
+                    <Property>
+                        <PropertyName>log4j.appender.stdout</PropertyName>
+                        <PropertyValue>org.apache.log4j.FileAppender</PropertyValue>
+                    </Property>
+                    <Property>
+                        <PropertyName>log4j.appender.stdout.File</PropertyName>
+                        <PropertyValue>logs/TestSuiteApplication-GreetingService.log</PropertyValue>
+                    </Property>
+                    <Property>
+                        <PropertyName>log4j.appender.stdout.layout</PropertyName>
+                        <PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
+                    </Property>
+                    <Property>
+                        <PropertyName>log4j.appender.stdout.layout.ConversionPattern</PropertyName>
+                        <PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m%n</PropertyValue>
+                    </Property>
+                </LoggerConfig>
+            </LoggerConfigs>
+            <ScheduledAppConfigs scheduleCheckInterval="1000" type="application">
+                <ConfigClass>org.openeai.config.ScheduledAppConfig</ConfigClass>
+                <ObjectClass>org.openeai.afa.ScheduledApp</ObjectClass>
+                <ThreadPoolConfig name="Standard" maxThreads="150" minThreads="0" maxIdleTime="1">
+                    <ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
+                    <ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
+                </ThreadPoolConfig>
+                <ScheduledAppConfig name="TestSuite">
+                    <Schedules isImmediate="true" runMechanism="Thread">
+                        <ObjectClass>org.openeai.afa.Schedule</ObjectClass>
+                        <Schedule name="RunSuite" runMechanism="Thread">
+                            <Commands inboundXmlValidation="false" outboundXmlValidation="false" writeToFile="false">
+                                <Command type="scheduled" isDefault="false">
+                                    <CommandName>RunSuiteCommand</CommandName>
+                                    <CommandClass>org.openeai.implementations.applications.testsuite.TestSuiteScheduledCommand</CommandClass>
+                                    <Configuration>
+                                        <ProducerConfigs startOnInitialization="true">
+                                            <ConnectionFactoryName>TestSuiteAppProducerQCF</ConnectionFactoryName>
+                                            <InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+                                            <ProviderURL>tcp://ip6-localhost:61616</ProviderURL>
+                                            <SecurityPrincipal>not used by OpenJMS</SecurityPrincipal>
+                                            <SecurityCredentials>not used by OpenJMS</SecurityCredentials>
+                                            <ProducerIdURL>localhost</ProducerIdURL>
+                                            <ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+                                            <ProducerConfig name="TestSuiteAppProducer">
+                                                <DestinationName>GreetingServiceQueue</DestinationName>
+                                                <ObjectClass>org.openeai.jms.producer.PointToPointProducer</ObjectClass>
+                                            </ProducerConfig>
+                                        </ProducerConfigs>
+                                        <ConsumerConfigs startOnInitialization="false">
+                                            <ConnectionFactoryName>TestSuiteAppConsumerTCF</ConnectionFactoryName>
+                                            <InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+                                            <ProviderURL>tcp://ip6-localhost:61616?jms.clientID=edu.emory.TestSuiteApplication-GreetingService</ProviderURL>
+                                            <SecurityPrincipal>not used by OpenJMS</SecurityPrincipal>
+                                            <SecurityCredentials>not used by OpenJMS</SecurityCredentials>
+                                            <ConfigClass>org.openeai.config.ConsumerConfig</ConfigClass>
+                                            <GenericResponse validate="false">
+                                                <DocumentURI>./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</DocumentURI>
+                                            </GenericResponse>
+                                            <ThreadPoolConfig name="PubSubThreadPool" maxThreads="30" minThreads="0" maxIdleTime="1" checkBeforeProcessing="true"/>
+                                            <ConsumerConfig name="TSPubSubConsumer">
+                                                <DestinationName>TestSuiteAppTopic</DestinationName>
+                                                <Commands inboundXmlValidation="false" outboundXmlValidation="false" writeToFile="false">
+                                                    <Command isAbsolute="true" type="syncMessage">
+                                                        <CommandName>VerifySync</CommandName>
+                                                        <CommandClass>org.openeai.implementations.applications.testsuite.SyncVerificationCommand</CommandClass>
+                                                        <Configuration>
+                                                            <ProducerConfigs startOnInitialization="true">
+                                                                <ConnectionFactoryName>TestSuiteAppProducerTCF</ConnectionFactoryName>
+                                                                <InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+                                                                <ProviderURL>tcp://ip6-localhost:61616</ProviderURL>
+                                                                <SecurityPrincipal>nothing</SecurityPrincipal>
+                                                                <SecurityCredentials>nothing</SecurityCredentials>
+                                                                <ProducerIdURL>localhost</ProducerIdURL>
+                                                                <ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+                                                                <ProducerConfig name="SyncErrorPublisher">
+                                                                    <DestinationName>LoggingServiceTopic</DestinationName>
+                                                                    <ObjectClass>org.openeai.jms.producer.PubSubProducer</ObjectClass>
+                                                                    <DefaultCommandName>EnterpriseSyncErrorLogger</DefaultCommandName>
+                                                                </ProducerConfig>
+                                                            </ProducerConfigs>
+                                                            <MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
+                                                                <SenderAppId>Test Suite Sync Verification</SenderAppId>
+                                                                <Authentication>
+                                                                    <UserId>jackson4</UserId>
+                                                                    <Signature>test</Signature>
+                                                                </Authentication>
+                                                                <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+                                                                <LayoutManager>
+                                                                    <InputLayout type="xml">
+                                                                        <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                                                                    </InputLayout>
+                                                                    <OutputLayout type="xml">
+                                                                        <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                                                                    </OutputLayout>
+                                                                </LayoutManager>
+                                                                <MessageObjectConfig name="TestId">
+                                                                    <CommandName>TestId</CommandName>
+                                                                    <ObjectClass>org.openeai.moa.objects.testsuite.TestId</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/openeai/Resources/1.0/ControlAreaEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+                                                                <MessageObjectConfig name="TestStatus">
+                                                                    <CommandName>TestStatus</CommandName>
+                                                                    <ObjectClass>org.openeai.moa.objects.testsuite.TestStatus</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+                                                                <MessageObjectConfig name="TestSuiteSummary">
+                                                                    <CommandName>TestSuiteSummary</CommandName>
+                                                                    <ObjectClass>org.openeai.moa.objects.testsuite.TestSuiteSummary</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+                                                                <MessageObjectConfig name="TestSeriesSummary">
+                                                                    <CommandName>TestSeriesSummary</CommandName>
+                                                                    <ObjectClass>org.openeai.moa.objects.testsuite.TestSeriesSummary</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+                                                                <MessageObjectConfig name="TestCaseSummary">
+                                                                    <CommandName>TestCaseSummary</CommandName>
+                                                                    <ObjectClass>org.openeai.moa.objects.testsuite.TestCaseSummary</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+                                                                <MessageObjectConfig name="TestStepSummary">
+                                                                    <CommandName>TestStepSummary</CommandName>
+                                                                    <ObjectClass>org.openeai.moa.objects.testsuite.TestStepSummary</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+
+
+                                                                <MessageObjectConfig name="Greeting.v1_0">
+                                                                    <CommandName>GreetingRequest</CommandName>
+                                                                    <PrimedXmlDocuments>
+                                                                        <PrimedXmlDocument type="generate">./message/releases/org/any-openeai-enterprise/CoreApplication/Greeting/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+                                                                    </PrimedXmlDocuments>
+                                                                    <ObjectClass>org.any_openeai_enterprise.moa.jmsobjects.coreapplication.v1_0.Greeting</ObjectClass>
+                                                                    <EnterpriseObjectDocument
+                                                                            docUri="eos/3.0/org/any-openeai-enterprise/CoreApplication/1.0/GreetingEO.xml"
+                                                                            ignoreMissingFields="true"
+                                                                            ignoreValidation="false"/>
+                                                                </MessageObjectConfig>
+                                                            </MessageObjectConfigs>
+                                                            <PropertyConfigs>
+                                                                <ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+                                                                <PropertyConfig name="TestSuiteProperties">
+                                                                    <Property>
+                                                                        <PropertyName>TestSuiteDocUri</PropertyName>
+                                                                        <PropertyValue>file:/opt/openeai/deploy/build-test/tests/GreetingService.minimal.xml</PropertyValue>
+                                                                    </Property>
+                                                                    <Property>
+                                                                        <PropertyName>TestSuiteSummaryDocPath</PropertyName>
+                                                                        <PropertyValue>./</PropertyValue>
+                                                                    </Property>
+                                                                    <Property>
+                                                                        <PropertyName>maxConsumptionTime</PropertyName>
+                                                                        <PropertyValue>20000</PropertyValue>
+                                                                    </Property>
+                                                                </PropertyConfig>
+                                                                <PropertyConfig name="SyncErrorSyncProperties">
+                                                                    <Property>
+                                                                        <PropertyName>SyncErrorSyncPrimedDocumentUri</PropertyName>
+                                                                        <PropertyValue>./message/releases/org/openeai/CoreMessaging/Sync/1.0/xml/Error-Sync.xml</PropertyValue>
+                                                                    </Property>
+                                                                </PropertyConfig>
+                                                            </PropertyConfigs>
+                                                        </Configuration>
+                                                    </Command>
+                                                </Commands>
+                                                <ObjectClass>org.openeai.jms.consumer.PubSubConsumer</ObjectClass>
+                                                <DbConnectionPoolConfig name="MessageBalancer"
+                                                                        dbDriverName="com.mysql.jdbc.Driver"
+                                                                        dbConnectString="jdbc:mysql://localhost/idservice"
+                                                                        dbConnectUserId="idservice"
+                                                                        dbConnectPassword="idservice22" dbPoolSize="2"/>
+                                            </ConsumerConfig>
+                                        </ConsumerConfigs>
+                                        <MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
+                                            <SenderAppId>org.any-openeai-enterprise.TestSuiteApplication-GreetingService</SenderAppId>
+                                            <Authentication>
+                                                <UserId>TestSuiteApplication</UserId>
+                                            </Authentication>
+                                            <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+                                            <LayoutManager>
+                                                <InputLayout type="xml">
+                                                    <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                                                </InputLayout>
+                                                <OutputLayout type="xml">
+                                                    <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                                                </OutputLayout>
+                                            </LayoutManager>
+                                            <MessageObjectConfig name="TestId">
+                                                <CommandName>TestId</CommandName>
+                                                <ObjectClass>org.openeai.moa.objects.testsuite.TestId</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/openeai/Resources/1.0/ControlAreaEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                            <MessageObjectConfig name="TestStatus">
+                                                <CommandName>TestStatus</CommandName>
+                                                <ObjectClass>org.openeai.moa.objects.testsuite.TestStatus</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                            <MessageObjectConfig name="TestSuiteSummary">
+                                                <CommandName>TestSuiteSummary</CommandName>
+                                                <ObjectClass>org.openeai.moa.objects.testsuite.TestSuiteSummary</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                            <MessageObjectConfig name="TestSeriesSummary">
+                                                <CommandName>TestSeriesSummary</CommandName>
+                                                <ObjectClass>org.openeai.moa.objects.testsuite.TestSeriesSummary</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                            <MessageObjectConfig name="TestCaseSummary">
+                                                <CommandName>TestCaseSummary</CommandName>
+                                                <ObjectClass>org.openeai.moa.objects.testsuite.TestCaseSummary</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                            <MessageObjectConfig name="TestStepSummary">
+                                                <CommandName>TestStepSummary</CommandName>
+                                                <ObjectClass>org.openeai.moa.objects.testsuite.TestStepSummary</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+
+
+                                            <MessageObjectConfig name="Greetee">
+                                                <CommandName>Greetee</CommandName>
+                                                <ObjectClass>org.any_openeai_enterprise.moa.objects.resources.v1_0.Greetee</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/any-openeai-enterprise/Resources/1.0/GreeteeEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                            <MessageObjectConfig name="Greeting.v1_0">
+                                                <CommandName>GreetingRequest</CommandName>
+                                                <PrimedXmlDocuments>
+                                                    <PrimedXmlDocument type="generate">./message/releases/org/any-openeai-enterprise/CoreApplication/Greeting/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+                                                </PrimedXmlDocuments>
+                                                <ObjectClass>org.any_openeai_enterprise.moa.jmsobjects.coreapplication.v1_0.Greeting</ObjectClass>
+                                                <EnterpriseObjectDocument
+                                                        docUri="eos/3.0/org/any-openeai-enterprise/CoreApplication/1.0/GreetingEO.xml"
+                                                        ignoreMissingFields="true" ignoreValidation="false"/>
+                                            </MessageObjectConfig>
+                                        </MessageObjectConfigs>
+                                        <ThreadPoolConfigs>
+                                            <ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
+                                            <ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
+                                            <ThreadPoolConfig name="TestSuiteThreadPool" maxThreads="1" minThreads="0" maxIdleTime="1"/>
+                                        </ThreadPoolConfigs>
+                                        <PropertyConfigs>
+                                            <ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+                                            <PropertyConfig name="TestSuiteProperties">
+                                                <Property>
+                                                    <PropertyName>TestSuiteDocUri</PropertyName>
+                                                    <PropertyValue>file:/opt/openeai/deploy/build-test/tests/GreetingService.minimal.xml</PropertyValue>
+                                                </Property>
+                                                <Property>
+                                                    <PropertyName>TestSuiteSummaryDocPath</PropertyName>
+                                                    <PropertyValue>./</PropertyValue>
+                                                </Property>
+                                                <Property>
+                                                    <PropertyName>maxProcessTime</PropertyName>
+                                                    <PropertyValue>30000</PropertyValue>
+                                                </Property>
+                                                <Property>
+                                                    <PropertyName>useThreads</PropertyName>
+                                                    <PropertyValue>true</PropertyValue>
+                                                </Property>
+                                            </PropertyConfig>
+                                        </PropertyConfigs>
+                                    </Configuration>
+                                </Command>
+                            </Commands>
+                        </Schedule>
+                    </Schedules>
+                </ScheduledAppConfig>
+            </ScheduledAppConfigs>
+        </Configuration>
+    </Application>
+</Deployment>

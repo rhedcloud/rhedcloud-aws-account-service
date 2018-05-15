@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.StockQuote.Update SYSTEM "../dtd/Update-Sync.dtd">
+<org.any-openeai-enterprise.Services.StockQuote.Update>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.Services" messageObject="StockQuote" messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+				<ProducerId>e809c8f7-30fa-44aa-91d6-95b724e054a4</ProducerId>
+				<MessageSeq>546</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>paymaster</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2007</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<StockQuote>
+				<StockSymbol>IBM</StockSymbol>
+				<StockName>INTL BUSINESS MAC</StockName>
+				<LastPrice>119.05</LastPrice>
+				<TimeStampDatetime>
+					<Year>2007</Year>
+					<Month>10</Month>
+					<Day>16</Day>
+					<Hour>10</Hour>
+					<Minute>10</Minute>
+					<Second>0</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>EST</Timezone>
+				</TimeStampDatetime>
+				<PriceChange>+1.02</PriceChange>
+				<OpenPrice>118.02</OpenPrice>
+				<HighPrice>119.27</HighPrice>
+				<LowPrice>117.85</LowPrice>
+				<TradingVolume>1099400</TradingVolume>
+				<PreviousClosingPrice>118.03</PreviousClosingPrice>
+			</StockQuote>
+		</NewData>
+		<BaselineData>
+			<StockQuote>
+				<StockSymbol>IBM</StockSymbol>
+				<StockName>INTL BUSINESS MAC</StockName>
+				<LastPrice>119.05</LastPrice>
+				<TimeStampDatetime>
+					<Year>2007</Year>
+					<Month>10</Month>
+					<Day>16</Day>
+					<Hour>10</Hour>
+					<Minute>10</Minute>
+					<Second>1</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>EST</Timezone>
+				</TimeStampDatetime>
+				<PriceChange>+1.02</PriceChange>
+				<OpenPrice>118.02</OpenPrice>
+				<HighPrice>119.27</HighPrice>
+				<LowPrice>117.85</LowPrice>
+				<TradingVolume>1099400</TradingVolume>
+				<PreviousClosingPrice>118.03</PreviousClosingPrice>
+			</StockQuote>
+		</BaselineData>
+	</DataArea>
+</org.any-openeai-enterprise.Services.StockQuote.Update>

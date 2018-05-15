@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE edu.emory.Network.ElasticIpAssignment.Update SYSTEM "../dtd/Update-Request.dtd">
+<edu.emory.Network.ElasticIpAssignment.Update>
+	<ControlAreaRequest messageCategory="edu.emory.Network" messageObject="ElasticIpAssignment"
+		messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>5b9c7fb5-5f7a-4141-aee0-b5e21ef2b89d</ProducerId>
+				<MessageSeq>22</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteApp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>9</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<ElasticIpAssignment>
+				<ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+				<OwnerId>vpc-c8d93cb1</OwnerId>
+				<Decription>Elastic IP 1</Decription>
+				<Purpose>Web Server</Purpose>
+				<ElasticIp>
+					<ElasticIpId>1</ElasticIpId>
+					<ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+					<CreateUser>swheat</CreateUser>
+					<CreateDatetime>
+						<Year>2017</Year>
+						<Month>9</Month>
+						<Day>17</Day>
+						<Hour>13</Hour>
+						<Minute>47</Minute>
+						<Second>30</Second>
+						<SubSecond>842</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ElasticIp>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2017</Year>
+					<Month>9</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>57</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ElasticIpAssignment>
+		</NewData>
+		<BaselineData>
+			<ElasticIpAssignment>
+				<ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+				<OwnerId>vpc-c8d93cb1</OwnerId>
+				<Decription>Elastic IP 1</Decription>
+				<Purpose>Web Server</Purpose>
+				<ElasticIp>
+					<ElasticIpId>1</ElasticIpId>
+					<ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+					<CreateUser>swheat</CreateUser>
+					<CreateDatetime>
+						<Year>2017</Year>
+						<Month>9</Month>
+						<Day>17</Day>
+						<Hour>13</Hour>
+						<Minute>47</Minute>
+						<Second>30</Second>
+						<SubSecond>842</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ElasticIp>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2017</Year>
+					<Month>9</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>57</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ElasticIpAssignment>
+		</BaselineData>
+	</DataArea>
+</edu.emory.Network.ElasticIpAssignment.Update>

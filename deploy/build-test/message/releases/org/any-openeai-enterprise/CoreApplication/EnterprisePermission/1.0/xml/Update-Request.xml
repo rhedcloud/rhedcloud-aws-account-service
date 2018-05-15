@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by David Hemmings (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Update SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterprisePermission/1.0/dtd/Update-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Update>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterprisePermission" messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseUserService</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>277</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>entuserserv</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>03</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<EnterprisePermission name="org.any-openeai-enterprise.EasAdminApplication.access">
+				<Description>Default permission to access the EasAdminApplication (Updated Description)</Description>
+			</EnterprisePermission>
+		</NewData>
+		<BaselineData>
+			<EnterprisePermission name="org.any-openeai-enterprise.EasAdminApplication.access">
+				<Description>Default permission to access the EasAdminApplication</Description>
+			</EnterprisePermission>
+		</BaselineData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Update>

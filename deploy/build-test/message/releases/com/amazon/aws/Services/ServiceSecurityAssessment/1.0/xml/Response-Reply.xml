@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!DOCTYPE com.amazon.aws.CloudFormation.Stack.Response SYSTEM "../dtd/Response-Reply.dtd">
+<com.amazon.aws.CloudFormation.Stack.Response>
+	<ControlAreaReply messageCategory="com.amazon.aws.CloudFormation" messageObject="Stack"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2016</Year>
+			<Month>8</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Account</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Stack>
+			<StackId>arn:aws:cloudformation:us-east-1:698677649721:stack/EmoryType1-1/f9e60090-5353-11e6-9c9f-500c5240588e</StackId>
+			<StackName>EmoryType1-1</StackName>
+			<Description>Emory AWS CloudFormation Template for a type 1 VPC: Extension of Emory
+				Network with All Access through Emory</Description>
+			<StackParameter>
+				<Key>PrivateSubnetCIDR</Key>
+				<Value>10.64.61.0/24</Value>
+			</StackParameter>
+			<StackParameter>
+				<Key>PublicSubnetCIDR</Key>
+				<Value>10.64.60.0/24</Value>
+			</StackParameter>
+			<StackParameter>
+				<Key>VPCCIDR</Key>
+				<Value>10.64.60.0/23</Value>
+			</StackParameter>
+			<StackParameter>
+				<Key>VPNAddress</Key>
+				<Value>163.246.8.67</Value>
+			</StackParameter>
+			<Tag>
+				<Key>TemplateName</Key>
+				<Value>EmoryVpcType1</Value>
+			</Tag>
+			<Output>
+				<Description>SubnetId of the VPN connected subnet</Description>
+				<OutputKey>PrivateSubnet</OutputKey>
+				<OutputValue>subnet-8fa499d7</OutputValue>
+			</Output>
+			<Output>
+				<Description>VPCId of the newly created VPC</Description>
+				<OutputKey>VPCId</OutputKey>
+				<OutputValue>vpc-82d54be5</OutputValue>
+			</Output>
+			<CreateDatetime>
+				<Year>2016</Year>
+				<Month>7</Month>
+				<Day>26</Day>
+				<Hour>17</Hour>
+				<Minute>11</Minute>
+				<Second>22</Second>
+				<SubSecond>148</SubSecond>
+				<Timezone>0:00-GMT</Timezone>
+			</CreateDatetime>
+			<Capability>CAPABILITY_IAM</Capability>
+			<Capability>CAPABILITY_NAMED_IAM</Capability>
+			<StackStatus>CREATE_COMPLETE</StackStatus>
+			<DisableRollback>false</DisableRollback>
+		</Stack>
+	</DataArea>
+</com.amazon.aws.CloudFormation.Stack.Response>

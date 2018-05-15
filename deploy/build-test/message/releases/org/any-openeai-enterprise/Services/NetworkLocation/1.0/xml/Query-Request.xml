@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.NetworkLocation.Query SYSTEM "../dtd/Query-Request.dtd">
+<org.any-openeai-enterprise.Services.NetworkLocation.Query>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.Services" messageObject="NetworkLocation" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.AnyApp</SenderAppId>
+				<ProducerId>753f99bc-4917-472b-8c7e-a9bc3ce592e9 </ProducerId>
+				<MessageSeq>32</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>anyapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2008</Year>
+			<Month>9</Month>
+			<Day>20</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.Services" messageObject="NetworkLocation" messageAction="Provide" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NetworkLocationQuerySpecification>
+			<IpNumber>127.0.0.1</IpNumber>
+		</NetworkLocationQuerySpecification>
+	</DataArea>
+</org.any-openeai-enterprise.Services.NetworkLocation.Query>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--	$Revision: 1.4 $
+		$Date: 2006/12/20 00:45:42 $
+		$Source: /cvs/repositories/openii3/project/message/releases/com/openii/Resources/1.0/Resources.dtd,v $
+-->
+<!--
+	Copyright 200 Emory University.  All Rights Reserved.
+
+	CONFIDENTIAL BUSINESS INFORMATION
+
+	THIS PROGRAM IS PROPRIETARY INFORMATION OF OPEN INTEGRATION INCORPORATED
+	CORPORATION AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
+	NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
+	WITHOUT THE WRITTEN PERMISSION OF OPEN INTEGRATION INCORPORATED
+-->
+<!--	Resources.dtd is a top-level DTD file used to include definitions
+		from other DTD files within this package or from other packages.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!-- Notes:
+-->
+<!-- Include the OpenEAI Segments to get elements required by the
+		OpenEAI Message Protocol
+ -->
+<!ENTITY % ORG.OPENEAI.RESOURCES SYSTEM "../../../../../org/openeai/Resources/1.0/Resources.dtd">
+%ORG.OPENEAI.RESOURCES;
+
+<!ENTITY % ORG.OPENEAI.TOOLKIT.RESOURCES.DOMAINS SYSTEM "../../../../../org/openeai/toolkit/Resources/1.0/Domains.dtd">
+%ORG.OPENEAI.TOOLKIT.RESOURCES.DOMAINS;
+<!ENTITY % ORG.OPENEAI.TOOLKIT.RESOURCES.FIELDS SYSTEM "../../../../../org/openeai/toolkit/Resources/1.0/Fields.dtd">
+%ORG.OPENEAI.TOOLKIT.RESOURCES.FIELDS;
+<!ENTITY % ORG.OPENEAI.TOOLKIT.RESOURCES.SEGMENTS SYSTEM "../../../../../org/openeai/toolkit/Resources/1.0/Segments.dtd">
+%ORG.OPENEAI.TOOLKIT.RESOURCES.SEGMENTS;

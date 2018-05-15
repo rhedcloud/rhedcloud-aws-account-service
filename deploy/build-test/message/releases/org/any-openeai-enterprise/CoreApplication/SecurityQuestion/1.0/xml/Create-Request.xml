@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.SecurityQuestion.Create SYSTEM "../dtd/Create-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.SecurityQuestion.Create>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="SecurityQuestion" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1001</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>acccnetid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>47</Minute>
+			<Second>34</Second>
+			<SubSecond>217</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<SecurityQuestion status="active" type="EAS">
+				<QuestionId>1</QuestionId>
+				<Text>What is your favorite color?</Text>
+			</SecurityQuestion>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.SecurityQuestion.Create>

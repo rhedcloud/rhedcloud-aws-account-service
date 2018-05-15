@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE org.any-openeai-enterprise.CommonLogging.ApplicationLogEntry.Delete SYSTEM "../../1.0/dtd/Delete-Sync.dtd">
+<org.any-openeai-enterprise.CommonLogging.ApplicationLogEntry.Delete>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CommonLogging" messageObject="ApplicationLogEntry" messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.CommonLoggingService</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>974</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>cls</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2013</Year>
+			<Month>12</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>23</Second>
+			<SubSecond>463</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<ApplicationLogEntry>
+				<LogEntryId>12345</LogEntryId>
+				<LogMessageType>ERROR</LogMessageType>
+				<LogMessageDatetime>
+					<Year>2013</Year>
+					<Month>12</Month>
+					<Day>27</Day>
+					<Hour>12</Hour>
+					<Minute>47</Minute>
+					<Second>34</Second>
+					<SubSecond>217</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LogMessageDatetime>
+				<ApplicationName>org.any-openeai-enterprise.TestApplication</ApplicationName>
+				<LogMessageText>An error occurred creating a user in the remote system. The exception is: timeout waiting for response to request.</LogMessageText>
+				<Remediation>Perhaps you can resend this message to the connector when the target service is available.</Remediation>
+			</ApplicationLogEntry>
+		</DeleteData>
+	</DataArea>
+</org.any-openeai-enterprise.CommonLogging.ApplicationLogEntry.Delete>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by David Hemmings (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.Monitoring.Ping.Create SYSTEM "../dtd/Create-Sync.dtd">
+<org.any-openeai-enterprise.Monitoring.Ping.Create>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.Monitoring" messageObject="Ping" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ZabbixAgent</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>303</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>zabbix</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2009</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>5:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<Ping>
+				<Text>This is a test.</Text>
+			</Ping>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.Monitoring.Ping.Create>

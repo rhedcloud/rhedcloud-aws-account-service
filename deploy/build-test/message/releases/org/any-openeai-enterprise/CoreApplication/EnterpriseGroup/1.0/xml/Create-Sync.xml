@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by David Hemmings (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseGroup.Create SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterpriseGroup/1.0/dtd/Create-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseGroup.Create>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseGroup" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseUserService</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>303</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>entuserserv</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<EnterpriseGroup name="org.any-openeai-enterprise.EnterprisePasswordResetters" displayName="EnterprisePasswordResetters">
+				<EnterpriseUser>
+					<NetId>
+						<Principal>ziggy</Principal>
+						<Domain>openeai.org</Domain>
+					</NetId>
+					<LightweightPerson>
+						<InstitutionalId>123456789</InstitutionalId>
+					</LightweightPerson>
+				</EnterpriseUser>
+				<EnterprisePermission name="org.any-openeai-enterprise.EasAdminApplication.access">
+					<Description>Default permission to access the EasAdminApplication</Description>
+				</EnterprisePermission>
+			</EnterpriseGroup>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseGroup.Create>
