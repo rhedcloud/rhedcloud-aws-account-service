@@ -37,17 +37,17 @@ pipelines:
         - source .profile
         - activemq start
         - sleep 5
-        - tail -1000 /opt/activemq/apache-activemq-5.15.2/data/activemq.log
-        - export OPENEAI_HOME=$HOME/deploy/build-test  
-        - cd $OPENEAI_HOME
-        - mkdir -p logs
-        - ./start.sh AwsAccountService
-        - sleep 5
-        - tail -1000 System.out
-        - tail -1000 logs/AwsAccountService.log
-        - ./start.sh AwsAccountServiceTestSuite
-        - sleep 20
-        - tail -1000 logs/TestSuiteApplication-AwsAccountService.log
+        #- tail -1000 /opt/activemq/apache-activemq-5.15.2/data/activemq.log
+        #- export OPENEAI_HOME=$HOME/deploy/build-test  
+        #- cd $OPENEAI_HOME
+        #- mkdir -p logs
+        #- ./start.sh AwsAccountService
+        #- sleep 5
+        #- tail -1000 System.out
+        #- tail -1000 logs/AwsAccountService.log
+        #- ./start.sh AwsAccountServiceTestSuite
+        #- sleep 20
+        #- tail -1000 logs/TestSuiteApplication-AwsAccountService.log
 
      - step:
         name: Generate web service facade
