@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.PersonalIdentificationNumber.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.PersonalIdentificationNumber.Generate>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="PersonalIdentificationNumber" messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1005</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>eas</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>48</Second>
+			<SubSecond>184</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreApplication" messageObject="PersonalIdentificationNumber" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<PinGenerateSpecification>
+			<InstitutionalId>123456789</InstitutionalId>
+			<Type>EAS</Type>
+		</PinGenerateSpecification>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.PersonalIdentificationNumber.Generate>

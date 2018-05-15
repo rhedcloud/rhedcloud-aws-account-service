@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.UserSecurityQuestion.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.UserSecurityQuestion.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="UserSecurityQuestion" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>applsvc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>48</Second>
+			<SubSecond>922</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uillinois.aits.EasPasswordResetServlet</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1005</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<UserSecurityQuestion ownerId="123456789">
+			<SecurityQuestion>
+				<QuestionId>1</QuestionId>
+				<Text>What is your favorite color?</Text>
+			</SecurityQuestion>
+			<SecurityAnswer>
+				<Text>Blue</Text>
+			</SecurityAnswer>
+		</UserSecurityQuestion>
+		<UserSecurityQuestion ownerId="123456789">
+			<SecurityQuestion>
+				<QuestionId>2</QuestionId>
+				<Text>What is your favorite food?</Text>
+			</SecurityQuestion>
+			<SecurityAnswer>
+				<Text>Spaghetti</Text>
+			</SecurityAnswer>
+		</UserSecurityQuestion>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.UserSecurityQuestion.Provide>

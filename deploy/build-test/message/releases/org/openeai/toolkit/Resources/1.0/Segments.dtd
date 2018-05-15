@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright 2012 Emory University.  All Rights Reserved.
+-->
+<!--	Segments.dtd is a a file where definitions of all elements with
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+ -->
+<!-- ====================================================================== -->
+<!-- Elements - Segments
+-->
+<!-- 
+MessageId was defined as an Element in openea/segments.dtd
+-->
+<!ELEMENT AppSettings (RowId?, JvmOptions?, ClassPath?, JavaHome?, CreateUser,CreateDate,ModUser?,ModDate?)>
+<!ELEMENT AppConfigs (RowId?, Revison?, ApplicationId?, Type?, IsActive?,DeploymentStatus,ConfigDescriptor,CreateUser,CreateDate)>
+<!ELEMENT DefaultConfigProperties (PropertyName?, PropertyValue?, Description?, ConsoleProperty?, CreateUser,CreateDate,ModUser?,ModDate?)>
+<!--RowId?-->
+<!ELEMENT RouterData (RowId?,SenderAppId?, MsgId?, TargetMessageId?, TargetAppId?, MsgCategory?,MsgObjecty?,MsgAction?,MsgType?,MsgRelease?,CreateUser,CreateDate,ModUser?,ModDate?)>
+<!ELEMENT LoggedMessage (LoggedMessageId?,LoggedMessageDatetime?,MsgCategory,MsgObjecty,MsgAction,MsgType,MsgRelease, MsgPriority,SenderApplId,MsgSeq,MsgDatetime,LogConsumerId,LogDbUser,TargetAppName)>
+<!ELEMENT ProcessedMessage (RowId?,ApplicationId?,ProcessedMessagedId?, MsgSeries?, CreateUser,CreateDate)>
+<!ELEMENT ProcessedSchedule (ProcessedScheduleId?, CreateUser,CreateDate)>
+<!ELEMENT Reports (ReportsId?, PrettyName?,Description?, CreateUser,CreateDate,ModUser?,ModDate?)>
+<!ELEMENT SyncError (SyncErrorId?, SyncErrorMsgId?, ErrorType?, ErrorNumber?, ErrorDesc?,CreateUser,CreateDate,ModUser?,ModDate?)>
+<!ELEMENT SyncErrorMsg (SyncErrorMsgId?, ConsumingApplName?, ConsumingProducerId?, ConsumingMsgSeq?, ProducingApplName?, ProducingProducerId?, ProducingMsgSeq?, ProducingMsgAction?, ProducingMsgCategory?, ProducingMsgObject?, ProducingMsgType?, ProducingMsgRelease?,Resolved?,Message?,CreateUser,CreateDate,ModUser?,ModDate?)>
+
+
+<!ELEMENT AppSettingsQuerySpecification (RowId?)>
+<!ELEMENT AppConfigsQuerySpecification (RowId?)>
+<!ELEMENT DefaultConfigPropertiesQuerySpecification (PropertyName?)>
+<!ELEMENT RouterDataQuerySpecification (RowId?,SenderAppId?, MsgId?, TargetMessageId?, TargetAppId?, MsgCategory?,MsgObjecty?,MsgAction?,MsgType?,MsgRelease?,CreateUser?,CreateDate?,ModUser?,ModDate?)>
+<!ELEMENT LoggedMessageQuerySpecification (LoggedMessageId?)>
+<!ELEMENT ProcessedMessageQuerySpecification (RowId?,ApplicationId?,ProcessedMessagedId?, MsgSeries?, CreateUser?,CreateDate?)>
+<!ELEMENT ProcessedScheduleQuerySpecification (ProcessedScheduleId?)>
+<!ELEMENT ReportsQuerySpecification (ReportsId?, PrettyName?,Description?, CreateUser?,CreateDate?,ModUser?,ModDate?)>
+<!ELEMENT SyncErrorQuerySpecification (SyncErrorId?, SyncErrorMsgId?, ErrorType?, ErrorNumber?, ErrorDesc?)>
+<!ELEMENT SyncErrorMsgQuerySpecification (SyncErrorMsgId?, ConsumingApplName?, ConsumingProducerId?, ConsumingMsgSeq?, ProducingApplName?, ProducingProducerId?, ProducingMsgSeq?, ProducingMsgAction?, ProducingMsgCategory?, ProducingMsgObject?, ProducingMsgType?, ProducingMsgRelease?,Resolved?,Message?)>
+

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.Reports.Create SYSTEM "../dtd/Create-Request.dtd">
+<org.openeai.toolkit.Console.Reports.Create>
+	<ControlAreaRequest messageCategory="org.openeai.toolkit.Console" messageObject="Reports" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>5</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<Reports>
+				<ReportsId>applicationReport</ReportsId>
+				<PrettyName>Application Report</PrettyName>
+				<Description>A report that displays a drill down (Tree component?) of applications and all the components used by each application (topic/queues, message objects, db connections, what data the app is authoritative, what data the app uses (via message objects and their primed docs) etc.</Description>
+				<CreateUser>SYS</CreateUser>
+				<CreateDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</CreateDate>
+				<ModUser>SYS</ModUser>
+				<ModDate>
+					<Month>1</Month>
+					<Day>1</Day>
+					<Year>2013</Year>
+				</ModDate>
+			</Reports>
+		</NewData>
+	</DataArea>
+</org.openeai.toolkit.Console.Reports.Create>

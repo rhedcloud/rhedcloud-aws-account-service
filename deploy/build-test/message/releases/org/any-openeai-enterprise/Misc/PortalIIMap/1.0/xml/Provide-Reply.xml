@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.Misc.PortalIIMap.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.Misc.PortalIIMap.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.Misc" messageObject="PortalIIMap" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseApplicationService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>gateway</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>03</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseIdActivationApplication</SenderAppId>
+				<ProducerId>ee7e1262-84ca-43f2-bbd1-66ee37fa7bac</ProducerId>
+				<MessageSeq>624</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<PortalIIMap>
+			<PortalKey>
+				<PortalId>16</PortalId>
+			</PortalKey>
+			<EnterpriseId>100000002</EnterpriseId>
+			<UnknownPerson>
+				<Name>
+					<LastName>User</LastName>
+					<FirstName>Developer</FirstName>
+				</Name>
+				<BirthDate>
+					<Month>05</Month>
+					<Day>05</Day>
+					<Year>1970</Year>
+				</BirthDate>
+				<Gender>Male</Gender>
+			</UnknownPerson>
+		</PortalIIMap>
+	</DataArea>
+</org.any-openeai-enterprise.Misc.PortalIIMap.Provide>

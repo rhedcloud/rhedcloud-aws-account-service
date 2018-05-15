@@ -1,183 +1,149 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.emory.awsaccount.service</groupId>
-	<artifactId>emory-aws-account-service</artifactId>
-	<version>${env.BITBUCKET_BRANCH}-${env.BITBUCKET_BUILD_NUMBER}</version>
-	<name>emory-aws-account-service</name>
-	<description>Emory AWS Account Service jar</description>
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+ <groupId>edu.emory.awsaccount.service</groupId>
+ <artifactId>emory-aws-account-service</artifactId>
+ <version>0.01</version>
+ <name>emory-aws-account-service</name>
+ <description>Emory AWS Account Service jar</description>
 
-	<!-- 
-	<repositories>
-		<repository>
-			<id>central</id>
-			<url>https://m2.n2nservices.com/artifactory/repo</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>snapshots</id>
-			<url>https://m2.n2nservices.com/artifactory/repo</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
-	 -->
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<!-- 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>m2.n2nservices.com</id>
-			<name>m2.n2nservices.com-snapshots</name>
-			<url>https://m2.n2nservices.com/artifactory/libs-snapshot-local</url>
-		</snapshotRepository>
-	</distributionManagement>
-	 -->
+ <!-- <repositories> <repository> <id>central</id> <url>https://m2.n2nservices.com/artifactory/repo</url> <snapshots> <enabled>false</enabled> 
+  </snapshots> </repository> <repository> <id>snapshots</id> <url>https://m2.n2nservices.com/artifactory/repo</url> <releases> <enabled>false</enabled> 
+  </releases> </repository> </repositories> -->
+ <build>
+  <plugins>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>2.3.2</version>
+    <configuration>
+     <source>1.8</source>
+     <target>1.8</target>
+    </configuration>
+   </plugin>
+  </plugins>
+ </build>
+ <!-- <distributionManagement> <snapshotRepository> <id>m2.n2nservices.com</id> <name>m2.n2nservices.com-snapshots</name> <url>https://m2.n2nservices.com/artifactory/libs-snapshot-local</url> 
+  </snapshotRepository> </distributionManagement> -->
 
-	<dependencies>
-		<dependency>
-			<groupId>edu.emory.awsaccount.service</groupId>
-			<artifactId>aws-java-sdk-1.11.123</artifactId>
-			<version>1.11.123</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/aws-java-sdk-1.11.123.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>aws-moa</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/aws-moa.jar</systemPath>
-		</dependency>		
-		
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>commons-io-2.5</artifactId>
-			<version>2.5</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/commons-io-2.5.jar</systemPath>
-		</dependency>		
+ <dependencies>
+  <!-- <dependency> <groupId>com.amazonaws</groupId> <artifactId>aws-java-sdk</artifactId> <version>1.11.123</version> </dependency> -->
+  <dependency>
+   <groupId>edu.emory.awsaccount.service</groupId>
+   <artifactId>aws-java-sdk-1.11.123</artifactId>
+   <version>1.11.123</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/aws-java-sdk-1.11.123.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>commons-validator-1.4.0</artifactId>
-			<version>1.4.0</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/commons-validator-1.4.0.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>aws-moa</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/aws-moa.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>emory-moa-1.2</artifactId>
-			<version>1.2</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/emory-moa-1.2.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>commons-io-2.5</artifactId>
+   <version>2.5</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/commons-io-2.5.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>httpclient-4.5.3</artifactId>
-			<version>4.5.3</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/httpclient-4.5.3.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>commons-validator-1.4.0</artifactId>
+   <version>1.4.0</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/commons-validator-1.4.0.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/jdom.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>emory-moa-1.2</artifactId>
+   <version>1.2</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/emory-moa-1.2.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>jms-1.1</artifactId>
-			<version>1.1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/jms-1.1.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>httpclient-4.5.3</artifactId>
+   <version>4.5.3</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/httpclient-4.5.3.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>log4j-1.2.15</artifactId>
-			<version>1.2.15</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/log4j-1.2.15.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>jdom</artifactId>
+   <version>1</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/jdom.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>mysql-connector-java-5.1.30</artifactId>
-			<version>5.1.30</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/mysql-connector-java-5.1.30-bin.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>jms-1.1</artifactId>
+   <version>1.1</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/jms-1.1.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>openeai</artifactId>
-			<version>1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/openeai.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>log4j-1.2.15</artifactId>
+   <version>1.2.15</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/log4j-1.2.15.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>openeai-utils</artifactId>
-			<version>1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/openeai_utils.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>mysql-connector-java-5.1.30</artifactId>
+   <version>5.1.30</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/mysql-connector-java-5.1.30-bin.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>xpp3-1.1.4c</artifactId>
-			<version>1.1.4c</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/xpp3-1.1.4c.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>openeai</artifactId>
+   <version>1</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/openeai.jar</systemPath>
+  </dependency>
 
-		<dependency>
-			<groupId>edu.emory.awsaccount.servicet</groupId>
-			<artifactId>xstream-1.4.10</artifactId>
-			<version>1.4.10</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/xstream-1.4.10.jar</systemPath>
-		</dependency>		
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>openeai-utils</artifactId>
+   <version>1</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/openeai_utils.jar</systemPath>
+  </dependency>
 
-		<!-- added for compile/package goal -->
-		<!-- 
-		<dependency>
-			<groupId>org.apache</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/src/main/resources/commons-logging-1.1.1.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>3.1.2-RELEASE</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/src/main/resources/spring-context-3.1.2.RELEASE.jar</systemPath>
-		</dependency>
-		 -->
-	</dependencies>
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>xpp3-1.1.4c</artifactId>
+   <version>1.1.4c</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/xpp3-1.1.4c.jar</systemPath>
+  </dependency>
+
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>xstream-1.4.10</artifactId>
+   <version>1.4.10</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/xstream-1.4.10.jar</systemPath>
+  </dependency>
+
+  <!-- added for compile/package goal -->
+  <!-- <dependency> <groupId>org.apache</groupId> <artifactId>commons-logging</artifactId> <version>1.1.1</version> <scope>system</scope> <systemPath>${project.basedir}/src/main/resources/commons-logging-1.1.1.jar</systemPath> 
+   </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> <version>3.1.2-RELEASE</version> <scope>system</scope> 
+   <systemPath>${project.basedir}/src/main/resources/spring-context-3.1.2.RELEASE.jar</systemPath> </dependency> -->
+ </dependencies>
 
 </project>

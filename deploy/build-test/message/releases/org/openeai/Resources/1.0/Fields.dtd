@@ -1,0 +1,113 @@
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 4038 $
+		$Date: 2015-09-10 16:37:25 -0400 (Thu, 10 Sep 2015) $
+		$Source$
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2002 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Fields.dtd is a file where all elements without children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!-- Release History:
+
+		2002/07/01	1.0 (tod@openeai.org, steve@openeai.org)
+ -->
+<!-- Include OpenEAI Domains -->
+<!ENTITY % ORG.OPENEAI.RESOURCES.DOMAINS SYSTEM "Domains.dtd">
+%ORG.OPENEAI.RESOURCES.DOMAINS;
+<!--	AuthUserId added 12/15/2000 for */ControlArea/Authentication/AuthUserId-->
+<!ELEMENT AuthUserId %STRDOM;>
+<!--	AuthUserSignature added 12/15/2000 for
+		*/ControlArea/Sender/Authentication/AuthUserSignature
+ -->
+<!ELEMENT AuthUserSignature %STRDOM;>
+<!--Day added 12/15/2000 for */ControlArea/Datetime/Day-->
+<!ELEMENT Day %STRDOM;>
+<!--	ErrorDescription added 12/15/2001 for 
+		ControlArea*/Result/Error/ErrorDescription
+ -->
+<!ELEMENT ErrorDescription %STRDOM;>
+<!--	ErrorNumber added 12/15/2000 for
+		ControlArea*/Result/Error/ErrorDescription
+ -->
+<!ELEMENT ErrorNumber %STRDOM;>
+<!--	Hour added 12/15/2000 for */ControlArea/Datetime/Hour-->
+<!ELEMENT Hour %STRDOM;>
+<!-- MessageSeq added 12/15/2000 for */ControlArea/Sender/MessageId/MessageSeq-->
+<!ELEMENT MessageSeq %STRDOM;>
+<!--	Minute added 12/15/2000 for */ControlArea/Datetime/Minute-->
+<!ELEMENT Minute %STRDOM;>
+<!--	Month added 12/15/2000 for */ControlArea/Datetime/Month-->
+<!ELEMENT Month %STRDOM;>
+<!-- ProducerId added 12/15/2000 for */ControlArea/Sender/MessageId/ProducerId identifies the producer for a sending application.  Always the same for a particular producer (paramaterized).  Identifies the producer of a message.-->
+<!ELEMENT ProducerId %STRDOM;>
+<!--	Second added 12/15/2000 for */ControlArea/Datetime/Second-->
+<!ELEMENT Second %STRDOM;>
+<!-- SenderAppId added 12/15/2000 for */ControlArea/Sender/MessageId/SenderAppId-->
+<!ELEMENT SenderAppId %STRDOM;>
+<!--	SubSecond added 12/15/2000 for */ControlArea/Datetime/SubSecond-->
+<!ELEMENT SubSecond %STRDOM;>
+<!--	TargetAppName added 07/01/2002 for */ControlArea/TargetInfo/TargetId-->
+<!ELEMENT TargetAppName %STRDOM;>
+<!--	TestSuiteName added 1/21/2003 for */ControlAreaRequest/Sender/TestId/TestSuiteName-->
+<!ELEMENT TestSuiteName %STRDOM;>
+<!--	TestSeriesNumber added 1/21/2003 for */ControlAreaRequest/Sender/TestId/TestSeriesNumber-->
+<!ELEMENT TestSeriesNumber %STRDOM;>
+<!--	TestCaseNumber added 1/21/2003 for */ControlAreaRequest/Sender/TestId/TestCaseNumber-->
+<!ELEMENT TestCaseNumber %STRDOM;>
+<!--	TestStepNumber added 1/21/2003 for */ControlAreaRequest/Sender/TestId/TestStepNumber-->
+<!ELEMENT TestStepNumber %STRDOM;>
+<!--	TimeZone added 12/15/2000 for */ControlArea/Datetime/TimeZone-->
+<!ELEMENT Timezone %STRDOM;>
+<!--	Year added 12/15/2000 for */ControlArea/Datetime/Year-->
+<!ELEMENT Year %STRDOM;>
+
+<!--	Value added 7/17/2013 for */Scalar/Value-->
+<!--	Value changed to ScalarValue 10/29/2013 for */Scalar/ScalarValue-->
+<!ELEMENT ScalarValue %STRDOM;>
+<!-- added to ScalarList 8/20/2015 to produce report -->
+<!ELEMENT ScalarListValue %STRDOM;>

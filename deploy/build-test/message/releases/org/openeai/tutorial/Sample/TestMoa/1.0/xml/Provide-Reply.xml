@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!DOCTYPE org.openeai.tutorial.Sample.TestMoa.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.openeai.tutorial.Sample.TestMoa.Provide>
+	<ControlAreaReply messageCategory="org.openeai.tutorial.Sample" messageObject="TestMoa" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>TestMoa</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestMoa</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>TestMoa</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<TestMoa>
+			<Id>1</Id>
+			<TmString>s1</TmString>
+			<TmDate>
+				<Month>1</Month>
+				<Day>2</Day>
+				<Year>1999</Year>
+			</TmDate>
+			<TmDatetime>
+				<Year>2000</Year>
+				<Month>1</Month>
+				<Day>2</Day>
+				<Hour>3</Hour>
+				<Minute>4</Minute>
+				<Second>5</Second>
+				<SubSecond>6</SubSecond>
+				<Timezone>EST</Timezone>
+			</TmDatetime>
+			<TmStar>s2</TmStar>
+			<TmStar>s3</TmStar>
+			<TmObject>
+				<TmString>s4</TmString>
+				<TmDate>
+					<Month>3</Month>
+					<Day>4</Day>
+					<Year>2011</Year>
+				</TmDate>
+			</TmObject>
+			<TmObjectStr>
+				<TmString>s6</TmString>
+			</TmObjectStr>
+		</TestMoa>
+	</DataArea>
+</org.openeai.tutorial.Sample.TestMoa.Provide>

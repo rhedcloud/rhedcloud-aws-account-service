@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE edu.emory.Network.CidrAssignment.Update SYSTEM "../dtd/Update-Sync.dtd">
+<edu.emory.Network.CidrAssignment.Update>
+	<ControlAreaSync messageCategory="edu.emory.Network" messageObject="CidrAssignment" messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+				<ProducerId>9c6ce634-5a4b-4959-be67-52ef3e82847f </ProducerId>
+				<MessageSeq>324</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>paymaster</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<CidrAssignment>
+				<CidrAssignmentId>1</CidrAssignmentId>
+				<OwnerId>vpc-233de844</OwnerId>
+				<Decription>For LITS Architecutre</Decription>
+				<Purpose>For POC use by Architecture</Purpose>
+				<Cidr>
+					<CidrId>1</CidrId>
+					<Network>10.64.40.0</Network>
+					<Bits>24</Bits>
+					<CreateUser>swheat@emory.edu</CreateUser>
+					<CreateDatetime>
+						<Year>2012</Year>
+						<Month>5</Month>
+						<Day>17</Day>
+						<Hour>13</Hour>
+						<Minute>47</Minute>
+						<Second>30</Second>
+						<SubSecond>842</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</Cidr>
+				<CreateUser>swheat@emory.edu</CreateUser>
+				<CreateDatetime>
+					<Year>2012</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</CidrAssignment>
+		</NewData>
+		<BaselineData>
+			<CidrAssignment>
+				<CidrAssignmentId>1</CidrAssignmentId>
+				<OwnerId>vpc-233de844</OwnerId>
+				<Decription>For LITS Architecutre</Decription>
+				<Purpose>For POC use by Architecture</Purpose>
+				<Cidr>
+					<CidrId>1</CidrId>
+					<Network>10.64.40.0</Network>
+					<Bits>24</Bits>
+					<CreateUser>swheat@emory.edu</CreateUser>
+					<CreateDatetime>
+						<Year>2012</Year>
+						<Month>5</Month>
+						<Day>17</Day>
+						<Hour>13</Hour>
+						<Minute>47</Minute>
+						<Second>30</Second>
+						<SubSecond>842</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</Cidr>
+				<CreateUser>swheat@emory.edu</CreateUser>
+				<CreateDatetime>
+					<Year>2012</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</CidrAssignment>
+		</BaselineData>
+	</DataArea>
+</edu.emory.Network.CidrAssignment.Update>

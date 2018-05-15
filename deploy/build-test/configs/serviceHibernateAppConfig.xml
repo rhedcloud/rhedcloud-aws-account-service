@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Deployment SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/Deployment.dtd">
+        <Deployment baseURI="none" status="deployed" type="development" name="edu.emory.ElasticIpService">
+<Application id="edu.emory.ElasticIpService">
+<FullName>edu.emory.ElasticIpService</FullName>
+<Description>edu.emory.ElasticIpService.  Example service, which simply return a sample message</Description>
+<Configuration initializeUsingThreads="false">
+<LoggerConfigs>
+<LoggerConfig name="ServiceLoggerConfig">
+<ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
+<Property>
+<PropertyName>log4j.rootCategory</PropertyName>
+<PropertyValue>INFO, A1</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1</PropertyName>
+<PropertyValue>org.apache.log4j.FileAppender</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.File</PropertyName>
+<PropertyValue>logs/ElasticIpService.log</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.layout</PropertyName>
+<PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.layout.ConversionPattern</PropertyName>
+<PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m-%C{1}.%M%L%n</PropertyValue>
+</Property>
+</LoggerConfig>
+</LoggerConfigs>
+<ConsumerConfigs>
+<ObjectClass>org.openeai.jms.consumer.PointToPointConsumer</ObjectClass>
+<InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+<ProviderURL>tcp://localhost:61616?jms.clientID=edu.emory.ElasticIpService</ProviderURL>
+<SecurityPrincipal>ElasticIpService</SecurityPrincipal>
+<SecurityCredentials>ElasticIpService22</SecurityCredentials>
+<ConfigClass>org.openeai.config.ConsumerConfig</ConfigClass>
+<GenericResponse validate="false">
+<DocumentURI>message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</DocumentURI>
+</GenericResponse>
+<ThreadPoolConfig name="ConsumerThreadPool" minThreads="0" maxThreads="30" maxIdleTime="1" checkBeforeProcessing="true">
+<ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
+<ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
+</ThreadPoolConfig>
+<ConsumerConfig transacted="false" startOnInitialization="true" name="P2PConsumer1">
+<ConnectionFactoryName>cn=ElasticIpServiceConsumerQCF</ConnectionFactoryName>
+<DestinationName>cn=ElasticIpServiceQueue</DestinationName>
+<Commands writeToFile="false" outboundXmlValidation="false" inboundXmlValidation="false">
+<Command writeToFile="false" type="requestMessage" outboundXmlValidation="false" isDefault="true" isAbsolute="true" inboundXmlValidation="false">
+<CommandName>RdbmsRequestCommand</CommandName>
+<CommandClass>com.openii.openeai.toolkit.rdbms.HibernateRdbmsRequestCommand</CommandClass>
+<Configuration initializeUsingThreads="false">
+<ProducerConfigs>
+<ProducerConfig transacted="false" tempQueuePoolSize="5" startOnInitialization="true" numberOfProducers="5" name="SyncPublisher" deliveryMode="PERSISTENT">
+<DestinationName>cn=RoutingServiceTopic</DestinationName>
+<ConnectionFactoryName>cn=ElasticIpServiceProducerTCF</ConnectionFactoryName>
+<InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+<ProviderURL>tcp://localhost:61616?jms.clientID=edu.emory.ElasticIpService</ProviderURL>
+<SecurityPrincipal>ElasticIpService</SecurityPrincipal>
+<SecurityCredentials>ElasticIpService22</SecurityCredentials>
+<ProducerIdURL>localhost</ProducerIdURL>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<ObjectClass>org.openeai.jms.producer.PubSubProducer</ObjectClass>
+<LoggingProducer transacted="false" tempQueuePoolSize="5" startOnInitialization="true" name="LoggingProducer" deliveryMode="PERSISTENT">
+<ConnectionFactoryName>cn=ElasticIpServiceProducerTCF</ConnectionFactoryName>
+<DestinationName>cn=LoggingServiceTopic</DestinationName>
+<InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+<ProviderURL>tcp://localhost:61616?jms.clientID=edu.emory.ElasticIpService</ProviderURL>
+<SecurityPrincipal>ElasticIpService</SecurityPrincipal>
+<SecurityCredentials>ElasticIpService22</SecurityCredentials>
+<ProducerIdURL>localhost</ProducerIdURL>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<ObjectClass>org.openeai.jms.producer.PubSubProducer</ObjectClass>
+</LoggingProducer>
+</ProducerConfig>
+</ProducerConfigs>
+<MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
+<SenderAppId>edu.emory.ElasticIpService</SenderAppId>
+<Authentication>
+<UserId>edu.emory.ElasticIpService</UserId>
+</Authentication>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" name="TestId" deferInitialization="false">
+<SenderAppId>org.any-openeai-enterprise.EnterpriseGreetingService</SenderAppId>
+<Authentication>
+<UserId>egs</UserId>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>org.openeai.moa.objects.testsuite.TestId</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="true" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/openeai/Resources/1.0/ControlAreaEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ElasticIp.v1_0">
+<SenderAppId>edu.emory.ElasticIpService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>ElasticIp</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/edu/emory/Network/ElasticIp/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>edu.emory.moa.jmsobjects.network.v1_0.ElasticIp</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/edu/emory/Network/1.0/ElasticIpEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ElasticIpAssignment.v1_0">
+<SenderAppId>edu.emory.ElasticIpService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>ElasticIpAssignment</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="create">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="generate">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="response">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/edu/emory/Network/ElasticIpAssignment/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/edu/emory/Network/1.0/ElasticIpAssignmentEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ElasticIpQuerySpecification.v1_0">
+<SenderAppId>edu.emory.ElasticIpService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>edu.emory.moa.objects.resources.v1_0.ElasticIpQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/edu/emory/Resources/1.0/ElasticIpQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ElasticIpAssignmentQuerySpecification.v1_0">
+<SenderAppId>edu.emory.ElasticIpService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>edu.emory.moa.objects.resources.v1_0.ElasticIpAssignmentQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/edu/emory/Resources/1.0/ElasticIpAssignmentQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ElasticIpRequisition.v1_0">
+<SenderAppId>edu.emory.ElasticIpService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>edu.emory.moa.objects.resources.v1_0.ElasticIpRequisition</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/edu/emory/Resources/1.0/ElasticIpRequisitionEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+</MessageObjectConfigs>
+<PropertyConfigs>
+<PropertyConfig refresh="false" name="GeneralProperties">
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<Property>
+<PropertyName>GenericResponseDocumentUri</PropertyName>
+<PropertyValue>./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PropertyValue>
+</Property>
+<Property>
+<PropertyName>publishSyncs</PropertyName>
+<PropertyValue>false</PropertyValue>
+</Property>
+<Property>
+<PropertyName>databaseId</PropertyName>
+<PropertyValue>HibernateDs</PropertyValue>
+</Property>
+<Property>
+<PropertyName>maintainBaselineStore</PropertyName>
+<PropertyValue>false</PropertyValue>
+</Property>
+<Property>
+<PropertyName>overrideDefaults</PropertyName>
+<PropertyValue>false</PropertyValue>
+</Property>
+<Property>
+<PropertyName>useConnectionFromHibernateCfg</PropertyName>
+<PropertyValue>true</PropertyValue>
+</Property>
+<Property>
+<PropertyName>checkAgainstBaseline</PropertyName>
+<PropertyValue>true</PropertyValue>
+</Property>
+</PropertyConfig>
+<PropertyConfig refresh="false" name="DbPoolMappings">
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<Property>
+<PropertyName>HibernateDs</PropertyName>
+<PropertyValue>HibernateDbPool</PropertyValue>
+</Property>
+</PropertyConfig>
+<PropertyConfig refresh="false" name="PersistenceHelperMappings">
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<Property>
+<PropertyName>Default</PropertyName>
+<PropertyValue>com.openii.openeai.toolkit.rdbms.persistence.hibernate.HibernateMoaPersistenceHelper</PropertyValue>
+</Property>
+</PropertyConfig>
+</PropertyConfigs>
+</Configuration>
+</Command>
+</Commands>
+</ConsumerConfig>
+
+</ConsumerConfigs>
+</Configuration>
+</Application>
+</Deployment>

@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TestSuite SYSTEM "ElasticIpService.TestSuite.dtd">
+        <TestSuite name="ElasticIpService Minimal Test Suite">
+<Description>ElasticIpService Minimal Test Suite</Description>
+<TestSeries producerName="TestSuiteP2PProducer" number="1">
+<Description>This series performs a minimal test on all operations for the message object ElasticIp</Description>
+<TestCase number="1">
+<Description>This case performs Create operations on the ElasticIp</Description>
+<TestStep number="1">
+<Description>Create operation on the ElasticIp  - success</Description>
+<CreateRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIp" messageRelease="1.0" messagePriority="9">
+<NewData>
+          <ElasticIp>
+            <ElasticIpId>1</ElasticIpId>
+            <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>47</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIp>
+        </NewData>
+<TestResult status="success" action="Create"/>
+</CreateRequest>
+</TestStep>
+</TestCase>
+<TestCase number="2">
+<Description>This case performs Query operations on the ElasticIp</Description>
+<TestStep number="1">
+<Description>Query operation on the ElasticIp  - success</Description>
+<QueryRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIp" messageRelease="1.0" messagePriority="9" queryObjectName="ElasticIpQuerySpecification">
+<QueryData>
+<ElasticIpQuerySpecification>
+          <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+        </ElasticIpQuerySpecification>
+</QueryData>
+<TestResult status="success" action="Query"/>
+<ProvideData>
+<ElasticIp>
+          <ElasticIpId>1</ElasticIpId>
+          <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+          <CreateUser>swheat</CreateUser>
+          <CreateDatetime>
+            <Year>2017</Year>
+            <Month>9</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>842</SubSecond>
+            <Timezone>America/New_York</Timezone>
+          </CreateDatetime>
+        </ElasticIp>
+</ProvideData>
+</QueryRequest>
+</TestStep>
+</TestCase>
+<TestCase number="3">
+<Description>This case performs Update operations on the ElasticIp</Description>
+<TestStep number="1">
+<Description>Update operation on the ElasticIp  - success</Description>
+<UpdateRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIp" messageRelease="1.0" messagePriority="9">
+<NewData>
+          <ElasticIp>
+            <ElasticIpId>1</ElasticIpId>
+            <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>47</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIp>
+        </NewData>
+<BaselineData>
+          <ElasticIp>
+            <ElasticIpId>1</ElasticIpId>
+            <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>47</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIp>
+        </BaselineData>
+<TestResult status="success" action="Update"/>
+</UpdateRequest>
+</TestStep>
+</TestCase>
+<TestCase number="4">
+<Description>This case performs Delete operations on the ElasticIp</Description>
+<TestStep number="1">
+<Description>Delete operation on the ElasticIp  - success</Description>
+<DeleteRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIp" messageRelease="1.0" messagePriority="9">
+<DeleteData>
+          <DeleteAction type="Delete"/>
+          <ElasticIp>
+            <ElasticIpId>1</ElasticIpId>
+            <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>47</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIp>
+        </DeleteData>
+<TestResult status="success" action="Delete"/>
+</DeleteRequest>
+</TestStep>
+</TestCase>
+</TestSeries>
+<TestSeries producerName="TestSuiteP2PProducer" number="2">
+<Description>This series performs a minimal test on all operations for the message object ElasticIpAssignment</Description>
+<TestCase number="1">
+<Description>This case performs Create operations on the ElasticIpAssignment</Description>
+<TestStep number="1">
+<Description>Create operation on the ElasticIpAssignment  - success</Description>
+<CreateRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIpAssignment" messageRelease="1.0" messagePriority="9">
+<NewData>
+          <ElasticIpAssignment>
+            <OwnerId>vpc-c8d93cb1</OwnerId>
+            <Decription>Elastic IP 1</Decription>
+            <Purpose>Web Server</Purpose>
+            <ElasticIp>
+              <ElasticIpId>1</ElasticIpId>
+              <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+              <CreateUser>swheat</CreateUser>
+              <CreateDatetime>
+                <Year>2017</Year>
+                <Month>9</Month>
+                <Day>17</Day>
+                <Hour>13</Hour>
+                <Minute>47</Minute>
+                <Second>30</Second>
+                <SubSecond>842</SubSecond>
+                <Timezone>America/New_York</Timezone>
+              </CreateDatetime>
+            </ElasticIp>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>57</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIpAssignment>
+        </NewData>
+<TestResult status="success" action="Create"/>
+</CreateRequest>
+</TestStep>
+</TestCase>
+<TestCase number="2">
+<Description>This case performs Query operations on the ElasticIpAssignment</Description>
+<TestStep number="1">
+<Description>Query operation on the ElasticIpAssignment  - success</Description>
+<QueryRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIpAssignment" messageRelease="1.0" messagePriority="9" queryObjectName="ElasticIpAssignmentQuerySpecification">
+<QueryData>
+<ElasticIpAssignmentQuerySpecification>
+          <OwnerId>vpc-c8d93cb1</OwnerId>
+        </ElasticIpAssignmentQuerySpecification>
+</QueryData>
+<TestResult status="success" action="Query"/>
+<ProvideData>
+<ElasticIpAssignment>
+          <ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+          <OwnerId>vpc-c8d93cb1</OwnerId>
+          <Decription>Elastic IP 1</Decription>
+          <Purpose>Web Server</Purpose>
+          <ElasticIp>
+            <ElasticIpId>1</ElasticIpId>
+            <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>47</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIp>
+          <CreateUser>swheat</CreateUser>
+          <CreateDatetime>
+            <Year>2017</Year>
+            <Month>9</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>57</Minute>
+            <Second>30</Second>
+            <SubSecond>842</SubSecond>
+            <Timezone>America/New_York</Timezone>
+          </CreateDatetime>
+        </ElasticIpAssignment>
+</ProvideData>
+</QueryRequest>
+</TestStep>
+</TestCase>
+<TestCase number="3">
+<Description>This case performs Update operations on the ElasticIpAssignment</Description>
+<TestStep number="1">
+<Description>Update operation on the ElasticIpAssignment  - success</Description>
+<UpdateRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIpAssignment" messageRelease="1.0" messagePriority="9">
+<NewData>
+          <ElasticIpAssignment>
+            <ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+            <OwnerId>vpc-c8d93cb1</OwnerId>
+            <Decription>Elastic IP 1</Decription>
+            <Purpose>Web Server</Purpose>
+            <ElasticIp>
+              <ElasticIpId>1</ElasticIpId>
+              <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+              <CreateUser>swheat</CreateUser>
+              <CreateDatetime>
+                <Year>2017</Year>
+                <Month>9</Month>
+                <Day>17</Day>
+                <Hour>13</Hour>
+                <Minute>47</Minute>
+                <Second>30</Second>
+                <SubSecond>842</SubSecond>
+                <Timezone>America/New_York</Timezone>
+              </CreateDatetime>
+            </ElasticIp>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>57</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIpAssignment>
+        </NewData>
+<BaselineData>
+          <ElasticIpAssignment>
+            <ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+            <OwnerId>vpc-c8d93cb1</OwnerId>
+            <Decription>Elastic IP 1</Decription>
+            <Purpose>Web Server</Purpose>
+            <ElasticIp>
+              <ElasticIpId>1</ElasticIpId>
+              <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+              <CreateUser>swheat</CreateUser>
+              <CreateDatetime>
+                <Year>2017</Year>
+                <Month>9</Month>
+                <Day>17</Day>
+                <Hour>13</Hour>
+                <Minute>47</Minute>
+                <Second>30</Second>
+                <SubSecond>842</SubSecond>
+                <Timezone>America/New_York</Timezone>
+              </CreateDatetime>
+            </ElasticIp>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>57</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIpAssignment>
+        </BaselineData>
+<TestResult status="success" action="Update"/>
+</UpdateRequest>
+</TestStep>
+</TestCase>
+<TestCase number="4">
+<Description>This case performs Delete operations on the ElasticIpAssignment</Description>
+<TestStep number="1">
+<Description>Delete operation on the ElasticIpAssignment  - success</Description>
+<DeleteRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIpAssignment" messageRelease="1.0" messagePriority="9">
+<DeleteData>
+          <DeleteAction type="Delete"/>
+          <ElasticIpAssignment>
+            <ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+            <OwnerId>vpc-c8d93cb1</OwnerId>
+            <Decription>Elastic IP 1</Decription>
+            <Purpose>Web Server</Purpose>
+            <ElasticIp>
+              <ElasticIpId>1</ElasticIpId>
+              <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+              <CreateUser>swheat</CreateUser>
+              <CreateDatetime>
+                <Year>2017</Year>
+                <Month>9</Month>
+                <Day>17</Day>
+                <Hour>13</Hour>
+                <Minute>47</Minute>
+                <Second>30</Second>
+                <SubSecond>842</SubSecond>
+                <Timezone>America/New_York</Timezone>
+              </CreateDatetime>
+            </ElasticIp>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>57</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIpAssignment>
+        </DeleteData>
+<TestResult status="success" action="Delete"/>
+</DeleteRequest>
+</TestStep>
+</TestCase>
+<TestCase number="5">
+<Description>This case performs Generate operations on the ElasticIpAssignment</Description>
+<TestStep number="1">
+<Description>Generate operation on the ElasticIpAssignment  - success</Description>
+<GenerateRequest messageCategory="edu.emory.Network" messageObjectName="ElasticIpAssignment" messageRelease="1.0" messagePriority="9" generateObjectName="ElasticIpRequisition">
+<GenerateData>
+<ElasticIpRequisition>
+          <OwnerId>vpc-c8d93cb1</OwnerId>
+        </ElasticIpRequisition>
+</GenerateData>
+<TestResult status="success" action="Create"/>
+<ResponseData>
+<ElasticIpAssignment>
+          <ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+          <OwnerId>vpc-c8d93cb1</OwnerId>
+          <Decription>Elastic IP 1</Decription>
+          <Purpose>Web Server</Purpose>
+          <ElasticIp>
+            <ElasticIpId>1</ElasticIpId>
+            <ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+            <CreateUser>swheat</CreateUser>
+            <CreateDatetime>
+              <Year>2017</Year>
+              <Month>9</Month>
+              <Day>17</Day>
+              <Hour>13</Hour>
+              <Minute>47</Minute>
+              <Second>30</Second>
+              <SubSecond>842</SubSecond>
+              <Timezone>America/New_York</Timezone>
+            </CreateDatetime>
+          </ElasticIp>
+          <CreateUser>swheat</CreateUser>
+          <CreateDatetime>
+            <Year>2017</Year>
+            <Month>9</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>57</Minute>
+            <Second>30</Second>
+            <SubSecond>842</SubSecond>
+            <Timezone>America/New_York</Timezone>
+          </CreateDatetime>
+        </ElasticIpAssignment>
+</ResponseData>
+</GenerateRequest>
+</TestStep>
+</TestCase>
+</TestSeries>
+</TestSuite>

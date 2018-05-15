@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE edu.emory.Network.ElasticIpAssignment.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<edu.emory.Network.ElasticIpAssignment.Delete>
+	<ControlAreaSync messageCategory="edu.emory.Network" messageObject="ElasticIpAssignment"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteApp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>9</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<ElasticIpAssignment>
+				<ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+				<OwnerId>vpc-c8d93cb1</OwnerId>
+				<Decription>Elastic IP 1</Decription>
+				<Purpose>Web Server</Purpose>
+				<ElasticIp>
+					<ElasticIpId>1</ElasticIpId>
+					<ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+					<CreateUser>swheat</CreateUser>
+					<CreateDatetime>
+						<Year>2017</Year>
+						<Month>9</Month>
+						<Day>17</Day>
+						<Hour>13</Hour>
+						<Minute>47</Minute>
+						<Second>30</Second>
+						<SubSecond>842</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ElasticIp>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2017</Year>
+					<Month>9</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>57</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ElasticIpAssignment>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Network.ElasticIpAssignment.Delete>

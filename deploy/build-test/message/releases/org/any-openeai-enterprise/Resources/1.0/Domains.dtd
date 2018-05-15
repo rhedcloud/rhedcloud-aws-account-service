@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.0.7 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!--	$Revision: 315 $
+		$Date: 2002-10-24 19:38:45 -0400 (Thu, 24 Oct 2002) $
+		$Source$
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2002 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Domains.dtd is a file in which any custom datatypes are defined.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+		
+		01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+ -->
+<!-- Notes:
+-->
+<!-- Date Data -->
+<!ENTITY % DATE "(Month, Day, Year)">
+<!-- Datetime Data -->
+<!ENTITY % DATETIME "(Year, Month, Day, Hour, Minute, Second, SubSecond, Timezone)">
+

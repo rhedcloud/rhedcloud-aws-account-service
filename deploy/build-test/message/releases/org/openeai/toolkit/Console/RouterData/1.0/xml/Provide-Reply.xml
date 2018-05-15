@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.RouterData.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.openeai.toolkit.Console.RouterData.Provide>
+	<ControlAreaReply messageCategory="org.openeai.toolkit.Console" messageObject="RouterData" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>MyLog</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>WebEaseMobile</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<RouterData>
+                            <RowId>1</RowId>
+			<SenderAppId>edu.emory.SciquestConnector</SenderAppId>
+			<MsgId>edu.emory.SciquestConnector-2355ad02-29f4-4cc6-9a8c-4265eda312be-1</MsgId>
+			<TargetMessageId>com.openii.SyncRouter-8ee4d13b-bc84-428a-a67d-81cc8c261cc0-1</TargetMessageId>
+			<TargetAppId>edu.emory.DataWarehouseConnector (NewPubSubConsumer)</TargetAppId>
+			<MsgCategory>com.sciquest.Procurement</MsgCategory>
+			<MsgObjecty>PurchaseOrder</MsgObjecty>
+			<MsgAction>Create</MsgAction>
+			<MsgType>Sync</MsgType>
+			<MsgRelease>1.0</MsgRelease>
+			<CreateUser>ESB30</CreateUser>
+			<CreateDate>
+				<Month>1</Month>
+				<Day>1</Day>
+				<Year>2013</Year>
+			</CreateDate>
+		</RouterData>
+	</DataArea>
+</org.openeai.toolkit.Console.RouterData.Provide>

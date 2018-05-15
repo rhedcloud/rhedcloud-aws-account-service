@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 1.1 $
+		$Date: 2008/12/03 21:56:59 $
+		$Source: /cvs/repositories/openii3/project/message/releases/edu/emory/Resources/1.0/Segments.dtd,v $
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2008 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Segments.dtd is a file where definitions of all elements with 
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+		01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+-->
+<!--	Notes:
+		Comments for each element should provide the initial context for which
+		the element was added and the date when it was added.
+-->
+<!-- ====================================================================== -->
+<!-- Elements - Segments
+-->
+<!--  AcademicCareer added 3/3/2010 for BlackboardMobile -->
+<!ELEMENT AcademicCareer (Name, Code)> 
+<!-- Address copied 01/12/2010 for Identity/Location -->
+<!-- Address modified 09/14/2010, CityOrLocality made optional - mbell4  -->
+<!-- Address modified 06/16/2011, Street1 made optional - mbell4  -->
+<!ELEMENT Address (Street1?, Street2?, Street3?, CityOrLocality?, County?, StateOrProvince?, Nation?, ZipOrPostalCode?)>
+<!-- Association added 12/16/2009 for Identity/Person -->
+<!ELEMENT Association ( Name, Key?, Realm?)>
+<!-- AvailableDate added 3/3/2010 for BlackboardMobile -->
+<!ELEMENT AvailableDate (StartDate, EndDate) >
+<!-- DriversLicense added 04/14/2009 for Identity/EnterpriseIdentity -->
+
+<!-- Comment added 05/16/2012 for Logging/HipaaAuditLogEntry -->
+<!ELEMENT Comment (CreateDatetime, EduPersonPrincipalName, Text)>
+
+<!ELEMENT DriversLicense (Value, Country?, State?, ImageUri?)>
+<!-- Classs added 3/03/2010 for BlackboardMobile. Three s's needed to avoid naming conflicts at java compile time 
+            added Description to Classs for BlackboardMobile 3/2/2010 
+            deleted 11/11/2010 
+<!ELEMENT Classs (Course, Section, Term, CrossListedClass*, Location? , Schedule?)>
+-->
+<!--  ClassQuerySpecification added 3/8/2010 for BlackboardMobile
+deleted 11/11/2010  
+<!ELEMENT  ClassQuerySpecification (CourseId?, Section?, Term? )>
+-->
+<!-- Course added 3/03/2010 for BlackboardMobile 
+deleted 11/11/2010 
+<!ELEMENT Course (CourseId, Name,  Description, Department, SchoolName) >
+-->
+<!--  CourseQuerySpecification added 3/8/2010 for BlackoardMobile
+deleted 11/11/2010 
+<!ELEMENT CourseQuerySpecification (CourseId?, Name?, Department?, SchoolName? )>
+-->
+<!-- CrossListedClass added 3/3/2010 for BlackboardMobile 
+deleted 11/11/2010 
+<!ELEMENT CrossListedClass (Classs) >
+-->
+<!-- DayOfWeekSchedule added for BlackboardMobile 3/3/2010 --> 
+<!ELEMENT DayOfWeekSchedule (StartTime, EndTime) >
+<!ATTLIST DayOfWeekSchedule 
+    day (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) #REQUIRED
+>
+<!-- Department copied 12/16/2009 for Identity/Employee -->
+<!-- Department updated 02/04/2010 Removed Lead -->
+<!ELEMENT Department (Name?, Code?, SetId?)>
+<!ATTLIST Department
+	type CDATA #IMPLIED
+>
+<!-- Division copied 12/16/2009 for Identity/OrgHierarchy -->
+<!-- Division updated 02/04/2010 Removed Lead -->
+<!ELEMENT Division (Name?, Code?, SetId?)>
+<!-- Eligibility added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT Eligibility (Value)>
+<!ATTLIST Eligibility
+	type CDATA #REQUIRED
+>
+<!-- Email updated 12/16/2009 added PublicId -->
+<!ELEMENT Email (EmailAddress)>
+<!ATTLIST Email
+	type CDATA #REQUIRED
+>
+<!-- EmailRestricted added 6/16/2011 for Amcom integration -->
+<!ELEMENT EmailRestricted (Email*)>
+<!ATTLIST EmailRestricted
+	type CDATA #IMPLIED
+>
+<!-- Employee added 12/16/2009 -->
+<!-- Employee updated 01/06/10 added Location -->
+<!-- Employee updated 11/15/10 added DirectoryTitle -->
+<!-- Employee attibutes physician and healthCareManager are not currently being set. mbell4 7/7/11 -->
+<!-- Employee Location (the location in the online directory) has moved to Person.  Although it is left here, it is not being populated by Id Svc v2.  Will remove from Employee in Resources 3.0. mbell4 7/7/11 -->
+<!-- DirectoryTitle has moved to Person.  Although it is left here, it is not being populated by Id Svc v2.  Will remove from Employee in Resources 3.0. mbell4 7/7/11 -->
+<!-- Job Location was added to Job.  These locations are the PS HR job locations. mbell4 7/7/11 -->
+<!-- TerminationDate was added to Employee.  This was to satisfy a requirement in FullPerson for eBirt system.  kbray 3/5/2013 -->
+<!ELEMENT Employee ( EmplId?, PublicId?, CurrentHireDate?, OrigHireDate?, ServiceDate?, EmployeeStatus?, Job* ,Location?, DirectoryTitle?, TerminationDate?, EmployeeDate* )>
+<!ATTLIST Employee
+	faculty (true | false) #IMPLIED
+	physician (true | false) #IMPLIED
+	healthCareManager (true | false) #IMPLIED
+	administrative (true | false) #IMPLIED
+	studentStaff (true | false) #IMPLIED
+	staffStudent (true | false) #IMPLIED
+	staff (true | false) #IMPLIED
+	retired (true | false) #IMPLIED
+	preStart (true | false) #IMPLIED
+>
+<!-- Added this segment to break out Employment Dates because they are carried at the company level
+.  This was to satisfy a requirement in FullPerson for eBirt system.  kbray 3/11/2013 -->
+<!ELEMENT EmployeeDate (CurrentHireDate?, OrigHireDate?, ServiceDate?, TerminationDate?)>
+<!ATTLIST EmployeeDate
+	type CDATA #REQUIRED
+>
+<!-- EmployeeQuerySpecification added 12/18/2009 -->
+<!ELEMENT EmployeeQuerySpecification (EmplId?, PublicId?)>
+<!-- Enrollment added 3/3/2010 for BlackBoardMobile  
+deleted 11/11/2010 
+<!ELEMENT Enrollment (Employee?, Student?,  SponsoredPerson?, Classs, EnrollmentContract)>
+-->
+<!-- EnrollmentContract added  3/3/2010 for BlackBoardMobile 
+deleted 11/11/2010 
+<!ELEMENT EnrollmentContract (RoleName, GradingBasis?, CreditHours?) >
+-->
+<!-- EnrollmentDate added  3/3/2010 for BlackBoardMobile 
+deleted 11/11/2010 
+<!ELEMENT EnrollmentDate (StartDate, EndDate) >
+-->
+<!-- FacilitiesBuilding added 06/13/2011 for Amcom Integration -->
+<!ELEMENT FacilitiesBuilding (Building, BuildingName?, Address?)>
+<!-- FacilitiesBuildingQuery added 09/08/2011 for Amcom Integration -->
+<!ELEMENT FacilitiesBuildingQuerySpecification (Building, BuildingName?)>
+<!-- FallbackContact added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT FallbackContact (EstablishedDate, EmailAddress?)>
+<!-- FullPerson added 06/02/2011 for Identity Service Version 2 -->
+<!ELEMENT FullPerson (PublicId, Person?, NetworkIdentity*, Employee?, Student?, SponsoredPerson*)>
+<!-- FullPersonQuerySpecification added 04/16/2009 -->
+<!-- Added Code which is used to search for a specific Department. added 6/18/2014 -->
+<!ELEMENT FullPersonQuerySpecification (PublicId?, NetId?, EmplId?, Prsni?, Code?)>
+<!--Geocode copied 01/12/2010 for Identity/Location -->
+<!ELEMENT Geocode (Longitude, Latitude, Altitude?, Accuracy?)>
+<!-- OrgEntity added 12/16/2009 for Identity/OrgHierarchy -->
+
+<!-- added 7/8/2014 for HALS -->
+<!ELEMENT HipaaAuditLog (LogId?,HipaaAuditLogEntry*)>
+<!ELEMENT HipaaAuditLogEntry (LogEntryId?, Tag*, Comment*, EventDatetime, AuditDatetime, ApplicationName, EduPersonPrincipalName, IpNumber, EventType, EventStatus, EventTarget, Description)>
+<!ELEMENT HipaaAuditLogEntryQuerySpecification (Comparison*,QueryLanguage?,LogEntryId?, StartEventDatetime?, EndEventDatetime?, StartAuditDatetime?, EndAuditDatetime?, ApplicationName?, EduPersonPrincipalName?, IpNumber?, EventType?, EventStatus?, EventTarget?, Description?)>
+<!--added 8/21/2015 for HALS-->
+<!ELEMENT BasicReport (ApplicationName,LogCount,DistinctEppnCount,DistinctIpCount,DistinctEventTypeCount,DistinctEventStatusCount,StartEventDatetime?,EndEventDatetime?,StartAuditDatetime?,EndAuditDatetime?)>
+<!ELEMENT BasicReportQuerySpecification (Comparison*,QueryLanguage?, StartDate?,EndDate?,StartDatetime?, EndDatetime?, ApplicationName?, EduPersonPrincipalName?, IpNumber?, EventType?, EventStatus?, EventTarget?, Description?)>
+
+
+
+<!-- Job added 12/18/2009 for Identity/Person -->
+<!-- Job updated 01/06/2010  -->
+<!-- Job Location was added to Job.  These locations are the PS HR job locations. mbell4 7/7/11 -->
+<!-- Employer Class was added to Job 9/21/17 -->
+
+<!ELEMENT Job (SequenceNumber, JobCode?, JobName?, PersonJobStatus?, Classification?, OrgHierarchy?, EmployeeTime?, Location?)>
+<!ATTLIST Job
+	type (current | future | terminated) #REQUIRED
+	primary (true | false) #IMPLIED
+>
+<!-- Lead copied 12/16/2009 for Identity/OrgHierarchy -->
+<!ELEMENT Lead (PublicId)>
+<!-- LocalizedNameList added 01/12/2009 for Identity/Person -->
+<!ELEMENT LocalizedNameList (PersonalName+)>
+<!-- Location added 12/18/2009 -->
+<!-- Location modified 9/14/2010, Locid made optional - mbell4 -->
+<!-- Location modified 6/16/2011, added attribute type - mbell4 -->
+<!ELEMENT Location (LocId?, Campus?, Building?, Address?, Floor?, Room?, Geocode?)> 
+<!ATTLIST Location
+	type CDATA #IMPLIED
+>
+<!-- LocationQuerySpecification added 12/18/2009 -->
+<!ELEMENT LocationQuerySpecification (LocId?)>
+<!-- LocationRestricted added 6/16/2011for Amcom integration  -->
+<!ELEMENT LocationRestricted (Location*)> 
+<!ATTLIST LocationRestricted
+	type CDATA #IMPLIED
+>
+<!-- NationalIdCard added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT NationalIdCard (Value, Country?, ImageUri?)>
+<!-- NetworkIdentity added from V1_0 to support FullPerson 06/02/2011 -->
+<!-- NetworkIdentity InitialPassword added by mbell4 01/31/2013 for NetIQ -->
+<!-- IntitialPassword should be removed by RoutingService transformation for all non-NetIQ subscribers -->
+<!ELEMENT NetworkIdentity (Value, PublicId?, CreateDate, EndDate?, Domain?, Tag*, InitialPassword?)>
+<!ATTLIST NetworkIdentity
+	type CDATA #REQUIRED
+	status (reserved | active | inactive) #REQUIRED
+	ancillary (true | false) "false"
+>
+<!ELEMENT OrgEntity (Name?, Code?, SetId?)>
+<!-- OrgHierarchy added 12/16/2009 -->
+<!ELEMENT OrgHierarchy (Department, WorkGroup?, Division, OrgEntity)> 
+<!-- OrgHierarchyQuerySpecification added 12/18/2009 -->
+<!ELEMENT OrgHierarchyQuerySpecification (Department?)>
+<!-- PersonalName added 04/14/2009 for Identity/EnterpriseIdentity -->
+<!ELEMENT PersonalName (LastName, FirstName, MiddleName?, NameSuffix?, Prefix?, Suffix?, CompositeName?)>
+<!ATTLIST PersonalName
+	type CDATA #REQUIRED
+	order (east | west) #IMPLIED
+	noFirstName (true | false) #IMPLIED
+>
+<!-- Person added 01/12/2010 -->
+<!-- Person expected Tag value list: "DirectorySuppress", "FerpaSuppress" -->
+<!-- Prsni added to Person 08/20/2010 by mbell4 for Service Now to Healthcare Remedy interface -->
+<!-- Location (online directory location) and DirectoryTitle added to Person 07/07/2011 by mbell4 for Id Svc 2.  These were formerly in Employee, but SponsoredPersons could have these set as well. -->
+<!-- EmailRestricted, PhoneRestricted, and LocationRestricted added to Person 07/07/2011 by mbell4 for Id Svc 2 . The routing service will replace those with type="Amcom" with "x"s when routing messages to non-Amcom consumers. -->
+<!ELEMENT Person (PublicId, PersonalName, LocalizedNameList?, SSN?, BirthDay?, BirthMonth?, BirthYear?, DriversLicense?, NationalIdCard*, Gender?, Association*, Eligibility*, Tag*, FallbackContact*,Phone*,Email*, Prsni, Location?, DirectoryTitle?, EmailRestricted?, PhoneRestricted?, LocationRestricted?)>
+<!-- PersonGeneorator added 2/18/2010 -->
+<!ELEMENT PersonGenerator (PersonalName)>
+<!-- PersonQuerySpecification added 04/16/2009 -->
+<!ELEMENT PersonQuerySpecification (PublicId?, NetId?, EmplId?, Prsni?)>
+<!-- Phone updated 12/16/2009 for Identity/Person -->
+<!-- Phone updated 06/16/2011, added PhoneCarrier for Amcom integration -->
+<!-- Use <Tag>ENotifyEmergency</Tag> to designate the phone # is the ENotify emergency phone number. -->
+<!ELEMENT Phone (CountryCode?, AreaCode?, Number, ExtensionNumber?, PhoneCarrier?, Tag*)>
+<!ATTLIST Phone
+	type CDATA #IMPLIED
+>
+<!-- PhoneCarrier added 06/16/2011 for Amcom Integration -->
+<!ELEMENT PhoneCarrier (Name?, Code?)>
+<!ATTLIST PhoneCarrier
+	type CDATA #IMPLIED
+>
+<!-- PhoneRestricted added 06/16/2011 for Amcom Integration -->
+<!ELEMENT PhoneRestricted (Phone*)>
+<!ATTLIST PhoneRestricted
+	type CDATA #IMPLIED
+>
+<!-- ProvisionPerson added 1/31/2013 by mbell4 for NetIQ  -->
+<!ELEMENT ProvisionPerson (PublicId, ServiceMatrixString?, FullEmailName, Person, NetworkIdentity*)>
+<!ATTLIST ProvisionPerson
+	inDirectory (true | false) #IMPLIED
+>
+<!-- Schedule added 3/3/2010 for BlackboardMobile  -->
+<!--Schedule is the date that the Blackboard Site is available
+deleted 11/11/2010 
+<!ELEMENT  Schedule (EnrollmentDate,  AvailableDate, DayOfWeekSchedule*)>
+-->
+<!-- 1/6/10 Added OrgHierarchy - SponsoredPerson added 12/16/2009 -->
+<!-- SponsoredPerson updated 6/16/2011 - Added cummunityphysician & communitystaff for Amcom integration-->
+<!ELEMENT SponsoredPerson ( PublicId, OrgHierarchy)>
+<!ATTLIST SponsoredPerson
+    type CDATA #REQUIRED
+    active (true | false) #IMPLIED
+    communityphysician (true | false) #IMPLIED
+    communitystaff (true | false) #IMPLIED
+> 
+<!-- Student added 3/2/2010 for BlackboardMobile -->
+<!-- eligibleStudent added 06/02/2011 to match Student.V1_0 for FullPerson-->
+<!ELEMENT Student (EmplId, PublicId?, StudentCareer*, LatestTerm?, StudentLevel?)>
+<!ATTLIST Student
+	activeStudent (true | false) #IMPLIED
+	currentApplicant (true | false) #IMPLIED
+	eligibleStudent (true | false) #IMPLIED
+>
+<!-- StudentQuerySpecification added 3/2/2010 for BlackboardMobile -->
+<!ELEMENT StudentQuerySpecification (EmplId?, PublicId?)>
+<!-- StudentCareer added 12/16/2009 for 3/2/2010 for BlackboardMobile -->
+<!ELEMENT StudentCareer ( AcademicCareer, Term?, AcadProgram? )>
+<!-- SponsoredPersonQuerySpecification added 12/18/2009 -->
+
+<!ELEMENT SponsoredPersonQuerySpecification (PublicId?)>
+<!-- StudentLevel added 12/18/2009 for Identity/Student -->
+<!ELEMENT StudentLevel (Name, Code)>
+<!-- WorkGroup added 12/16/2009 for Identity/OrgHierarchy -->
+<!ELEMENT WorkGroup (Name?, Code?, SetId?)>
+<!-- ================================================== -->
+<!--  Changelog
+03/03/2010 jleon Added segments for BlackboardMobile. Added Course segment.
+11/18/2010 jleon Cleaned up for Blackboard-Opus project. 
+                 deleted Classs, ClasssQuery, Course, CourseQuery, CrossListed, Enrollment, EnrollmentContract, EnrollmentDate, Schedule
+-->

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright 2012 Emory University.  All Rights Reserved.
+-->
+<!--	Segments.dtd is a a file where definitions of all elements with
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+ -->
+<!-- ====================================================================== -->
+<!-- Elements - Segments
+-->
+<!-- 
+MessageId was defined as an Element in openea/segments.dtd
+-->
+
+<!-- ####################the following are for testing or tutorial##################### -->
+<!-- for GwGreeting exercise gwang -->
+<!ELEMENT GwGreetee (GwFullName)>  <!-- for exercise gwang28-->
+<!ELEMENT GwGreeting (Text)> <!-- for exercise gwang28-->
+
+
+
+<!-- for HelloHibernate tutorial gwang -->
+<!ELEMENT HelloHibernate (Id,Message?)>
+<!ELEMENT HelloHibernateQuerySpecification (Id?,Message?)>
+<!ELEMENT HelloHibernateMessage (Message?)>
+
+<!-- for OpenEai-ServiceGen example gwang -->
+<!ELEMENT HelloHibernateGw (Id,Message?,MessageNumber?,LastModifiedDatetime?,LastModifiedDate?)>
+<!ELEMENT HelloHibernateGwQuerySpecification (Comparison*,Id?,Message?,LastModifiedDate?,LastModifiedDatetime?,StartDate?,EndDate?)>
+<!ELEMENT HelloHibernateGwMessage (Id?,Message?,LastModifiedDatetime?,LastModifiedDate?)>
+
+<!-- for OpenEai-ServiceGen example gwang -->
+<!ELEMENT HelloHibernateKc (Id,Message?,MessageNumber?,LastModifiedDatetime?,LastModifiedDate?)>
+<!ELEMENT HelloHibernateKcQuerySpecification (Comparison*,Id?,Message?,LastModifiedDate?,LastModifiedDatetime?,StartDate?,EndDate?)>
+<!ELEMENT HelloHibernateKcMessage (Id?,Message?,LastModifiedDatetime?,LastModifiedDate?)>
+
+
+<!-- for HelloHibernateAdvancedQuerySpec tutorial gwang -->
+<!ELEMENT HelloHibernateAqs (Id,Message)>
+<!ELEMENT HelloHibernateAqsQuerySpecification (Logical?,Comparison*, Id?, Message?)>
+
+<!-- for TestMoa gwang -->
+<!-- moagen doesnot handle TmStarDate* definition (a repeating date object)
+<!ELEMENT TestMoa (Id,TmString,TmDate?,TmDatetime?,TmStar*,TmStarDate*,TmObject?,TmObjectStr*,TmStarSquare*)>
+-->
+<!ELEMENT TestMoa (Id,TmString,TmDate?,TmDatetime?,TmStar*,TmObject?,TmObjectStr*,TmStarSquare*)>
+<!ELEMENT TmObject (TmString?,TmDate?)>
+<!ELEMENT TmObjectStr (TmString?)>
+<!ELEMENT TmStarSquare (TmObjectStr*,TmObject*)>
+
+<!ELEMENT TestMoaQuerySpecification (Logical?,Comparison*, Id?, TmString?,StartDatetime?)>
+
+<!ELEMENT TestSimpleMoa (Id?,TmDate?,TmDatetime?)>
+<!ELEMENT TestSimpleMoaQuerySpecification (Id?,TmDate?,TmDatetime?)>
+
+<!ELEMENT TestStarMoa (Id?,TmStar*)>
+<!ELEMENT TestStarMoaQuerySpecification (Id?,TmStar*)>
+
+<!ELEMENT TestObjectStarMoa (Id?,TmObjectStr*)>
+<!ELEMENT TestObjectStarMoaQuerySpecification (Id?,TmObjectStr*)>
+
+<!ELEMENT Scalar (Value?)>
+<!ELEMENT ScalarQuerySpecification (QueryLanguage?)>
+
+
+
+

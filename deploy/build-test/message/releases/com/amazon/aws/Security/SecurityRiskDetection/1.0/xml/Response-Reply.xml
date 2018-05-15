@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Security.SecurityRiskDetection.Response SYSTEM "../dtd/Response-Reply.dtd">
+<com.amazon.aws.Security.SecurityRiskDetection.Response>
+	<ControlAreaReply messageCategory="com.amazon.aws.Security"
+		messageObject="SecurityRiskDetection" messageAction="Response" messagePriority="9"
+		messageType="Reply" messageRelease="1.0">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AwsAccountService</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>52</Second>
+			<SubSecond>132</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>org.actsi.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<SecurityRiskDetection>
+			<AccountId>727542611512</AccountId>
+			<SecurityRiskDetector>S3PublicBucketDetector</SecurityRiskDetector>
+			<SecurityRiskRemediator>S3PublicBucketRemediator</SecurityRiskRemediator>
+			<DetectedSecurityRisk>
+				<Type>S3PublicBucket</Type>
+				<AmazonResourceName>arn:aws:s3:::serviceforge-videos</AmazonResourceName>
+				<RemediationResult>
+					<Status>Remediated</Status>
+					<Description>Removed public access</Description>
+				</RemediationResult>
+			</DetectedSecurityRisk>
+			<CreateUser>SecurityRiskDetectionApplication</CreateUser>
+			<CreateDatetime>
+				<Year>2017</Year>
+				<Month>11</Month>
+				<Day>17</Day>
+				<Hour>13</Hour>
+				<Minute>47</Minute>
+				<Second>52</Second>
+				<SubSecond>132</SubSecond>
+				<Timezone>6:00-GMT</Timezone>
+			</CreateDatetime>
+		</SecurityRiskDetection>
+	</DataArea>
+</com.amazon.aws.Security.SecurityRiskDetection.Response>

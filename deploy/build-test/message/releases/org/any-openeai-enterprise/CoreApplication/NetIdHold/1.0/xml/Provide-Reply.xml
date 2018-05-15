@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.NetIdHold.Provide SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/NetIdHold/1.0/dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.NetIdHold.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="NetIdHold" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseApplicationService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>applsvc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>48</Second>
+			<SubSecond>922</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1005</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<NetIdHold>
+			<NetId>
+				<Principal>jackson4</Principal>
+				<Domain>uillinois.edu</Domain>
+			</NetId>
+			<StartDate>
+				<Month>9</Month>
+				<Day>10</Day>
+				<Year>2002</Year>
+			</StartDate>
+			<EndDate>
+				<Month>9</Month>
+				<Day>10</Day>
+				<Year>2003</Year>
+			</EndDate>
+		</NetIdHold>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.NetIdHold.Provide>

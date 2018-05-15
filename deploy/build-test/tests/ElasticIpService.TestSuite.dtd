@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!--		$Revision: 1.1 $
+		$Date: 2006/10/23 14:00:16 $
+		$Source: /cvs/repositories/openii2/openii2/distributions/toolkit-examples-3.0/configs/messaging/Environments/Examples/TestSuites/ErpConnector.suite1.dtd,v $
+-->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org) at 
+		the University of Illinois Urbana-Champaign.
+
+		Copyright (C) 2003 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--		Release History
+		1/26/2003		tod@openeai.org		Original release.
+						steve@openeai.org
+-->
+<!--
+		The following ENTITY declaration effectively includes the definitions of
+		all complex objects needed in test suite documents that will be constrained
+		with this definition. This will change depending on the objects being
+		used in a test suite. In most cases, your organization will want to include
+		its own resources file for its message definitions, so that message objects
+		that your organization has defined or shares with other organizations can
+		be placed into your test suite documents.	-->
+<!--<!ENTITY % RESOURCES SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/Resources/1.0/Resources.dtd">-->
+
+
+<!ENTITY % RESOURCES1 SYSTEM "../../message/releases/edu/emory/Resources/1.0/Resources.dtd">
+%RESOURCES1;
+
+<!--
+		When completed, a test suite document will describe a set of tests that
+		are to be executed by the OpenEAI TestSuiteApplication. This test suite
+		consists of one or more test series. Each test series contains one or more
+		test cases that are intended to run in sequence. Each test case contains one
+		or more test steps.  The test steps will be executed and the results verified.
+	
+		name
+		
+		The name attribute uniquely identifies this test suite.
+		
+		Description
+		
+		The Description element contains a useful description about the tests
+		contained in the suite.
+		
+		TestSeries
+		
+		There can be one or more TestSeries in a TestSuite. Each of these series will
+		include TestCases and TestSteps.
+		
+		TestSuiteSummary
+		
+		The TestSuiteSummary element is used by the OpenEAI TestSuiteApplication to
+		summarize the results of the tests that were performed.-->
+<!ELEMENT TestSuite (Description, TestSeries+, TestSuiteSummary?)>
+<!ATTLIST TestSuite
+	name CDATA #REQUIRED
+>
+<!--
+<!ELEMENT Description (#PCDATA)>-->
+<!--
+		The following is a description of all of the child elements and attributes
+		of the TestSeries element:
+
+		number
+		
+		The number attribute is a unique number to identify this test series in the
+		test suite. 
+
+	 
+		producerName
+		
+		This is the name of the org.openeai.jms.producer.PointToPointProducer 
+		that will be used by the OpenEAI TestSuite Application when performing 
+		request/reply messaging. The name here must match the name of the 
+		PointToPointProducer in the TestSuite Applicaiton's deployment descriptor.
+		
+		Description
+		
+		The Description element contains a useful description about the tests
+		contained in series. For example, "this series create a BasicPerson and then
+		modifies the state of that BasicPerson by updating each piece of data for
+		that BasicPerson and verifying it in a separate case."
+	
+		TestCase
+		
+		A TestSeries element can contain one or more TestCase elements. See the
+		comments with the TestCase element in this definition for more details.
+	
+		TestStatus
+		
+		The TestStatus element is completed by the OpenEAI TestSuiteApplication to
+		indicate the status of the TestSeries. This is set based on all the other
+		activity prescribed in the series. For example, if any TestCases within the
+		Series have	failed, the TestStatus for the TestSeries will be 'fail' also.-->
+<!ELEMENT TestSeries (Description, TestCase+, TestStatus?)>
+<!ATTLIST TestSeries
+	number CDATA #REQUIRED
+	producerName CDATA #REQUIRED
+>
+<!--
+		The following is a description of all of the child elements and attributes
+		of the TestCase element:
+
+		number
+	
+		The number attribute is a unique number to identify this test case in the
+		test series.
+		
+		preExecutionSleepInterval
+	 
+		The preExecutionSleepInterval attribute indicates the number of
+		milliseconds that the TestSuiteApplication should sleep prior to executing
+		this particular TestCase. This can be useful for introducing arbitrary "wait
+		time" into the execution of a test suite.
+		
+		postExecutionSleepInterval
+		
+		The postExecutionSleepInterval attribute indicates the number of milliseconds
+		that the TestSuiteApplication should sleep after executing this particular
+		TestCase. This can be useful for introducing arbitrary "wait time" into the
+		execution of a TestSuite.
+		
+		Description
+		
+		The Description element contains a useful description about the test case
+		or the purpose of the test steps contained in test case. For example, "this
+		series create a BasicPerson and then modifies the state of that BasicPerson
+		by updating each piece of data for that BasicPerson and verifying it in a
+		separate case."
+	
+		TestStep
+	
+		A TestCase element can contain one or more TestStep elements. See the
+		comments with the TestStep element in this definition for more details.
+
+		TestStatus
+		
+		The TestStatus element is completed by the OpenEAI TestSuiteApplication to
+		indicate the status of the TestCase. This is set based on all the other
+		activity prescribed in the case. For example, if any TestSteps within the
+		TestCase case have failed, the TestStatus for the TestCase will be 'fail'
+		also.-->
+<!ELEMENT TestCase (Description, TestStep+, TestStatus?)>
+<!ATTLIST TestCase
+	number CDATA #REQUIRED
+	preExecutionSleepInterval CDATA #IMPLIED
+	postExecutionSleepInterval CDATA #IMPLIED
+>
+<!--
+		The TestStep element is where all the action occurs. This is where you
+		specify which request action is to be performed by the TestSuiteApplication.
+		A single request must be specified for the TestStep. The types of request
+		actions that can	be performed include CreateRequest, QueryRequest,
+		UpdateRequest or DeleteRequest. The TestSuiteApplication will use the data 
+		associated with these request actions to perform the action and verify
+		results.
+		
+		The TearDownRequest is a special type of request that is used by the 
+		TestSuite Application to take the authoritative source back to a known 
+		good state.  It uses the TearDownRequest to query for the current 
+		state of an object and delete it.  It does not verify this request.  
+		See the TearDownRequest element for more information.
+		
+		The following is a description of all of the child elements and attributes
+		of the TestCase element:
+	
+		number
+		
+		The number attribute is a unique number to identify this test step in the
+		test case.
+		
+		preExecutionSleepInterval
+		
+		The preExecutionSleepInterval attribute indicates the number of
+		milliseconds that the TestSuiteApplication should sleep prior to executing
+		this particular TestStep. This can be useful for introducing arbitrary "wait
+		time" into the execution of a test step.
+		
+		postExecutionSleepInterval
+		
+		The postExecutionSleepInterval attribute indicates the number of milliseconds
+		that the TestSuiteApplication should sleep after executing this particular
+		TestStep. This can be useful for introducing arbitrary "wait time" into the
+		execution of a test step.
+		
+		Description
+		
+		The Description element contains a useful description about the test step.
+		For example, "this step updates BasicPerson with a new home address."
+	
+		TestStatus
+		
+		The TestStatus element is completed by the OpenEAI TestSuiteApplication to
+		indicate the status of the TestStep.-->
+<!ELEMENT TestStep (Description, (GenerateRequest | CreateRequest | CreateSync | QueryRequest | UpdateRequest | UpdateSync | DeleteRequest | DeleteSync | TearDownRequest), TestStatus?)>
+
+<!ATTLIST TestStep
+	number CDATA #REQUIRED
+	producerName CDATA #IMPLIED
+	preExecutionSleepInterval CDATA #IMPLIED
+	postExecutionSleepInterval CDATA #IMPLIED
+>
+<!ELEMENT GenerateRequest (GenerateData, TestResult, ResponseData, ExpectedCreateSync*)>
+<!ATTLIST GenerateRequest
+        messageCategory CDATA #REQUIRED
+        generateObjectName CDATA #REQUIRED
+        messageObjectName CDATA #REQUIRED
+        messageRelease CDATA #REQUIRED
+        messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!ELEMENT GenerateData (ElasticIpRequisition )>
+<!ELEMENT ResponseData (ElasticIp | ElasticIpAssignment )>
+<!ATTLIST ResponseData
+        xslUri CDATA #IMPLIED
+>
+
+
+<!--
+		If a CreateRequest is specified, the TestSuite application will take the 
+		NewData element and create the message object associated with it in the
+		authoritative source. It will use the TestResult element to verify that the
+		appropriate reply was returned from the authoritative source. Finally, it
+		will verify that the appropriate ExpectedCreateSync message was published by the
+		authoritative source.
+	
+		messageCategory
+		
+		This will be the fully qualified message category associated 
+		with the Create-Request message you would like to send.
+		
+		messageObjectName
+	
+		This is the name of the message object. This should match the name given
+		to a message object in the TestSuiteApplication's deployment descriptor.
+		It will look for a message object with a name that matches the value
+		specified here, populate it with the NewData and perform the create action
+		with that object.
+		
+		messageRelease
+		
+		The messageRelease attribute is the message release number associated with
+		the message object.
+		
+		messagePriority
+		
+		The messagePriority attribute is the message priority associated with the
+		message that will be produced.
+		
+		NewData
+		
+		The NewData element consists of the data that should be used to populate
+		the Java message object in order to send the appropriate test message.
+		Since this DTD should import the appropriate resources file for your
+		organization, the full message object definitions will be available and 
+		assist in constraining and prompting for complete message object data entry.
+				
+		TestResult
+		
+		The TestSuiteApplication will use this element as an expected result in 
+		verifying the reply sent by the gateway that consumes the Create-Request
+		message. See the comments with the TestResult element in this definition.
+			
+		ExpectedCreateSync
+		
+		The TestSuiteApplication uses this element to verify the appropriate 
+		Create-Sync message is published by the authoritative application which
+		processed the request message.-->
+<!ELEMENT CreateRequest (NewData, TestResult, ExpectedCreateSync*)>
+<!ATTLIST CreateRequest
+	messageCategory CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!--
+		The CreateSync element is used to publish a Create-Sync message to a 
+		target that processes sync messages.  Then, the optional QueryRequest 
+		element can be used to determine if the sync was processed correctly.  Normally, 
+		in these situations the Create-Sync will be for a message object that the 
+		system IS NOT authoritative for and the QueryRequest will be for a different 
+		object that it IS authoritative for.
+		
+		The 'sleepInterval' attribute indicates how many milliseconds the TestSuite 
+		application should wait between publishing the Sync message and performing 
+		the Query to verify the sync was processed properly.  All other attributes 
+		are used in the same way they are used for the CreateRequest element.
+		
+		For example, a system may consume BasicPerson-Create-Sync messages 
+		to keep it's own store up-to-date.  However, it IS NOT authoritative for BasicPerson
+		objects.  However, it is authoritative for some other object that includes some 
+		BasicPerson information.  Therefore, it consumes BasicPerson sync messages 
+		and when someone queries for the object it is authoritative for, it uses some of 
+		that BasicPerson information in that object.
+-->
+<!ELEMENT CreateSync (NewData, QueryRequest?)>
+<!ATTLIST CreateSync
+	sleepInterval CDATA #IMPLIED
+	messageCategory CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!--
+		The NewData element will be used by both CreateRequest and UpdateRequest 
+		TestSteps. It will also appear in ExpectedCreateSync and ExpectedUpdateSync expected 
+		results. According to the OpenEAI Message Protocol, the NewData element
+		is a required element in these messages.
+	
+		The objects that are acceptable children of this element will vary based on
+		your organization. In other words, the reason you include your organization's
+		resources DTD is to include your message object definitions within this
+		element. Using constrained message object definitions within the DataArea
+		provides data entry assistance by allowing the author of a test suite to
+		fully validate the document and use XML editors that will prompt for message
+		object fields during data entry.
+	
+		In this case, only the message objects of the fictitious enterprise
+		any-openeai-enterprise.org can appear in the NewData element (such as
+		ApplicationSession, EnterpriseSession, EnterpriseUser, etc.), because we
+		included the resources file for any-openeai-enterprise.org at:
+		http://xml.openeai.org/message/releases/org/any-openeai-enterprise/Resources/1.0/Resources.dtd.
+		To change what objects can be included in the NewData element, either add to 
+		or replace the current Resources include with your desired includes.-->
+<!ELEMENT NewData (ElasticIp | ElasticIpAssignment)>
+<!--
+		The BaselineData element will be used in UpdateRequest and ExpectedUpdateSync
+		steps. According to the OpenEAI Message Protocol, the BaselineData element is
+		a required element in these messages. See the comments with the NewData
+		element in this definition for an explanation of how the possible child
+		elements of BaselineData are constrained; they are constrained in the same
+		manner as the child elements of NewData for the same reasons.-->
+<!ELEMENT BaselineData (ElasticIp | ElasticIpAssignment)>
+<!--
+	 	The TestResult element specifies the expected results of the processing 
+		of a request message.
+	
+		action
+		
+		The action attribute specifies the action that should be present in the reply
+		message that is returned by the authoritative application after it performs
+		the action specified in the request.
+		
+		status
+		
+		The status attribute is the status that should be included in the reply
+		message that is returned by the authoritative source after it performs the
+		action. The TestSuiteApplication can look at this expected status and compare 
+		it to the actual status returned by the gateway. If the status returned by
+		the gateway does not match the expected value specified here, the TestStep
+		will fail.-->
+<!ELEMENT TestResult EMPTY>
+<!ATTLIST TestResult
+	action (Query | Create | Delete | Update) #REQUIRED
+	status (success | failure) #REQUIRED
+>
+<!--
+		The ExpectedCreateSync element is used to specify the data that should be included 
+		in a Create-Sync message published by an authoritative application after it
+		successfully processes a Create-Request message. After the TestSuiteApplication 
+		produces all the requests, it will consume all sync messages published by 
+		the gateway and determine if it published the appropriate messages by
+		comparing the expected sync messages to the actual syncs consumed.
+	
+		The sync messages published are correlated to the requests that precipitated 
+		them by the TestId element in the ControlArea of the messages. The TestId is
+		a combination of the TestSuite name, TestSeries number, TestCase number, and
+		TestStep number.
+	
+		The Java message objects inherit the TestId member data and corresponding 
+		getter/setter methods. When the TestSuite application sends a request, it
+		populates the object with the TestId. Then, when the requests are produced, 
+		that TestId is placed into the ControlAreaRequest of the message. Then, the 
+		gateway that consumes the message should retrieve that TestId and populate 
+		any object it uses to publish the sync message with that TestId. In this way,
+		the TestId will become part of the ControlAreaSync of the sync message, which 
+		can be pulled out by the TestSuiteApplication and used to find the appropriate
+		expected sync listed in the TestSuite document with which to compare with the
+		actual sync message consumed.-->
+<!ELEMENT ExpectedCreateSync (NewData)>
+<!--
+		The QueryRequest element is used to specify the data that should be used 
+		to perform a query action. It also allows entry of the data expected to be 
+		returned from that query in the form of the ProvideData element.
+		
+		producerName
+		
+		This should only be used if this QueryRequest is being used to validate a sync 
+		message was processed properly by the consuming system.  It will contain 
+		the name of the PointToPointProducer that the TestSuite application should 
+		use to execute the QueryRequest.  This is needed because the Sync message 
+		will be published using a PubSubProducer and the QueryRequest needs a 
+		PointToPointProducer.
+	
+		messageCategory
+		
+		This will be the fully-qualified message category associated with the
+		Query-Request message.
+		
+		queryObjectName
+		
+		This is the name of the object that should be used as the key object in the
+		query. This should match the name of the message object in the 
+		TestSuiteApplication's deployment descriptor. It will look for a message
+		object with a name that matches the value specified here, populate it with
+		the QueryData and pass it to the query method of the message object being
+		used to perform the query.
+		
+		messageObjectName
+		
+		This is the name of the message object for which the query is being
+		performed. This should match the name given to a message object in the 
+		TestSuiteApplication's deployment descriptor. It will look for a message
+		object with a name that matches the value specified here and use it to
+		perform the query.
+		
+		messageRelease
+		
+		The messageRelease attribute is the message release number associated with
+		the message object.
+		
+		messagePriority
+		
+		The messagePriority attribute is the message priority associated with the
+		message that will be produced.
+		
+		QueryData
+		
+		This is the data that should be used to populate the object specified in the
+		queryObjectName attribute. That object will be populated with the data listed
+		here and passed to the query method of the message object being used to
+		perform the query. Like NewData, DeleteData, and BaselineData, the child
+		elements that may be listed within QueryData are constrained based on the
+		message object definitions included in this definition through the resources
+		import above.
+		
+		TestResult
+		
+		The TestSuiteApplication will use this element as an expected result in 
+		verifying the reply sent by the gateway that consumes the Query-Request
+		message. See the comments with the TestResult element in this definition.
+	
+		ProvideData
+		
+		This is the data expected to be returned in the Provide-Reply sent back 
+		from the gateway processing the Query-Request message. The 
+		TestSuiteApplication will receive the reply from the gateway and verify that
+		the objects returned match the data specified here.-->
+<!ELEMENT QueryRequest (QueryData, TestResult, ProvideData)>
+<!ATTLIST QueryRequest
+	producerName CDATA #IMPLIED
+	messageCategory CDATA #REQUIRED
+	queryObjectName CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!ELEMENT QueryData (ElasticIpQuerySpecification | ElasticIpAssignmentQuerySpecification)>
+<!ELEMENT ProvideData (ElasticIp* | ElasticIpAssignment*)>
+<!ATTLIST ProvideData
+        xslUri CDATA #IMPLIED
+>
+<!--
+		The TearDownRequest is used by the TestSuite Application to 
+		take the authoritative system back to a known state.  Many 
+		times, depending on the TestSteps that are executed, and 
+		the success or failure of those steps, it is 
+		necessary to do this in order to be able to run the TestSuite 
+		multiple times.  This request is typically used after a series of 
+		TestSteps have been executed as the last TestStep in a 
+		TestCase.
+		
+		The TearDownRequest instructs the TestSuite application to 
+		query for a particular object and use the results of that query 
+		to delete everything that gets returned.  This is different than 
+		a normal DeleteRequest because you are not specifying the 
+		DeleteData to use in the delete as it may not be correct based 
+		on the success or failure of previous steps.  This approach 
+		allows you to simply say "query for this object and delete 
+		whatever is returned, without verifying the results."
+		
+		This request uses DeleteAction and QueryData just like the 
+		DeleteRequest and QueryRequest.  It also uses the 
+		messageCategory, queryObjectName, messageObjectName, 
+		messageRelease and messagePriority attributes just like 
+		the QueryRequest.  Refer to DeleteRequest and QueryRequest 
+		for more information regarding these items.-->
+<!ELEMENT TearDownRequest (DeleteAction, QueryData)>
+<!ATTLIST TearDownRequest
+	messageCategory CDATA #REQUIRED
+	queryObjectName CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!--
+		If an UpdateRequest is specified, the TestSuite application will take the 
+		NewData and BaselineData elements and create the message object associated
+		with UpdateRequest in the authoritative source. It will use the TestResult
+		element to verify that the appropriate reply was returned from the
+		authoritative source. Finally, it will verify that the appropriate ExpectedUpdateSync
+		message was published by the authoritative source.
+	
+		messageCategory
+		
+		This will be the fully qualified message category associated 
+		with the Update-Request message you would like to send.
+		
+		messageObjectName
+	
+		This is the name of the message object. This should match the name given
+		to a message object in the TestSuiteApplication's deployment descriptor.
+		It will look for a message object with a name that matches the value
+		specified here, populate it with the NewData and BaselineData, and perform
+		the update action with that object.
+		
+		messageRelease
+		
+		The messageRelease attribute is the message release number associated with
+		the message object.
+		
+		messagePriority
+		
+		The messagePriority attribute is the message priority associated with the
+		message that will be produced. 
+		
+		NewData
+		
+		The NewData element consists of the update data that should be used to
+		populate the Java message object in order to send the appropriate test
+		message. Since this DTD should import the appropriate resources file for your
+		organization, the full message object definitions will be available and 
+		assist in constraining and prompting for complete message object data entry.
+		
+		BaselineData
+		
+		The BaselineData element consists of the expected baseline state that should
+		be used to populate the Java message object in order to send the appropriate
+		test message. As above, since this DTD should import the appropriate
+		resources file for your organization, the full message object definitions
+		will be available and assist in constraining and prompting for complete
+		message object data entry.
+				
+		TestResult
+		
+		The TestSuiteApplication will use this element as an expected result in 
+		verifying the reply sent by the gateway that consumes the Update-Request
+		message. See the comments with the TestResult element in this definition.
+			
+		ExpectedUpdateSync
+		
+		The TestSuiteApplication uses this element to verify the appropriate 
+		Update-Sync message is published by the authoritative application which
+		processed the request message.-->
+<!ELEMENT UpdateRequest (NewData, BaselineData, TestResult, ExpectedUpdateSync*)>
+<!ATTLIST UpdateRequest
+	messageCategory CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!--
+		The UpdateSync element is used to publish an Update-Sync message to a 
+		target that processes sync messages.  Then, the optional QueryRequest 
+		element can be used to determine if the sync was processed correctly.  Normally, 
+		in these situations the Update-Sync will be for a message object that the 
+		system IS NOT authoritative for and the QueryRequest will be for a different 
+		object that it IS authoritative for.
+		
+		The 'sleepInterval' attribute indicates how many milliseconds the TestSuite 
+		application should wait between publishing the Sync message and performing 
+		the Query to verify the sync was processed properly.  All other attributes 
+		are used in the same way they are used for the UpdateRequest element.
+		
+		For example, a system may consume BasicPerson-Update-Sync messages 
+		to keep it's own store up-to-date.  However, it IS NOT authoritative for BasicPerson
+		objects.  However, it is authoritative for some other object that includes some 
+		BasicPerson information.  Therefore, it consumes BasicPerson sync messages 
+		and when someone queries for the object it is authoritative for, it uses some of 
+		that BasicPerson information in that object.
+-->
+<!ELEMENT UpdateSync (NewData, BaselineData, QueryRequest?)>
+<!ATTLIST UpdateSync
+	sleepInterval CDATA #IMPLIED
+	messageCategory CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!--
+		The ExpectedUpdateSync element is used to specify the data that should be included 
+		in the expected Update-Sync message. After the TestSuiteApplication produces
+		all the requests, it will consume all Sync messages published by the gateway
+		and determine if it published the appropriate messages by comparing the
+		expected sync messages to the actual sync messages consumed.
+
+		See the comments with the ExpectedCreateSync element in this definition for a 
+		detailed description of how sync messages are correlated with the requests
+		that precipitated them.-->
+<!ELEMENT ExpectedUpdateSync (NewData, BaselineData)>
+<!--
+		The DeleteRequest element is used to specify data that the
+		TestSuiteApplciation should use to send a Delete-Request to an authoritative
+		application. Like the other request elements used within a test step, it
+		also allows you to specify the expected results of that delete as well as any
+		Delete-Sync messages that should be published as a result of the delete
+		action.
+	
+		It uses messageCategory, messageObjectName, messageRelease, and
+		messagePriority just like all the other request elements.
+	
+		DeleteData allows you to specify the data to use when performing the delete
+		action. Like the other actions, the allowable message objects are constrained
+		in this definition by the resources that are imported into this definition.
+		Additionally, it allows you to specify the delete action that should be used
+		when performing the delete. According to the OpenEAI Message Protocol, valid
+		delete actions are 'delete' and 'purge'.-->
+<!ELEMENT DeleteRequest (DeleteData, TestResult, ExpectedDeleteSync*)>
+<!ATTLIST DeleteRequest
+	messageCategory CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!--
+		The DeleteSync element is used to publish a Delete-Sync message to a 
+		target that processes sync messages.  Then, the optional QueryRequest 
+		element can be used to determine if the sync was processed correctly.  Normally, 
+		in these situations the Delete-Sync will be for a message object that the 
+		system IS NOT authoritative for and the QueryRequest will be for a different 
+		object that it IS authoritative for.
+		
+		The 'sleepInterval' attribute indicates how many milliseconds the TestSuite 
+		application should wait between publishing the Sync message and performing 
+		the Query to verify the sync was processed properly.  All other attributes 
+		are used in the same way they are used for the DeleteRequest element.
+		
+		For example, a system may consume BasicPerson-Delete-Sync messages 
+		to keep it's own store up-to-date.  However, it IS NOT authoritative for BasicPerson
+		objects.  However, it is authoritative for some other object that includes some 
+		BasicPerson information.  Therefore, it consumes BasicPerson sync messages 
+		and when someone queries for the object it is authoritative for, it uses some of 
+		that BasicPerson information in that object.
+-->
+<!ELEMENT DeleteSync (DeleteData, QueryRequest?)>
+<!ATTLIST DeleteSync
+	sleepInterval CDATA #IMPLIED
+	messageCategory CDATA #REQUIRED
+	messageObjectName CDATA #REQUIRED
+	messageRelease CDATA #REQUIRED
+	messagePriority (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) #REQUIRED
+>
+<!ELEMENT DeleteData (DeleteAction, (ElasticIp | ElasticIpAssignment))>
+<!--
+		The ExpectedDeleteSync element is used to specify the data that should be included 
+		in the expected Delete-Sync message. After the TestSuiteApplication 
+		produces all the requests, it will consume all sync messages published by 
+		the gateway and determine if the gateway published the appropriate sync
+		messages by comparing the expected sync messages to the actual sync messages
+	 	consumed.
+
+		See the comments with the ExpectedCreateSync element in this definition for a
+		detailed description of how sync messages are correlated with the requests
+		that precipitated them.-->
+<!ELEMENT ExpectedDeleteSync (DeleteData)>
+<!--
+		The TestStatus element is filled in by the TestSuite application as it 
+		performs request/reply messaging and consumes sync messages. If a request
+		action has an expected sync message associated with it and the request
+		succeeds, the test step status will be set to 'pending'. Then, when the sync
+		message is consumed and verified, the status will be set to 'pass'. If the
+		request fails or if the sync message does not match the expected sync result,
+		the status will be set to 'fail' and one or more reasons will be added to the
+		TestStatus. If a request fails, the reason(s) reported will
+		include all errors returned by the gateway that consumed the request.-->
+<!ELEMENT TestStatus (Failure?)>
+<!ATTLIST TestStatus
+	value (pass | fail | pending | incomplete) #REQUIRED
+	elapsedRequestTime CDATA #IMPLIED
+>
+<!ELEMENT Failure (Reason+)>
+<!ELEMENT Reason (#PCDATA)>
+<!--
+		The TestSuiteSummary element is populated by the TestSuite application 
+		when all request actions have been performed and all resulting sync 
+		messages have been verified.
+	
+		It documents the start and end times of the request/reply processing 
+		as well as the start and end times of the sync consumption.
+	
+		Additionally, it documents the total number of TestSeries, TestCases, and 
+		TestSteps as well as the number of passes and failures.-->
+<!ELEMENT TestSuiteSummary (RequestReplyStartDatetime, RequestReplyEndDatetime, RequestTimings*, SyncConsumptionStartDatetime?, SyncConsumptionEndDatetime?, TestSeriesSummary, TestCaseSummary, TestStepSummary)>
+<!ELEMENT RequestReplyStartDatetime (%DATETIME;)>
+<!ELEMENT RequestReplyEndDatetime (%DATETIME;)>
+<!ELEMENT SyncConsumptionStartDatetime (%DATETIME;)>
+<!ELEMENT SyncConsumptionEndDatetime (%DATETIME;)>
+<!ELEMENT TestSeriesSummary (TotalSeries, PassedSeries, FailedSeries)>
+<!ELEMENT TestCaseSummary (TotalCases, PassedCases, FailedCases)>
+<!ELEMENT TestStepSummary (TotalSteps, PassedSteps, FailedSteps)>
+<!ELEMENT TotalSeries (#PCDATA)>
+<!ELEMENT PassedSeries (#PCDATA)>
+<!ELEMENT FailedSeries (#PCDATA)>
+<!ELEMENT TotalCases (#PCDATA)>
+<!ELEMENT PassedCases (#PCDATA)>
+<!ELEMENT FailedCases (#PCDATA)>
+<!ELEMENT TotalSteps (#PCDATA)>
+<!ELEMENT PassedSteps (#PCDATA)>
+<!ELEMENT FailedSteps (#PCDATA)>
+<!ELEMENT RequestTimings (NumberOfRequests, AverageTime, MaximumTime, MinimumTime)>
+<!ATTLIST RequestTimings
+	messageAction (Create | Delete | Generate | Query | Update) #REQUIRED
+>
+<!ELEMENT AverageTime (#PCDATA)>
+<!ELEMENT NumberOfRequests (#PCDATA)>
+<!ELEMENT MaximumTime EMPTY>
+<!ATTLIST MaximumTime
+	testStepId CDATA #REQUIRED
+	value CDATA #REQUIRED
+>
+<!ELEMENT MinimumTime EMPTY>
+<!ATTLIST MinimumTime
+	testStepId CDATA #REQUIRED
+	value CDATA #REQUIRED
+>

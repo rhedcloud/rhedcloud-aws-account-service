@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Network.CidrAssignment.Response SYSTEM "../dtd/Response-Reply.dtd">
+<edu.emory.Network.CidrAssignment.Response>
+	<ControlAreaReply messageCategory="edu.emory.Network" messageObject="CidrAssignment" messageAction="Response" messagePriority="9" messageType="Reply" messageRelease="1.0">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.Network.CidrAssignment</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>1</Month>
+			<Day>1</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>762</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>producer1</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<CidrAssignment>
+			<CidrAssignmentId>1</CidrAssignmentId>
+			<OwnerId>vpc-233de844</OwnerId>
+			<Decription>For LITS Architecutre</Decription>
+			<Purpose>For POC use by Architecture</Purpose>
+			<Cidr>
+				<CidrId>1</CidrId>
+				<Network>10.64.40.0</Network>
+				<Bits>24</Bits>
+				<CreateUser>swheat@emory.edu</CreateUser>
+				<CreateDatetime>
+					<Year>2012</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</Cidr>
+			<CreateUser>swheat@emory.edu</CreateUser>
+			<CreateDatetime>
+				<Year>2012</Year>
+				<Month>5</Month>
+				<Day>17</Day>
+				<Hour>13</Hour>
+				<Minute>47</Minute>
+				<Second>30</Second>
+				<SubSecond>842</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</CreateDatetime>
+		</CidrAssignment>
+	</DataArea>
+</edu.emory.Network.CidrAssignment.Response>

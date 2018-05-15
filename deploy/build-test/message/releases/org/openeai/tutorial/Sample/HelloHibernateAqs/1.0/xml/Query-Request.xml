@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE org.openeai.tutorial.Sample.HelloHibernateAqs.Query SYSTEM "../dtd/Query-Request.dtd">
+<org.openeai.tutorial.Sample.HelloHibernateAqs.Query>
+	<ControlAreaRequest messageCategory="org.openeai.tutorial.Sample" messageObject="HelloHibernateAqs" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>HelloHibernateAqs</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>456</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.tutorial.Sample" messageObject="HelloHibernateAqs" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<HelloHibernateAqsQuerySpecification>
+			<Logical fields="*" operator="or"/>
+			<Comparison fields="Message" operator="like"/>
+			<Id>1</Id>
+			<Message>H%</Message>
+		</HelloHibernateAqsQuerySpecification>
+	</DataArea>
+</org.openeai.tutorial.Sample.HelloHibernateAqs.Query>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright 2012 Emory University.  All Rights Reserved.
+-->
+<!--	Segments.dtd is a a file where definitions of all elements with
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+ -->
+<!-- ====================================================================== -->
+<!-- Elements - Segments
+-->
+<!-- 
+MessageId was defined as an Element in openea/segments.dtd
+-->
+<!ELEMENT Account (AccountId, AccountName, ComplianceClass, SensitiveDataType*, PasswordLocation, EmailAddress+, AccountOwnerNetId?, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT EmailAddress (Type, Email)>
+<!ELEMENT AccountQuerySpecification (Comparison*, QueryLanguage?, AccountId?, AccountName?, EmailAddress?, AccountOwnerNetId?, FinancialAccountNumber?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT AccountAlias (AccountId, Name)>
+<!ELEMENT AccountAliasQuerySpecification (AccountId)>
+<!ELEMENT AccountOrganizationMembership (AccountId, ParentId)>
+<!ELEMENT AccountOrganizationMembershipQuerySpecification (AccountId)>
+<!ELEMENT AccountProvisioningAuthorization (NetId, IsAuthorized, AuthorizedUserDescription, UnauthorizedReason*)>
+<!ELEMENT AccountProvisioningAuthorizationQuerySpecification (NetId)>
+<!ELEMENT SamlProvider (AccountId, Name, SamlMetadataDocument)>
+<!ELEMENT SamlProviderQuerySpecification (AccountId)>
+<!ELEMENT SensitiveDataTypeAuthorization (IsAuthorized, AuthorizedSensitiveDataTypeDescription, UnauthorizedReason*)>
+<!ELEMENT SensitiveDataTypeAuthorizationQuerySpecification (SensitiveDataType*)>
+<!ELEMENT Stack (StackId, StackName, Description?, StackParameter*, Tag*, Output*, CreateDatetime, Capability*, NotificationOptions?, StackStatus, DisableRollback, StackPolicy?)>
+<!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, StackId?, StackName?)>
+<!ELEMENT StackRequisition (AccountId, Credentials?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
+<!ELEMENT StackParameter (Key, Value)>
+<!ELEMENT Output (Description, OutputKey, OutputValue)>
+<!ELEMENT Parameters (Key, Value)>
+<!ELEMENT Tag (Key, Value)>
+<!ELEMENT Credentials (AccessKeyId, SecretKey)>
+<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminNetId?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, TicketId?, AuthenticatedRequestorNetId, AccountOwnerNetId, FinancialAccountNumber, CustomerAdminNetId+, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>
+<!ELEMENT VirtualPrivateCloudProvisioning (ProvisioningId, VirtualPrivateCloudRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT VirtualPrivateCloudProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT ProvisioningStep (ProvisioningStepId?,ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT Property (Key, Value)>
+<!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT LineItem (InvoiceId, PayerAccountId, LinkedAccountId?, RecordType, RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime, InvoiceDatetime, PayerAccountName, LinkedAccountName?, TaxationAddress, PayerPONumber?, ProductCode, ProductName, SellerOfRecord, UsageType, Operation, RateId, ItemDescription, UsageStartDatetime, UsageEndDatetime, UsageQuantity, BlendedRate?, CurrencyCode, CostBeforeTax, Credits, TaxAmount, TaxType, TotalCost)>
+<!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?,BillId?,PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
+<!ELEMENT Service (ServiceId, ServiceCode, ServiceName, Status, ServiceLandingPageUrl, Description?, Category*, ConsoleCategory*, AwsHipaaEligible, EmoryHipaaEligible, Tag*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT ServiceSecurityAssessment (ServiceId, Status, SecurityRisk*, ServiceControl*)>
+<!ELEMENT SecurityRisk (SecurityRiskId, ServiceId, RiskLevel, Description, Countermeasure*)>
+<!ELEMENT Countermeasure (SecurityRiskId, Status, Description, Verifier, VerificationDatetime)>
+<!ELEMENT ServiceControl (ServiceId, Description)>
+<!ELEMENT SecurityRiskDetection (AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
+<!ELEMENT RemediationResult (Status, Description, Error*)>
+<!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?)>
+
+
+
+

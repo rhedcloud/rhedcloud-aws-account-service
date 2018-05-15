@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Network.ElasticIpAssignment.Response SYSTEM "../dtd/Response-Reply.dtd">
+<edu.emory.Network.ElasticIpAssignment.Response>
+	<ControlAreaReply messageCategory="edu.emory.Network" messageObject="ElasticIpAssignment"
+		messageAction="Response" messagePriority="9" messageType="Reply" messageRelease="1.0">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>9</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>31</Second>
+			<SubSecond>85</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>org.actsi.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<ElasticIpAssignment>
+			<ElasticIpAssignmentId>1</ElasticIpAssignmentId>
+			<OwnerId>vpc-c8d93cb1</OwnerId>
+			<Decription>Elastic IP 1</Decription>
+			<Purpose>Web Server</Purpose>
+			<ElasticIp>
+				<ElasticIpId>1</ElasticIpId>
+				<ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2017</Year>
+					<Month>9</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</ElasticIp>
+			<CreateUser>swheat</CreateUser>
+			<CreateDatetime>
+				<Year>2017</Year>
+				<Month>9</Month>
+				<Day>17</Day>
+				<Hour>13</Hour>
+				<Minute>57</Minute>
+				<Second>30</Second>
+				<SubSecond>842</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</CreateDatetime>
+		</ElasticIpAssignment>
+	</DataArea>
+</edu.emory.Network.ElasticIpAssignment.Response>

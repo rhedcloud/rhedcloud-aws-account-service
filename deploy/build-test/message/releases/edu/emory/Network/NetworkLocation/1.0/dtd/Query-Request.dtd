@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!--	$Revision: 1.2 $
+	$Date: 2008/09/21 06:23:41 $
+	$Source: /cvs/repositories/openii3/project/message/releases/org/any-openeai-enterprise/Services/NetworkLocation/1.0/dtd/Query-Request.dtd,v $
+-->
+<!-- OpenEAI sample enterprise 
+	Copyright 2002-2007 OpenEAI Software Foundation.
+-->
+<!--
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.Network.NetworkLocation.Query (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (NetworkLocationQuerySpecification)>

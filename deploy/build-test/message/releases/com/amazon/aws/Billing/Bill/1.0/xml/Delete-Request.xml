@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Billing.Bill.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<com.amazon.aws.Billing.Bill.Delete>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Billing" messageObject="Bill"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
+				<MessageSeq>2734</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuite</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>1</Month>
+			<Day>9</Day>
+			<Hour>13</Hour>
+			<Minute>55</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<Bill>
+				<PayerAccountId>357163498835</PayerAccountId>
+				<BillDate>
+					<Month>1</Month>
+					<Day>9</Day>
+					<Year>2017</Year>
+				</BillDate>
+				<Type>estimated</Type>
+				<LineItem>
+					<InvoiceId>Estimated_MP</InvoiceId>
+					<PayerAccountId>357163498835</PayerAccountId>
+					<RecordType>PayerLineItem</RecordType>
+					<RecordId>4200000000528921596</RecordId>
+					<BillingPeriodStartDatetime>
+						<Year>2017</Year>
+						<Month>1</Month>
+						<Day>1</Day>
+						<Hour>0</Hour>
+						<Minute>0</Minute>
+						<Second>0</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>6:00-GMT</Timezone>
+					</BillingPeriodStartDatetime>
+					<BillingPeriodEndDatetime>
+						<Year>2017</Year>
+						<Month>1</Month>
+						<Day>31</Day>
+						<Hour>23</Hour>
+						<Minute>59</Minute>
+						<Second>59</Second>
+						<SubSecond>999</SubSecond>
+						<Timezone>6:00-GMT</Timezone>
+					</BillingPeriodEndDatetime>
+					<InvoiceDatetime>
+						<Year>2017</Year>
+						<Month>1</Month>
+						<Day>9</Day>
+						<Hour>15</Hour>
+						<Minute>52</Minute>
+						<Second>12</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>6:00-GMT</Timezone>
+					</InvoiceDatetime>
+					<PayerAccountName>Emory AWS 1</PayerAccountName>
+					<TaxationAddress>1599 CLIFTON RD. NE 3RD F, MAILSTOP 1599-0001-1QA, Atlanta, GA,
+						30322, US</TaxationAddress>
+					<ProductCode>9b24287dgv39qtltt9nqvp9kx</ProductCode>
+					<ProductName>Sophos UTM 9 (Auto Scaling PAYG)</ProductName>
+					<SellerOfRecord>Sophos</SellerOfRecord>
+					<UsageType>SoftwareUsage:m4.large</UsageType>
+					<Operation>Hourly</Operation>
+					<RateId>19761059</RateId>
+					<ItemDescription>AWS Marketplace Free Trial us-east-1 m4.large</ItemDescription>
+					<UsageStartDatetime>
+						<Year>2017</Year>
+						<Month>1</Month>
+						<Day>3</Day>
+						<Hour>17</Hour>
+						<Minute>4</Minute>
+						<Second>16</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>6:00-GMT</Timezone>
+					</UsageStartDatetime>
+					<UsageEndDatetime>
+						<Year>2017</Year>
+						<Month>1</Month>
+						<Day>31</Day>
+						<Hour>23</Hour>
+						<Minute>59</Minute>
+						<Second>59</Second>
+						<SubSecond>999</SubSecond>
+						<Timezone>6:00-GMT</Timezone>
+					</UsageEndDatetime>
+					<UsageQuantity>140.0</UsageQuantity>
+					<CurrencyCode>USD</CurrencyCode>
+					<CostBeforeTax>0.00</CostBeforeTax>
+					<Credits>0.0</Credits>
+					<TaxAmount>0.000000</TaxAmount>
+					<TaxType>None</TaxType>
+					<TotalCost>0.000000</TotalCost>
+				</LineItem>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2017</Year>
+					<Month>1</Month>
+					<Day>9</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</CreateDatetime>
+			</Bill>
+		</DeleteData>
+	</DataArea>
+</com.amazon.aws.Billing.Bill.Delete>

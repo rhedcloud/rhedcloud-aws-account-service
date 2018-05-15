@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.ElasticIp.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.Network.ElasticIp.Query>
+	<ControlAreaRequest messageCategory="edu.emory.Network" messageObject="ElasticIp"
+		messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>VpcpApp</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>Cidr</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>9</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>456</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Example" messageObject="Cidr"
+			messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<ElasticIpQuerySpecification>
+			<ElasticIpAddress>170.140.104.25</ElasticIpAddress>
+		</ElasticIpQuerySpecification>
+	</DataArea>
+</edu.emory.Network.ElasticIp.Query>

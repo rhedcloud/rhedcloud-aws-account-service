@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Security.SecurityRiskDetection.Create SYSTEM "../dtd/Create-Sync.dtd">
+<com.amazon.aws.Security.SecurityRiskDetection.Create>
+	<ControlAreaSync messageCategory="com.amazon.aws.Security" messageObject="SecurityRiskDetection"
+		messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>3</Month>
+			<Day>15</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<SecurityRiskDetection>
+				<AccountId>727542611512</AccountId>
+				<SecurityRiskDetector>S3PublicBucketDetector</SecurityRiskDetector>
+				<SecurityRiskRemediator>S3PublicBucketRemediator</SecurityRiskRemediator>
+				<DetectedSecurityRisk>
+					<Type>S3PublicBucket</Type>
+					<AmazonResourceName>arn:aws:s3:::serviceforge-videos</AmazonResourceName>
+					<RemediationResult>
+						<Status>Remediated</Status>
+						<Description>Removed public access</Description>
+					</RemediationResult>
+				</DetectedSecurityRisk>
+				<CreateUser>SecurityRiskDetectionApplication</CreateUser>
+				<CreateDatetime>
+					<Year>2017</Year>
+					<Month>11</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>52</Second>
+					<SubSecond>132</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</CreateDatetime>
+			</SecurityRiskDetection>
+		</NewData>
+	</DataArea>
+</com.amazon.aws.Security.SecurityRiskDetection.Create>

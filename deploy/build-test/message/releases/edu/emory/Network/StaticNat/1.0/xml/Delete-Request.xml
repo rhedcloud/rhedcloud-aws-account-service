@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.StaticNat.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<edu.emory.Network.StaticNat.Delete>
+	<ControlAreaRequest messageCategory="edu.emory.Network" messageObject="StaticNat"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
+				<MessageSeq>2734</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteApplication</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>9</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<StaticNat>
+				<PublicIp>170.140.104.25</PublicIp>
+				<PrivateIp>10.64.1.17</PrivateIp>
+			</StaticNat>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Network.StaticNat.Delete>

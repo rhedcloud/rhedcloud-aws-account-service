@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 3898 $
+		$Date: 2013-12-30 11:52:13 -0500 (Mon, 30 Dec 2013) $
+		$Source$
+ -->
+<!-- This file is part of the OpenEAI Application Foundation or
+		OpenEAI Message Object API created by Tod Jackson
+		(tod@openeai.org) and Steve Wheat (steve@openeai.org).
+
+		Copyright (C) 2002 The OpenEAI Software Foundation
+
+		This library is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public
+		License as published by the Free Software Foundation; either
+		version 2.1 of the License, or (at your option) any later version.
+
+		This library is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+		Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+		For specific licensing details and examples of how this software 
+		can be used to build commercial integration software or to implement
+		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
+ -->
+<!--	Fields.dtd is a file where definitions of all elements without 
+		children appear.
+		
+		The OpenEAI Deployment Patterns suggest that, when using DTDs,
+		an enterprise should separate its definitions into four slices
+		to improve the management of definitions and to promote the use
+		of common object definitions.  The four slices are:
+		
+		Resources - 	a  file for including definitions from enternal
+							organizations.  For examaple, in their own
+							Resources.dtd, an enterprise will reference
+							the OpenEAI definitions, which give them the
+							ControlArea* definitions required by the OpenEAI
+							Message Protocol. 
+							
+		Segments - 	a file where definitions of all elements with
+							children appear
+							
+		Fields - 		a file where all elements without children appear
+		
+		Domains - 	a file in which any custom datatypes are defined
+		
+		This approach was learned by observing contraint practices of the 
+		Open Application Group, and these same practices have served the
+		practitioners of OpenEAI well.
+ -->
+<!--	Release History
+
+				01/04/2002	1.0		robchong@uillinois.edu, rmajumd@uillinois.edu
+-->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+-->
+<!-- ====================================================================== -->
+<!--AccessDatetime added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT AccessDatetime %DATETIME;>
+<!--AccessStatus added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT AccessStatus %STRDOM;>
+<!--AccessTarget added 12/27/2012 for AccessLogEntry-->
+<!ELEMENT AccessTarget %STRDOM;>
+<!--AccessType added 12/27/2012 for AccessLogEntry-->
+<!ELEMENT AccessType %STRDOM;>
+<!--Altitude added 09/20/2008 for Services/NetworkLocation/Geocode-->
+<!ELEMENT Altitude %STRDOM;>
+<!--ApplicationName added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT ApplicationName %STRDOM;>
+<!--ApplicationSessionId added 09/10/2002 for CoreApplication/ApplicationSession-->
+<!ELEMENT ApplicationSessionId %STRDOM;>
+<!--AttemptDatetime added 09/25/2007 for CoreApplication/AuthenticationAttempt-->
+<!ELEMENT AttemptDatetime %DATETIME;>
+<!--AttemptId added 09/25/2007 for CoreApplication/AuthenticationAttempt-->
+<!ELEMENT AttemptId %STRDOM;>
+<!--AttemptStatus added 09/25/2007 for AuthenticationAttempt-->
+<!ELEMENT AttemptStatus %STRDOM;>
+<!--BCC added 07/20/2009 for CoreApplication/EmailMessage-->
+<!ELEMENT BCC %STRDOM;>
+<!--BirthDate added 10/24/2002 for InstitutionalIdentity/UnknownPerson-->
+<!ELEMENT BirthDate %DATE;>
+<!--Body added 09/20/2009 for CoreApplication/EmailMessage-->
+<!ELEMENT Body %STRDOM;>
+<!--Building added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Building %STRDOM;>
+<!--CC added 07/20/2009 for CoreApplication/EmailMessage-->
+<!ELEMENT CC %STRDOM;>
+<!--CityOrLocality added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT CityOrLocality %STRDOM;>
+<!--ClientIp added 10/24/2002 for CoreApplication/ApplicationSession-->
+<!ELEMENT ClientIp %STRDOM;>
+<!--Comment added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT Comment %STRDOM;>
+<!--County added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT County %STRDOM;>
+<!--Credential added 11/11/2010 for Services/AuthenticationQuerySpecification-->
+<!ELEMENT Credential %STRDOM;>
+<!--Description added 10/15/2004 for CoreApplication/EnterpriseGroup-->
+<!ELEMENT Description %STRDOM;>
+<!--Domain added 09/10/2002 for CoreApplication/NetIdAssignment-->
+<!ELEMENT Domain %STRDOM;>
+<!--EndDate added 09/10/2002 for CoreApplication/NetIdAssignment-->
+<!ELEMENT EndDate %DATE;>
+<!--EndDatetime added 09/10/2002 for CoreApplication/EnterpriseSession-->
+<!ELEMENT EndDatetime %DATETIME;>
+<!--EnterpriseID added 6/9/1970 for PortalIIMap-->
+<!ELEMENT EnterpriseId %STRDOM;>
+<!--EnterprisePermissionName added 09/10/2002 for CoreApplication/EnterpriseUserRole-->
+<!ELEMENT EnterprisePermissionName %STRDOM;>
+<!--EnterpriseSessionId added 09/10/2002 for CoreApplication/EnterpriseSession-->
+<!ELEMENT EnterpriseSessionId %STRDOM;>
+<!--EstimatedGenerationTime added 5/24/2005 for ReportSpecification-->
+<!ELEMENT EstimatedGenerationTime %STRDOM;>
+<!--Explanation added 8/11/2007 for ValidationStatus-->
+<!ELEMENT Explanation %STRDOM;>
+<!--FirstName added 10/24/2002 for InstitutionalIdentity/UnknownPerson/Name-->
+<!ELEMENT FirstName %STRDOM;>
+<!--Floor added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Floor %STRDOM;>
+<!--From added 7/20/2009 for CoreApplication/EmailMessage-->
+<!ELEMENT From %STRDOM;>
+<!--FullName added 09/25/2003 for Greetee-->
+<!ELEMENT FullName %STRDOM;>
+<!--GenerationTime added 5/24/2005 for Report-->
+<!ELEMENT GenerationTime %STRDOM;>
+<!--Gender added 10/24/2002 for InstitutionalIdentity/UnknownPerson-->
+<!ELEMENT Gender %STRDOM;>
+<!--HighPrice added 10/16/2007 for StockQuote-->
+<!ELEMENT HighPrice %STRDOM;>
+<!--Hostname added 09/25/2007 for CoreApplication/AuthenticationAttempt-->
+<!ELEMENT Hostname %STRDOM;>
+<!--InputText added 10/29/2009 for ConversionService-->
+<!ELEMENT InputText %STRDOM;>
+<!--InstitutionalId added 10/24/2002 for InstitutionalIdentity-->
+<!ELEMENT InstitutionalId %STRDOM;>
+<!--IpNumber added 09/10/2008 for NetworkLocation-->
+<!ELEMENT IpNumber %STRDOM;>
+<!--LastActivityDatetime added 09/10/2002 for CoreApplication/EnterpriseSession-->
+<!ELEMENT LastActivityDatetime %DATETIME;>
+<!--LastConnectionDatetime added 11/09/2004 for Monitoring/AcceptorStatus-->
+<!ELEMENT LastConnectionDatetime %DATETIME;>
+<!--LastName added 10/24/2002 for InstitutionalIdentity/UnknownPerson/Name-->
+<!ELEMENT LastName %STRDOM;>
+<!--LastPrice added 10/16/2007 for StockQuoteownPerson/Name-->
+<!ELEMENT LastPrice %STRDOM;>
+<!--Latitude added 09/20/2008 for Services/NetworkLocation/Geocode-->
+<!ELEMENT Latitude %STRDOM;>
+<!--LegalName added 10/24/2002 for Name-->
+<!ELEMENT LegalName %STRDOM;>
+<!--Line added 04/22/2002 for Utility/File-->
+<!ELEMENT Line %STRDOM;>
+<!--LogDatetime added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT LogDatetime %DATETIME;>
+<!--LogEntryId added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT LogEntryId %STRDOM;>
+<!--LogId added 12/27/2013 for AccessLog-->
+<!ELEMENT LogId %STRDOM;>
+<!--LogMessageCode added 09/10/2002 for CoreApplicationEnterpriseLogEntryCreata/DataArea/EnterpriseLogEntry-->
+<!ELEMENT LogMessageCode %STRDOM;>
+<!--LogMessageContext added 12/27/2013 for ApplicationLogEntry-->
+<!ELEMENT LogMessageContext %STRDOM;>
+<!--LogMessageDatetime added 12/27/2013 for ApplicationLogEntry-->
+<!ELEMENT LogMessageDatetime %DATETIME;>
+<!--LogMessageText added 09/10/2002 for CoreApplicationEnterpriseLogEntryCreata/DataArea/EnterpriseLogEntry-->
+<!ELEMENT LogMessageText %STRDOM;>
+<!--LogMessageType added 12/27/2013 for ApplicationLogEntry-->
+<!ELEMENT LogMessageType %STRDOM;>
+<!--Longitude added 09/20/2008 for Services/NetworkLocation/Geocode-->
+<!ELEMENT Longitude %STRDOM;>
+<!--LowPrice added 10/16/2007 for StockQuoteownPerson/Name-->
+<!ELEMENT LowPrice %STRDOM;>
+<!--Message added 9/25/2007 for CoreApplication/AuthenticationAttempt-->
+<!ELEMENT Message %STRDOM;>
+<!--Modality added 5/24/2005 for ReportSpecification-->
+<!ELEMENT Modality %STRDOM;>
+<!--MiddleName added 10/24/2002 for InstitutionalIdentity/UnknownPerson-->
+<!ELEMENT MiddleName %STRDOM;>
+<!--Nation added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Nation %STRDOM;>
+<!--Node added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Node %STRDOM;>
+<!--OpenPrice added 10/16/2007 for StockQuote-->
+<!ELEMENT OpenPrice %STRDOM;>
+<!--OutputFormat added 5/24/2005 for ReportSpecification-->
+<!ELEMENT OutputFormat %STRDOM;>
+<!--OutputText added 10/29/2009 for ConversionService-->
+<!ELEMENT OutputText %STRDOM;>
+<!--Path added 04/22/2002 for Utility/File-->
+<!ELEMENT Path %STRDOM;>
+<!--Permission added 07/30/2010 for Authorization-->
+<!ELEMENT Permission %STRDOM;>
+<!--PersonPrincipalName added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT PersonPrincipalName %STRDOM;>
+<!--PortalId added 6/6/7 for uPortal to I2Service cross reference-->
+<!ELEMENT PortalId %STRDOM;>
+<!--Prefix added 10/24/2002 for Name-->
+<!ELEMENT PreferredFirstName %STRDOM;>
+<!--Prefix added 10/24/2002 for Name-->
+<!ELEMENT Prefix %STRDOM;>
+<!--PreviousClosingPrice added 10/16/2007 for StockQuote-->
+<!ELEMENT PreviousClosingPrice %STRDOM;>
+<!--PriceChange added 10/16/2007 for StockQuote-->
+<!ELEMENT PriceChange %STRDOM;>
+<!--Principal added 09/10/2002 for Person/NetId-->
+<!ELEMENT Principal %STRDOM;>
+<!--PropertyName added 03/04/2004 for CoreApplicationNetIdGenerate/NetIdSeed/Property-->
+<!ELEMENT PropertyName %STRDOM;>
+<!--PropertyValue added 03/04/2004 for CoreApplicationNetIdGenerate/NetIdSeed/Property-->
+<!ELEMENT PropertyValue %STRDOM;>
+<!--QuestionId added 8/10/2007 for SecurityQuestion-->
+<!ELEMENT QuestionId %STRDOM;>
+<!--Remediation added 12/27/2013 for ApplicationLogEntry-->
+<!ELEMENT Remediation %STRDOM;>
+<!--ReportName added 5/24/2005 for ReportSpecification-->
+<!ELEMENT ReportName %STRDOM;>
+<!--Room added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Room %STRDOM;>
+<!--SocialSecurityNumber added 10/24/2002 for InstitutionalIdentity/UnknownPerson-->
+<!ELEMENT SocialSecurityNumber %STRDOM;>
+<!--StartDate added 09/10/2002 for CoreApplication/NetIdAssignment-->
+<!ELEMENT StartDate %DATE;>
+<!--StateOrProvince added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT StateOrProvince %STRDOM;>
+<!--Status added 07/20/2009 for CoreApplication/EmailMessage-->
+<!ELEMENT Status %STRDOM;>
+<!--StatusCode added 08/11/2007 for ValidationStatus-->
+<!ELEMENT StatusCode %STRDOM;>
+<!--StartDatetime added 09/10/2002 for CoreApplication/EnterpriseSession-->
+<!ELEMENT StartDatetime %DATETIME;>
+<!--StockName added 10/16/2007 for StockQuote-->
+<!ELEMENT StockName %STRDOM;>
+<!--StockQuoteService added 10/16/2007 for StockQuote-->
+<!ELEMENT StockQuoteService %STRDOM;>
+<!--StockSymbol added 10/16/2007 for StockQuote-->
+<!ELEMENT StockSymbol %STRDOM;>
+<!--StopDatetime added 11/09/2004 for Monitoring/AcceptorStatus-->
+<!ELEMENT StopDatetime %DATETIME;>
+<!--Street1 added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Street1 %STRDOM;>
+<!--Street2 added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Street2 %STRDOM;>
+<!--Street3 added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT Street3 %STRDOM;>
+<!--Subject added 07/20/2009 for CoreApplication/EmailMessage-->
+<!ELEMENT Subject %STRDOM;>
+<!--Suffix added 10/24/2002 for Name-->
+<!ELEMENT Suffix %STRDOM;>
+<!--Tag added 12/27/2013 for AccessLogEntry-->
+<!ELEMENT Tag %STRDOM;>
+<!--TestRequest added 08/08/2010 for Authorization-->
+<!ELEMENT TestRequest %STRDOM;>
+<!--Text added 09/25/2003 for Greeting-->
+<!ELEMENT Text %STRDOM;>
+<!--TimeStamp added 10/16/2007 for StockQuote-->
+<!ELEMENT TimeStampDatetime %DATETIME;>
+<!--To added 7/20/2009 for EmailMessage-->
+<!ELEMENT To %STRDOM;>
+<!--TradingVolume added 10/16/2007 for StockQuote-->
+<!ELEMENT TradingVolume %STRDOM;>
+<!--Type added 08/11/2007 for SecurityQuestion-->
+<!ELEMENT Type %STRDOM;>
+<!--URI added 05/24/2005 for Report-->
+<!ELEMENT URI %STRDOM;>
+<!--UserIdentifier added 9/25/2007 for AuthenticationAttempt-->
+<!ELEMENT UserIdentifier %STRDOM;>
+<!--Value added 8/11/2007 for PersonalIdentificationNumber-->
+<!--<!ELEMENT Value %STRDOM;>-->
+<!--VariableName added 09/10/2002 for Identifier-->
+<!ELEMENT VariableName %STRDOM;>
+<!--VariableValue added 09/10/2002 for CoreApplication/EnterpriseSession-->
+<!ELEMENT VariableValue %STRDOM;>
+<!--ZipOrPostalCode added 09/20/2008 for Services/NetworkLocation-->
+<!ELEMENT ZipOrPostalCode %STRDOM;>
+<!-- ==================================================== -->
+

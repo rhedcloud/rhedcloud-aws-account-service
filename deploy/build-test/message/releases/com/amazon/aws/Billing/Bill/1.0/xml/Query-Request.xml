@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Billing.Bill.Query SYSTEM "../dtd/Query-Request.dtd">
+<com.amazon.aws.Billing.Bill.Query>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Billing" messageObject="Bill"
+		messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8e0a-af76759563421 </ProducerId>
+				<MessageSeq>151</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuite</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>456</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="com.amazon.aws.Billing" messageObject="Bill"
+			messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<BillQuerySpecification>
+			<PayerAccountId>357163498835</PayerAccountId>
+		</BillQuerySpecification>
+	</DataArea>
+</com.amazon.aws.Billing.Bill.Query>

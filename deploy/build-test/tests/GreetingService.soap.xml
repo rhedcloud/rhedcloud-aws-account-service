@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gre="http://www.emory.edu/GreetingService/" xmlns:gre1="http://www.emory.edu/greeting/">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<gre:GreetingGenerateRequest>
+			<gre1:Greetee>
+				<gre1:FullName>George</gre1:FullName>
+			</gre1:Greetee>
+		</gre:GreetingGenerateRequest>
+	</soapenv:Body>
+</soapenv:Envelope>

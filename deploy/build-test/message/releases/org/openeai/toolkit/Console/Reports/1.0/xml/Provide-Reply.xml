@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.Reports.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<org.openeai.toolkit.Console.Reports.Provide>
+	<ControlAreaReply messageCategory="org.openeai.toolkit.Console" messageObject="Reports" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>MyLog</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>WebEaseMobile</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Reports>
+			<ReportsId>applicationReport</ReportsId>
+			<PrettyName>Application Report</PrettyName>
+			<Description>A report that displays a drill down (Tree component?) of applications and all the components used by each application (topic/queues, message objects, db connections, what data the app is authoritative, what data the app uses (via message objects and their primed docs) etc.</Description>
+			<CreateUser>SYS</CreateUser>
+			<CreateDate>
+				<Month>1</Month>
+				<Day>1</Day>
+				<Year>2013</Year>
+			</CreateDate>
+			<ModUser>SYS</ModUser>
+			<ModDate>
+				<Month>1</Month>
+				<Day>1</Day>
+				<Year>2013</Year>
+			</ModDate>
+		</Reports>
+	</DataArea>
+</org.openeai.toolkit.Console.Reports.Provide>

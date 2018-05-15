@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Update SYSTEM "../dtd/Update-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Update>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="AuthenticationAttempt" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseApplicationService</SenderAppId>
+				<ProducerId>324e738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1011</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>acccnetid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>39</Second>
+			<SubSecond>729</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<AuthenticationAttempt>
+				<AttemptId>223456789</AttemptId>
+				<AttemptDatetime>
+					<Year>2001</Year>
+					<Month>4</Month>
+					<Day>6</Day>
+					<Hour>12</Hour>
+					<Minute>50</Minute>
+					<Second>48</Second>
+					<SubSecond>922</SubSecond>
+					<Timezone>7:00-GMT</Timezone>
+				</AttemptDatetime>
+				<UserIdentifier>swheat</UserIdentifier>
+				<Hostname>host.admin.uillinois.edu</Hostname>
+				<ClientIp>123.123.123.123</ClientIp>
+				<AttemptStatus>allowed</AttemptStatus>
+				<AuthenticationStatus>
+					<StatusCode>failed</StatusCode>
+					<Description>The user is inauthentic.</Description>
+					<Explanation>The user failed to provide appropriate credentials.</Explanation>
+				</AuthenticationStatus>
+				<Message>Invalid username or password.</Message>
+			</AuthenticationAttempt>
+		</NewData>
+		<BaselineData>
+			<AuthenticationAttempt>
+				<AttemptId>223456789</AttemptId>
+				<AttemptDatetime>
+					<Year>2001</Year>
+					<Month>4</Month>
+					<Day>6</Day>
+					<Hour>12</Hour>
+					<Minute>50</Minute>
+					<Second>48</Second>
+					<SubSecond>922</SubSecond>
+					<Timezone>7:00-GMT</Timezone>
+				</AttemptDatetime>
+				<UserIdentifier>swheat</UserIdentifier>
+				<Hostname>host.admin.uillinois.edu</Hostname>
+				<ClientIp>123.123.123.123</ClientIp>
+				<AttemptStatus>allowed</AttemptStatus>
+				<AuthenticationStatus>
+					<StatusCode>no attempt</StatusCode>
+					<Description>No attempt has been made.</Description>
+					<Explanation>It is possible that an attempt may be allowed, but that the user does not actually perform the attempt.</Explanation>
+				</AuthenticationStatus>
+				<Message>There have been too many attempts over a short period of time.  Please try again later.</Message>
+			</AuthenticationAttempt>
+		</BaselineData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Update>

@@ -1,0 +1,25 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:hel="http://www.emory.edu/HelloHibernateGwService/" xmlns="http://www.emory.edu/hellohibernategw/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <hel:HelloHibernateGwUpdateRequest>
+         <hel:HelloHibernateGwNewData>
+         <HelloHibernateGw>
+            <Id>1</Id>
+            <Message>Hi</Message>
+            <MessageNumber>1</MessageNumber>
+            <LastModifiedDatetime>2011-02-03T04:05:06.000-05:00</LastModifiedDatetime>
+            <LastModifiedDate>2012-08-09-04:00</LastModifiedDate>
+         </HelloHibernateGw>
+         </hel:HelloHibernateGwNewData>
+         <hel:HelloHibernateGwBaselineData>
+          <HelloHibernateGw>
+            <Id>1</Id>
+            <Message>Hi</Message>
+            <MessageNumber>1</MessageNumber>
+            <LastModifiedDatetime>2011-02-03T04:05:06.000-05:00</LastModifiedDatetime>
+            <LastModifiedDate>2012-08-09-04:00</LastModifiedDate>
+         </HelloHibernateGw>
+         </hel:HelloHibernateGwBaselineData>
+      </hel:HelloHibernateGwUpdateRequest>
+   </soapenv:Body>
+</soapenv:Envelope>

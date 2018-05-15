@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.StaticNat.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Network.StaticNat.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Network" messageObject="StaticNat"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af0675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteApplication</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>9</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<StaticNat>
+			<PublicIp>170.140.104.25</PublicIp><!--Global-->
+			<PrivateIp>10.64.1.17</PrivateIp><!--Local-->
+		</StaticNat>
+	</DataArea>
+</edu.emory.Network.StaticNat.Provide>

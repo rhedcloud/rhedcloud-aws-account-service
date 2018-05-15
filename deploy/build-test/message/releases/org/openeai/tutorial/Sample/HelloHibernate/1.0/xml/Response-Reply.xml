@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.openeai.tutorial.Samples.HelloHibernate.Response SYSTEM "../dtd/Response-Reply.dtd">
+<org.openeai.tutorial.Samples.HelloHibernate.Response>
+	<ControlAreaReply messageCategory="org.openeai.tutorial.Samples" messageObject="HelloHibernate" messageAction="Response" messagePriority="9" messageType="Reply" messageRelease="1.0">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.tutorial.Samples.HelloHibernate</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>1</Month>
+			<Day>1</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>762</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>producer1</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<HelloHibernate>
+			<Id>100</Id>
+			<Message>Hi</Message>
+		</HelloHibernate>
+	</DataArea>
+</org.openeai.tutorial.Samples.HelloHibernate.Response>

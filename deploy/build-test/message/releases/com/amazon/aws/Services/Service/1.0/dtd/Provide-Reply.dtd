@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited by Tom Cervenka (Emory University) -->
+<!-- Defines a response to a query message.
+-->
+<!-- 
+	Copyright 2018 Emory University. All rights reserved.
+-->
+<!--Release History (this information is manually updated when the message is released)
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT com.amazon.aws.Services.Service.Provide (ControlAreaReply, DataArea)>
+<!ELEMENT DataArea (Service*)>

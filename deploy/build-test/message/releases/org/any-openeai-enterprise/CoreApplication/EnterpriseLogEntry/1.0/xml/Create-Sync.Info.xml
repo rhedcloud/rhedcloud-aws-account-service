@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterpriseLogEntry.Create SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterpriseLogEntry/1.0/dtd/Create-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterpriseLogEntry.Create>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterpriseLogEntry" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.PaymasterBatchErrorViewer</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>pmberrv</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>04</Month>
+			<Day>06</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second/>
+			<SubSecond/>
+			<Timezone/>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<EnterpriseLogEntry action="Log" level="Info">
+				<ApplicationSessionId>d90d65fd-1219-471b-85cb-cc9181bd75b6-130.126.239.69</ApplicationSessionId>
+				<Datetime>
+					<Year>2002</Year>
+					<Month>9</Month>
+					<Day>11</Day>
+					<Hour>15</Hour>
+					<Minute>19</Minute>
+					<Second>22</Second>
+					<SubSecond>562</SubSecond>
+					<Timezone>7:00-GMT</Timezone>
+				</Datetime>
+				<LogMessageCode>PaymasterBatchErrorViewer-1001</LogMessageCode>
+				<LogMessageText>User viewed the run summary page.</LogMessageText>
+			</EnterpriseLogEntry>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterpriseLogEntry.Create>

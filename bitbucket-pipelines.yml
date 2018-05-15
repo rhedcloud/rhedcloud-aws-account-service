@@ -3,18 +3,209 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: maven:3.3.9
+image:
+  name: emory/esb-service-base-1.0:latest
+  username: $DOCKER_HUB_USERNAME
+  password: $DOCKER_HUB_PASSWORD
+  email: $DOCKER_HUB_EMAIL
+  run-as-user: 1000
+
+options:
+  docker: true
 
 pipelines:
   default:
-    - step:
-        caches:
-          - maven
-        script: # Modify the commands below to build your repository.
-          - cat /etc/issue
-          - apt-get update
-          - apt-get install zip
-          - mvn -B verify # -B batch mode makes Maven less verbose
-          - zip -r emory-aws-account-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/emory-aws-account-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"emory-aws-account-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip"
+     - step:
+        name: Build ESB service
+        caches: 
+        - maven
+        script:
+        - cat /etc/issue         # echo out the linux the image using
+        - source $HOME/.profile  # source the profile to setup env variables
+        - mvn -B verify          # -B batch mode makes Maven less verbose
+        artifacts:
+        - target/**              # preserve the build artifacts for the next step
+
+     - step: 
+        name: Deploy and test locally
+        script:
+        - ls -la
+        - echo $HOME
+        - cp target/*.jar deploy/build-test/libs/AwsAccountService
+        - cp -R deploy/* $HOME/deploy
+        - cd
+        - source .profile
+        - activemq start
+        - sleep 5
+        - tail -1000 /opt/activemq/apache-activemq-5.15.2/data/activemq.log
+        - export OPENEAI_HOME=$HOME/deploy/build-test  
+        - cd $OPENEAI_HOME
+        - mkdir -p logs
+        - ./start.sh AwsAccountService
+        - sleep 5
+        - tail -1000 System.out
+        - tail -1000 logs/AwsAccountService.log
+        - ./start.sh AwsAccountServiceTestSuite
+        - sleep 20
+        - tail -1000 logs/TestSuiteApplication-AwsAccountService.log
+
+     - step:
+        name: Generate web service facade
+        script:
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/openeai-servicegen.git # import service generation deps
+        - source $HOME/.profile                                                           # source the profile to setup env variable
+        - export BUILD_HOME=`pwd`
+        - echo version $VERSION_NUMBER build $BITBUCKET_BUILD_NUMBER
+        - cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties/awsaccount.properties # copy the servicegen properties to where servicegen needs them
+        - cp deploy/build-test/servicegen-configs/build.custom.properties openeai-servicegen/build.custom.properties # copy the servicegen properties to where servicegen needs them
+        - cp deploy/build-test/servicegen-configs/build.default.properties openeai-servicegen/build.default.properties # copy the servicegen properties to where servicegen needs them
+        - cp deploy/build-test/servicegen-configs/build.webservice.xml openeai-servicegen/build.webservice.xml # copy the servicegen properties to where servicegen needs them
+        - cd openeai-servicegen                                                           # change working directory to servicegen home
+        - ./gen-webservice awsaccount                                                       # generate the web service facade
+        - cat target/awsaccount/emory-awsaccount-webservice/resources/services.xml
+        - export TARGET_DIR=target/awsaccount/emory-awsaccount-webservice/build/lib
+        - ls -la $TARGET_DIR
+        - mkdir -p $BUILD_HOME/deploy/build-test/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-localhost.aar $BUILD_HOME/deploy/build-test/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
+        - mkdir -p $BUILD_HOME/deploy/esb-dev/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-dev.aar $BUILD_HOME/deploy/esb-dev/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-dev/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
+        - mkdir -p $BUILD_HOME/deploy/esb-test/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-qa.aar $BUILD_HOME/deploy/esb-test/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
+        - mkdir -p $BUILD_HOME/deploy/esb-stage/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-stage/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-stage/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
+        - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-prod/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
+        - cd $BUILD_HOME/deploy/build-test/libs/Axis2                                     # create the axis2.war for the build environment
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - mkdir -p WEB-INF/services
+        - mkdir -p WEB-INF/lib
+        - mkdir -p WEB-INF/classes
+        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        - cp ../AwsAccountService/* WEB-INF/lib
+        - cp ../../configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
+        - cp -r ../../configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate WEB-INF/classes
+
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar   
+        - jar uf axis2.war WEB-INF/lib/*   
+        - jar uf axis2.war WEB-INF/classes   
+        - rm -Rf WEB-INF
+        # Create the axis2.war file for DEV
+        - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2               
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - mkdir -p WEB-INF/services
+        - mkdir -p WEB-INF/lib
+        - mkdir -p WEB-INF/classes
+        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        - cp ../AwsAccountService/* WEB-INF/lib
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
+        - jar uf axis2.war WEB-INF/lib/*   
+        - jar uf axis2.war WEB-INF/classes  
+        - rm -Rf WEB-INF
+        # Create the axis2.war file for TEST
+        - cd $BUILD_HOME/deploy/esb-test/libs/Axis2                                    
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - mkdir -p WEB-INF/services
+        - mkdir -p WEB-INF/lib
+        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        - cp ../AwsAccountService/* WEB-INF/lib
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar   
+        - jar uf axis2.war WEB-INF/lib/*   
+        - rm -Rf WEB-INF
+        # Create the axis2.war file for STAGE
+        - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2                              
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - mkdir -p WEB-INF/services
+        - mkdir -p WEB-INF/lib
+        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        - cp ../AwsAccountService/* WEB-INF/lib
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
+        - jar uf axis2.war WEB-INF/lib/*   
+        - rm -Rf WEB-INF
+        # Create the axis2.war file for PROD
+        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2                              
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - mkdir -p WEB-INF/services
+        - mkdir -p WEB-INF/lib
+        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        - cp ../AwsAccountService/* WEB-INF/lib
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
+        - jar uf axis2.war WEB-INF/lib/*   
+        - rm -Rf WEB-INF
+        artifacts:
+        - deploy/**     # preserve the deploy artifacts for the next step
+
+     - step: 
+        name: Deploy and test the facade locally
+        script:
+        - source $HOME/.profile  
+        - cd deploy/build-test
+        - export BUILD_HOME=`pwd`
+        - wget http://mirrors.ibiblio.org/apache/tomcat/tomcat-8/v8.0.52/bin/apache-tomcat-8.0.52.tar.gz
+        - tar xvzf apache-tomcat-8.0.52.tar.gz
+        - cp -R configs  apache-tomcat-8.0.52/bin
+        - cp -R message  apache-tomcat-8.0.52/bin
+        #- cp -R eos  apache-tomcat-8.0.52/bin
+        - cd ../..
+        - ls deploy
+        - jar tf deploy/build-test/libs/Axis2/axis2.war
+        - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.52/webapps
+        - cd deploy/build-test/apache-tomcat-8.0.52/bin
+        - export CATALINA_HOME=..
+        - chmod 755 *.sh
+        - ./startup.sh
+        - sleep 30
+        - tail -1000  ../logs/catalina.out
+        - wget http://localhost:8080/axis2/services/listServices
+        - cat listServices
+        - wget http://localhost:8080/axis2/services/AwsAccountService?wsdl
+        - cat AwsAccountService?wsdl
+        #- $BUILD_HOME/tests/post.curl.sh
+        #- cat ../logs/catalina.out
+     
+     - step: 
+        name: Upload build products
+        script:
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - ls -la 
+        - zip -r emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
+        - emory-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
+        - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
+
+     - step:
+        name: Deploy to dev
+        script:
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
+        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
+        
+     - step:
+        name: Deploy to test
+        deployment: test
+        trigger: manual
+        script:
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - export S3_UPLOAD_ARTIFACT=deploy/esb-test/libs/Axis2/axis2.war
+        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
+
+     - step:
+        name: Deploy to staging
+        deployment: staging
+        trigger: manual
+        script:
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - export S3_UPLOAD_ARTIFACT=deploy/esb-stage/libs/Axis2/axis2.war
+        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
+
+     - step:
+        name: Deploy to production
+        deployment: production
+        trigger: manual
+        script:
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - export S3_UPLOAD_ARTIFACT=deploy/esb-prod/libs/Axis2/axis2.war
+        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD     

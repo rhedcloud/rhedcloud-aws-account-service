@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.academyone.Service.Statistics.Query SYSTEM "../dtd/Query-Request.dtd">
+<com.academyone.Service.Statistics.Query>
+	<ControlAreaRequest messageCategory="com.academyone.Service" messageObject="Statistics" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>com.academyone.AcademyOneTestSuiteApplication</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AcademyOne</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2009</Year>
+			<Month>5</Month>
+			<Day>5</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>256</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="com.academyone.Service" messageObject="Statistics" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<StatisticsQuerySpecification/>
+	</DataArea>
+</com.academyone.Service.Statistics.Query>

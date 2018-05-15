@@ -48,14 +48,14 @@ import org.openeai.transport.SyncService;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 
-//import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SamlProvider;
+//import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAliasProvider;
 // AWS MOA objects
-//import com.amazon.aws.moa.objects.resources.v1_0.SamlProviderQuerySpecification;
-//import com.amazon.aws.moa.objects.resources.v1_0.SamlProviderRequisition;
-//import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Saml;
+//import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasProviderQuerySpecification;
+//import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasProviderRequisition;
+//import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.AccountAlias;
 
 // VPC Provider Implementation
-//import edu.emory.awsaccount.service.provider.SamlProviderProvider;
+//import edu.emory.awsaccount.service.provider.AccountAliasProviderProvider;
 import edu.emory.awsaccount.service.provider.AccountAliasProvider;
 import edu.emory.awsaccount.service.provider.ProviderException;
 
@@ -64,70 +64,71 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
- * This command handles requests for Saml objects. Specifically, it handles a
- * Query-Request, a Generate-Request, an Update-Request, and a Delete-Request
- * for this object with the following high-level logic:
+ * This command handles requests for AccountAlias objects. Specifically, it
+ * handles a Query-Request, a Generate-Request, an Update-Request, and a
+ * Delete-Request for this object with the following high-level logic:
  * <P>
  * <OL>
- * <LI>com.amazon.aws.Provisioning.Saml.Query-Request (<A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/dtd/Query-Request.dtd?view=markup"
+ * <LI>com.amazon.aws.Provisioning.AccountAlias.Query-Request (<A HREF=
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/dtd/Query-Request.dtd?view=markup"
  * >Definition</A> | <A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/xml/Query-Request.xml?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Query-Request.xml?view=markup"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to an XML document</LI>
  * <LI>Build a message object from the XML document for the
- * SamlQuerySpecification</LI>
- * <LI>Invoke the query method of the configured Saml provider</LI>
+ * AccountAliasQuerySpecification</LI>
+ * <LI>Invoke the query method of the configured AccountAlias provider</LI>
  * <LI>Build the message response from the results of the query operation. This
- * should contain a list of Saml objects from which one can build a list of Saml
- * objects.</LI>
+ * should contain a list of AccountAlias objects from which one can build a list
+ * of AccountAlias objects.</LI>
  * <LI>Return the response</LI>
  * </UL>
  * </LI>
- * <LI>com.amazon.aws.Provisioning.Saml.Generate-Request (<A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/dtd/Generate-Request.dtd?view=markup"
+ * <LI>com.amazon.aws.Provisioning.AccountAlias.Generate-Request (<A HREF=
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/dtd/Generate-Request.dtd?view=markup"
  * >Definition</A> | <A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/xml/Generate-Request.xml?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Generate-Request.xml?view=markup"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
- * <LI>Build a message object from the XML document for the SamlRequisition
- * object</LI>
- * <LI>Invoke the generate method of the configured Saml provider.</LI>
- * <LI>Build the Saml object from the results of the generate operation. This
- * should always return a Saml in the success case.</LI>
- * <LI>If successful, publish a Saml.Create-Sync message</LI>
+ * <LI>Build a message object from the XML document for the
+ * AccountAliasRequisition object</LI>
+ * <LI>Invoke the generate method of the configured AccountAlias provider.</LI>
+ * <LI>Build the AccountAlias object from the results of the generate operation.
+ * This should always return a AccountAlias in the success case.</LI>
+ * <LI>If successful, publish a AccountAlias.Create-Sync message</LI>
  * <LI>Build the response to the request message</LI>
  * <LI>Return the response to the request message</LI>
  * </UL>
  * </LI>
- * <LI>com.amazon.aws.Provisioning.Saml.Update-Request (<A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/dtd/Update-Request.dtd?view=markup"
+ * <LI>com.amazon.aws.Provisioning.AccountAlias.Update-Request (<A HREF=
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/dtd/Update-Request.dtd?view=markup"
  * >Definition</A> | <A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/xml/Update-Request.xml?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Update-Request.xml?view=markup"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
  * <LI>Build a message objects for the XML document for the baseline and new
- * Saml objects</LI>
+ * AccountAlias objects</LI>
  * <LI>Perform baseline comparison</LI>
- * <LI>Invoke the update method of the configured Saml provider</LI>
- * <LI>If successful, publish a Saml.Update-Sync message</LI>
+ * <LI>Invoke the update method of the configured AccountAlias provider</LI>
+ * <LI>If successful, publish a AccountAlias.Update-Sync message</LI>
  * <LI>Build the response to the request message</LI>
  * <LI>Return the response to the request message</LI>
  * </UL>
  * </LI>
- * <LI>com.amazon.aws.Provisioning.Saml.Delete-Request (<A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/dtd/Delete-Request.dtd?view=markup"
+ * <LI>com.amazon.aws.Provisioning.AccountAlias.Delete-Request (<A HREF=
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/dtd/Delete-Request.dtd?view=markup"
  * >Definition</A> | <A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/Saml/1.0/xml/Delete-Request.xml?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Request.xml?view=markup"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
- * <LI>Build a message object from the XML document for the Saml object</LI>
- * <LI>Invoke the delete method of the configured Saml provider</LI>
- * <LI>If successful, publish a Saml.Delete-Sync message</LI>
+ * <LI>Build a message object from the XML document for the AccountAlias
+ * object</LI>
+ * <LI>Invoke the delete method of the configured AccountAlias provider</LI>
+ * <LI>If successful, publish a AccountAlias.Delete-Sync message</LI>
  * <LI>Build the response to the request message</LI>
  * <LI>Return the response to the request message</LI>
  * </UL>
@@ -185,7 +186,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             throw new InstantiationException(errMsg);
         }
 
-        // Initialize a SamlProviderProvider
+        // Initialize a AccountAliasProviderProvider
         String className = getProperties().getProperty("accountAliasProviderClassName");
         if (className == null || className.equals("")) {
             String errMsg = "No accountAliasProviderClassName property " + "specified. Can't continue.";
@@ -203,9 +204,9 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             else
                 logger.info(LOGTAG + "providerClass is not null.");
             provider = (AccountAliasProvider) Class.forName(className).newInstance();
-            logger.info(LOGTAG + "Initializing SamlProviderProvider: " + provider.getClass().getName());
+            logger.info(LOGTAG + "Initializing AccountAliasProviderProvider: " + provider.getClass().getName());
             provider.init(getAppConfig());
-            logger.info(LOGTAG + "SamlProviderProvider initialized.");
+            logger.info(LOGTAG + "AccountAliasProviderProvider initialized.");
             setProvider(provider);
         } catch (ClassNotFoundException cnfe) {
             String errMsg = "Class named " + className + "not found on the " + "classpath.  The exception is: " + cnfe.getMessage();
@@ -216,7 +217,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         } catch (ProviderException pe) {
-            String errMsg = "An error occurred initializing the " + "SamlProviderProvider " + className + ". The exception is: "
+            String errMsg = "An error occurred initializing the " + "AccountAliasProviderProvider " + className + ". The exception is: "
                     + pe.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
@@ -233,7 +234,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         }
 
         // Verify that we have all required objects in the AppConfig.
-        // Get a configured Saml from AppConfig.
+        // Get a configured AccountAlias from AppConfig.
         AccountAlias saml = new AccountAlias();
         try {
             saml = (AccountAlias) getAppConfig().getObjectByType(saml.getClass().getName());
@@ -243,7 +244,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             throw new InstantiationException(errMsg);
         }
 
-        // Get a SamlQuerySpecification from AppConfig.
+        // Get a AccountAliasQuerySpecification from AppConfig.
         AccountAliasQuerySpecification querySpec = new AccountAliasQuerySpecification();
         try {
             querySpec = (AccountAliasQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
@@ -253,10 +254,10 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             throw new InstantiationException(errMsg);
         }
 
-        // // Get a SamlRequisition from AppConfig.
-        // SamlRequisition req = new SamlRequisition();
+        // // Get a AccountAliasRequisition from AppConfig.
+        // AccountAliasRequisition req = new AccountAliasRequisition();
         // try {
-        // req = (SamlRequisition) getAppConfig()
+        // req = (AccountAliasRequisition) getAppConfig()
         // .getObjectByType(req.getClass().getName());
         // } catch (EnterpriseConfigurationObjectException eoce) {
         // String errMsg = "Error retrieving an object from AppConfig: " +
@@ -284,7 +285,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
      *             document, and verifies that message object of the message is
      *             a VirtualPrivateCloud and the action is a query, generate,
      *             update, or delete. Then this method uses the configured
-     *             SamlProviderProvider to perform each operation.
+     *             AccountAliasProviderProvider to perform each operation.
      */
     @Override
     public final Message execute(int messageNumber, Message aMessage) throws CommandException {
@@ -329,11 +330,11 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         String msgObject = eControlArea.getAttribute("messageObject").getValue();
 
         // Verify that the message object we are dealing with is a
-        // SamlProvider object; if not, reply with an error.
-        if (msgObject.equalsIgnoreCase("SamlProvider") == false) {
+        // AccountAliasProvider object; if not, reply with an error.
+        if (msgObject.equalsIgnoreCase("AccountAlias") == false) {
             String errType = "application";
             String errCode = "OpenEAI-1001";
-            String errDesc = "Unsupported message object: " + msgObject + ". This command expects 'Saml'.";
+            String errDesc = "Unsupported message object: " + msgObject + ". This command expects 'AccountAlias'.";
             logger.error(LOGTAG + errDesc);
             logger.error(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
             ArrayList errors = new ArrayList();
@@ -375,11 +376,11 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         // Get the EPPN from from AuthUserId.
         String eppn = getEppnFromAuthUserId(authUserId);
 
-        // Get a configured SamlRequisition from AppConfig.
-        AccountAlias reqSamlProvider = new AccountAlias();
+        // Get a configured AccountAliasRequisition from AppConfig.
+        AccountAlias accountAlias = new AccountAlias();
         TestId testId = new TestId();
         try {
-            reqSamlProvider = (AccountAlias) getAppConfig().getObjectByType(reqSamlProvider.getClass().getName());
+            accountAlias = (AccountAlias) getAppConfig().getObjectByType(accountAlias.getClass().getName());
             testId = (TestId) getAppConfig().getObjectByType(testId.getClass().getName());
         } catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: " + eoce.getMessage();
@@ -390,8 +391,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
         // Handle a Generate-Request.
         if (msgAction.equalsIgnoreCase("Create")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.SamlProvider.Create-Request" + " message.");
-            Element eCreateObject = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("SamlProvider");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.AccountAliasProvider.Create-Request" + " message.");
+            Element eCreateObject = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("AccountAlias");
 
             // Verify that the generate object element is not null. If it is
             // null, reply
@@ -399,7 +400,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             if (eCreateObject == null) {
                 String errType = "application";
                 String errCode = "OpenEAI-1015";
-                String errDesc = "Invalid element found in the Generate-Request " + "message. This command expects a SamlRequisition";
+                String errDesc = "Invalid element found in the Generate-Request " + "message. This command expects a AccountAlias";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -408,10 +409,11 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 return getMessage(msg, replyContents);
             }
 
-            // Now build a SamlRequisition object from the element in the
+            // Now build a AccountAliasRequisition object from the element in
+            // the
             // message.
             try {
-                reqSamlProvider.buildObjectFromInput(eCreateObject);
+                accountAlias.buildObjectFromInput(eCreateObject);
                 if (eTestId != null)
                     testId.buildObjectFromInput(eTestId);
             } catch (EnterpriseLayoutException ele) {
@@ -419,8 +421,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 // element.
                 String errType = "application";
                 String errCode = "MppiService-1001";
-                String errDesc = "An error occurred building the generate object from "
-                        + "the DataArea element in the Generate-Request message. The exception " + "is: " + ele.getMessage();
+                String errDesc = "An error occurred building the create object from "
+                        + "the DataArea element in the Create-Request message. The exception " + "is: " + ele.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -429,23 +431,24 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 return getMessage(msg, replyContents);
             }
 
-            // Generate the Saml object using the provider implementation.
-            logger.info(LOGTAG + "Creating a Saml...");
+            // Generate the AccountAlias object using the provider
+            // implementation.
+            logger.info(LOGTAG + "Creating a AccountAlias...");
 
-            // SamlProvider saml = null;
+            // AccountAliasProvider saml = null;
             try {
                 long generateStartTime = System.currentTimeMillis();
-                getProvider().create(reqSamlProvider);
+                getProvider().create(accountAlias);
                 long generateTime = System.currentTimeMillis() - generateStartTime;
-                logger.info(LOGTAG + "Generate Saml in " + generateTime + " ms.");
+                logger.info(LOGTAG + "Create AccountAlias in " + generateTime + " ms.");
                 if (eTestId != null)
-                    reqSamlProvider.setTestId(testId);
+                    accountAlias.setTestId(testId);
             } catch (Throwable pe) {
                 logger.error(LOGTAG, pe);
                 // There was an error generating the identity
                 String errType = "application";
                 String errCode = "AwsAccountService-1003";
-                String errDesc = "An error occurred generating the Saml. The " + "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred generating the AccountAlias. The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -453,28 +456,28 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            logger.info(LOGTAG + "Generated Saml ");
+            logger.info(LOGTAG + "Created AccountAlias ");
 
             logger.info(LOGTAG + "Publishing sync... ");
             // Publish a Create-Sync Message
             try {
                 MessageProducer producer = getProducerPool().getProducer();
                 if (getVerbose())
-                    logger.info(LOGTAG + "Publishing Saml.Create-Sync message...");
+                    logger.info(LOGTAG + "Publishing AccountAlias.Create-Sync message...");
                 Authentication auth = new Authentication();
                 auth.setAuthUserId(authUserId);
                 auth.setAuthUserSignature("none");
-                reqSamlProvider.setAuthentication(auth);
-                reqSamlProvider.createSync((SyncService) producer);
-                logger.info(LOGTAG + "Published Saml.Create-Sync" + " message.");
+                accountAlias.setAuthentication(auth);
+                accountAlias.createSync((SyncService) producer);
+                logger.info(LOGTAG + "Published AccountAlias.Create-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the Saml.Create-Sync" + " message after generating a Saml. The "
-                        + "exception is: " + eose.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias.Create-Sync"
+                        + " message after generating a AccountAlias. The " + "exception is: " + eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
-                String errMsg = "An error occurred publishing the Saml.Create-Sync" + " message after generating a Saml. The "
-                        + "exception is: " + jmse.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias.Create-Sync"
+                        + " message after generating a AccountAlias. The " + "exception is: " + jmse.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, jmse);
             }
@@ -486,16 +489,18 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             } else {
                 localResponseDoc.getRootElement().addContent(new Element("DataArea"));
             }
-            // Element eSaml = null;
+            // Element eAccountAlias = null;
             // try {
-            // eSaml = (Element) reqSamlProvider.buildOutputFromObject();
+            // eAccountAlias = (Element)
+            // reqAccountAliasProvider.buildOutputFromObject();
             // } catch (EnterpriseLayoutException ele) {
-            // String errMsg = "An error occurred serializing a Saml object to
+            // String errMsg = "An error occurred serializing a AccountAlias
+            // object to
             // an XML element. The exception is: " + ele.getMessage();
             // logger.error(LOGTAG + errMsg, ele);
             // throw new CommandException(errMsg, ele);
             // }
-            // localResponseDoc.getRootElement().getChild("DataArea").addContent(eSaml);
+            // localResponseDoc.getRootElement().getChild("DataArea").addContent(eAccountAlias);
             // String replyContents = buildReplyDocument(eControlArea,
             // localResponseDoc);
             //
@@ -510,7 +515,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
             // Log execution time.
             long executionTime = System.currentTimeMillis() - startTime;
-            logger.info(LOGTAG + "Delete-Request command execution complete in " + executionTime + " ms.");
+            logger.info(LOGTAG + "Create-Request command execution complete in " + executionTime + " ms.");
 
             // Return the response with status success.
             return getMessage(msg, replyContents2);
@@ -518,8 +523,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
-            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.Saml." + "Query-Request message.");
-            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("SamlQuerySpecification");
+            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountAlias." + "Query-Request message.");
+            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("AccountAliasQuerySpecification");
 
             // Get a configured query object from AppConfig.
             AccountAliasQuerySpecification querySpec = new AccountAliasQuerySpecification();
@@ -563,20 +568,20 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 return getMessage(msg, replyContents);
             }
 
-            // Query for the Saml from the provider.
-            logger.info(LOGTAG + "Querying for the Saml...");
+            // Query for the AccountAlias from the provider.
+            logger.info(LOGTAG + "Querying for the AccountAlias...");
 
             List results = null;
             try {
                 long queryStartTime = System.currentTimeMillis();
                 results = getProvider().query(querySpec);
                 long queryTime = System.currentTimeMillis() - queryStartTime;
-                logger.info(LOGTAG + "Queried for Saml in " + queryTime + "ms.");
+                logger.info(LOGTAG + "Queried for AccountAlias in " + queryTime + "ms.");
             } catch (ProviderException pe) {
                 // There was an error generating the identity
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred querying for the Saml." + "The " + "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred querying for the AccountAlias." + "The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -598,15 +603,15 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
                 ArrayList stackList = new ArrayList();
                 for (int i = 0; i < results.size(); i++) {
-                    Element eSaml = null;
+                    Element eAccountAlias = null;
                     try {
                         AccountAlias stack = (AccountAlias) results.get(i);
-                        eSaml = (Element) stack.buildOutputFromObject();
-                        stackList.add(eSaml);
+                        eAccountAlias = (Element) stack.buildOutputFromObject();
+                        stackList.add(eAccountAlias);
                         if (eTestId != null)
                             stack.setTestId(testId);
                     } catch (EnterpriseLayoutException ele) {
-                        String errMsg = "An error occurred serializing " + "Saml object to an XML element. " + "The exception is: "
+                        String errMsg = "An error occurred serializing " + "AccountAlias object to an XML element. " + "The exception is: "
                                 + ele.getMessage();
                         logger.error(LOGTAG + errMsg);
                         throw new CommandException(errMsg, ele);
@@ -622,15 +627,15 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
         // Handle a Delete-Request.
         if (msgAction.equalsIgnoreCase("Delete")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." + "Saml.Delete-Request message.");
-            Element eSaml = inDoc.getRootElement().getChild("DataArea").getChild("DeleteData").getChild("Saml");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." + "AccountAlias.Delete-Request message.");
+            Element eAccountAlias = inDoc.getRootElement().getChild("DataArea").getChild("DeleteData").getChild("AccountAlias");
 
-            // Verify that the Saml element is not null. If it is
+            // Verify that the AccountAlias element is not null. If it is
             // null, reply with an error.
-            if (eSaml == null) {
+            if (eAccountAlias == null) {
                 String errType = "application";
                 String errCode = "OpenEAI-1015";
-                String errDesc = "Invalid element found in the Delete-Request " + "message. This command expects a Saml";
+                String errDesc = "Invalid element found in the Delete-Request " + "message. This command expects a AccountAlias";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -639,7 +644,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 return getMessage(msg, replyContents);
             }
 
-            // Get a configured Saml from AppConfig.
+            // Get a configured AccountAlias from AppConfig.
             AccountAlias samlProvider = new AccountAlias();
             try {
                 samlProvider = (AccountAlias) getAppConfig().getObjectByType(samlProvider.getClass().getName());
@@ -651,7 +656,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
             // Now build a stack object from the element in the message.
             try {
-                samlProvider.buildObjectFromInput(eSaml);
+                samlProvider.buildObjectFromInput(eAccountAlias);
                 if (eTestId != null)
                     testId.buildObjectFromInput(eTestId);
                 samlProvider.setTestId(testId);
@@ -670,19 +675,19 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 return getMessage(msg, replyContents);
             }
 
-            // Delete the Saml object using the provider.
-            logger.info(LOGTAG + "Deleting a Saml...");
+            // Delete the AccountAlias object using the provider.
+            logger.info(LOGTAG + "Deleting a AccountAlias...");
 
             try {
                 long deleteStartTime = System.currentTimeMillis();
                 getProvider().delete(samlProvider);
                 long deleteTime = System.currentTimeMillis() - deleteStartTime;
-                logger.info(LOGTAG + "Deleted Saml in " + deleteTime + " ms.");
+                logger.info(LOGTAG + "Deleted AccountAlias in " + deleteTime + " ms.");
             } catch (ProviderException pe) {
                 // There was an error deleting the VPC
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred deleting the Saml " + "The " + "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred deleting the AccountAlias " + "The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -695,17 +700,17 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             try {
                 MessageProducer producer = getProducerPool().getProducer();
                 if (getVerbose())
-                    logger.info(LOGTAG + "Publishing Saml.Delete-Sync message...");
+                    logger.info(LOGTAG + "Publishing AccountAlias.Delete-Sync message...");
                 samlProvider.deleteSync("delete", (SyncService) producer);
-                logger.info(LOGTAG + "Published Saml.Delete-Sync" + " message.");
+                logger.info(LOGTAG + "Published AccountAlias.Delete-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the Saml" + ".Delete-Sync message after deleting " + "the Saml. The "
-                        + "exception is: " + eose.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias" + ".Delete-Sync message after deleting "
+                        + "the AccountAlias. The " + "exception is: " + eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
-                String errMsg = "An error occurred publishing the Saml" + ".Delete-Sync message after deleting " + "the Saml. The "
-                        + "exception is: " + jmse.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias" + ".Delete-Sync message after deleting "
+                        + "the AccountAlias. The " + "exception is: " + jmse.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, jmse);
             }
@@ -724,9 +729,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
             // Return the response with status success.
             return getMessage(msg, replyContents);
-        }
-
-        else {
+        } else {
             // The messageAction is invalid; it is not a query, generate,
             // create. update, or delete
             String errType = "application";
@@ -743,19 +746,19 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
     }
 
     /**
-     * @param SamlProviderProvider
-     *            , the Saml provider
+     * @param AccountAliasProviderProvider
+     *            , the AccountAlias provider
      *            <P>
-     *            Sets the Saml provider for this command.
+     *            Sets the AccountAlias provider for this command.
      */
     protected void setProvider(AccountAliasProvider provider) {
         m_provider = provider;
     }
 
     /**
-     * @return SamlProviderProvider, the Saml provider
+     * @return AccountAliasProviderProvider, the AccountAlias provider
      *         <P>
-     *         Gets the Saml provider for this command.
+     *         Gets the AccountAlias provider for this command.
      */
     protected AccountAliasProvider getProvider() {
         return m_provider;

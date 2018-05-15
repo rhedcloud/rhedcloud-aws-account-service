@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.NetIdAssignment.Create SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/NetIdAssignment/1.0/dtd/Create-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.NetIdAssignment.Create>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="NetIdAssignment" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1003</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>acccnetid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>47</Minute>
+			<Second>34</Second>
+			<SubSecond>217</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<NetIdAssignment>
+				<NetId>
+					<Principal>jackson4</Principal>
+					<Domain>uillinois.edu</Domain>
+				</NetId>
+				<InstitutionalIdentity>
+					<InstitutionalId>123456789</InstitutionalId>
+					<UnknownPerson>
+						<Name>
+							<LastName>Jackson</LastName>
+							<FirstName>Johnathan</FirstName>
+						</Name>
+						<BirthDate>
+							<Month>2</Month>
+							<Day>16</Day>
+							<Year>1969</Year>
+						</BirthDate>
+						<Gender>Male</Gender>
+					</UnknownPerson>
+				</InstitutionalIdentity>
+				<StartDate>
+					<Month>9</Month>
+					<Day>10</Day>
+					<Year>2002</Year>
+				</StartDate>
+			</NetIdAssignment>
+		</NewData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.NetIdAssignment.Create>

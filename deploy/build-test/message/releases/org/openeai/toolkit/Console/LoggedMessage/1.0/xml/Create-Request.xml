@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE org.openeai.toolkit.Console.LoggedMessage.Create SYSTEM "../dtd/Create-Request.dtd">
+<org.openeai.toolkit.Console.LoggedMessage.Create>
+	<ControlAreaRequest messageCategory="org.openeai.toolkit.Console" messageObject="LoggedMessage" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.toolkit.Console</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>5</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<LoggedMessage>
+				<LoggedMessageDatetime>
+					<Year>2013</Year>
+					<Month>1</Month>
+					<Day>2</Day>
+					<Hour>3</Hour>
+					<Minute>4</Minute>
+					<Second>5</Second>
+					<SubSecond>6</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</LoggedMessageDatetime>
+				<MsgCategory>edu.emory.Identity</MsgCategory>
+				<MsgObjecty>FullPerson</MsgObjecty>
+				<MsgAction>Create</MsgAction>
+				<MsgType>Sync</MsgType>
+				<MsgRelease>1.0</MsgRelease>
+				<MsgPriority>9</MsgPriority>
+				<SenderApplId>com.openii.SyncRouter</SenderApplId>
+				<MsgSeq>480</MsgSeq>
+				<MsgDatetime>
+					<Year>2013</Year>
+					<Month>1</Month>
+					<Day>2</Day>
+					<Hour>3</Hour>
+					<Minute>4</Minute>
+					<Second>5</Second>
+					<SubSecond>6</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</MsgDatetime>
+				<LogConsumerId>SyncLogger</LogConsumerId>
+				<LogDbUser>ESB30</LogDbUser>
+				<TargetAppName>edu.emory.ServiceNowGateway (ServiceNowPubSubConsumer)</TargetAppName>
+			</LoggedMessage>
+		</NewData>
+	</DataArea>
+</org.openeai.toolkit.Console.LoggedMessage.Create>

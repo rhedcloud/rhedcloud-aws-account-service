@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--	$Revision: 1.4 $
+		$Date: 2006/12/20 00:45:42 $
+		$Source: /cvs/repositories/openii3/project/message/releases/com/openii/Resources/1.0/Fields.dtd,v $
+-->
+<!--	Elements with no child elements shared by all event messages.
+-->
+<!--
+	Copyright 2009 Emory University.  All Rights Reserved.
+
+	CONFIDENTIAL BUSINESS INFORMATION
+
+	THIS PROGRAM IS PROPRIETARY INFORMATION OF OPEN INTEGRATION INCORPORATED
+	CORPORATION AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
+	NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
+	WITHOUT THE WRITTEN PERMISSION OF OPEN INTEGRATION INCORPORATED
+-->
+<!--	Notes:
+	Comments for each element should provide the initial context for which
+	the element was added and the date when it was added.
+-->
+<!-- ====================================================================== -->
+
+
+<!ELEMENT ApplicationId %STRDOM;>
+<!ELEMENT ClassPath %STRDOM;>
+<!ELEMENT ConfigDescriptor %STRDOM;>
+<!ELEMENT ConsoleProperty %STRDOM;>
+<!ELEMENT ConsumingApplName %STRDOM;>
+<!ELEMENT ConsumingMsgSeq %STRDOM;>
+<!ELEMENT ConsumingProducerId %STRDOM;>
+<!ELEMENT CreateDate %DATE;>
+<!ELEMENT CreateUser %STRDOM;>
+<!ELEMENT DeploymentStatus %STRDOM;>
+<!ELEMENT Description %STRDOM;>
+<!ELEMENT ErrorDesc %STRDOM;>
+
+
+<!ELEMENT ErrorType %STRDOM;>
+<!ELEMENT IsActive %STRDOM;>
+<!ELEMENT JavaHome %STRDOM;>
+<!ELEMENT JvmOptions %STRDOM;>
+<!ELEMENT LogConsumerId %STRDOM;>
+<!ELEMENT LogDbUser %STRDOM;>
+<!ELEMENT LoggedMessageDatetime %DATETIME;>
+<!ELEMENT LoggedMessageId %STRDOM;>
+<!ELEMENT Message %STRDOM;>
+<!ELEMENT MsgAction %STRDOM;>
+<!ELEMENT MsgCategory %STRDOM;>
+<!ELEMENT MsgDatetime %DATETIME;>
+<!ELEMENT MsgId %STRDOM;>
+<!ELEMENT MsgObjecty %STRDOM;>
+<!ELEMENT MsgPriority %STRDOM;>
+<!ELEMENT MsgRelease %STRDOM;>
+<!ELEMENT MsgSeq %STRDOM;>
+<!ELEMENT MsgSeries %STRDOM;>
+<!ELEMENT MsgType %STRDOM;>
+<!ELEMENT ModDate %DATE;>
+<!ELEMENT ModUser %STRDOM;>
+<!ELEMENT PrettyName %STRDOM;>
+<!ELEMENT ProcessedMessagedId %STRDOM;>
+<!ELEMENT ProcessedScheduleId %STRDOM;>
+<!ELEMENT ProducingApplName %STRDOM;>
+<!ELEMENT ProducingMsgAction %STRDOM;>
+<!ELEMENT ProducingMsgCategory %STRDOM;>
+<!ELEMENT ProducingMsgObject %STRDOM;>
+<!ELEMENT ProducingMsgRelease %STRDOM;>
+<!ELEMENT ProducingMsgType %STRDOM;>
+<!ELEMENT ProducingMsgSeq %STRDOM;>
+<!ELEMENT ProducingProducerId %STRDOM;>
+<!ELEMENT PropertyName %STRDOM;>
+<!ELEMENT PropertyValue %STRDOM;>
+<!ELEMENT ReportsId %STRDOM;>
+<!ELEMENT Resolved %STRDOM;>
+<!ELEMENT Revison %STRDOM;>
+<!ELEMENT RowId %STRDOM;>
+<!ELEMENT SenderApplId %STRDOM;>
+<!ELEMENT SyncErrorId %STRDOM;>
+<!ELEMENT SyncErrorMsgId %STRDOM;>
+<!ELEMENT TargetAppId %STRDOM;>
+
+<!ELEMENT TargetMessageId %STRDOM;>
+<!ELEMENT Type %STRDOM;>

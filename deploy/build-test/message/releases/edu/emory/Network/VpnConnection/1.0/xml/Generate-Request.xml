@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.VpnConnection.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<edu.emory.Network.VpnConnection.Generate>
+	<ControlAreaRequest messageCategory="edu.emory.Network" messageObject="VpnConnection"
+		messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.NetIdApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>citesid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Network" messageObject="VpnConnection"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<VpnConnectionRequisition>
+			<VpcId>vpc-8aed17e2</VpcId>
+			<VpcCidr>10.65.0.0/23</VpcCidr>
+			<VpnId>1</VpnId>
+			<VpnEndpoint>
+				<RemoteVpnIpAddress>72.22.11.32</RemoteVpnIpAddress>
+				<PresharedKey>4cdzgEXUQbm8q/QBC0kK8fW5/4BuOf8Pv2l6MSbv</PresharedKey>
+				<CustomerGatewayIpAdress>170.140.76.1</CustomerGatewayIpAdress>
+				<VpnInsideIpCidr>169.254.248.0/30</VpnInsideIpCidr>
+			</VpnEndpoint>
+			<VpnEndpoint>
+				<RemoteVpnIpAddress>72.22.11.22</RemoteVpnIpAddress>
+				<PresharedKey>4cdzgEXUQbm8q/QBC0kK8fW5/4BuOf8Pv718MSgf</PresharedKey>
+				<CustomerGatewayIpAdress>170.140.77.1</CustomerGatewayIpAdress>
+				<VpnInsideIpCidr>169.254.252.0/30</VpnInsideIpCidr>
+			</VpnEndpoint>
+		</VpnConnectionRequisition>
+	</DataArea>
+</edu.emory.Network.VpnConnection.Generate>

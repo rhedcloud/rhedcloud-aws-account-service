@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.ApplicationSession.Query SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/ApplicationSession/1.0/dtd/Query-Request.dtd">
+<org.any-openeai-enterprise.CoreApplication.ApplicationSession.Query>
+	<ControlAreaRequest messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="ApplicationSession" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.TestSuiteApplication</SenderAppId>
+				<ProducerId>c741965b-faca-4163-ae73-50b6e6d088b3</ProducerId>
+				<MessageSeq>1003</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>authserv</AuthUserId>
+				<AuthUserSignature>8a1e9460-be8a-4d49-a3c2-b5d2fa08ca57</AuthUserSignature>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2002</Year>
+			<Month>9</Month>
+			<Day>11</Day>
+			<Hour>15</Hour>
+			<Minute>59</Minute>
+			<Second>18</Second>
+			<SubSecond>221</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="ApplicationSession" messageAction="Provide" messageRelease="1.1" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<Identifier type="ApplicationSession" value="ca2bb587-65cf-417d-bcde-866565b28c09-130.126.239.69"/>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.ApplicationSession.Query>

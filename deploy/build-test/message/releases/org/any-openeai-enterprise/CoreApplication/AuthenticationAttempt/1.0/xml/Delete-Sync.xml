@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Steve Wheat (Open Integration Incorporated) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Wheat (Administrative Information Technology Services) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Delete>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="AuthenticationAttempt" messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.EnterpriseApplicationService</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>974</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>eas</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>4</Month>
+			<Day>6</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>39</Second>
+			<SubSecond>729</SubSecond>
+			<Timezone>7:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<AuthenticationAttempt>
+				<AttemptId>223456789</AttemptId>
+				<AttemptDatetime>
+					<Year>2001</Year>
+					<Month>4</Month>
+					<Day>6</Day>
+					<Hour>12</Hour>
+					<Minute>50</Minute>
+					<Second>48</Second>
+					<SubSecond>922</SubSecond>
+					<Timezone>7:00-GMT</Timezone>
+				</AttemptDatetime>
+				<UserIdentifier>swheat</UserIdentifier>
+				<Hostname>host.admin.uillinois.edu</Hostname>
+				<ClientIp>123.123.123.123</ClientIp>
+				<AttemptStatus>allowed</AttemptStatus>
+				<AuthenticationStatus>
+					<StatusCode>failed</StatusCode>
+					<Description>The user is inauthentic.</Description>
+					<Explanation>The user failed to provide appropriate credentials.</Explanation>
+				</AuthenticationStatus>
+				<Message>Invalid username or password.</Message>
+			</AuthenticationAttempt>
+		</DeleteData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.AuthenticationAttempt.Delete>

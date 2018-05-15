@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.openeai.tutorial.Samples.Greeting.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<org.openeai.tutorial.Samples.Greeting.Generate>
+	<ControlAreaRequest messageCategory="org.openeai.tutorial.Samples" messageObject="Greeting" messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.GreetingApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>greetee</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.tutorial.Samples" messageObject="Greeting" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<GwGreetee>
+			<GwFullName>World</GwFullName>
+		</GwGreetee>
+	</DataArea>
+</org.openeai.tutorial.Samples.Greeting.Generate>

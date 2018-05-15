@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Delete SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/InstitutionalIdentity/1.0/dtd/Delete-Sync.dtd">
+<org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Delete>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="InstitutionalIdentity" messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.InstitutionalIdentityService</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>265</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>robchong</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<InstitutionalIdentity>
+				<InstitutionalId>656613875</InstitutionalId>
+				<UnknownPerson>
+					<Name>
+						<LastName>Chong</LastName>
+						<FirstName>Robert</FirstName>
+					</Name>
+					<BirthDate>
+						<Month>8</Month>
+						<Day>24</Day>
+						<Year>1970</Year>
+					</BirthDate>
+					<Gender>Male</Gender>
+				</UnknownPerson>
+			</InstitutionalIdentity>
+		</DeleteData>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.InstitutionalIdentity.Delete>

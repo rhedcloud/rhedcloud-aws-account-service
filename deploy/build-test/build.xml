@@ -1,0 +1,421 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSpy v2005 sp1 U (http://www.xmlspy.com) by Tom Cervenka (University of Illinois) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Tod Jackson (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!--
+  =======================================================================
+    OpenEAI Sample Enterprise build file
+  =======================================================================
+-->
+<project name="OpenEAI Sample Enterprise" default="all" basedir=".">
+	<!--
+       ===================================================================
+         Set the properties related to the source tree
+       ===================================================================
+  -->
+	<property environment="myenv" value="${env}"/>
+	<property name="openeai.dir" value="${myenv.OPENEAI_HOME}/"/>
+	<property name="runtime.dir" value="${myenv.OPENEAI_HOME}/"/>
+	<property name="runtimelib.dir" value="${runtime.dir}libs/ElasticIpService"/>
+	<property name="openeailib.dir" value="${openeai.dir}libs/ElasticIpService"/>	
+	<property name="aws.runtimelib.dir" value="${openeai.dir}configs/messaging/Environments/Examples/Jars/ElasticIpService"/>	
+	<property name="src.dir" value="${openeai.dir}source"/>
+	<property name="moagen_src.dir" value="${openeai.dir}moagen/source"/>
+	<property name="portal.home" value="${openeai.dir}/uPortal_rel-2-5-1"/>
+	<!--
+       ===================================================================
+         Set the properties for the build area
+       ===================================================================
+  -->
+	<property name="build.dir" value="${src.dir}/build"/>
+	<property name="build.classes" value="${build.dir}/classes"/>
+	<property name="build.lib" value="${build.dir}/lib"/>
+	<property name="javadoc.dir" value="${build.dir}/docs/api"/>
+	<property name="javadoc.src.dir" value="${src.dir}"/>
+	<property name="moagen_build.dir" value="moagen/build"/>
+	<property name="moagen_build.classes" value="${moagen_build.dir}/classes"/>
+	<property name="moagen_build.lib" value="${moagen_build.dir}/lib"/>
+	<property name="moagen_javadoc.dir" value="${moagen_build.dir}/docs/api"/>
+	<property name="moagen_javadoc.src.dir" value="${moagen_src.dir}"/>
+	<path id="project.class.path">
+		<fileset dir="${openeailib.dir}">
+			<patternset id="openeai.sources">
+				<include name="*.jar"/>
+				<include name="*.zip"/>
+			</patternset>
+		</fileset>
+	</path>
+	<path id="runtime.class.path">
+		<fileset dir="${runtimelib.dir}">
+			<patternset id="runtime.sources">
+				<include name="*.jar"/>
+				<include name="*.zip"/>
+			</patternset>
+		</fileset>
+		<pathelement location="${runtimelib.dir}"/>
+		<pathelement location="${runtimelib.dir}/hibernate"/>
+	</path>
+	<path id="aws.runtime.class.path">
+		<fileset dir="${aws.runtimelib.dir}">
+			<patternset id="runtime.sources">
+				<include name="*.jar"/>
+				<include name="*.zip"/>
+			</patternset>
+		</fileset>
+		<pathelement location="${aws.runtimelib.dir}"/>
+		<pathelement location="${aws.runtimelib.dir}/hibernate"/>
+	</path>
+	<!--
+       ===================================================================
+         Build the code
+       ===================================================================
+  -->
+	<property name="debug" value="on"/>
+	<!--Build the source code-->
+	<target name="moagen_build" depends="cleanMoagen">
+		<mkdir dir="${moagen_build.dir}"/>
+		<mkdir dir="${moagen_build.classes}"/>
+		<mkdir dir="${moagen_build.lib}"/>
+		<javac srcdir="${moagen_src.dir}" destdir="${moagen_build.classes}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}" includes="**">
+			<classpath refid="project.class.path"/>
+		</javac>
+	</target>
+	<target name="build" depends="cleanJars">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${build.lib}"/>
+		<javac srcdir="${src.dir}" destdir="${build.classes}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}" includes="**">
+			<classpath refid="runtime.class.path"/>
+		</javac>
+	</target>
+	<!--start-->
+	<target name="javadoc">
+		<mkdir dir="${javadoc.dir}"/>
+		<javadoc packagenames="com.any_erp_vendor.*, org.any_openeai_enterprise.*" sourcepath="${javadoc.src.dir}" destdir="${javadoc.dir}" author="true" version="true" use="true" windowtitle="OpenEAI Sample Enterprise version 1.0" bottom="Copyright &#169; 2002, OpenEAI Software Foundation">
+			<doctitle>OpenEAI Sample Enterprise documentation<![CDATA[<P><h5>This documentation is similar to the documentation that one might expect to be delivered with  OpenEAI based message gateways and applications.  In this case, it's part of the OpenEAI Sample Enterprise which includes a gateway provided by a ficticious company called 'Any-ERP-Vendor', a Self Service Application developed by a ficticious organization called 'Any OpenEAI Enterprise' and a gateway for that same organization that consumes Synchronization messages published by the ERP vendor to keep an Enterprise Warehouse up-to-date.</h5>]]></doctitle>
+			<classpath refid="project.class.path"/>
+		</javadoc>
+	</target>
+	<target name="moagen_javadoc">
+		<mkdir dir="${moagen_javadoc.dir}"/>
+		<javadoc packagenames="com.any_service_provider.moa.*" sourcepath="${moagen_javadoc.src.dir}" destdir="${moagen_javadoc.dir}" author="true" version="true" use="true" windowtitle="OpenEAI Generated MOA" bottom="Copyright &#169; 2006, OpenEAI Software Foundation">
+			<doctitle>OpenEAI Generated MOA documentation.<![CDATA[<P><h5>This documentation is a result of the Javadoc that gets generated in the generated Message Object API (MOA) for both of our ficticious organizations in the sample enterprise.</h5>]]></doctitle>
+			<classpath refid="project.class.path"/>
+		</javadoc>
+	</target>
+	<!--Create the jar files  -->
+	<target name="allJars" depends="build">
+		<jar jarfile="${build.lib}/any-erp-vendor-gateway.jar">
+			<fileset dir="${build.classes}">
+				<include name="com/any_erp_vendor/messaging/gateways/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-erp-vendor-moa.jar">
+			<fileset dir="${build.classes}">
+				<include name="com/any_erp_vendor/moa/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-openeai-enterprise-application.jar">
+			<fileset dir="${build.classes}">
+				<include name="org/any_openeai_enterprise/applications/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-openeai-enterprise-gateway.jar">
+			<fileset dir="${build.classes}">
+				<include name="org/any_openeai_enterprise/gateways/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-openeai-enterprise-service.jar">
+			<fileset dir="${build.classes}">
+				<include name="org/any_openeai_enterprise/services/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-openeai-enterprise-moa.jar">
+			<fileset dir="${build.classes}">
+				<include name="org/any_openeai_enterprise/moa/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-openeai-enterprise-portlet.jar">
+			<fileset dir="${build.classes}">
+				<include name="org/openeai/portlets/**"/>
+			</fileset>
+		</jar>
+		<jar jarfile="${build.lib}/any-service-provider.jar">
+			<fileset dir="${build.classes}">
+				<include name="com/any_service_provider/**"/>
+			</fileset>
+		</jar>
+		<war destfile="${portal.home}/lib/portlets/SelfServicePortlet.war" webxml="${runtime.dir}/Portlets/SelfServicePortlet/WEB-INF/web.xml">
+			<lib dir="${runtime.dir}/Jars/4.0">
+				<include name="any-erp-vendor-moa.jar"/>
+				<include name="any-openeai-enterprise-moa.jar"/>
+				<include name="exolabcore-0.3.3.jar"/>
+				<include name="gnu-regexp-1.0.8.jar"/>
+				<include name="jdom.jar"/>
+				<include name="jms.jar"/>
+				<include name="log4j.jar"/>
+				<include name="openeai.jar"/>
+				<include name="openjms-0.7.3.1.jar"/>
+				<include name="openii-moa.jar"/>
+			</lib>
+			<lib dir="${build.lib}">
+				<include name="any-openeai-enterprise-portlet.jar"/>
+			</lib>
+			<webinf dir="${runtime.dir}/Portlets/SelfServicePortlet/WEB-INF">
+				<include name="portlet.xml"/>
+			</webinf>
+			<webinf dir="${openeai.dir}/props">
+				<include name="AddressValidator.properties"/>
+			</webinf>
+			<webinf dir="${openeai.dir}/props">
+				<include name="PasswordValidator.properties"/>
+			</webinf>
+			<webinf dir="${openeai.dir}/props">
+				<include name="SelfServicePortlet.properties"/>
+			</webinf>
+			<fileset dir="${runtime.dir}/Portlets/SelfServicePortlet/transformation">
+				<include name="**"/>
+			</fileset>
+			<fileset dir="${runtime.dir}/Portlets/SelfServicePortlet/av">
+				<include name="**"/>
+			</fileset>
+			<fileset dir="${runtime.dir}/Portlets/SelfServicePortlet/pv">
+				<include name="**"/>
+			</fileset>
+		</war>
+	</target>
+	<target name="moagen_jars" depends="moagen_build">
+		<!-- 
+		<jar jarfile="${moagen_build.lib}\service-moa.jar">
+			<fileset dir="${moagen_build.classes}">
+				<include name="com/any_erp_vendor/moa/**"/>
+				<include name="**"/>
+			</fileset>
+		</jar>
+		 -->
+		<jar jarfile="${moagen_build.lib}/any-openeai-enterprise-moa.jar">
+			<fileset dir="${moagen_build.classes}">
+				<include name="org/any_openeai_enterprise/moa/**"/>
+			</fileset>
+		</jar>
+	</target>
+	<!--Clean up our mess-->
+	<target name="clean">
+		<delete dir="${build.classes}"/>
+		<delete dir="${javadoc.dir}"/>
+		<delete dir="${build.lib}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	<target name="cleanJars">
+		<delete dir="${build.classes}"/>
+		<delete dir="${build.lib}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	<target name="cleanMoagen">
+		<delete dir="${moagen_build.classes}"/>
+		<delete dir="${moagen_javadoc.dir}"/>
+		<delete dir="${moagen_build.lib}"/>
+		<delete dir="${moagen_build.dir}"/>
+	</target>
+	<!--Main target-->
+	<target name="main" depends="build" description="Build code as needed"/>
+	<!--Everything, from scratch -->
+	<target name="all" depends="clean, build, allJars, javadoc" description="Rebuild code and jars from scratch"/>
+	<target name="moa" depends="cleanMoagen, moagen_build, moagen_jars, moagen_javadoc" description="Rebuild generated MOA code and jars from scratch"/>
+	<!--Start an OpenEAI based gateway.-->
+	<target name="EnterpriseRequestProxy">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/EnterpriseRequestProxy.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="EnterpriseTransRouter">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/EnterpriseTransRouter.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="EnterpriseLoggingService">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/EnterpriseLoggingService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="AevGateway">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/AevGateway.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="AwsAccountServiceRdbms">
+		<pathconvert property="classpathProp" refid="aws.runtime.class.path"/>
+		<echo>Classpath is ${classpathProp}</echo>
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/AwsAccountServiceRdbms.properties"/>
+			<classpath refid="aws.runtime.class.path"/>
+		</java>
+	</target>
+	<target name="EnterpriseWarehouse">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/EnterpriseWarehouse.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="GreetingService">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/GreetingService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="AddressValidationService">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/AddressValidationService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="PasswordValidationService">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/PasswordValidationService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="DirectoryServiceGateway">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/DirectoryServiceGateway.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="UportalGateway">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/UportalGateway.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="SakaiGateway">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/SakaiGateway.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="InstitutionalIdentityService">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/InstitutionalIdentityService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<!--Start an OpenEAI based application-->
+	<target name="AnyErpMoaGen">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/AnyErpMoaGen.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="AnyOpenEaiMoaGen">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/AnyOpenEaiMoaGen.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="UiMoaGen">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/UiMoaGen.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="SctMoaGen">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/SctMoaGen.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="AevTestSuite">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/AevTestSuite.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="GreetingServiceTestSuite">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/GreetingServiceTestSuite.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="ScheduledSelfService">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/ScheduledSelfService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="SelfService">
+		<java classname="org.any_openeai_enterprise.applications.selfservice.SelfServiceApplication" fork="true">
+			<arg value="./props/SelfService.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="PathReplacer">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/PathReplacer.properties"/>
+			<jvmarg value="-DOPENEAI_HOME=${myenv.OPENEAI_HOME}"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="PropertyRefresher">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/PropertyRefresher.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="JmxBaseAgent">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/JmxBaseAgent.properties"/>
+			<classpath refid="runtime.class.path"/>
+			<!--			<jvmarg value="-Xrunhprof:cpu=samples,file=log.txt,depth=3"/>-->
+			<!--
+			<jvmarg value="-Xms8m"/>
+			<jvmarg value="-Xmx8m"/>
+			-->
+		</java>
+	</target>
+	<target name="GreetingApplication">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/GreetingApplication.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<!--Start a PERL Java module JavaServer-->
+	<target name="PerlJavaServer">
+		<java classname="JavaServer" fork="true">
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="BannerGateway">
+		<java classname="org.openeai.jms.consumer.MessageConsumerClient" fork="true">
+			<arg value="./props/BannerGateway.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="I2sTestSuite">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/I2sTestSuite.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="DirectoryServiceTestSuite">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/DirectoryServiceTestSuite.properties"/>
+			<classpath refid="runtime.class.path"/>
+		</java>
+	</target>
+	<target name="ElasticIpService">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/ElasticIpService.properties"/>
+			<classpath refid="aws.runtime.class.path"/>
+		</java>
+	</target>
+	<target name="ElasticIpTestSuite">
+		<java classname="org.openeai.afa.GenericAppRunner" fork="true">
+			<arg value="./props/ElasticIpTestSuite.properties"/>
+			<classpath refid="aws.runtime.class.path"/>
+		</java>
+	</target>
+</project>

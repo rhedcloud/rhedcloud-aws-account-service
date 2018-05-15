@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.Cidr.Create SYSTEM "../dtd/Create-Request.dtd">
+<edu.emory.Network.Cidr.Create>
+	<ControlAreaRequest messageCategory="edu.emory.Network" messageObject="Cidr"
+		messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.usda.ars.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>nutrientdbservice</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<Cidr>
+				<CidrId>1</CidrId>
+				<Network>10.65.0.0</Network>
+				<Bits>23</Bits>
+				<AssociatedCidr>
+					<Type>VpnInsideIpCidr</Type>
+					<Network>169.254.248.0</Network>
+					<Bits>30</Bits>
+				</AssociatedCidr>
+				<AssociatedCidr>
+					<Type>VpnInsideIpCidr</Type>
+					<Network>169.254.252.0</Network>
+					<Bits>30</Bits>
+				</AssociatedCidr>
+				<AssociatedCidr>
+					<Type>CustomerGatewayIpAddress</Type>
+					<Network>170.140.76.1</Network>
+					<Bits>32</Bits>
+				</AssociatedCidr>
+				<AssociatedCidr>
+					<Type>CustomerGatewayIpAddress</Type>
+					<Network>170.140.77.1</Network>
+					<Bits>32</Bits>
+				</AssociatedCidr>
+				<Property>
+					<PropertyName>vpnId</PropertyName>
+					<PropertyValue>1</PropertyValue>
+				</Property>
+				<CreateUser>swheat@emory.edu</CreateUser>
+				<CreateDatetime>
+					<Year>2012</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</Cidr>
+		</NewData>
+	</DataArea>
+</edu.emory.Network.Cidr.Create>

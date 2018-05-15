@@ -1,0 +1,9 @@
+<!-- Authorization added 07/30/2010 -->
+<!-- Authorization modified 02/09/2012 -->
+<!ELEMENT Authorization (Principal, Permission*, TestRequest?)>
+<!ATTLIST Authorization
+	isAuthorized CDATA #IMPLIED	
+>
+<!-- AuthorizationQuerySpecification added 07/30/2010 -->
+<!-- AuthorizationQuerySpecification modified 02/09/2012 -->
+<!ELEMENT AuthorizationQuerySpecification (Principal, Permission*)>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE org.any-openeai-enterprise.CommonLogging.ApplicationLogEntry.Update SYSTEM "../../1.0/dtd/Update-Sync.dtd">
+<org.any-openeai-enterprise.CommonLogging.ApplicationLogEntry.Update>
+	<ControlAreaSync messageCategory="org.any-openeai-enterprise.CommonLogging" messageObject="ApplicationLogEntry" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.any-openeai-enterprise.TestApplication</SenderAppId>
+				<ProducerId>32d738c0-97b7-45dc-943f-8d52e0c563c7</ProducerId>
+				<MessageSeq>1004</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2013</Year>
+			<Month>12</Month>
+			<Day>27</Day>
+			<Hour>12</Hour>
+			<Minute>50</Minute>
+			<Second>39</Second>
+			<SubSecond>729</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<ApplicationLogEntry>
+				<LogMessageType>ERROR</LogMessageType>
+				<LogMessageDatetime>
+					<Year>2013</Year>
+					<Month>12</Month>
+					<Day>27</Day>
+					<Hour>12</Hour>
+					<Minute>47</Minute>
+					<Second>34</Second>
+					<SubSecond>217</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LogMessageDatetime>
+				<ApplicationName>org.any-openeai-enterprise.TestApplication</ApplicationName>
+				<LogMessageText>An error occurred creating a user in the remote system. The exception is: timeout waiting for response to request.</LogMessageText>
+				<LogMessageContext>This is some additional context.</LogMessageContext>
+				<Remediation>Perhaps you can resend this message to the connector when the target service is available.</Remediation>
+			</ApplicationLogEntry>
+		</NewData>
+		<BaselineData>
+			<ApplicationLogEntry>
+				<LogMessageType>ERROR</LogMessageType>
+				<LogMessageDatetime>
+					<Year>2013</Year>
+					<Month>12</Month>
+					<Day>27</Day>
+					<Hour>12</Hour>
+					<Minute>47</Minute>
+					<Second>34</Second>
+					<SubSecond>217</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LogMessageDatetime>
+				<ApplicationName>org.any-openeai-enterprise.TestApplication</ApplicationName>
+				<LogMessageText>An error occurred creating a user in the remote system. The exception is: timeout waiting for response to request.</LogMessageText>
+				<Remediation>Perhaps you can resend this message to the connector when the target service is available.</Remediation>
+			</ApplicationLogEntry>
+		</BaselineData>
+	</DataArea>
+</org.any-openeai-enterprise.CommonLogging.ApplicationLogEntry.Update>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.openeai.CoreMessaging.Generic.Response SYSTEM "http://xml.openeai.org/message/releases/org/openeai/CoreMessaging/Generic/1.0/dtd/Response-Reply.dtd">
+<org.openeai.CoreMessaging.Generic.Response>
+	<ControlAreaReply messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Banner</SenderAppId>
+				<ProducerId />
+				<MessageSeq />
+			</MessageId>
+			<Authentication>
+				<AuthUserId>banner</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>31</Second>
+			<SubSecond>967</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Create" status="failure">
+			<ProcessedMessageId>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>dc336eca-89c6-4205-9911-e74e5e4df790 </ProducerId>
+				<MessageSeq>2</MessageSeq>
+			</ProcessedMessageId>
+			<Error type="application">
+				<ErrorNumber>Gateway101</ErrorNumber>
+				<ErrorDescription>Banner unavailable: unable to connect to Banner database</ErrorDescription>
+			</Error>
+			<Error type="system">
+				<ErrorNumber>10</ErrorNumber>
+				<ErrorDescription>
+					SQL Exception: ORA-01017: invalid username/password; logon denied
+					java.sql.SQLException: ORA-01017: invalid username/password; logon denied
+					
+        				at java.lang.Throwable.fillInStackTrace(Native Method)
+        				at java.lang.Throwable.fillInStackTrace(Compiled Code)
+        				at java.lang.Throwable.&lt;init&gt;(Compiled Code)
+        				at java.lang.Exception.&lt;init&gt;(Exception.java:42)
+        				at java.sql.SQLException.&lt;init&gt;(SQLException.java:43)
+        				at oracle.jdbc.dbaccess.DBError.throwSqlException(DBError.java:114)
+        				at oracle.jdbc.ttc7.TTIoer.processError(TTIoer.java:208)
+        				at oracle.jdbc.ttc7.O3log.receive2nd(Compiled Code)
+        				at oracle.jdbc.ttc7.TTC7Protocol.logon(TTC7Protocol.java:230)
+        				at oracle.jdbc.driver.OracleConnection.&lt;init&gt;(OracleConnection.java:198)
+        				at oracle.jdbc.driver.OracleDriver.getConnectionInstance(OracleDriver.java:251)
+        				at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:224)
+        				at java.sql.DriverManager.getConnection(Compiled Code)
+        				at java.sql.DriverManager.getConnection(DriverManager.java:137)
+        				at JDBCTest.main(Compiled Code)
+				</ErrorDescription>
+			</Error>
+		</Result>
+	</ControlAreaReply>
+</org.openeai.CoreMessaging.Generic.Response>

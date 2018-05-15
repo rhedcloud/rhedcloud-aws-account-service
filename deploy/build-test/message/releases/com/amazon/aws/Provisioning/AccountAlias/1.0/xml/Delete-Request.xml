@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE com.amazon.aws.Provisioning.AccountAlias.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<com.amazon.aws.Provisioning.AccountAlias.Delete>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning" messageObject="AccountAlias"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>Account</SenderAppId>
+				<ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
+				<MessageSeq>2734</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>Account</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<AccountAlias>
+				<AccountId>455327104748</AccountId>
+				<Name>serviceforge-aws-1001</Name>
+			</AccountAlias>
+		</DeleteData>
+	</DataArea>
+</com.amazon.aws.Provisioning.AccountAlias.Delete>

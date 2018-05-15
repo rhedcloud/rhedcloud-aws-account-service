@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (InVivo IT) -->
+<!DOCTYPE org.any-openeai-enterprise.Services.Conversion.Response SYSTEM "../dtd/Response-Reply.dtd">
+<org.any-openeai-enterprise.Services.Conversion.Response>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.Services" messageObject="Conversion" messageAction="Response" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>my.com.sains.MyCare2x</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>MyCare2x</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2009</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>722</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>my.com.sains.MyCare2x</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Conversion>
+			<InputText>This should be an HL7 message</InputText>
+			<OutputText>This should be an XML message</OutputText>
+		</Conversion>
+	</DataArea>
+</org.any-openeai-enterprise.Services.Conversion.Response>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Provide SYSTEM "http://xml.openeai.org/message/releases/org/any-openeai-enterprise/CoreApplication/EnterprisePermission/1.0/dtd/Provide-Reply.dtd">
+<org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Provide>
+	<ControlAreaReply messageCategory="org.any-openeai-enterprise.CoreApplication" messageObject="EnterprisePermission" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.EnterpriseDirectoryService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>gateway</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>03</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uillinois.uihr.NessieApplication</SenderAppId>
+				<ProducerId>ee7e1262-84ca-43f2-bbd1-66ee37fa7bac</ProducerId>
+				<MessageSeq>624</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<EnterprisePermission name="org.any-openeai-enterprise.EasAdminApplication.access">
+			<Description>Default permission to access the EasAdminApplication</Description>
+		</EnterprisePermission>
+	</DataArea>
+</org.any-openeai-enterprise.CoreApplication.EnterprisePermission.Provide>

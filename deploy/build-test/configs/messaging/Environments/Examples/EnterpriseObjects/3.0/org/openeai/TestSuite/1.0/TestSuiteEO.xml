@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Tod Jackson (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--		$Revision: 1.1 $
+		$Date: 2006/10/23 13:56:57 $
+		$Source: /cvs/repositories/openii2/openii2/distributions/toolkit-examples-3.0/configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/openeai/TestSuite/1.0/TestSuiteEO.xml,v $
+-->
+<!--This file is part of the OpenEAI Application Foundation or
+OpenEAI Message Object API created by Tod Jackson
+(tod@openeai.org) and Steve Wheat (steve@openeai.org) at 
+the University of Illinois Urbana-Champaign.
+
+Copyright (C) 2002 The OpenEAI Software Foundation
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+For specific licensing details and examples of how this software
+can be used to build commercial integration software or to implement
+integrations for your enterprise, visit http://www.OpenEai.org/licensing.-->
+<!DOCTYPE EnterpriseObjects SYSTEM "http://xmltest.sct.com/xml/configs/xml/dtd/1.0/EnterpriseObjects.dtd">
+<EnterpriseObjects>
+	<IncludeList>
+		<DocumentUri>configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/openeai/Resources/1.0/ControlAreaEO.xml</DocumentUri>
+	</IncludeList>
+	<ObjectDefinition name="TestStatus">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.TestStatus</ClassName>
+		<Field name="Value" type="Attribute" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="ElapsedRequestTime" type="Attribute" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+		<Field name="Failure" type="Object" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="Success">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.Success</ClassName>
+		<Field name="Id" type="Attribute" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="Failure">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.Failure</ClassName>
+		<Field name="Reason" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="TestSuiteSummary">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.TestSuiteSummary</ClassName>
+		<Field name="RequestReplyStartDatetime" type="Object" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="RequestReplyEndDatetime" type="Object" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="RequestTimings" type="Object" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+		<Field name="SyncConsumptionStartDatetime" type="Object" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+		<Field name="SyncConsumptionEndDatetime" type="Object" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+		<Field name="TestSeriesSummary" type="Object" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="TestCaseSummary" type="Object" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="TestStepSummary" type="Object" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="RequestReplyStartDatetime">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.resources.Datetime</ClassName>
+		<Field name="Year" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Month" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Day" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Hour" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Minute" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Second" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="SubSecond" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Timezone" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="RequestReplyEndDatetime">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.resources.Datetime</ClassName>
+		<Field name="Year" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Month" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Day" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Hour" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Minute" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Second" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="SubSecond" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Timezone" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="RequestTimings">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.testsuite.RequestTimings</ClassName>
+		<Field name="MessageAction" type="Attribute" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="NumberOfRequests" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="AverageTime" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="MaximumTime" type="Object" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+		<Field name="MinimumTime" type="Object" isKey="false">
+			<Description/>
+			<Format required="false"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="MaximumTime">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.testsuite.MaximumTime</ClassName>
+		<Field name="TestStepId" type="Attribute" isKey="true">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Value" type="Attribute" isKey="true">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="MinimumTime">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.testsuite.MinimumTime</ClassName>
+		<Field name="TestStepId" type="Attribute" isKey="true">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Value" type="Attribute" isKey="true">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="SyncConsumptionStartDatetime">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.resources.Datetime</ClassName>
+		<Field name="Year" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Month" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Day" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Hour" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Minute" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Second" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="SubSecond" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Timezone" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="SyncConsumptionEndDatetime">
+		<Description/>
+		<ClassName>org.openeai.moa.objects.resources.Datetime</ClassName>
+		<Field name="Year" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Month" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Day" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Hour" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Minute" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Second" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="SubSecond" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="Timezone" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="TestSeriesSummary">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.TestSeriesSummary</ClassName>
+		<Field name="TotalSeries" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="PassedSeries" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="FailedSeries" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="TestCaseSummary">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.TestCaseSummary</ClassName>
+		<Field name="TotalCases" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="PassedCases" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="FailedCases" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+	<ObjectDefinition name="TestStepSummary">
+		<Description>Used to create TestSuite-Summary file when test suite is ran.</Description>
+		<ClassName>org.openeai.moa.objects.testsuite.TestStepSummary</ClassName>
+		<Field name="TotalSteps" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="PassedSteps" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+		<Field name="FailedSteps" type="Element" isKey="false">
+			<Description/>
+			<Format required="true"/>
+		</Field>
+	</ObjectDefinition>
+</EnterpriseObjects>
