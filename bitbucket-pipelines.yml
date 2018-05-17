@@ -103,7 +103,7 @@ pipelines:
         - mkdir -p WEB-INF/classes
         - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
         - cp ../AwsAccountService/* WEB-INF/lib
-        - cp ../../configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
+        - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
         - jar uf axis2.war WEB-INF/lib/*   
