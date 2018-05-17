@@ -3,7 +3,7 @@
  <modelVersion>4.0.0</modelVersion>
  <groupId>edu.emory.awsaccount.service</groupId>
  <artifactId>emory-aws-account-service</artifactId>
- <version>0.01</version>
+ <version>${env.BITBUCKET_BRANCH}-${env.BITBUCKET_BUILD_NUMBER}</version>
  <name>emory-aws-account-service</name>
  <description>Emory AWS Account Service jar</description>
 
