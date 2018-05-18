@@ -105,6 +105,7 @@ pipelines:
         - cp ../AwsAccountService/* WEB-INF/lib
         - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
+        - cp ../../hibernate.cfg.xml WEB-INF/classes
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
         - jar uf axis2.war WEB-INF/lib/*   
         - jar uf axis2.war WEB-INF/classes  
@@ -115,11 +116,17 @@ pipelines:
         - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
+        - mkdir -p WEB-INF/classes
         - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
         - cp ../AwsAccountService/* WEB-INF/lib
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar   
+        - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
+        - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
+        - cp ../../hibernate.cfg.xml WEB-INF/classes
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
         - jar uf axis2.war WEB-INF/lib/*   
+        - jar uf axis2.war WEB-INF/classes  
         - rm -Rf WEB-INF
+        - jar tf axis2.war
         # Create the axis2.war file for STAGE
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2                              
         - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
