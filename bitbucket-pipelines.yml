@@ -128,25 +128,25 @@ pipelines:
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for STAGE
-        - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2                              
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
-        - mkdir -p WEB-INF/services
-        - mkdir -p WEB-INF/lib
-        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
-        - cp ../AwsAccountService/* WEB-INF/lib
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
-        - jar uf axis2.war WEB-INF/lib/*   
-        - rm -Rf WEB-INF
-        # Create the axis2.war file for PROD
-        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2                              
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
-        - mkdir -p WEB-INF/services
-        - mkdir -p WEB-INF/lib
-        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
-        - cp ../AwsAccountService/* WEB-INF/lib
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
-        - jar uf axis2.war WEB-INF/lib/*   
-        - rm -Rf WEB-INF
+        #- cd $BUILD_HOME/deploy/esb-stage/libs/Axis2                              
+        #- unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        #- mkdir -p WEB-INF/services
+        #- mkdir -p WEB-INF/lib
+        #- cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        #- cp ../AwsAccountService/* WEB-INF/lib
+        #- jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
+        #- jar uf axis2.war WEB-INF/lib/*   
+        #- rm -Rf WEB-INF
+        ## Create the axis2.war file for PROD
+        #- cd $BUILD_HOME/deploy/esb-prod/libs/Axis2                              
+        #- unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        #- mkdir -p WEB-INF/services
+        #- mkdir -p WEB-INF/lib
+        #- cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+        #- cp ../AwsAccountService/* WEB-INF/lib
+        #- jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
+        #- jar uf axis2.war WEB-INF/lib/*   
+        #- rm -Rf WEB-INF
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
 
