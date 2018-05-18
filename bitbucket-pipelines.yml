@@ -182,13 +182,14 @@ pipelines:
         name: Upload build products
         script:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
-        - ls -la 
+        - ls -la        
         - zip -r emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
-        - emory-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
+        - ls -l emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip       
+        #- emory-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
         - ls
         - ls target/*
         - ls target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
-        - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
+        #- emory-aws-pipeline-scripts/upload_artifact.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
 
      - step:
         name: Deploy to dev
