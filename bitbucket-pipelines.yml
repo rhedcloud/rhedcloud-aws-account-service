@@ -197,6 +197,11 @@ pipelines:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
         - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
+        #- sleep 30
+        #- export WS_URL=https://emory-awsaccount-service-dev/services/AwsAccountService
+        #- wget ${WS_URL}?wsdl
+        #- cat AwsAccountService?wsdl
+        #- deploy/build-test/tests/curl.post.sh ${WS_URL}
         
      - step:
         name: Deploy to test
