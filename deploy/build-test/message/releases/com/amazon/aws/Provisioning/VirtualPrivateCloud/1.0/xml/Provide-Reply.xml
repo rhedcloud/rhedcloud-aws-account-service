@@ -36,8 +36,11 @@
 	<DataArea>
 		<VirtualPrivateCloud>
 			<VpcId>vpc-e02be087</VpcId>
-			<AccountId>357163498835</AccountId>				
+			<AccountId>357163498835</AccountId>
+			<Cidr>10.65.0.0/23</Cidr>
+			<VpnProfileId>1</VpnProfileId>
 			<Type>1</Type>
+			<Purpose>First development environment VPC</Purpose>
 			<CreateUser>swheat</CreateUser>
 			<CreateDatetime>
 				<Year>2016</Year>

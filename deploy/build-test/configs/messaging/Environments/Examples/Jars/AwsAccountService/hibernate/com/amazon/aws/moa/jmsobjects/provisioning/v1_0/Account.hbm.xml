@@ -7,6 +7,10 @@
 </id>
 <property name="AccountName" column="ACCOUNT_NAME"/>
 <property name="ComplianceClass" column="COMPLIANCE_CLASS"/>
+<bag name="SensitiveDataType" table="ACCOUNT_SNSTV_DT_TYP">
+<key column="ACCOUNT_ID" unique="false"/>
+<element type="string" column="SENSITIVE_DATA_TYPE"/>
+</bag>
 <property name="PasswordLocation" column="PASSWORD_LOCATION"/>
 <bag name="EmailAddress" table="ACCOUNT_EMAIL_ADDRESS">
 <key column="ACCOUNT_ID"/>
@@ -16,12 +20,6 @@
 </composite-element>
 </bag>
 <property name="AccountOwnerNetId" column="ACCOUNT_OWNER_NET_ID"/>
-<!--
-<bag name="CustomerAdminNetId" table="ACCOUNT_CSTMR_DMN_NT_D">
-<key column="ACCOUNT_ID" unique="false"/>
-<element type="string" column="CUSTOMER_ADMIN_NET_ID"/>
-</bag>
--->
 <property name="FinancialAccountNumber" column="FINANCIAL_ACCOUNT_NUMBER"/>
 <property name="CreateUser" column="CREATE_USER"/>
 <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>

@@ -37,6 +37,7 @@
 <!ELEMENT BlendedRate %STRDOM;>
 <!ELEMENT Category %STRDOM;>
 <!ELEMENT Capability %STRDOM;>
+<!ELEMENT Cidr %STRDOM;>
 <!ELEMENT ComplianceClass %STRDOM;>
 <!ELEMENT ConsoleCategory %STRDOM;>
 <!ELEMENT CostBeforeTax %STRDOM;>
@@ -119,3 +120,4 @@
 <!ELEMENT UsageType %STRDOM;>
 <!ELEMENT Value %STRDOM;>
 <!ELEMENT VpcId %STRDOM;> 
+<!ELEMENT VpnProfileId %STRDOM;>
