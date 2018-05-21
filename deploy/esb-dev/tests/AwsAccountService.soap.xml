@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:aws="http://www.emory.edu/AwsAccountService/" xmlns:aws1="http://www.emory.edu/awsaccount/" xmlns:open="http://www.openeai.org/openeai/">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<aws:AccountQueryRequest>
+			<aws1:AccountQuerySpecification>
+			</aws1:AccountQuerySpecification>
+		</aws:AccountQueryRequest>
+	</soapenv:Body>
+</soapenv:Envelope>
