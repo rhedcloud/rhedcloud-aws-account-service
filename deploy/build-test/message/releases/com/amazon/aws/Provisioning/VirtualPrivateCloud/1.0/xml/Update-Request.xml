@@ -3,7 +3,9 @@
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
 <!DOCTYPE com.amazon.aws.Provisioning.VirtualPrivateCloud.Update SYSTEM "../dtd/Update-Request.dtd">
 <com.amazon.aws.Provisioning.VirtualPrivateCloud.Update>
-	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloud" messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
+		messageObject="VirtualPrivateCloud" messageAction="Update" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>
 				<SenderAppId>VirtualPrivateCloud</SenderAppId>
@@ -24,14 +26,18 @@
 			<SubSecond>428</SubSecond>
 			<Timezone>6:00-GMT</Timezone>
 		</Datetime>
-		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
 	</ControlAreaRequest>
 	<DataArea>
 		<NewData>
 			<VirtualPrivateCloud>
 				<VpcId>vpc-e02be087</VpcId>
-				<AccountId>357163498835</AccountId>				
+				<AccountId>357163498835</AccountId>
+				<Cidr>10.65.0.0/23</Cidr>
+				<VpnProfileId>1</VpnProfileId>
 				<Type>1</Type>
+				<Purpose>First development environment VPC, updated</Purpose>
 				<CreateUser>swheat</CreateUser>
 				<CreateDatetime>
 					<Year>2016</Year>
@@ -48,8 +54,11 @@
 		<BaselineData>
 			<VirtualPrivateCloud>
 				<VpcId>vpc-e02be087</VpcId>
-				<AccountId>357163498835</AccountId>				
+				<AccountId>357163498835</AccountId>
+				<Cidr>10.65.0.0/23</Cidr>
+				<VpnProfileId>1</VpnProfileId>
 				<Type>1</Type>
+				<Purpose>First development environment VPC</Purpose>
 				<CreateUser>swheat</CreateUser>
 				<CreateDatetime>
 					<Year>2016</Year>

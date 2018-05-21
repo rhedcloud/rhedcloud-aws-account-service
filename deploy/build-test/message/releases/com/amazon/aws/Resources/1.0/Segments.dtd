@@ -59,7 +59,7 @@ MessageId was defined as an Element in openea/segments.dtd
 <!ELEMENT Parameters (Key, Value)>
 <!ELEMENT Tag (Key, Value)>
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
-<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnProfileId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminNetId?, CreateUser?, LastUpdateUser?)>
 <!ELEMENT VirtualPrivateCloudRequisition (AccountId?, TicketId?, AuthenticatedRequestorNetId, AccountOwnerNetId, FinancialAccountNumber, CustomerAdminNetId+, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>
 <!ELEMENT VirtualPrivateCloudProvisioning (ProvisioningId, VirtualPrivateCloudRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>

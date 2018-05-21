@@ -3,7 +3,9 @@
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
 <!DOCTYPE com.amazon.aws.Provisioning.VirtualPrivateCloud.Delete SYSTEM "../dtd/Delete-Request.dtd">
 <com.amazon.aws.Provisioning.VirtualPrivateCloud.Delete>
-	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloud" messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Request">
+	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
+		messageObject="VirtualPrivateCloud" messageAction="Delete" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>
 				<SenderAppId>VirtualPrivateCloud</SenderAppId>
@@ -24,15 +26,19 @@
 			<SubSecond>423</SubSecond>
 			<Timezone>6:00-GMT</Timezone>
 		</Datetime>
-		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic" messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
 	</ControlAreaRequest>
 	<DataArea>
 		<DeleteData>
 			<DeleteAction type="Delete"/>
 			<VirtualPrivateCloud>
 				<VpcId>vpc-e02be087</VpcId>
-				<AccountId>357163498835</AccountId>				
+				<AccountId>357163498835</AccountId>
+				<Cidr>10.65.0.0/23</Cidr>
+				<VpnProfileId>1</VpnProfileId>
 				<Type>1</Type>
+				<Purpose>First development environment VPC</Purpose>
 				<CreateUser>swheat</CreateUser>
 				<CreateDatetime>
 					<Year>2016</Year>

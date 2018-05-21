@@ -5,11 +5,11 @@
 <id name="VpcId" column="VPC_ID">
 <generator class="assigned"/>
 </id>
-<property name="AccountId" column="ACCOUNT_ID" />
+<property name="AccountId" column="ACCOUNT_ID"/>
+<property name="Cidr" column="CIDR"/>
+<property name="VpnProfileId" column="VPN_PROFILE_ID"/>
 <property name="Type" column="TYPE_"/>
-<!--
-<property name="ComplianceClass" column="COMPLIANCE_CLASS"/>
--->
+<property name="Purpose" column="PURPOSE"/>
 <property name="CreateUser" column="CREATE_USER"/>
 <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
