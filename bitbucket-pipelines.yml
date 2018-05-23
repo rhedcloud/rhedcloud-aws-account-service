@@ -71,17 +71,14 @@ pipelines:
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
         - mkdir -p $BUILD_HOME/deploy/esb-dev/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-dev.aar $BUILD_HOME/deploy/esb-dev/libs/Axis2/emory-awsaccount-webservice-1.0.aar
-        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-dev/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
         - mkdir -p $BUILD_HOME/deploy/esb-test/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-qa.aar $BUILD_HOME/deploy/esb-test/libs/Axis2/emory-awsaccount-webservice-1.0.aar
-        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
-        #- mkdir -p $BUILD_HOME/deploy/esb-stage/libs/Axis2
-        #- cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-stage/libs/Axis2/emory-awsaccount-webservice-1.0.aar
-        #- cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-stage/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
-        #- mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
-        #- cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
-        #- cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/esb-prod/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
-        - cd $BUILD_HOME/deploy/build-test/libs/Axis2                                     # create the axis2.war for the build environment
+        - mkdir -p $BUILD_HOME/deploy/esb-stage/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-stage.aar $BUILD_HOME/deploy/esb-stage/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
+        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+        # Create the axis2.war file for build environment
+        - cd $BUILD_HOME/deploy/build-test/libs/Axis2    
         - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
