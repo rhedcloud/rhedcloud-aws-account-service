@@ -103,6 +103,8 @@
             token="$${webservice.sync.operation}" value="${webservice.sync.operation}"/>
         <replace file="${project.dir}/wsdl/webservice.java.xsl"
             token="$${moa.queryspecification.suffix}" value="${moa.queryspecification.suffix}"/>
+        <replace file="${project.dir}/wsdl/webservice.java.xsl"
+            token="$${getVersion.text}" value="${getVersion.text}"/>
         <xslt in="${project.dir}/../moas.xml" out="${wsdl.dir}/webservice.java"
             style="${wsdl.dir}/webservice.java.xsl"> </xslt>
         
@@ -138,6 +140,16 @@
         wsdl2java.sh  -uri ./wsdl/moas.wsdl   -ss -sd -t -s -d adb -ap -p ${package.webservice.name}
         -->
         <echo message="webservice.application.id=${webservice.application.id}"/>
+        
+
+            <replace file="${project.dir}/resources/services.xml">
+                <replacetoken><![CDATA[<service name="GreetingService">]]></replacetoken>
+                <replacevalue>
+                    <![CDATA[
+                <service name="GreetingService" scope="soapsession">]]>
+                </replacevalue>
+            </replace>
+            
         <replace file="${project.dir}/resources/services.xml">
             <replacetoken><![CDATA[<messageReceivers>]]></replacetoken>
             <replacevalue>
@@ -165,6 +177,18 @@
             value="${webservice.application.id}"/>
         <replace file="${project.dir}/resources/services.xml" token="${service.name}Skeleton"
             value="${service.name}"/>
+        
+        <replace file="${project.dir}/resources/services.xml">
+            <replacetoken><![CDATA[</service>]]></replacetoken>
+            <replacevalue>
+                <![CDATA[
+           <operation name="getVersion">
+            <messageReceiver  class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
+        </operation>   
+                </service>]]>
+            </replacevalue>
+        </replace>    
+        
         <!--
         <replace file="${project.dir}/resources/services.xml">
             <replacetoken><![CDATA[<serviceGroup>]]></replacetoken>
