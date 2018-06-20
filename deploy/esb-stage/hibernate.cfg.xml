@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 <session-factory>
-<property name="connection.url">jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/GENQA,cn=OracleContext,dc=emory,dc=edu</property>
+<property name="connection.url">jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/ESBSTG,cn=OracleContext,dc=emory,dc=edu</property>
 <property name="connection.username">awsaccount</property>
 <property name="connection.password">***REMOVED***</property>
 <property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
@@ -19,7 +19,7 @@
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
 <property name="hibernate.show_sql">false</property>
-<property name="hibernate.hbm2ddl.auto">validate</property>
+<property name="hibernate.hbm2ddl.auto">create</property>
 <mapping resource="OpenEai.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/billing/v1_0/Bill.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/Account.hbm.xml"/>
