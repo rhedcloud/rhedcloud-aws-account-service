@@ -22,6 +22,7 @@ pipelines:
         script:
         - cat /etc/issue         # echo out the linux the image using
         - source $HOME/.profile  # source the profile to setup env variables
+        - cp lib/*.jar deploy/build-test/libs/AwsAccountService  #copy build libraries to build-test
         - mvn -B verify          # -B batch mode makes Maven less verbose
         - ls target/*
         artifacts:
