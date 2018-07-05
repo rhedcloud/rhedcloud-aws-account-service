@@ -28,6 +28,10 @@ import org.openeai.jms.consumer.commands.*;
 import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.ActionableEnterpriseObject;
 
+import edu.emory.awsaccount.service.provider.ProviderException;
+import edu.emory.awsaccount.service.provider.StackProvider;
+import edu.emory.awsaccount.service.provider.UserNotificationProvider;
+
 
 /**
  * This command consumes an AccountNotification message and sends 
@@ -41,6 +45,7 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 	implements SyncCommand {
 
 	private boolean m_verbose = false;
+	private UserNotificationProvider m_provider = null;
 	private String LOGTAG = "[AwsNotificationSyncCommand] ";
 	private Category logger = org.openeai.OpenEaiObject.logger;
 
@@ -82,6 +87,47 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 			logger.error(LOGTAG + errMsg);
 			throw new InstantiationException(errMsg);
 		}
+		
+		// Initialize a UserNotificationProvider
+        String className = getProperties().getProperty("userNotificationProviderClassName");
+        if (className == null || className.equals("")) {
+            String errMsg = "No userNotificationProviderClassName property "
+                    + "specified. Can't continue.";
+            logger.fatal(LOGTAG + errMsg);
+            throw new InstantiationException(errMsg);
+        }
+        logger.info(LOGTAG + "userNotificationProviderClassName is: " + className);
+
+        UserNotificationProvider provider = null;
+        try {
+            logger.info(LOGTAG + "Getting class for name: " + className);
+            Class providerClass = Class.forName(className);
+            if (providerClass == null)
+                logger.info(LOGTAG + "providerClass is null.");
+            else
+                logger.info(LOGTAG + "providerClass is not null.");
+            provider = (UserNotificationProvider) Class.forName(className).newInstance();
+            logger.info(LOGTAG + "Initializing UserNotificationProvider: "
+                    + provider.getClass().getName());
+            provider.init(getAppConfig());
+            logger.info(LOGTAG + "UserNotificationProvider initialized.");
+            setProvider(provider);
+        } catch (ClassNotFoundException cnfe) {
+            String errMsg = "Class named " + className + "not found on the " + "classpath.  The exception is: "
+                    + cnfe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new InstantiationException(errMsg);
+        } catch (IllegalAccessException iae) {
+            String errMsg = "An error occurred getting a class for name: " + className + ". The exception is: "
+                    + iae.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new InstantiationException(errMsg);
+        } catch (ProviderException pe) {
+            String errMsg = "An error occurred initializing the UserNotificationProvider " +
+            		className + ". The exception is: " + pe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new InstantiationException(errMsg);
+        }
 
 		logger.info(LOGTAG + "Initialization complete.");
 	
@@ -231,7 +277,6 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 			String errMsg = "An error occurred getting an object from AppConfig. "
 					+ "The exception is: " + ecoe.getMessage();
 			logger.error(LOGTAG + errMsg);
-			throw new InstantiationException(errMsg);
 		}
 			
 		
@@ -253,18 +298,41 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 		
 		// Retrieve the list of UserIds for UserNotifications.
 		String accountId = aNotification.getAccountId();
-		logger.info(LOGTAG + "Retrieving list of users for account: " + accountId);
-		List<String> userIds = getUserNotificationProvider().getUserIdsForAccount(accountId);
-		
+		List<String> userIds = null;
+		try {
+			logger.info(LOGTAG + "Retrieving list of users for account: " + accountId);
+			long startTime = System.currentTimeMillis();
+			userIds = getProvider().getUserIdsForAccount(accountId);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Retrieved list of users in " + time + "ms.");
+		}
+		catch (ProviderException pe) {
+			
+		}
+			
 		// Create a UserNotification from the AccountNotification for each UserId.
 		ListIterator userIdIterator = userIds.listIterator();
 		while(userIdIterator.hasNext()) {
-			String userId = (String)userIdIterator.next();
-			getUserNotificationProvider().generateUserNotification(userId, aNotification);
+			try {
+				String userId = (String)userIdIterator.next();
+				logger.info(LOGTAG + "Generating a UserNotfication for user: " + userId);
+				long startTime = System.currentTimeMillis();
+				getProvider().generate(userId, aNotification);
+			}
+			catch (ProviderException pe) {
+				
+			}
+			
 		}
 		
-
 		return;
 	}
 	
+	private void setProvider(UserNotificationProvider provider) {
+		m_provider = provider;
+	}
+	
+	private UserNotificationProvider getProvider() {
+		return m_provider;
+	}
 }
