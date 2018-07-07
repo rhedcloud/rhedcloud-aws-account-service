@@ -9,7 +9,7 @@
 <component name="VirtualPrivateCloudRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition">
 <property name="AccountId" column="ACCOUNT_ID"/>
 <property name="RequestId" column="REQUEST_ID"/>
-<property name="AuthenticatedRequestorUserId" column="AUTHENTICATED_REQUESTOR_USER_ID"/>
+<property name="AuthenticatedRequestorUserId" column="AUTHN_REQUESTOR_USER_ID"/>
 <property name="AccountOwnerUserId" column="ACCOUNT_OWNER_USER_ID"/>
 <property name="FinancialAccountNumber" column="FINANCIAL_ACCOUNT_NUMBER"/>
 <!--TODO: automation-->
