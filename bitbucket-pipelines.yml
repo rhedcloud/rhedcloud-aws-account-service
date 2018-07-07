@@ -50,11 +50,13 @@ pipelines:
         #- ./start.sh AwsAccountServiceTestSuite
         #- sleep 20
         #- tail -1000 logs/TestSuiteApplication-AwsAccountService.log
+        artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
 
      - step:
         name: Generate web service facade
         script:
+        - ls deploy/build-test/libs/AwsAccountService
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/openeai-servicegen.git # import service generation deps
         - source $HOME/.profile                                                           # source the profile to setup env variable
         - export BUILD_HOME=`pwd`
