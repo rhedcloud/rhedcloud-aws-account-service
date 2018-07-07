@@ -80,7 +80,7 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 				new com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification();
 		try {
 			uNotification = (com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification) 
-					getAppConfig().getObjectByType(aNotification.getClass().getName());
+					getAppConfig().getObjectByType(uNotification.getClass().getName());
 		} catch (EnterpriseConfigurationObjectException ecoe) {
 			String errMsg = "An error occurred getting an object from AppConfig. "
 					+ "The exception is: " + ecoe.getMessage();
