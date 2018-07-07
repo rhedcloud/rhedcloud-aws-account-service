@@ -50,6 +50,7 @@ pipelines:
         #- ./start.sh AwsAccountServiceTestSuite
         #- sleep 20
         #- tail -1000 logs/TestSuiteApplication-AwsAccountService.log
+        - deploy/**     # preserve the deploy artifacts for the next step
 
      - step:
         name: Generate web service facade
