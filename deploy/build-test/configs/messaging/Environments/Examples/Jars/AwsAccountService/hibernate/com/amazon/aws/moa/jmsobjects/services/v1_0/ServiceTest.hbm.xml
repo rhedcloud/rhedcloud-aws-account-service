@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.objects.resources.v1_0">
+<class name="ServiceTest" table="SERVICE_TEST">
+
+<id name="ServiceTestId" column="SERVICE_TEST_ID" type="OpenEaiLong">
+<generator class="OpenEaiSequence">
+<param name="sequence">H_SERVICE_TEST_SEQ</param>
+</generator>
+</id>
+<property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
+<property name="Description" column="DESCRIPTION"/>
+
+<bag name="ServiceTestStep" cascade="all">
+<key column="ServiceTestId"/>
+<one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.ServiceTestStep"/>
+</bag>
+
+<property name="ServiceTestExpectedResult" column="SERVICE_TEST_EXPECTED_RESULT"/>
+</class>
+</hibernate-mapping>

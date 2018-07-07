@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.services.v1_0">
+<class name="ServiceSecurityAssessment" table="SERVICE_SECURITY_ASSESSMENT">
+<id name="ServiceSecurityAssessmentId" column="SERVICE_SECURITY_ASSESSMENT_ID"/>
+<bag name="ServiceId" table="SRVC_SCRTY_SSSSMNT_SERVICE_ID">
+<key column="SERVICE_SECURITY_ASSESSMENT_ID" unique="false"/>
+<element type="string" column="SERVICE_ID"/>
+</bag>
+<property name="Status" column="STATUS"/>
+<bag name="SecurityRisk" cascade="all">
+<key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
+<one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk"/>
+</bag>
+<!--
+<bag name="SecurityRisk" table="SRVC_SCRTY_SSSSMNT_SECURITY_RI">
+<key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk">
+<property name="SecurityRiskId" column="SECURITY_RISK_ID"/>
+<property name="ServiceId" column="SERVICE_ID"/>
+<property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
+<property name="ServiceRiskName" column="SERVICE_RISK_NAME"/>
+<property name="RiskLevel" column="RISK_LEVEL"/>
+<property name="Description" column="DESCRIPTION"/>
+<property name="AssessorId" column="ASSESSOR_ID"/>
+<property name="AssessmentDatetime" type="OpenEaiDatetime" column="ASSESSMENT_DATETIME"/>
+
+<nested-composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Countermeasure" name="Countermeasure">
+<property name="SecurityRiskId" column="SECURITY_RISK_ID"/>
+<property name="Status" column="STATUS"/>
+<property name="Description" column="DESCRIPTION"/>
+<property name="Verifier" column="VERIFIER"/>
+<property name="VerificationDatetime" type="OpenEaiDatetime" column="VERIFICATION_DATETIME"/>
+</nested-composite-element>
+</composite-element>
+</bag>
+-->
+
+<bag name="ServiceControl" table="SRVC_SCRTY_SSSSMNT_SRVC_CNTRL">
+<key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.ServiceControl">
+<property name="ServiceId" column="SERVICE_ID"/>
+<property name="ServiceControlId" column="SERVICE_CONTROL_ID"/>
+<property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
+<property name="ServiceControlName" column="SERVICE_CONTROL_NAME"/>
+<property name="Description" column="DESCRIPTION"/>
+<property name="AssessorId" column="ASSESSOR_ID"/>
+<property name="AssessmentDatetime" type="OpenEaiDatetime" column="ASSESSMENT_DATETIME"/>
+<property name="Verifier" column="VERIFIER"/>
+<property name="VerificationDatetime" type="OpenEaiDatetime" column="VERIFICATION_DATETIME"/>
+</composite-element>
+</bag>
+
+<bag name="ServiceGuideline" table="SRVC_SCRTY_SSSSMNT_SRVC_GDLN">
+<key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.ServiceGuideline">
+<property name="ServiceId" column="SERVICE_ID"/>
+<property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
+<property name="ServiceGuidelineName" column="SERVICE_GUIDELINE_NAME"/>
+<property name="Description" column="DESCRIPTION"/>
+<property name="AssessorId" column="ASSESSOR_ID"/>
+<property name="AssessmentDatetime" type="OpenEaiDatetime" column="ASSESSMENT_DATETIME"/>
+</composite-element>
+</bag>
+
+<component name="ServiceTestPlan" class="com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan">
+
+<property name="ServiceId" column="SERVICE_ID"/>
+<!--TODO simply modeling?
+<property name="ServiceTestRequirement" column="SERVICE_TEST_REQUIREMENT"/>
+-->
+
+<bag name="ServiceTestRequirement" cascade="all">
+<key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
+<one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.ServiceTestRequirement"/>
+</bag>
+</component>
+<!--
+-->
+</class>
+</hibernate-mapping>

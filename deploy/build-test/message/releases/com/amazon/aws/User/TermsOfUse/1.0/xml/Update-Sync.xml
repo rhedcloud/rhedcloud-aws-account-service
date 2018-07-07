@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.User.TermsOfUse.Update SYSTEM "../dtd/Update-Sync.dtd">
+<com.amazon.aws.User.TermsOfUse.Update>
+	<ControlAreaSync messageCategory="com.amazon.aws.User" messageObject="TermsOfUse"
+		messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AwsAccountService</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>5</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<TermsOfUse>
+				<TermsOfUseId>1</TermsOfUseId>
+				<Revision>1</Revision>
+				<EffectiveDate>
+					<Month>7</Month>
+					<Day>1</Day>
+					<Year>2018</Year>
+				</EffectiveDate>
+				<Text>Some text the user must agree to...updated</Text>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>7</Month>
+					<Day>1</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</TermsOfUse>
+		</NewData>
+		<BaselineData>
+			<TermsOfUse>
+				<TermsOfUseId>1</TermsOfUseId>
+				<Revision>1</Revision>
+				<EffectiveDate>
+					<Month>7</Month>
+					<Day>1</Day>
+					<Year>2018</Year>
+				</EffectiveDate>
+				<Text>Some text the user must agree to</Text>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>7</Month>
+					<Day>1</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</TermsOfUse>
+		</BaselineData>
+	</DataArea>
+</com.amazon.aws.User.TermsOfUse.Update>

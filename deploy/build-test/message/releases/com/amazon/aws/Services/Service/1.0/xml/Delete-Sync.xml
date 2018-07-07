@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
-<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
-<!DOCTYPE com.amazon.aws.CloudFormation.Stack.Delete SYSTEM "../dtd/Delete-Sync.dtd">
-<com.amazon.aws.CloudFormation.Stack.Delete>
-	<ControlAreaSync messageCategory="com.amazon.aws.CloudFormation" messageObject="Stack"
+<!DOCTYPE com.amazon.aws.Services.Service.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<com.amazon.aws.Services.Service.Delete>
+	<ControlAreaSync messageCategory="com.amazon.aws.Services" messageObject="Services"
 		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
 		<Sender>
 			<MessageId>
-				<SenderAppId>org.usda.ars.TestSuiteApplication</SenderAppId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
 				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
 				<MessageSeq>1024</MessageSeq>
 			</MessageId>
@@ -16,9 +14,9 @@
 			</Authentication>
 		</Sender>
 		<Datetime>
-			<Year>2010</Year>
-			<Month>11</Month>
-			<Day>17</Day>
+			<Year>2018</Year>
+			<Month>7</Month>
+			<Day>1</Day>
 			<Hour>13</Hour>
 			<Minute>47</Minute>
 			<Second>30</Second>
@@ -29,56 +27,32 @@
 	<DataArea>
 		<DeleteData>
 			<DeleteAction type="Delete"/>
-			<Stack>
-				<StackId>arn:aws:cloudformation:us-east-1:698677649721:stack/EmoryType1-1/f9e60090-5353-11e6-9c9f-500c5240588e</StackId>
-				<StackName>EmoryType1-1</StackName>
-				<Description>Emory AWS CloudFormation Template for a type 1 VPC: Extension of Emory
-					Network with All Access through Emory</Description>
-				<StackParameter>
-					<Key>PrivateSubnetCIDR</Key>
-					<Value>10.64.61.0/24</Value>
-				</StackParameter>
-				<StackParameter>
-					<Key>PublicSubnetCIDR</Key>
-					<Value>10.64.60.0/24</Value>
-				</StackParameter>
-				<StackParameter>
-					<Key>VPCCIDR</Key>
-					<Value>10.64.60.0/23</Value>
-				</StackParameter>
-				<StackParameter>
-					<Key>VPNAddress</Key>
-					<Value>163.246.8.67</Value>
-				</StackParameter>
-				<Tag>
-					<Key>TemplateName</Key>
-					<Value>EmoryVpcType1</Value>
-				</Tag>
-				<Output>
-					<Description>SubnetId of the VPN connected subnet</Description>
-					<OutputKey>PrivateSubnet</OutputKey>
-					<OutputValue>subnet-8fa499d7</OutputValue>
-				</Output>
-				<Output>
-					<Description>VPCId of the newly created VPC</Description>
-					<OutputKey>VPCId</OutputKey>
-					<OutputValue>vpc-82d54be5</OutputValue>
-				</Output>
+			<Service>
+				<ServiceId>1</ServiceId>
+				<AwsServiceCode>amazon-elastic-compute-cloud-linux</AwsServiceCode>
+				<AwsServiceName>Elastic Compute Cloud (EC2 - Linux)</AwsServiceName>
+				<AlternateServiceName>EC2</AlternateServiceName>
+				<CombinedServiceName>Elastic Compute Cloud (EC2)</CombinedServiceName>
+				<Status>available with countermeasures</Status>
+				<ServiceLandingPageUrl>https://aws.amazon.com/ec2/</ServiceLandingPageUrl>
+				<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that
+					provides secure, resizable compute capacity in the cloud. Updated.</Description>
+				<Category>compute</Category>
+				<ConsoleCategory>compute</ConsoleCategory>
+				<AwsHipaaEligible>true</AwsHipaaEligible>
+				<EmoryHipaaEligible>true</EmoryHipaaEligible>
+				<CreateUser>testsuite-user</CreateUser>
 				<CreateDatetime>
-					<Year>2016</Year>
-					<Month>7</Month>
-					<Day>26</Day>
+					<Year>2018</Year>
+					<Month>2</Month>
+					<Day>7</Day>
 					<Hour>17</Hour>
 					<Minute>11</Minute>
 					<Second>22</Second>
 					<SubSecond>148</SubSecond>
 					<Timezone>0:00-GMT</Timezone>
 				</CreateDatetime>
-				<Capability>CAPABILITY_IAM</Capability>
-				<Capability>CAPABILITY_NAMED_IAM</Capability>
-				<StackStatus>CREATE_COMPLETE</StackStatus>
-				<DisableRollback>false</DisableRollback>
-			</Stack>
+			</Service>
 		</DeleteData>
 	</DataArea>
-</com.amazon.aws.CloudFormation.Stack.Delete>
+</com.amazon.aws.Services.Service.Delete>

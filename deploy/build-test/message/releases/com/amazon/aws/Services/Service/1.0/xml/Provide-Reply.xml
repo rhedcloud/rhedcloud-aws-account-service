@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
 <!DOCTYPE com.amazon.aws.Services.Service.Provide SYSTEM "../dtd/Provide-Reply.dtd">
 <com.amazon.aws.Services.Service.Provide>
 	<ControlAreaReply messageCategory="com.amazon.aws.Services" messageObject="Service"
@@ -34,19 +33,19 @@
 	</ControlAreaReply>
 	<DataArea>
 		<Service>
-			<ServiceId>EC2</ServiceId>
-			<ServiceCode>EC2</ServiceCode>
-			<ServiceName>Amazon EC2</ServiceName>
-			<Status>Fully Available</Status>
+			<ServiceId>1</ServiceId>
+			<AwsServiceCode>amazon-elastic-compute-cloud-linux</AwsServiceCode>
+			<AwsServiceName>Elastic Compute Cloud (EC2 - Linux)</AwsServiceName>
+			<AlternateServiceName>EC2</AlternateServiceName>
+			<CombinedServiceName>Elastic Compute Cloud (EC2)</CombinedServiceName>
+			<Status>available with countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/ec2/</ServiceLandingPageUrl>
-			<Description>
-				Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud.
-			</Description>
-			<Category>Compute</Category>
-			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible>
-			<Tag><Key>VerificationDate</Key><Value>12/13/2016</Value></Tag>
-			<Tag><Key>Verifier</Key><Value>Steve Wheat</Value></Tag>
+			<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides
+				secure, resizable compute capacity in the cloud. </Description>
+			<Category>compute</Category>
+			<ConsoleCategory>compute</ConsoleCategory>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>

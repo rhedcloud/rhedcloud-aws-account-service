@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Attemps to define schema -->
+<!--
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="#mySchema">
+<xs:schema id="mySchema" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="querylanguages">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbound" minOccurs="0" ref="querylanguage"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="querylanguage">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbound" minOccurs="1" ref="QueryLanguage"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Querylanguage">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="1" minOccurs="0" ref="SqlString"/>
+				<xs:element maxOccurs="unbound" minOccurs="0" ref="Parameter"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Parameter">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="1" minOccurs="0" ref="SqlString"/>
+				<xs:element maxOccurs="unbound" minOccurs="0" ref="Parameter"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="SqlString" type="xs:string"/>
+</xs:schema>
+-->
+<querylanguages>
+	<!-- type named or hql must be of entity (managed by hibernate) -->
+	<querylanguage>
+		<HelloHibernateGwQuerySpecification>
+			<QueryLanguage type="hql" name="findHelloByIds" value="from HelloHibernateGw where id in (:id1,:id2)">
+				<!-- all Parmameter element stay inside QueryLanguage element -->	
+				<Parameter name="id1"/>
+				<Parameter name="id2"/>
+			</QueryLanguage>
+		</HelloHibernateGwQuerySpecification>
+		
+		<HelloHibernateGwQuerySpecification>
+			<QueryLanguage type="hql" name="findHelloByIdList" value="from HelloHibernateGw where id in (:idList)">
+				<!-- the value of the parameter xxxList must to be a comma separated list -->	
+				<Parameter name="idList"/>
+			</QueryLanguage>
+		</HelloHibernateGwQuerySpecification>
+		
+		<HelloHibernateGwQuerySpecification>
+			<QueryLanguage type="named" name="findHelloById">
+				<Parameter name="Id"/>
+			</QueryLanguage>
+		</HelloHibernateGwQuerySpecification>
+		<HelloHibernateGwQuerySpecification>
+			<!-- each querySpecification can only have 1 QueryLanguage -->
+			<QueryLanguage type="named" name="findHelloByDates">
+				<Parameter name="StartDate"/>
+				<Parameter name="EndDate"/>
+			</QueryLanguage>
+		</HelloHibernateGwQuerySpecification>
+		<HelloHibernateGwQuerySpecification>
+			<!-- type scalars can be of none-entity moa (not managed by hibernate), its SqlString element must not be null, and must have Return element to define its return types -->
+			<QueryLanguage type="scalars" name="findHelloByIdDate">
+				<SqlString
+					value="select id,message,message_number as MessageNumber,last_modified_date as LastModifiedDate,last_modified_datetime as LastModifiedDatetime from hello_hibernate_gw where id = :Id and  Last_modified_date = to_date(:StartDate,'YYYY-MM-DD') ">
+					<Return name="Id" type="string" />
+					<Return name="Message" type="string" />
+					<Return name="MessageNumber" type="string" />
+					<Return name="LastModifiedDate" type="OpenEaiDate" />
+					<Return name="LastModifiedDatetime" type="OpenEaiDatetime" />
+				</SqlString>
+				<Parameter name="Id"/>				
+				<Parameter name="StartDate"/>
+			</QueryLanguage>
+		</HelloHibernateGwQuerySpecification>		
+	</querylanguage>
+	
+	<!-- type named or hql must be of entity (managed by hibernate) -->
+	<querylanguage>
+		<BillQuerySpecification>
+			<QueryLanguage type="named" name="findBillsByDates" >
+				<Parameter name="StartDate"/>
+				<Parameter name="EndDate"/>
+			</QueryLanguage>
+		</BillQuerySpecification>
+		<!--not working yet as this is a collection-->
+		<BillQuerySpecification>
+			<QueryLanguage type="named" name="findBillsByLinkedAccountId">
+				<Parameter name="LinkedAccountId"/>
+			</QueryLanguage>
+		</BillQuerySpecification>
+	</querylanguage>
+</querylanguages>

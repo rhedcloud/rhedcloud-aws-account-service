@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE com.amazon.aws.CloudFormation.Stack.Query SYSTEM "../dtd/Query-Request.dtd">
-<com.amazon.aws.CloudFormation.Stack.Query>
-	<ControlAreaRequest messageCategory="com.amazon.aws.CloudFormation" messageObject="Stack"
+<!DOCTYPE com.amazon.aws.Services.Service.Query SYSTEM "../dtd/Query-Request.dtd">
+<com.amazon.aws.Services.Service.Query>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Services" messageObject="Service"
 		messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>
@@ -27,9 +27,8 @@
 			messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
 	</ControlAreaRequest>
 	<DataArea>
-		<StackQuerySpecification>
-			<AccountId>123456789123</AccountId>
-			<StackName>MOBILEHUB-2110621634-Development</StackName>
-		</StackQuerySpecification>
+		<ServiceQuerySpecification>
+			<ServiceId>1</ServiceId>
+		</ServiceQuerySpecification>
 	</DataArea>
-</com.amazon.aws.CloudFormation.Stack.Query>
+</com.amazon.aws.Services.Service.Query>

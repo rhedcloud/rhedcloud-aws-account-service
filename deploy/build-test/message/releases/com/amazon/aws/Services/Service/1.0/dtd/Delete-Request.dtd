@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (Emory University) -->
-<!-- Defines a message that deletes a stack.
+<!-- Defines a message that deletes a service.
 -->
 <!-- 
 	Copyright 2016 Emory University. All rights reserved.
@@ -12,6 +11,6 @@
 <!-- Include resources (elements) shared by all messages -->
 <!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
 %RESOURCES;
-<!ELEMENT com.amazon.aws.CloudFormation.Stack.Delete (ControlAreaRequest, DataArea)>
+<!ELEMENT com.amazon.aws.Services.Service.Delete (ControlAreaRequest, DataArea)>
 <!ELEMENT DataArea (DeleteData)>
-<!ELEMENT DeleteData (DeleteAction, Stack)>
+<!ELEMENT DeleteData (DeleteAction, Service)>

@@ -33,10 +33,10 @@
 			<VirtualPrivateCloudProvisioning>
 				<ProvisioningId>emory-vpcp-23</ProvisioningId>
 				<VirtualPrivateCloudRequisition>
-					<AuthenticatedRequestorNetId>swheat</AuthenticatedRequestorNetId>
-					<AccountOwnerNetId>swheat</AccountOwnerNetId>
+					<AuthenticatedRequestorUserId>swheat</AuthenticatedRequestorUserId>
+					<AccountOwnerUserId>swheat</AccountOwnerUserId>
 					<FinancialAccountNumber>0000001536</FinancialAccountNumber>
-					<CustomerAdminNetId>swheat</CustomerAdminNetId>
+					<CustomerAdminUserId>swheat</CustomerAdminUserId>
 					<Type>1</Type>
 					<ComplianceClass>none</ComplianceClass>
 					<Purpose>test</Purpose>

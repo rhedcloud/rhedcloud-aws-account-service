@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.services.v1_0">
+<class name="Service" table="SERVICE">
+<id name="ServiceId" column="SERVICE_ID" type="OpenEaiLong">
+<generator class="OpenEaiSequence">
+<param name="sequence">H_SERVICE_SEQ</param>
+</generator>
+</id>
+<property name="AwsServiceCode" column="AWS_SERVICE_CODE"/>
+<property name="AwsServiceName" column="AWS_SERVICE_NAME"/>
+<property name="AlternateServiceName" column="ALTERNATE_SERVICE_NAME"/>
+<property name="CombinedServiceName" column="COMBINED_SERVICE_NAME"/>
+<property name="Status" column="STATUS"/>
+<property name="ServiceLandingPageUrl" column="SERVICE_LANDING_PAGE_URL"/>
+<property name="Description" length="2000" column="DESCRIPTION"/>
+<bag name="Category" table="SERVICE_CATEGORY">
+<key column="SERVICE_ID" unique="false"/>
+<element type="string" column="CATEGORY"/>
+</bag>
+<bag name="ConsoleCategory" table="SERVICE_CNSL_CTGRY">
+<key column="SERVICE_ID" unique="false"/>
+<element type="string" column="CONSOLE_CATEGORY"/>
+</bag>
+<property name="AwsHipaaEligible" column="AWS_HIPAA_ELIGIBLE"/>
+<property name="EmoryHipaaEligible" column="EMORY_HIPAA_ELIGIBLE"/>
+<bag name="Tag" table="SERVICE_TAG">
+<key column="SERVICE_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Tag">
+<property name="Key" column="KEY_"/>
+<property name="Value" column="VALUE"/>
+</composite-element>
+</bag>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>
