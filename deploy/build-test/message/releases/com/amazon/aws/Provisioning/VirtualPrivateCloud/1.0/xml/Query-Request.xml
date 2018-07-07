@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE com.amazon.aws.Provisioning.VirtualPrivateCloud.Query SYSTEM "../dtd/Query-Request.dtd">
 <com.amazon.aws.Provisioning.VirtualPrivateCloud.Query>
-	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloud" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
+		messageObject="VirtualPrivateCloud" messageAction="Query" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>
 				<SenderAppId>VirtualPrivateCloud</SenderAppId>
@@ -22,7 +24,9 @@
 			<SubSecond>456</SubSecond>
 			<Timezone>6:00-GMT</Timezone>
 		</Datetime>
-		<ExpectedReplyFormat messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloud" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+		<ExpectedReplyFormat messageCategory="com.amazon.aws.Provisioning"
+			messageObject="VirtualPrivateCloud" messageRelease="1.0" messageAction="Provide"
+			messageType="Reply"/>
 	</ControlAreaRequest>
 	<DataArea>
 		<VirtualPrivateCloudQuerySpecification>

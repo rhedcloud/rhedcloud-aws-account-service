@@ -6,7 +6,7 @@
 <!--	Elements with no child elements shared by all event messages.
 -->
 <!--
-	Copyright 2009 Emory University.  All Rights Reserved.
+	Copyright 2018 Emory University.  All Rights Reserved.
 
 	CONFIDENTIAL BUSINESS INFORMATION
 
@@ -24,13 +24,22 @@
 <!ELEMENT AccessKeyId %STRDOM;>
 <!ELEMENT AccountId %STRDOM;>
 <!ELEMENT AccountName %STRDOM;>
+<!ELEMENT AccountNotificationId %STRDOM;>
 <!ELEMENT AccountOwnerNetId %STRDOM;>
+<!ELEMENT AccountOwnerId %STRDOM;>
+<!ELEMENT AccountOwnerUserId %STRDOM;>
 <!ELEMENT ActualTime %STRDOM;>
+<!ELEMENT AlternateServiceName %STRDOM;>
 <!ELEMENT AmazonResourceName %STRDOM;>
 <!ELEMENT AnticipatedTime %STRDOM;>
-<!ELEMENT AuthenticatedRequestorNetId %STRDOM;>
+<!ELEMENT AssessmentDatetime %DATETIME;>
+<!ELEMENT AssessorId %STRDOM;>
+<!ELEMENT AuthenticatedRequestorUserId %STRDOM;>
 <!ELEMENT AuthorizedUserDescription %STRDOM;>
 <!ELEMENT AuthorizedSensitiveDataTypeDescription %STRDOM;>
+<!ELEMENT AwsHipaaEligible %STRDOM;>
+<!ELEMENT AwsServiceCode %STRDOM;>
+<!ELEMENT AwsServiceName %STRDOM;>
 <!ELEMENT BillDate %DATE;>
 <!ELEMENT BillingPeriodEndDatetime %DATETIME;>
 <!ELEMENT BillingPeriodStartDatetime %DATETIME;>
@@ -38,6 +47,7 @@
 <!ELEMENT Category %STRDOM;>
 <!ELEMENT Capability %STRDOM;>
 <!ELEMENT Cidr %STRDOM;>
+<!ELEMENT CombinedServiceName %STRDOM;>
 <!ELEMENT ComplianceClass %STRDOM;>
 <!ELEMENT ConsoleCategory %STRDOM;>
 <!ELEMENT CostBeforeTax %STRDOM;>
@@ -45,18 +55,20 @@
 <!ELEMENT CreateUser %STRDOM;>
 <!ELEMENT Credits %STRDOM;>
 <!ELEMENT CurrencyCode %STRDOM;>
-<!ELEMENT CustomerAdminNetId %STRDOM;>
+<!ELEMENT CustomerAdminUserId %STRDOM;>
 <!ELEMENT Description %STRDOM;>
 <!ELEMENT DisableRollback %STRDOM;>
+<!ELEMENT EffectiveDate %DATE;>
 <!ELEMENT Email %STRDOM;>
+<!ELEMENT EmoryHipaaEligible %STRDOM;>
 <!ELEMENT EndDate %DATE;>
 <!ELEMENT FinancialAccountNumber %STRDOM;>
-<!ELEMENT HippaEligible %STRDOM;>
 <!ELEMENT InvoiceDatetime %DATETIME;>
 <!ELEMENT InvoiceId %STRDOM;>
 <!ELEMENT IsAuthorized %STRDOM;>
 <!ELEMENT ItemDescription %STRDOM;> 
 <!ELEMENT Key %STRDOM;>
+<!ELEMENT LastLoginDatetime %DATETIME;>
 <!ELEMENT LastUpdateDatetime %DATETIME;>
 <!ELEMENT LastUpdateUser %STRDOM;>
 <!ELEMENT LinkedAccountId %STRDOM;>
@@ -74,6 +86,7 @@
 <!ELEMENT PayerAccountId %STRDOM;>
 <!ELEMENT PayerAccountName %STRDOM;>
 <!ELEMENT PayerPONumber %STRDOM;>
+<!ELEMENT Priority %STRDOM;>
 <!ELEMENT ProductCode %STRDOM;>
 <!ELEMENT ProductName %STRDOM;>
 <!ELEMENT ProvisioningId %STRDOM;>
@@ -81,20 +94,37 @@
 <!ELEMENT ProvisioningStepId %STRDOM;>
 <!ELEMENT Purpose %STRDOM;>
 <!ELEMENT RateId %STRDOM;>
+<!ELEMENT Read %STRDOM;>
+<!ELEMENT ReadDatetime %DATETIME;>
 <!ELEMENT RecordId %STRDOM;>
 <!ELEMENT RecordType %STRDOM;>
+<!ELEMENT ReferenceId %STRDOM;>
+<!ELEMENT RequestId %STRDOM;>
 <!ELEMENT ResourceType %STRDOM;>
+<!ELEMENT Revision %STRDOM;>
+<!ELEMENT RiskLevel %STRDOM;>
 <!ELEMENT RoleArn %STRDOM;>
 <!ELEMENT SamlMetadataDocument %STRDOM;>
 <!ELEMENT SecretKey %STRDOM;>
 <!ELEMENT SecurityRiskDetector %STRDOM;>
+<!ELEMENT SecurityRiskId %STRDOM;>
 <!ELEMENT SecurityRiskRemediator %STRDOM;>
 <!ELEMENT SellerOfRecord %STRDOM;>
 <!ELEMENT SensitiveDataType %STRDOM;>
-<!ELEMENT ServiceCode %STRDOM;>
+<!ELEMENT SequenceNumber %STRDOM;>
+<!ELEMENT ServiceControlId %STRDOM;>
+<!ELEMENT ServiceControlName %STRDOM;>
+<!ELEMENT ServiceControlNumber %STRDOM;>
 <!ELEMENT ServiceId %STRDOM;>
+<!ELEMENT ServiceGuidelineNumber %STRDOM;>
+<!ELEMENT ServiceGuidelineName %STRDOM;>
 <!ELEMENT ServiceLandingPageUrl %STRDOM;>
-<!ELEMENT ServiceName %STRDOM;>
+<!ELEMENT ServiceRiskNumber %STRDOM;>
+<!ELEMENT ServiceRiskName %STRDOM;>
+<!ELEMENT ServiceTestExpectedResult %STRDOM;>
+<!ELEMENT ServiceTestId %STRDOM;>
+<!ELEMENT ServiceTestRequirementId %STRDOM;>
+<!ELEMENT ServiceTestStepId %STRDOM;>
 <!ELEMENT StackId %STRDOM;>
 <!ELEMENT StackName %STRDOM;>
 <!ELEMENT StackPolicyBody %STRDOM;>
@@ -105,11 +135,15 @@
 <!ELEMENT StepId %STRDOM;>
 <!ELEMENT StepResult %STRDOM;>
 <!ELEMENT StepStatus %STRDOM;>
+<!ELEMENT Subject %STRDOM;>
 <!ELEMENT TaxAmount %STRDOM;>
 <!ELEMENT TaxType %STRDOM;>
 <!ELEMENT TaxationAddress %STRDOM;>
 <!ELEMENT TemplateBody %STRDOM;>
 <!ELEMENT TemplateUrl %STRDOM;>
+<!ELEMENT TermsOfUseAgreementId %STRDOM;>
+<!ELEMENT TermsOfUseId %STRDOM;>
+<!ELEMENT Text %STRDOM;>
 <!ELEMENT TimeoutInMinutes %STRDOM;>
 <!ELEMENT TotalCost %STRDOM;>
 <!ELEMENT Type %STRDOM;>
@@ -118,6 +152,8 @@
 <!ELEMENT UsageQuantity %STRDOM;>
 <!ELEMENT UsageStartDatetime %DATETIME;>
 <!ELEMENT UsageType %STRDOM;>
+<!ELEMENT UserId %STRDOM;>
+<!ELEMENT UserNotificationId %STRDOM;>
 <!ELEMENT Value %STRDOM;>
 <!ELEMENT VpcId %STRDOM;> 
-<!ELEMENT VpnProfileId %STRDOM;>
+<!ELEMENT VpnConnectionProfileId %STRDOM;>

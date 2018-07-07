@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (Emory University) -->
-<!-- Defines a stack generate request message.
+<!-- Defines a service create request message.
 -->
 <!-- 
 	Copyright 2016 Emory University. All rights reserved.
@@ -12,5 +12,5 @@
 <!-- Include resources (elements) shared by all messages -->
 <!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
 %RESOURCES;
-<!ELEMENT com.amazon.aws.CloudFormation.Stack.Generate (ControlAreaRequest, DataArea)>
-<!ELEMENT DataArea (StackRequisition)>
+<!ELEMENT com.amazon.aws.Services.Service.Create (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (Service)>

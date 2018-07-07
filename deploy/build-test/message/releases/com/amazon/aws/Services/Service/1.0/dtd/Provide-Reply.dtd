@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited by Tom Cervenka (Emory University) -->
-<!-- Defines a response to a query message.
+<!-- Defines a message that provides service objects.
 -->
 <!-- 
 	Copyright 2018 Emory University. All rights reserved.

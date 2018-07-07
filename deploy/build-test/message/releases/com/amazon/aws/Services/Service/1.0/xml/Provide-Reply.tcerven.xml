@@ -2,7 +2,8 @@
 <!-- edited by Tom Cervenka (Emory University) -->
 <!DOCTYPE com.amazon.aws.Services.Service.Provide SYSTEM "../dtd/Provide-Reply.dtd">
 <com.amazon.aws.Services.Service.Provide>
-	<ControlAreaReply messageCategory="com.amazon.aws.Services" messageObject="Service" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+	<ControlAreaReply messageCategory="com.amazon.aws.Services" messageObject="Service"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
 		<Sender>
 			<MessageId>
 				<SenderAppId>TestSuiteApplication</SenderAppId>
@@ -34,15 +35,24 @@
 	<DataArea>
 		<Service>
 			<ServiceId>EC2</ServiceId>
-			<ServiceCode>EC2</ServiceCode>
-			<ServiceName>Elastic Compute Cloud</ServiceName>
+			<AwsServiceCode>EC2</AwsServiceCode>
+			<AwsServiceName>Elastic Compute Cloud</AwsServiceName>
 			<Status>Fully Available</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/ec2/</ServiceLandingPageUrl>
-			<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud.</Description>
+			<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides
+				secure, resizable compute capacity in the cloud.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>VerificationDate</Key><Value>12/13/2016</Value></Tag>
-			<Tag><Key>Verifier</Key><Value>Steve Wheat</Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>VerificationDate</Key>
+				<Value>12/13/2016</Value>
+			</Tag>
+			<Tag>
+				<Key>Verifier</Key>
+				<Value>Steve Wheat</Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -54,18 +64,23 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>ECR</ServiceId>
-			<ServiceCode>ECR</ServiceCode>
-			<ServiceName>Elastic Container Registry</ServiceName>
+			<AwsServiceCode>ECR</AwsServiceCode>
+			<AwsServiceName>Elastic Container Registry</AwsServiceName>
 			<Status>Blocked</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/ecr</ServiceLandingPageUrl>
-			<Description>Amazon Elastic Container Registry (ECR) is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. </Description>
+			<Description>Amazon Elastic Container Registry (ECR) is a fully-managed Docker container
+				registry that makes it easy for developers to store, manage, and deploy Docker
+				container images. </Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			
-			
-			<HippaEligible>false</HippaEligible><CreateUser>testsuite-user</CreateUser>
+
+
+			<AwsHipaaEligible>false</AwsHipaaEligible>
+			<EmoryHipaaEligible>false</EmoryHipaaEligible>
+			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
 				<Month>2</Month>
@@ -76,17 +91,28 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>ECS</ServiceId>
-			<ServiceCode>ECS</ServiceCode>
-			<ServiceName>Elastic Container Service</ServiceName>
+			<AwsServiceCode>ECS</AwsServiceCode>
+			<AwsServiceName>Elastic Container Service</AwsServiceName>
 			<Status>Blocked Pending Review</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/ecs</ServiceLandingPageUrl>
-			<Description>Amazon Elastic Container Service (Amazon ECS) is a highly scalable, high-performance container orchestration service that supports Docker containers and allows you to easily run and scale containerized applications on AWS.</Description>
+			<Description>Amazon Elastic Container Service (Amazon ECS) is a highly scalable,
+				high-performance container orchestration service that supports Docker containers and
+				allows you to easily run and scale containerized applications on AWS.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>01/18/2018</Value></Tag>
-			<Tag><Key>Verifier</Key><Value>Elliot Kendall</Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>01/18/2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Verifier</Key>
+				<Value>Elliot Kendall</Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -98,17 +124,29 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>Lightsail</ServiceId>
-			<ServiceCode>Lightsail</ServiceCode>
-			<ServiceName>Lightsail</ServiceName>
+			<AwsServiceCode>Lightsail</AwsServiceCode>
+			<AwsServiceName>Lightsail</AwsServiceName>
 			<Status>Blocked</Status>
 			<ServiceLandingPageUrl>https://amazonlightsail.com</ServiceLandingPageUrl>
-			<Description>Amazon Lightsail is the easiest way to get started with AWS for developers who just need virtual private servers. </Description>
+			<Description>Amazon Lightsail is the easiest way to get started with AWS for developers
+				who just need virtual private servers. </Description>
 			<Category>Compute</Category>
-			<ConsoleCategory>Compute</ConsoleCategory><HippaEligible>false</HippaEligible><Tag><Key>VerificationDate</Key><Value>03/02/2017</Value></Tag><Tag><Key>Verifier</Key><Value>Kevin Niekerk</Value></Tag>
-			
-			
+			<ConsoleCategory>Compute</ConsoleCategory>
+			<AwsHipaaEligible>false</AwsHipaaEligible>
+			<EmoryHipaaEligible>false</EmoryHipaaEligible>
+			<Tag>
+				<Key>VerificationDate</Key>
+				<Value>03/02/2017</Value>
+			</Tag>
+			<Tag>
+				<Key>Verifier</Key>
+				<Value>Kevin Niekerk</Value>
+			</Tag>
+
+
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -120,17 +158,28 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>VPC</ServiceId>
-			<ServiceCode>VPC</ServiceCode>
-			<ServiceName>Virtual Private Cloud</ServiceName>
+			<AwsServiceCode>VPC</AwsServiceCode>
+			<AwsServiceName>Virtual Private Cloud</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/vpc</ServiceLandingPageUrl>
-			<Description>Amazon Virtual Private Cloud (Amazon VPC) lets you provision a logically isolated section of the Amazon Web Services (AWS) cloud where you can launch AWS resources in a virtual network that you define.</Description>
+			<Description>Amazon Virtual Private Cloud (Amazon VPC) lets you provision a logically
+				isolated section of the Amazon Web Services (AWS) cloud where you can launch AWS
+				resources in a virtual network that you define.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>VerificationDate</Key><Value>03/02/2017</Value></Tag>
-			<Tag><Key>Verifier</Key><Value>system administrator</Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>VerificationDate</Key>
+				<Value>03/02/2017</Value>
+			</Tag>
+			<Tag>
+				<Key>Verifier</Key>
+				<Value>system administrator</Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -142,17 +191,27 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>Batch</ServiceId>
-			<ServiceCode>Batch</ServiceCode>
-			<ServiceName>Batch</ServiceName>
+			<AwsServiceCode>Batch</AwsServiceCode>
+			<AwsServiceName>Batch</AwsServiceName>
 			<Status>Blocked Pending Review</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/batch/</ServiceLandingPageUrl>
-			<Description>AWS Batch enables developers, scientists, and engineers to easily and efficiently run hundreds of thousands of batch computing jobs on AWS.</Description>
+			<Description>AWS Batch enables developers, scientists, and engineers to easily and
+				efficiently run hundreds of thousands of batch computing jobs on AWS.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>false</HippaEligible><Tag><Key>VerificationDate</Key><Value>February 8, 2017</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen</Value></Tag>
+			<AwsHipaaEligible>false</AwsHipaaEligible>
+			<EmoryHipaaEligible>false</EmoryHipaaEligible>
+			<Tag>
+				<Key>VerificationDate</Key>
+				<Value>February 8, 2017</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen</Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -164,17 +223,29 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>EB</ServiceId>
-			<ServiceCode>EB</ServiceCode>
-			<ServiceName>Elastic Beanstalk</ServiceName>
+			<AwsServiceCode>EB</AwsServiceCode>
+			<AwsServiceName>Elastic Beanstalk</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/elasticbeanstalk/</ServiceLandingPageUrl>
-			<Description>AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and services developed with Java, .NET, PHP, Node.js, Python, Ruby, Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.</Description>
+			<Description>AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling
+				web applications and services developed with Java, .NET, PHP, Node.js, Python, Ruby,
+				Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and
+				IIS.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>false</HippaEligible><Tag><Key>LastUpdate</Key><Value>Jan 09, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen</Value></Tag>
+			<AwsHipaaEligible>false</AwsHipaaEligible>
+			<EmoryHipaaEligible>false</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Jan 09, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen</Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -186,17 +257,27 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>Lambda</ServiceId>
-			<ServiceCode>Lambda</ServiceCode>
-			<ServiceName>Lambda</ServiceName>
+			<AwsServiceCode>Lambda</AwsServiceCode>
+			<AwsServiceName>Lambda</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/lambda</ServiceLandingPageUrl>
-			<Description>AWS Lambda lets you run code without provisioning or managing servers.</Description>
+			<Description>AWS Lambda lets you run code without provisioning or managing
+				servers.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>false</HippaEligible><Tag><Key>LastUpdate</Key><Value>Feb 01, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>false</AwsHipaaEligible>
+			<EmoryHipaaEligible>false</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Feb 01, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -208,17 +289,28 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>AutoScaling</ServiceId>
-			<ServiceCode>AutoScaling</ServiceCode>
-			<ServiceName>Auto Scaling</ServiceName>
+			<AwsServiceCode>AutoScaling</AwsServiceCode>
+			<AwsServiceName>Auto Scaling</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/autoscaling/</ServiceLandingPageUrl>
-			<Description>Auto Scaling helps you maintain application availability and allows you to scale your Amazon EC2 capacity up or down automatically according to conditions you define. </Description>
+			<Description>Auto Scaling helps you maintain application availability and allows you to
+				scale your Amazon EC2 capacity up or down automatically according to conditions you
+				define. </Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>Feb 01, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Feb 01, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -230,17 +322,35 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>ELB</ServiceId>
-			<ServiceCode>ELB</ServiceCode>
-			<ServiceName>Elastic Load Balancing</ServiceName>
+			<AwsServiceCode>ELB</AwsServiceCode>
+			<AwsServiceName>Elastic Load Balancing</AwsServiceName>
 			<Status>Available</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/elasticloadbalancing/</ServiceLandingPageUrl>
-			<Description>Elastic Load Balancing automatically distributes incoming application traffic across multiple Amazon EC2 instances.</Description>
+			<Description>Elastic Load Balancing automatically distributes incoming application
+				traffic across multiple Amazon EC2 instances.</Description>
 			<Category>Compute</Category>
 			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>Jan 03, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag><Tag><Key>VerificationDate</Key><Value>01/31/2017</Value></Tag><Tag><Key>Verifier</Key><Value>Mike Lewis</Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Jan 03, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
+			<Tag>
+				<Key>VerificationDate</Key>
+				<Value>01/31/2017</Value>
+			</Tag>
+			<Tag>
+				<Key>Verifier</Key>
+				<Value>Mike Lewis</Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -252,17 +362,28 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>S3</ServiceId>
-			<ServiceCode>S3</ServiceCode>
-			<ServiceName>Simple Storage Service</ServiceName>
+			<AwsServiceCode>S3</AwsServiceCode>
+			<AwsServiceName>Simple Storage Service</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/s3/</ServiceLandingPageUrl>
-			<Description>Amazon Simple Storage Service (Amazon S3) is object storage with a simple web service interface to store and retrieve any amount of data from anywhere on the web. </Description>
+			<Description>Amazon Simple Storage Service (Amazon S3) is object storage with a simple
+				web service interface to store and retrieve any amount of data from anywhere on the
+				web. </Description>
 			<Category>Storage</Category>
 			<ConsoleCategory>Storage</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>Feb 01, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Feb 01, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -274,17 +395,27 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>EBS</ServiceId>
-			<ServiceCode>EBS</ServiceCode>
-			<ServiceName>Elastic Block Storage</ServiceName>
+			<AwsServiceCode>EBS</AwsServiceCode>
+			<AwsServiceName>Elastic Block Storage</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/ebs/</ServiceLandingPageUrl>
-			<Description>Amazon Elastic Block Store (Amazon EBS) provides persistent block storage volumes for use with Amazon EC2 instances in the AWS Cloud.</Description>
+			<Description>Amazon Elastic Block Store (Amazon EBS) provides persistent block storage
+				volumes for use with Amazon EC2 instances in the AWS Cloud.</Description>
 			<Category>Storage</Category>
 			<ConsoleCategory>Storage</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>Feb 01, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Feb 01, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -296,17 +427,27 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>EFS</ServiceId>
-			<ServiceCode>EFS</ServiceCode>
-			<ServiceName>Elastic File System</ServiceName>
+			<AwsServiceCode>EFS</AwsServiceCode>
+			<AwsServiceName>Elastic File System</AwsServiceName>
 			<Status>Blocked</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/efs/</ServiceLandingPageUrl>
-			<Description>Amazon Elastic File System (Amazon EFS) provides simple, scalable file storage for use with Amazon EC2 instances in the AWS Cloud.</Description>
+			<Description>Amazon Elastic File System (Amazon EFS) provides simple, scalable file
+				storage for use with Amazon EC2 instances in the AWS Cloud.</Description>
 			<Category>Storage</Category>
 			<ConsoleCategory>Storage</ConsoleCategory>
-			<HippaEligible>false</HippaEligible><Tag><Key>LastUpdate</Key><Value>Jan 15, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>false</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Jan 15, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -318,17 +459,27 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>Glacier</ServiceId>
-			<ServiceCode>Glacier</ServiceCode>
-			<ServiceName>Glacier</ServiceName>
+			<AwsServiceCode>Glacier</AwsServiceCode>
+			<AwsServiceName>Glacier</AwsServiceName>
 			<Status>Available with Countermeasures</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/glacier/</ServiceLandingPageUrl>
-			<Description>Amazon Glacier is a secure, durable, and extremely low-cost cloud storage service for data archiving and long-term backup.</Description>
+			<Description>Amazon Glacier is a secure, durable, and extremely low-cost cloud storage
+				service for data archiving and long-term backup.</Description>
 			<Category>Storage</Category>
 			<ConsoleCategory>Storage</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>Jan 09, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Jan 09, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>
@@ -340,17 +491,27 @@
 				<SubSecond>148</SubSecond>
 				<Timezone>0:00-GMT</Timezone>
 			</CreateDatetime>
-		</Service><Service>
+		</Service>
+		<Service>
 			<ServiceId>Storage Gateway</ServiceId>
-			<ServiceCode>Storage Gateway</ServiceCode>
-			<ServiceName>Storage Gateway</ServiceName>
+			<AwsServiceCode>Storage Gateway</AwsServiceCode>
+			<AwsServiceName>Storage Gateway</AwsServiceName>
 			<Status>Blocked</Status>
 			<ServiceLandingPageUrl>https://aws.amazon.com/storagegateway/</ServiceLandingPageUrl>
-			<Description>The AWS Storage Gateway service seamlessly enables hybrid cloud storage between on-premises environments and the AWS Cloud.</Description>
+			<Description>The AWS Storage Gateway service seamlessly enables hybrid cloud storage
+				between on-premises environments and the AWS Cloud.</Description>
 			<Category>Storage</Category>
 			<ConsoleCategory>Storage</ConsoleCategory>
-			<HippaEligible>true</HippaEligible><Tag><Key>LastUpdate</Key><Value>Jan 08, 2018</Value></Tag>
-			<Tag><Key>Reviewed by</Key><Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value></Tag>
+			<AwsHipaaEligible>true</AwsHipaaEligible>
+			<EmoryHipaaEligible>true</EmoryHipaaEligible>
+			<Tag>
+				<Key>LastUpdate</Key>
+				<Value>Jan 08, 2018</Value>
+			</Tag>
+			<Tag>
+				<Key>Reviewed by</Key>
+				<Value>Elliot Kendall, Kevin Niekerk, and Paul Petersen </Value>
+			</Tag>
 			<CreateUser>testsuite-user</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>

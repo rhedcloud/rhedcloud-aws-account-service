@@ -8,14 +8,14 @@
 
 <component name="VirtualPrivateCloudRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition">
 <property name="AccountId" column="ACCOUNT_ID"/>
-<property name="TicketId" column="TICKET_ID"/>
-<property name="AuthenticatedRequestorNetId" column="AUTHENTICATED_REQUESTOR_NET_ID"/>
-<property name="AccountOwnerNetId" column="ACCOUNT_OWNER_NET_ID"/>
+<property name="RequestId" column="REQUEST_ID"/>
+<property name="AuthenticatedRequestorUserId" column="AUTHENTICATED_REQUESTOR_USER_ID"/>
+<property name="AccountOwnerUserId" column="ACCOUNT_OWNER_USER_ID"/>
 <property name="FinancialAccountNumber" column="FINANCIAL_ACCOUNT_NUMBER"/>
 <!--TODO: automation-->
-<bag name="CustomerAdminNetId" table="VRTL_PRVT_CLD_PRVSNNG_CSTDMND_" >
+<bag name="CustomerAdminUserId" table="VRTL_PRVT_CLD_PRVSNNG_CSTDMND_" >
 <key column="PROVISIONING_ID" unique="false"/>
-<element type="string" column="CUSTOMER_ADMIN_NET_ID" />
+<element type="string" column="CUSTOMER_ADMIN_USER_ID" />
 </bag>
 
 <property name="Type" column="TYPE_"/>

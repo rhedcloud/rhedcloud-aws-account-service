@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazom.aws.User.TermsOfUseAgreement.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<com.amazom.aws.User.TermsOfUseAgreement.Delete>
+	<ControlAreaSync messageCategory="com.amazom.aws.User" messageObject="TermsOfUseAgreement"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AwsAccountService</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>7</Month>
+			<Day>11</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>America/New_York</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<TermsOfUseAgreement>
+				<TermsOfUseAgreementId>1</TermsOfUseAgreementId>
+				<TermsOfUseId>1</TermsOfUseId>
+				<UserId>1</UserId>
+				<CreateUser>P0934572</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>7</Month>
+					<Day>1</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</TermsOfUseAgreement>
+		</DeleteData>
+	</DataArea>
+</com.amazom.aws.User.TermsOfUseAgreement.Delete>

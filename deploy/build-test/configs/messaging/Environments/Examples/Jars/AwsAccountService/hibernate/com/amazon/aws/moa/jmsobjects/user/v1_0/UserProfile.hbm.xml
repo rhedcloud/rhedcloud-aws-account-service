@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.user.v1_0">
+<class name="UserProfile" table="USER_PROFILE">
+<id name="UserId" column="USER_ID">
+<generator class="assigned"/>
+</id>
+<bag name="Property" table="USER_PROFILE_PROPERTY">
+<key column="USER_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
+<property name="Key" column="KEY_"/>
+<property name="Value" column="VALUE"/>
+</composite-element>
+</bag>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+<property name="LastLoginDatetime" type="OpenEaiDatetime" column="LAST_LOGIN_DATETIME"/>
+</class>
+</hibernate-mapping>

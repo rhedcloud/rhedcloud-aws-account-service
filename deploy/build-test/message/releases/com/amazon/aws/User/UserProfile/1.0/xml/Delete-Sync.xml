@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.User.UserProfile.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<com.amazon.aws.User.UserProfile.Delete>
+	<ControlAreaSync messageCategory="com.amazon.aws.User" messageObject="UserProfile"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AwsAccountService</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<UserProfile>
+				<UserId>P0934572</UserId>
+				<Property>
+					<Key>sendNotificationEmails</Key>
+					<Value>true</Value>
+				</Property>
+				<CreateUser>P0934572</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</CreateDatetime>
+				<LastUpdateDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>48</Minute>
+					<Second>21</Second>
+					<SubSecond>458</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LastUpdateDatetime>
+				<LastLoginDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LastLoginDatetime>
+			</UserProfile>
+		</DeleteData>
+	</DataArea>
+</com.amazon.aws.User.UserProfile.Delete>

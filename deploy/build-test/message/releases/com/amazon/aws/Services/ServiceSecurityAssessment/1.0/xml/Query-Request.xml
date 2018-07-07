@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE com.amazon.aws.CloudFormation.Stack.Query SYSTEM "../dtd/Query-Request.dtd">
-<com.amazon.aws.CloudFormation.Stack.Query>
-	<ControlAreaRequest messageCategory="com.amazon.aws.CloudFormation" messageObject="Stack"
-		messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+<!DOCTYPE com.amazon.aws.Services.ServiceSecurityAssessment.Query SYSTEM "../dtd/Query-Request.dtd">
+<com.amazon.aws.Services.ServiceSecurityAssessment.Query>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Services"
+		messageObject="ServiceSecurityAssessment" messageAction="Query" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>
-				<SenderAppId>TestSuiteApplication</SenderAppId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
 				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
 				<MessageSeq>1024</MessageSeq>
 			</MessageId>
@@ -23,13 +24,12 @@
 			<SubSecond>456</SubSecond>
 			<Timezone>6:00-GMT</Timezone>
 		</Datetime>
-		<ExpectedReplyFormat messageCategory="com.amazon.aws.CloudFormation" messageObject="Stack"
+		<ExpectedReplyFormat messageCategory="com.amazon.aws.Services" messageObject="ServiceSecurityAssessment"
 			messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
 	</ControlAreaRequest>
 	<DataArea>
-		<StackQuerySpecification>
-			<AccountId>123456789123</AccountId>
-			<StackName>MOBILEHUB-2110621634-Development</StackName>
-		</StackQuerySpecification>
+		<ServiceSecurityAssessmentQuerySpecification>
+			<ServiceId>1</ServiceId>
+		</ServiceSecurityAssessmentQuerySpecification>
 	</DataArea>
-</com.amazon.aws.CloudFormation.Stack.Query>
+</com.amazon.aws.Services.ServiceSecurityAssessment.Query>

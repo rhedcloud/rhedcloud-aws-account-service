@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.User.UserProfile.Update SYSTEM "../dtd/Update-Request.dtd">
+<com.amazon.aws.User.UserProfile.Update>
+	<ControlAreaRequest messageCategory="com.amazon.aws.User" messageObject="UserProfile"
+		messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>5b9c7fb5-5f7a-4141-aee0-b5e21ef2b89d</ProducerId>
+				<MessageSeq>22</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>6</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<UserProfile>
+				<UserId>P0934572</UserId>
+				<Property>
+					<Key>sendNotificationEmails</Key>
+					<Value>true</Value>
+				</Property>
+				<CreateUser>P0934572</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</CreateDatetime>
+				<LastUpdateDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>48</Minute>
+					<Second>21</Second>
+					<SubSecond>458</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LastUpdateDatetime>
+				<LastLoginDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LastLoginDatetime>
+			</UserProfile>
+		</NewData>
+		<BaselineData>
+			<UserProfile>
+				<UserId>P0934572</UserId>
+				<CreateUser>P0934572</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</CreateDatetime>
+				<LastLoginDatetime>
+					<Year>2018</Year>
+					<Month>6</Month>
+					<Day>17</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</LastLoginDatetime>
+			</UserProfile>
+		</BaselineData>
+	</DataArea>
+</com.amazon.aws.User.UserProfile.Update>
