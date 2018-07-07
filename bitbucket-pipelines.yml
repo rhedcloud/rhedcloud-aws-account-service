@@ -170,12 +170,12 @@ pipelines:
         - tar xvzf apache-tomcat-8.0.50.tar.gz
         - cp -R configs  apache-tomcat-8.0.50/bin
         - cp -R message  apache-tomcat-8.0.50/bin
-        #- cp -R eos  apache-tomcat-8.0.52/bin
+        #- cp -R eos  apache-tomcat-8.0.50/bin
         - cd ../..
         - ls deploy
         - jar tf deploy/build-test/libs/Axis2/axis2.war
         - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
-        - cd deploy/build-test/apache-tomcat-8.0.52/bin
+        - cd deploy/build-test/apache-tomcat-8.0.50/bin
         - export CATALINA_HOME=..
         - chmod 755 *.sh
         - ./startup.sh
