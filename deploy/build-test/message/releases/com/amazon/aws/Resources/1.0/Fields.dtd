@@ -29,6 +29,7 @@
 <!ELEMENT AccountOwnerId %STRDOM;>
 <!ELEMENT AccountOwnerUserId %STRDOM;>
 <!ELEMENT ActualTime %STRDOM;>
+<!ELEMENT AgreedDatetime %DATETIME;>
 <!ELEMENT AlternateServiceName %STRDOM;>
 <!ELEMENT AmazonResourceName %STRDOM;>
 <!ELEMENT AnticipatedTime %STRDOM;>
@@ -86,6 +87,7 @@
 <!ELEMENT PayerAccountId %STRDOM;>
 <!ELEMENT PayerAccountName %STRDOM;>
 <!ELEMENT PayerPONumber %STRDOM;>
+<!ELEMENT PresentedDatetime %DATETIME;>
 <!ELEMENT Priority %STRDOM;>
 <!ELEMENT ProductCode %STRDOM;>
 <!ELEMENT ProductName %STRDOM;>
