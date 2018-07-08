@@ -9,7 +9,7 @@
 </generator>
 </id>
 <property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
-<property name="Description" column="DESCRIPTION"/>
+<property name="Description" column="DESCRIPTION" length="2500"/>
 
 <bag name="ServiceTestStep" cascade="all">
 <key column="ServiceTestId"/>
