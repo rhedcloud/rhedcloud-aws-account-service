@@ -100,4 +100,11 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 			</QueryLanguage>
 		</BillQuerySpecification>
 	</querylanguage>
+	<querylanguage>
+		<ServiceSecurityAssessmentQuerySpecification>
+			<QueryLanguage type="hql" name="byServiceId" value="from ServiceSecurityAssessment where :ServiceId in elements(ServiceId) ">
+				<Parameter name="ServiceId"/>
+			</QueryLanguage>
+		</ServiceSecurityAssessmentQuerySpecification>
+	</querylanguage>
 </querylanguages>
