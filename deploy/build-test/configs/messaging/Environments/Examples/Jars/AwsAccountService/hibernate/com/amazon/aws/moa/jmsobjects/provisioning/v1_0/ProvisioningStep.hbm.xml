@@ -10,7 +10,7 @@
 <property name="ProvisioningId" column="PROVISIONING_ID"/>
 <property name="StepId" column="STEP_ID"/>
 <property name="Type" column="TYPE_"/>
-<property name="Description" column="DESCRIPTION" length="1000"/>
+<property name="Description" column="DESCRIPTION" length="2500"/>
 <property name="Status" column="STATUS"/>
 <property name="StepResult" column="STEP_RESULT"/>
 <property name="ActualTime" column="ACTUAL_TIME"/>
