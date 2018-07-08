@@ -12,4 +12,5 @@
 <!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
 %RESOURCES;
 <!ELEMENT com.amazon.aws.Services.ServiceSecurityAssessment.Create (ControlAreaRequest, DataArea)>
-<!ELEMENT DataArea (ServiceSecurityAssessment)>
+<!ELEMENT DataArea (NewData)>
+<!ELEMENT NewData (ServiceSecurityAssessment)>

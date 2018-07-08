@@ -28,6 +28,7 @@
             messageAction="Response" messageRelease="1.0" messageType="Reply"/>
     </ControlAreaRequest>
     <DataArea>
+        <NewData>
         <ServiceSecurityAssessment>
             <ServiceId>1</ServiceId>
             <Status>complete</Status>
@@ -351,5 +352,6 @@
                 </ServiceTestRequirement>
             </ServiceTestPlan>
         </ServiceSecurityAssessment>
+        </NewData>
     </DataArea>
 </com.amazon.aws.Services.ServiceSecurityAssessment.Create>

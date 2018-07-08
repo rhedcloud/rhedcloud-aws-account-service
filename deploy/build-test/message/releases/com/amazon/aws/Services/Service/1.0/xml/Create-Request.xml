@@ -27,6 +27,7 @@
             messageAction="Response" messageRelease="1.0" messageType="Reply"/>
     </ControlAreaRequest>
     <DataArea>
+        <NewData>
         <Service>
             <ServiceId>1</ServiceId>
             <AwsServiceCode>amazon-elastic-compute-cloud-linux</AwsServiceCode>
@@ -53,5 +54,6 @@
                 <Timezone>0:00-GMT</Timezone>
             </CreateDatetime>
         </Service>
+        </NewData>
     </DataArea>
 </com.amazon.aws.Services.Service.Create>

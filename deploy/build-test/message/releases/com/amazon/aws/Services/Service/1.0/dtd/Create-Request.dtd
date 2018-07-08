@@ -13,4 +13,5 @@
 <!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
 %RESOURCES;
 <!ELEMENT com.amazon.aws.Services.Service.Create (ControlAreaRequest, DataArea)>
-<!ELEMENT DataArea (Service)>
+<!ELEMENT DataArea (NewData)>
+<!ELEMENT NewData (Service)>
