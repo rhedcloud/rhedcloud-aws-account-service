@@ -32,6 +32,17 @@
 				<TermsOfUseAgreementId>1</TermsOfUseAgreementId>
 				<TermsOfUseId>1</TermsOfUseId>
 				<UserId>1</UserId>
+				<Status>presented</Status>
+				<PresentedDatetime>
+					<Year>2018</Year>
+					<Month>1</Month>
+					<Day>11</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>30</Second>
+					<SubSecond>842</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</PresentedDatetime>
 				<CreateUser>P0934572</CreateUser>
 				<CreateDatetime>
 					<Year>2018</Year>

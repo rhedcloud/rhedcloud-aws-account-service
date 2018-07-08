@@ -36,6 +36,7 @@
 			<TermsOfUseAgreementId>1</TermsOfUseAgreementId>
 			<TermsOfUseId>1</TermsOfUseId>
 			<UserId>1</UserId>
+			<Status>presented</Status>
 			<CreateUser>P0934572</CreateUser>
 			<CreateDatetime>
 				<Year>2018</Year>

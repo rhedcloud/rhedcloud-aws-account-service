@@ -7,6 +7,9 @@
 </id>
 <property name="TermsOfUseId" column="TERMS_OF_USE_ID"/>
 <property name="UserId" column="USER_ID"/>
+<property name="Status" column="STATUS"/>
+<property name="PresentedDatetime" type="OpenEaiDatetime" column="PRESENTED_DATETIME"/>
+<property name="AgreedDatetime" type="OpenEaiDatetime" column="AGREED_DATETIME"/>
 <property name="CreateUser" column="CREATE_USER"/>
 <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
