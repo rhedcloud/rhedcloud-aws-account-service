@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.billing.v1_0">
+<class name="Bill" table="BILL">
+<id name="BillId" column="BILL_ID" type="OpenEaiLong" >
+<generator class="OpenEaiSequence">
+<param name="sequence">H_BILLING_SEQ</param>
+</generator>
+</id>
+<property name="PayerAccountId" column="PAYER_ACCOUNT_ID"/>
+<property name="BillDate" type="OpenEaiDate" column="BILL_DATE"/>
+<property name="Type" column="TYPE_"/>
+<bag name="LineItem" table="BILL_LINE_ITEM">
+<key column="BILL_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.LineItem">
+<property name="InvoiceId" column="INVOICE_ID"/>
+<property name="PayerAccountId" column="PAYER_ACCOUNT_ID"/>
+<property name="LinkedAccountId" column="LINKED_ACCOUNT_ID"/>
+<property name="RecordType" column="RECORD_TYPE"/>
+<property name="RecordId" column="RECORD_ID"/>
+<property name="BillingPeriodStartDatetime" type="OpenEaiDatetime" column="BILLING_PERIOD_START_DATETIME"/>
+<property name="BillingPeriodEndDatetime" type="OpenEaiDatetime" column="BILLING_PERIOD_END_DATETIME"/>
+<property name="InvoiceDatetime" type="OpenEaiDatetime" column="INVOICE_DATETIME"/>
+<property name="PayerAccountName" column="PAYER_ACCOUNT_NAME"/>
+<property name="LinkedAccountName" column="LINKED_ACCOUNT_NAME"/>
+<property name="TaxationAddress" column="TAXATION_ADDRESS"/>
+<property name="PayerPONumber" column="PAYER_PONUMBER"/>
+<property name="ProductCode" column="PRODUCT_CODE"/>
+<property name="ProductName" column="PRODUCT_NAME"/>
+<property name="SellerOfRecord" column="SELLER_OF_RECORD"/>
+<property name="UsageType" column="USAGE_TYPE"/>
+<property name="Operation" column="OPERATION"/>
+<property name="RateId" column="RATE_ID"/>
+<property name="ItemDescription" column="ITEM_DESCRIPTION"/>
+<property name="UsageStartDatetime" type="OpenEaiDatetime" column="USAGE_START_DATETIME"/>
+<property name="UsageEndDatetime" type="OpenEaiDatetime" column="USAGE_END_DATETIME"/>
+<property name="UsageQuantity" column="USAGE_QUANTITY"/>
+<property name="BlendedRate" column="BLENDED_RATE"/>
+<property name="CurrencyCode" column="CURRENCY_CODE"/>
+<property name="CostBeforeTax" column="COST_BEFORE_TAX"/>
+<property name="Credits" column="CREDITS"/>
+<property name="TaxAmount" column="TAX_AMOUNT"/>
+<property name="TaxType" column="TAX_TYPE"/>
+<property name="TotalCost" column="TOTAL_COST"/>
+</composite-element>
+</bag>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+
+<sql-query name="findBillsByDates">
+<return alias="Bill" class="Bill"/>
+<![CDATA[
+		select * from bill  where  bill_date between to_date(:StartDate,'YYYY-MM-DD') and  to_date(:EndDate,'YYYY-MM-DD')
+        ]]>
+</sql-query>
+<sql-query name="findBillsByLinkedAccountId">
+<return alias="Bill" class="Bill"/>
+<![CDATA[
+		select * from bill b left join bill_line_item l on b.bill_id = l.bill_id
+where l.linked_account_id = :LinkedAccountId
+        ]]>
+</sql-query>
+</hibernate-mapping>

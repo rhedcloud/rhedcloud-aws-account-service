@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.provisioning.v1_0">
+<class name="AccountNotification" table="ACCOUNT_NOTIFICATION">
+<id name="AccountNotificationId" column="ACCOUNT_NOTIFICATION_ID" type="OpenEaiLong">
+<generator class="OpenEaiSequence">
+<param name="sequence">H_ACCOUNT_NOTIFICATION_SEQ</param>
+</generator>
+</id>
+<property name="AccountId" column="ACCOUNT_ID"/>
+<property name="Type" column="TYPE_"/>
+<property name="Priority" column="PRIORITY"/>
+<property name="Subject" column="SUBJECT"/>
+<property name="Text" length="2000" column="TEXT"/>
+<property name="ReferenceId" column="REFERENCE_ID"/>
+<bag name="Annotation" table="ACCOUNT_NOTIF_ANNOTATION">
+<key column="ACCOUNT_NOTIFICATION_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Annotation">
+<property name="Text" column="TEXT"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</composite-element>
+</bag>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>

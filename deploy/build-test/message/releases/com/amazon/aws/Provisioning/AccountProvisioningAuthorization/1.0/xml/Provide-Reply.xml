@@ -34,7 +34,7 @@
 	</ControlAreaReply>
 	<DataArea>
 		<AccountProvisioningAuthorization>
-			<NetId>swheat</NetId>
+			<UserId>swheat</UserId>
 			<IsAuthorized>true</IsAuthorized>
 			<AuthorizedUserDescription>Presently, Emory faculty and staff are allowed to provision
 				AWS accounts using the following evaluation...</AuthorizedUserDescription>

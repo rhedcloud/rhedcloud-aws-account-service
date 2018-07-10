@@ -22,7 +22,8 @@ pipelines:
         script:
         - cat /etc/issue         # echo out the linux the image using
         - source $HOME/.profile  # source the profile to setup env variables
-        - mvn -B verify          # -B batch mode makes Maven less verbose
+        - cp lib/*.jar deploy/build-test/libs/AwsAccountService  #copy build libraries to build-test
+        - mvn -X verify          # -B batch mode makes Maven less verbose
         - ls target/*
         artifacts:
         - target/**              # preserve the build artifacts for the next step
@@ -49,10 +50,13 @@ pipelines:
         #- ./start.sh AwsAccountServiceTestSuite
         #- sleep 20
         #- tail -1000 logs/TestSuiteApplication-AwsAccountService.log
+        artifacts:
+        - deploy/**     # preserve the deploy artifacts for the next step
 
      - step:
         name: Generate web service facade
         script:
+        - ls deploy/build-test/libs/AwsAccountService
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/openeai-servicegen.git # import service generation deps
         - source $HOME/.profile                                                           # source the profile to setup env variable
         - export BUILD_HOME=`pwd`
@@ -169,16 +173,16 @@ pipelines:
         - source $HOME/.profile
         - cd deploy/build-test
         - export BUILD_HOME=`pwd`
-        - wget http://mirrors.ibiblio.org/apache/tomcat/tomcat-8/v8.0.52/bin/apache-tomcat-8.0.52.tar.gz
-        - tar xvzf apache-tomcat-8.0.52.tar.gz
-        - cp -R configs  apache-tomcat-8.0.52/bin
-        - cp -R message  apache-tomcat-8.0.52/bin
-        #- cp -R eos  apache-tomcat-8.0.52/bin
+        - wget  https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.50/bin/apache-tomcat-8.0.50.tar.gz
+        - tar xvzf apache-tomcat-8.0.50.tar.gz
+        - cp -R configs  apache-tomcat-8.0.50/bin
+        - cp -R message  apache-tomcat-8.0.50/bin
+        #- cp -R eos  apache-tomcat-8.0.50/bin
         - cd ../..
         - ls deploy
         - jar tf deploy/build-test/libs/Axis2/axis2.war
-        - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.52/webapps
-        - cd deploy/build-test/apache-tomcat-8.0.52/bin
+        - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
+        - cd deploy/build-test/apache-tomcat-8.0.50/bin
         - export CATALINA_HOME=..
         - chmod 755 *.sh
         - ./startup.sh
