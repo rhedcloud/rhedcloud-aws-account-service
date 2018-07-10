@@ -29,7 +29,7 @@
 	</ControlAreaRequest>
 	<DataArea>
 		<AccountProvisioningAuthorizationQuerySpecification>
-			<NetId>swheat</NetId>
+			<UserId>swheat</UserId>
 		</AccountProvisioningAuthorizationQuerySpecification>
 	</DataArea>
 </com.amazon.aws.Provisioning.AccountProvisioningAuthorization.Query>

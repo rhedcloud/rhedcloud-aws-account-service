@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Services.Service.Update SYSTEM "../dtd/Update-Sync.dtd">
+<com.amazon.aws.Services.Service.Update>
+	<ControlAreaSync messageCategory="com.amazon.aws.Services" messageObject="Service"
+		messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>9c6ce634-5a4b-4959-be67-52ef3e82847f </ProducerId>
+				<MessageSeq>324</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteApp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>6</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<Service>
+				<ServiceId>1</ServiceId>
+				<AwsServiceCode>amazon-elastic-compute-cloud-linux</AwsServiceCode>
+				<AwsServiceName>Elastic Compute Cloud (EC2 - Linux)</AwsServiceName>
+				<AlternateServiceName>EC2</AlternateServiceName>
+				<CombinedServiceName>Elastic Compute Cloud (EC2)</CombinedServiceName>
+				<Status>available with countermeasures</Status>
+				<ServiceLandingPageUrl>https://aws.amazon.com/ec2/</ServiceLandingPageUrl>
+				<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that
+					provides secure, resizable compute capacity in the cloud. Updated.</Description>
+				<Category>compute</Category>
+				<ConsoleCategory>compute</ConsoleCategory>
+				<AwsHipaaEligible>true</AwsHipaaEligible>
+				<EmoryHipaaEligible>true</EmoryHipaaEligible>
+				<CreateUser>testsuite-user</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>2</Month>
+					<Day>7</Day>
+					<Hour>17</Hour>
+					<Minute>11</Minute>
+					<Second>22</Second>
+					<SubSecond>148</SubSecond>
+					<Timezone>0:00-GMT</Timezone>
+				</CreateDatetime>
+			</Service>
+		</NewData>
+		<BaselineData>
+			<Service>
+				<ServiceId>1</ServiceId>
+				<AwsServiceCode>amazon-elastic-compute-cloud-linux</AwsServiceCode>
+				<AwsServiceName>Elastic Compute Cloud (EC2 - Linux)</AwsServiceName>
+				<AlternateServiceName>EC2</AlternateServiceName>
+				<CombinedServiceName>Elastic Compute Cloud (EC2)</CombinedServiceName>
+				<Status>available with countermeasures</Status>
+				<ServiceLandingPageUrl>https://aws.amazon.com/ec2/</ServiceLandingPageUrl>
+				<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that
+					provides secure, resizable compute capacity in the cloud. </Description>
+				<Category>compute</Category>
+				<ConsoleCategory>compute</ConsoleCategory>
+				<AwsHipaaEligible>true</AwsHipaaEligible>
+				<EmoryHipaaEligible>true</EmoryHipaaEligible>
+				<CreateUser>testsuite-user</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>2</Month>
+					<Day>7</Day>
+					<Hour>17</Hour>
+					<Minute>11</Minute>
+					<Second>22</Second>
+					<SubSecond>148</SubSecond>
+					<Timezone>0:00-GMT</Timezone>
+				</CreateDatetime>
+			</Service>
+		</BaselineData>
+	</DataArea>
+</com.amazon.aws.Services.Service.Update>

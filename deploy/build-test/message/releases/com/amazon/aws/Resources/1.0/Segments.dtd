@@ -36,49 +36,68 @@
 <!-- Elements - Segments
 -->
 <!-- 
-MessageId was defined as an Element in openea/segments.dtd
+MessageId was defined as an Element in openeai/segments.dtd
 -->
-<!ELEMENT Account (AccountId, AccountName, ComplianceClass, SensitiveDataType*, PasswordLocation, EmailAddress+, AccountOwnerNetId?, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT EmailAddress (Type, Email)>
-<!ELEMENT AccountQuerySpecification (Comparison*, QueryLanguage?, AccountId?, AccountName?, EmailAddress?, AccountOwnerNetId?, FinancialAccountNumber?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT Account (AccountId, AccountName, ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountAlias (AccountId, Name)>
 <!ELEMENT AccountAliasQuerySpecification (AccountId)>
+<!ELEMENT AccountNotification (AccountNotificationId?, AccountId, Type, Priority, Subject, Text, ReferenceId?, Annotation*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT AccountNotificationQuerySpecification (Comparison*, QueryLanguage?, AccountNotificationId?, AccountId?, Type?, Priority?)>
 <!ELEMENT AccountOrganizationMembership (AccountId, ParentId)>
 <!ELEMENT AccountOrganizationMembershipQuerySpecification (AccountId)>
-<!ELEMENT AccountProvisioningAuthorization (NetId, IsAuthorized, AuthorizedUserDescription, UnauthorizedReason*)>
-<!ELEMENT AccountProvisioningAuthorizationQuerySpecification (NetId)>
-<!ELEMENT SamlProvider (AccountId, Name, SamlMetadataDocument)>
-<!ELEMENT SamlProviderQuerySpecification (AccountId)>
-<!ELEMENT SensitiveDataTypeAuthorization (IsAuthorized, AuthorizedSensitiveDataTypeDescription, UnauthorizedReason*)>
-<!ELEMENT SensitiveDataTypeAuthorizationQuerySpecification (SensitiveDataType*)>
-<!ELEMENT Stack (StackId, StackName, Description?, StackParameter*, Tag*, Output*, CreateDatetime, Capability*, NotificationOptions?, StackStatus, DisableRollback, StackPolicy?)>
-<!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, StackId?, StackName?)>
-<!ELEMENT StackRequisition (AccountId, Credentials?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
-<!ELEMENT StackParameter (Key, Value)>
+<!ELEMENT AccountProvisioningAuthorization (UserId, IsAuthorized, AuthorizedUserDescription, UnauthorizedReason*)>
+<!ELEMENT AccountProvisioningAuthorizationQuerySpecification (UserId)>
+<!ELEMENT AccountQuerySpecification (Comparison*, QueryLanguage?, AccountId?, AccountName?, EmailAddress?, AccountOwnerId?, FinancialAccountNumber?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT Annotation (Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
+<!-- not sure CountermeasureId needed -->
+<!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId, Status, Description, Verifier?, VerificationDatetime?)>
+<!ELEMENT Credentials (AccessKeyId, SecretKey)>
+<!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
+<!ELEMENT EmailAddress (Type, Email)>
+<!ELEMENT LineItem (InvoiceId, PayerAccountId, LinkedAccountId?, RecordType, RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime, InvoiceDatetime, PayerAccountName, LinkedAccountName?, TaxationAddress, PayerPONumber?, ProductCode, ProductName, SellerOfRecord, UsageType, Operation, RateId, ItemDescription, UsageStartDatetime, UsageEndDatetime, UsageQuantity, BlendedRate?, CurrencyCode, CostBeforeTax, Credits, TaxAmount, TaxType, TotalCost)>
 <!ELEMENT Output (Description, OutputKey, OutputValue)>
 <!ELEMENT Parameters (Key, Value)>
+<!ELEMENT Property (Key, Value)>
+<!ELEMENT ProvisioningStep (ProvisioningStepId?,ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT RemediationResult (Status, Description, Error*)>
+<!ELEMENT SamlProvider (AccountId, Name, SamlMetadataDocument)>
+<!ELEMENT SamlProviderQuerySpecification (AccountId)>
+<!ELEMENT SecurityRisk (SecurityRiskId?, ServiceId, SequenceNumber, ServiceRiskName, RiskLevel, Description, AssessorId, AssessmentDatetime, Countermeasure*)>
+<!ELEMENT SecurityRiskDetection (AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?)>
+<!ELEMENT SensitiveDataTypeAuthorization (IsAuthorized, AuthorizedSensitiveDataTypeDescription, UnauthorizedReason*)>
+<!ELEMENT SensitiveDataTypeAuthorizationQuerySpecification (SensitiveDataType*)>
+
+<!ELEMENT Service (ServiceId?, AwsServiceCode, AwsServiceName, AlternateServiceName?, CombinedServiceName?, Status, ServiceLandingPageUrl, Description?, Category*, ConsoleCategory*, AwsHipaaEligible, EmoryHipaaEligible, Tag*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT ServiceControl (ServiceId?, ServiceControlId, SequenceNumber, ServiceControlName, Description, AssessorId, AssessmentDatetime, Verifier?, VerificationDatetime?)>
+<!ELEMENT ServiceGuideline (ServiceId?, SequenceNumber, ServiceGuidelineName, Description, AssessorId, AssessmentDatetime)>
+<!ELEMENT ServiceQuerySpecification (Comparison*, QueryLanguage?, ServiceId?, ServiceCode?, ServiceName?, Status?, Category*, ConsoleCategory*, AwsHipaaEligible?, EmoryHipaaEligible?, Tag*)>
+
+<!ELEMENT ServiceSecurityAssessment (ServiceSecurityAssessmentId?, ServiceId+, Status, SecurityRisk*, ServiceControl*, ServiceGuideline*, ServiceTestPlan?)>
+<!ELEMENT ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskId?, ServiceId?, RiskLevel?)>
+<!ELEMENT ServiceTest (ServiceTestId?, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpectedResult)>
+<!ELEMENT ServiceTestPlan (ServiceId, ServiceTestRequirement*)>
+<!ELEMENT ServiceTestRequirement (ServiceTestRequirementId?, SequenceNumber, Description, ServiceTest*)>
+<!ELEMENT ServiceTestStep (ServiceTestStepId?, ServiceTestId, SequenceNumber, Description)>
+<!ELEMENT Stack (StackId, StackName, Description?, StackParameter*, Tag*, Output*, CreateDatetime, Capability*, NotificationOptions?, StackStatus, DisableRollback, StackPolicy?)>
+<!ELEMENT StackParameter (Key, Value)>
+<!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, StackId?, StackName?)>
+<!ELEMENT StackRequisition (AccountId, Credentials?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
 <!ELEMENT Tag (Key, Value)>
-<!ELEMENT Credentials (AccessKeyId, SecretKey)>
-<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnProfileId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminNetId?, CreateUser?, LastUpdateUser?)>
-<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, TicketId?, AuthenticatedRequestorNetId, AccountOwnerNetId, FinancialAccountNumber, CustomerAdminNetId+, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>
+<!ELEMENT TermsOfUse (TermsOfUseId?, Revision, EffectiveDate, ExpirationDate?, Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT TermsOfUseAgreement (TermsOfUseAgreementId, TermsOfUseId, UserId, Status, PresentedDatetime, AgreedDatetime?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT TermsOfUseAgreementQuerySpecification (TermsOfUseAgreementId?, TermsOfUseId?, UserId?)>
+<!ELEMENT TermsOfUseQuerySpecification (Comparison*, QueryLanguage?, TermsOfUseId?, Revision?, EffectiveDate?, ExpirationDate?)>
+<!ELEMENT UserAction (UserActionId?, UserId, Action, Description, Detail?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT UserActionQuerySpecification (Comparison*, QueryLanguage?, UserId, Action)>
+<!ELEMENT UserNotification (UserNotificationId?, AccountNotificationId?, UserId, Type?, Priority?, Subject?, Text?, Read, ReadDatetime?, SentToEmailAddress?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT UserNotificationQuerySpecification (Comparison*, QueryLanguage?, UserNotificationId?, AccountNotificationId?, AccountId?, UserId?, Type?, Priority?, Read?)>
+<!ELEMENT UserProfile (UserId, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?, LastLoginDatetime)>
+<!ELEMENT UserProfileQuerySpecification (UserId?, Property*)>
+<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnConnectionProfileId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioning (ProvisioningId, VirtualPrivateCloudRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
-<!ELEMENT ProvisioningStep (ProvisioningStepId?,ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT Property (Key, Value)>
-<!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT LineItem (InvoiceId, PayerAccountId, LinkedAccountId?, RecordType, RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime, InvoiceDatetime, PayerAccountName, LinkedAccountName?, TaxationAddress, PayerPONumber?, ProductCode, ProductName, SellerOfRecord, UsageType, Operation, RateId, ItemDescription, UsageStartDatetime, UsageEndDatetime, UsageQuantity, BlendedRate?, CurrencyCode, CostBeforeTax, Credits, TaxAmount, TaxType, TotalCost)>
-<!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?,BillId?,PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
-<!ELEMENT Service (ServiceId, ServiceCode, ServiceName, Status, ServiceLandingPageUrl, Description?, Category*, ConsoleCategory*, AwsHipaaEligible, EmoryHipaaEligible, Tag*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT ServiceSecurityAssessment (ServiceId, Status, SecurityRisk*, ServiceControl*)>
-<!ELEMENT SecurityRisk (SecurityRiskId, ServiceId, RiskLevel, Description, Countermeasure*)>
-<!ELEMENT Countermeasure (SecurityRiskId, Status, Description, Verifier, VerificationDatetime)>
-<!ELEMENT ServiceControl (ServiceId, Description)>
-<!ELEMENT SecurityRiskDetection (AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
-<!ELEMENT RemediationResult (Status, Description, Error*)>
-<!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?)>
-
-
-
-
+<!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminUserId?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, RequestId?, AuthenticatedRequestorUserId, AccountOwnerUserId, FinancialAccountNumber, CustomerAdminUserId+, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>

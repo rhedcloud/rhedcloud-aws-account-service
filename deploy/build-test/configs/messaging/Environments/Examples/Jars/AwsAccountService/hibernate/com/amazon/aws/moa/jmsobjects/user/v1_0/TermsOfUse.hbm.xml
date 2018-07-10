@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.user.v1_0">
+<class name="TermsOfUse" table="TERMS_OF_USE">
+<id name="TermsOfUseId" column="TERMS_OF_USE_ID">
+<generator class="assigned"/>
+</id>
+<property name="Revision" column="REVISION"/>
+<property name="EffectiveDate" type="OpenEaiDate" column="EFFECTIVE_DATE"/>
+<property name="ExpirationDate" type="OpenEaiDate" column="EXPIRATION_DATE"/>
+<property name="Text" column="TEXT"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (Emory University) -->
-<!-- Defines a stack query message.
+<!-- Defines a security assessment query request.
 -->
 <!-- 
-	Copyright 2016 Emory University. All rights reserved.
+	Copyright 2018 Emory University. All rights reserved.
 -->
 <!--Release History (this information is manually updated when the message is released)
 -->
@@ -12,5 +11,5 @@
 <!-- Include resources (elements) shared by all messages -->
 <!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
 %RESOURCES;
-<!ELEMENT com.amazon.aws.CloudFormation.Stack.Query (ControlAreaRequest, DataArea)>
-<!ELEMENT DataArea (StackQuerySpecification)>
+<!ELEMENT com.amazon.aws.Services.ServiceSecurityAssessment.Query (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (ServiceSecurityAssessmentQuerySpecification)>

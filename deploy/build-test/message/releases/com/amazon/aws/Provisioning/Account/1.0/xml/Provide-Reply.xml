@@ -53,7 +53,7 @@
 				<Type>security</Type>
 				<Email>aws-security@emory.edu</Email>
 			</EmailAddress>
-			<AccountOwnerNetId>swheat</AccountOwnerNetId>
+			<AccountOwnerId>swheat</AccountOwnerId>
 			<FinancialAccountNumber>0000001536</FinancialAccountNumber>
 			<CreateUser>swheat</CreateUser>
 			<CreateDatetime>
