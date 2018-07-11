@@ -17,7 +17,7 @@ pipelines:
   default:
      - step:
         name: Build ESB service
-        caches: 
+        caches:
         - maven
         script:
         - cat /etc/issue         # echo out the linux the image using
@@ -28,7 +28,7 @@ pipelines:
         artifacts:
         - target/**              # preserve the build artifacts for the next step
 
-     - step: 
+     - step:
         name: Deploy and test locally
         script:
         - ls -la
@@ -40,7 +40,7 @@ pipelines:
         - activemq start
         - sleep 5
         #- tail -1000 /opt/activemq/apache-activemq-5.15.2/data/activemq.log
-        #- export OPENEAI_HOME=$HOME/deploy/build-test  
+        #- export OPENEAI_HOME=$HOME/deploy/build-test
         #- cd $OPENEAI_HOME
         #- mkdir -p logs
         #- ./start.sh AwsAccountService
@@ -82,8 +82,9 @@ pipelines:
         - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
         # Create the axis2.war file for build environment
-        - cd $BUILD_HOME/deploy/build-test/libs/Axis2    
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - cd $BUILD_HOME/deploy/build-test/libs/Axis2
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
+        - jar uf axis2.war $BUILD_HOME/.ebextensions
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
         - mkdir -p WEB-INF/classes
@@ -92,13 +93,14 @@ pipelines:
         - cp ../../configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
 
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar   
-        - jar uf axis2.war WEB-INF/lib/*   
-        - jar uf axis2.war WEB-INF/classes   
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
+        - jar uf axis2.war WEB-INF/lib/*
+        - jar uf axis2.war WEB-INF/classes
         - rm -Rf WEB-INF
         # Create the axis2.war file for DEV
-        - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2               
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
+        - jar uf axis2.war $BUILD_HOME/.ebextensions
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
         - mkdir -p WEB-INF/classes
@@ -107,14 +109,15 @@ pipelines:
         - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
         - cp ../../hibernate.cfg.xml WEB-INF/classes
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
-        - jar uf axis2.war WEB-INF/lib/*   
-        - jar uf axis2.war WEB-INF/classes  
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
+        - jar uf axis2.war WEB-INF/lib/*
+        - jar uf axis2.war WEB-INF/classes
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for TEST
-        - cd $BUILD_HOME/deploy/esb-test/libs/Axis2                                    
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
+        - jar uf axis2.war $BUILD_HOME/.ebextensions
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
         - mkdir -p WEB-INF/classes
@@ -123,14 +126,15 @@ pipelines:
         - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
         - cp ../../hibernate.cfg.xml WEB-INF/classes
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
-        - jar uf axis2.war WEB-INF/lib/*   
-        - jar uf axis2.war WEB-INF/classes  
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
+        - jar uf axis2.war WEB-INF/lib/*
+        - jar uf axis2.war WEB-INF/classes
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for STAGE, almost the same as TEST except .aar
-        - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2                              
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
+        - jar uf axis2.war $BUILD_HOME/.ebextensions
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
         - mkdir -p WEB-INF/classes
@@ -139,14 +143,15 @@ pipelines:
         - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
         - cp ../../hibernate.cfg.xml WEB-INF/classes
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
-        - jar uf axis2.war WEB-INF/lib/*   
-        - jar uf axis2.war WEB-INF/classes  
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
+        - jar uf axis2.war WEB-INF/lib/*
+        - jar uf axis2.war WEB-INF/classes
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for PROD
-        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2                              
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war 
+        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
+        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
+        - jar uf axis2.war $BUILD_HOME/.ebextensions
         - mkdir -p WEB-INF/services
         - mkdir -p WEB-INF/lib
         - mkdir -p WEB-INF/classes
@@ -155,18 +160,18 @@ pipelines:
         - cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
         - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
         - cp ../../hibernate.cfg.xml WEB-INF/classes
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar  
-        - jar uf axis2.war WEB-INF/lib/*   
-        - jar uf axis2.war WEB-INF/classes  
+        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
+        - jar uf axis2.war WEB-INF/lib/*
+        - jar uf axis2.war WEB-INF/classes
         - rm -Rf WEB-INF
         - jar tf axis2.war
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
 
-     - step: 
+     - step:
         name: Deploy and test the facade locally
         script:
-        - source $HOME/.profile  
+        - source $HOME/.profile
         - cd deploy/build-test
         - export BUILD_HOME=`pwd`
         - wget  https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.50/bin/apache-tomcat-8.0.50.tar.gz
@@ -191,14 +196,14 @@ pipelines:
         # everything needs to run locally to test: activeMQ, database, sampleMessage and EOs
         #- $BUILD_HOME/tests/post.curl.sh
         #- cat ../logs/catalina.out
-     
-     - step: 
+
+     - step:
         name: Upload build products
         script:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
-        - ls -la        
+        - ls -la
         - zip -r emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
-        - ls -l emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip       
+        - ls -l emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
         # file too large to upload to bitbucket
         #- emory-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
         - emory-aws-pipeline-scripts/upload_artifact_s3.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip itarch-bitbucket-downloads /emory-aws-account-service/
@@ -216,7 +221,7 @@ pipelines:
         #- wget ${WS_URL}?wsdl
         #- cat AwsAccountService?wsdl
         #- deploy/build-test/tests/curl.post.sh ${WS_URL}
-        
+
      - step:
         name: Deploy to test
         deployment: test
@@ -242,4 +247,4 @@ pipelines:
         script:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-prod/libs/Axis2/axis2.war
-        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD     
+        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
