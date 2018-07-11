@@ -82,7 +82,10 @@ pipelines:
         - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
         # Create the htpasswd file for beanstalk.
-        - apt-get install -y apache2-utils
+        - whoami
+        - ls -la $BUILD_HOME/.ebextensions
+        - env
+        - sudo apt-get install -y apache2-utils
         - htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
         - ls -la $BUILD_HOME/.ebextensions
         # Create the axis2.war file for build environment
