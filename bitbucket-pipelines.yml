@@ -83,7 +83,7 @@ pipelines:
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
         # Create the htpasswd file for beanstalk.
         - htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
-        - ls -la $BUILD_HOME/.ebextensions
+        - ls -laR $BUILD_HOME/.ebextensions
         # Create the axis2.war file for build environment
         - cd $BUILD_HOME/deploy/build-test/libs/Axis2
         - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
