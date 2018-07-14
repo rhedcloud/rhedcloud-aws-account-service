@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="com.amazon.aws.moa.objects.resources.v1_0">
+<hibernate-mapping package="edu.emory.moa.jmsobjects.network.v1_0">
 <class name="ProvisioningStep" table="PRVSNNG_STP">
 <id name="ProvisioningStepId" column="PROVISIONING_STEP_ID" type="OpenEaiLong" >
 <generator class="OpenEaiSequence">
