@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.jms.JMSException;
+
 // Log4j
 import org.apache.log4j.Category;
 
@@ -31,7 +33,11 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.PropertyConfig;
+import org.openeai.jms.producer.PointToPointProducer;
+import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
+import org.openeai.moa.EnterpriseObjectCreateException;
+import org.openeai.transport.RequestService;
 import org.openeai.xml.XmlDocumentReader;
 import org.openeai.xml.XmlDocumentReaderException;
 
@@ -51,15 +57,13 @@ import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
  * @author Steve Wheat (swheat@emory.edu)
  *
  */
-public class ExampleUserNotificationProvider extends OpenEaiObject 
+public class EmoryUserNotificationProvider extends OpenEaiObject 
 implements UserNotificationProvider {
 
 	private Category logger = OpenEaiObject.logger;
 	private AppConfig m_appConfig;
-	private long m_userNotificationId = 2646351098L;
-	private HashMap<String, UserNotification> m_userNotificationMap = 
-			new HashMap<String, UserNotification>();
-	private String LOGTAG = "[ExampleUserNotificationProvider] ";
+	private ProducerPool m_awsAccountServiceProducerPool = null;
+	private String LOGTAG = "[EmoryUserNotificationProvider] ";
 	
 	/**
 	 * @see UserNotificationProvider.java
@@ -83,6 +87,23 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg, eoce);
 		}
 		
+		// This provider needs to send messages to the AWS account service
+		// to create UserNotifications.
+		ProducerPool p2p1 = null;
+		try {
+			p2p1 = (ProducerPool)getAppConfig()
+				.getObject("AwsAccountServiceProducerPool");
+			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}	
+		
 		logger.info(LOGTAG + pConfig.getProperties().toString());
 
 		logger.info(LOGTAG + "Initialization complete.");
@@ -96,11 +117,7 @@ implements UserNotificationProvider {
 	public List<String> getUserIdsForAccount(String accountId)
 			throws ProviderException {
 
-		String LOGTAG = "[ExampleUserNotificationProvider.getUserIdsForAccount] ";
-		logger.info(LOGTAG + "Getting UserIds for account: " + accountId);
-		
-		
-	    // If the AccountId is null, throw an exception.
+		// If the AccountId is null, throw an exception.
 		if (accountId == null || accountId.equals("")) {
 			String errMsg = "The accountId is null.";
 			throw new ProviderException(errMsg);
@@ -132,10 +149,8 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg, ecoe);
 		}
 
-		// Set the values of the UserNotification.	
-		String userNotificationId = Long.toString(incrementUserNotificationId());
+		// Set the values of the UserNotification.
 		try {
-			uNotification.setUserNotificationId(userNotificationId);
 			uNotification.setAccountNotificationId(aNotification.getAccountNotificationId());
 			uNotification.setUserId(userId);
 			uNotification.setRead("false");
@@ -150,16 +165,52 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg, efe);
 		}
 		
-		// Add the UserNotification to the map.
-		m_userNotificationMap.put(userNotificationId, uNotification);
-
+		// Create the UserNotification in the AWS Account Service.
+		// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Create the UserNotification object.
+		try {
+			long startTime = System.currentTimeMillis();
+			uNotification.create(rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Created UserNotification " +
+				"object in " + time + " ms.");
+		}
+		catch (EnterpriseObjectCreateException eoce) {
+			String errMsg = "An error occurred creating the " +
+					"UserNotification object The exception is: " + 
+					eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+		}
+		
 		// Return the object.
 		return uNotification;
 	}
-
 	
-	private synchronized long incrementUserNotificationId() {
-		return m_userNotificationId++;
+	private AppConfig getAppConfig() {
+		return m_appConfig;
+	}
+	
+	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+		m_awsAccountServiceProducerPool = pool;
+	}
+	
+	private ProducerPool getAwsAccountServiceProducerPool() {
+		return m_awsAccountServiceProducerPool;
 	}
 
 }
