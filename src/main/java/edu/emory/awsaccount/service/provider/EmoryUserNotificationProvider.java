@@ -155,6 +155,8 @@ implements UserNotificationProvider {
 		// Set the values of the UserNotification.
 		try {
 			uNotification.setAccountNotificationId(aNotification.getAccountNotificationId());
+			uNotification.setType(aNotification.getType());
+			uNotification.setPriority(aNotification.getPriority());
 			uNotification.setSubject(aNotification.getSubject());
 			uNotification.setText(aNotification.getText());
 			uNotification.setUserId(userId);
