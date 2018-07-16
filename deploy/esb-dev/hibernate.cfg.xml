@@ -22,6 +22,8 @@
 <property name="hibernate.show_sql">true</property>
 <property name="hibernate.hbm2ddl.auto">validate</property>
 <mapping resource="OpenEai.hbm.xml"/>
+<mapping resource="DbLock.hbm.xml"/>
+<mapping resource="DbSequence.hbm.xml"/>
 
 <mapping resource="com/amazon/aws/moa/jmsobjects/billing/v1_0/Bill.hbm.xml"/>
 
