@@ -128,6 +128,9 @@ implements UserNotificationProvider {
 		List<String> userIds = Arrays.asList(strUserIds.split("\\s*,\\s*"));
 		return userIds;
 		
+		// TODO: Query the AWS Account Service for all users associated with this account.
+		// Build a list of UserIds and return it.
+		
 	}
 
 	/**
@@ -152,6 +155,8 @@ implements UserNotificationProvider {
 		// Set the values of the UserNotification.
 		try {
 			uNotification.setAccountNotificationId(aNotification.getAccountNotificationId());
+			uNotification.setSubject(aNotification.getSubject());
+			uNotification.setText(aNotification.getText());
 			uNotification.setUserId(userId);
 			uNotification.setRead("false");
 			uNotification.setCreateUser("AwsAccountService");
