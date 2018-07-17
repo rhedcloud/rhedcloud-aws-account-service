@@ -24,7 +24,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
 
-
 /**
  * Interface for all AccountAlias object providers.
  * <P>
@@ -32,6 +31,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 12 July 2018
  */
+
 public interface AccountAliasProvider {
     /**
      * 
@@ -49,33 +49,36 @@ public interface AccountAliasProvider {
      * 
      * <P>
      * 
-     * @param AccountAliasQuerySpecficiation, the query parameter.
+     * @param AccountAliasQuerySpecficiation,
+     *            the query parameter.
      * @return List, a list of matching AccountAlias objects.
      *         <P>
      * @throws ProviderException
      *             with details of the providing the list.
      */
-    public List<AccountAlias> query(AccountAliasQuerySpecification querySpec) 
-    	throws ProviderException;  
+    public List<AccountAlias> query(AccountAliasQuerySpecification querySpec) throws ProviderException;
 
     /**
      * 
      * <P>
      * 
-     * @param AccountAlias, the object to create.
-     *         <P>
-     * @throws ProviderException with details of the error generating the object.
+     * @param AccountAlias,
+     *            the object to create.
+     *            <P>
+     * @throws ProviderException
+     *             with details of the error generating the object.
      */
-    public void create(AccountAlias alias) 
-    	throws ProviderException;
-    
+    public void create(AccountAlias alias) throws ProviderException;
+
     /**
      * 
      * <P>
      * 
-     * @param Stack, the object to delete.
+     * @param Stack,
+     *            the object to delete.
      *            <P>
-     * @throws ProviderException with details of the error deleting the stack.
+     * @throws ProviderException
+     *             with details of the error deleting the stack.
      */
     public void delete(AccountAlias alias) throws ProviderException;
 
