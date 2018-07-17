@@ -18,16 +18,31 @@
 <property name="hibernate.c3p0.acquireRetryDelay">250</property>
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
-<property name="hibernate.show_sql">false</property>
+<property name="hibernate.show_sql">true</property>
+<property name="hibernate.show_sql">true</property>
 <property name="hibernate.hbm2ddl.auto">create</property>
 <mapping resource="OpenEai.hbm.xml"/>
+<mapping resource="DbLock.hbm.xml"/>
+<mapping resource="DbSequence.hbm.xml"/>
+
 <mapping resource="com/amazon/aws/moa/jmsobjects/billing/v1_0/Bill.hbm.xml"/>
+
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/Account.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/VirtualPrivateCloud.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/VirtualPrivateCloudProvisioning.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/ProvisioningStep.hbm.xml"/>
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountAlias.hbm.xml"/>
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountOrganizationMembership.hbm.xml"/>
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/SamlProvider.hbm.xml"/>
+
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/Service.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceSecurityAssessment.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/SecurityRisk.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTestRequirement.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTest.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTestStep.hbm.xml"/>
+
+<mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/TermsOfUse.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/TermsOfUseAgreement.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserNotification.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserProfile.hbm.xml"/>
 </session-factory>
 </hibernate-configuration>
