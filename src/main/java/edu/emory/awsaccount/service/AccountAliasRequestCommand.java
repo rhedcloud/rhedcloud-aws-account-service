@@ -11,55 +11,41 @@
 
 package edu.emory.awsaccount.service;
 
-// Core Java
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-// Java Message Service
 import javax.jms.JMSException;
 import javax.jms.Message;
+//import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
-// Log4j
-import org.apache.log4j.*;
-
-// JDOM
+import org.apache.commons.validator.GenericValidator;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.log4j.PropertyConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
-
 // OpenEAI foundation components
 import org.openeai.config.CommandConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
-import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.LoggerConfig;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.consumer.commands.CommandException;
+import org.openeai.jms.consumer.commands.GenericCrudRequestCommand;
 import org.openeai.jms.consumer.commands.RequestCommand;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.EnterpriseObjectSyncException;
-import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Authentication;
 import org.openeai.moa.objects.testsuite.TestId;
 import org.openeai.transport.SyncService;
 
-import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
-// AWS MOA objects
-import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
-import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 
-// VPC Provider Implementation
-import edu.emory.awsaccount.service.provider.StackProvider;
 import edu.emory.awsaccount.service.provider.AccountAliasProvider;
 import edu.emory.awsaccount.service.provider.ProviderException;
-
-//Apache Commons Validators
-import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
  * This command handles requests for AccountAlias objects. Specifically, it
@@ -71,27 +57,12 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  */
 
 public class AccountAliasRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
-    private static String LOGTAG = "[AccountAliasRequestCommand] ";
-    private static Logger logger = Logger.getLogger(StackRequestCommand.class);
-    private AccountAliasProvider m_provider = null;
-    private ProducerPool m_producerPool = null;
-
-    /**
-     * @param CommandConfig
-     * @throws InstantiationException
-     *             <P>
-     *             This constructor initializes the command using a
-     *             CommandConfig object. It invokes the constructor of the
-     *             ancestor, RequestCommandImpl, and then retrieves one
-     *             PropertyConfig object from AppConfig by name and gets and
-     *             sets the command properties using that PropertyConfig object.
-     *             This means that this command must have one PropertyConfig
-     *             object in its configuration named 'GeneralProperties'. This
-     *             constructor also initializes the response document and
-     *             provide document used in replies.
-     */
+    private static String LOGTAG = "[AwsAccountRequestCommand] ";
+    private AccountAliasProvider m_provider;
+    private ProducerPool m_producerPool;
     public AccountAliasRequestCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
+
         logger.info(LOGTAG + "Initializing " + ReleaseTag.getReleaseInfo());
 
         // Initialize a command-specific logger if it exists.

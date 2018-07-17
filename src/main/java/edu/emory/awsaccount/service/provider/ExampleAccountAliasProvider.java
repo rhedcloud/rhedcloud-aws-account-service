@@ -31,6 +31,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.PropertyConfig;
+import org.openeai.jms.consumer.commands.provider.ExampleCrudProvider;
 import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.xml.XmlDocumentReader;
 import org.openeai.xml.XmlDocumentReaderException;
@@ -38,7 +39,9 @@ import org.openeai.xml.XmlDocumentReaderException;
 //AWS Message Object API (MOA)
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountOrganizationMembership;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountOrganizationMembershipQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
@@ -51,6 +54,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
  * @version 1.0 - 12 July 2018
  *
  */
+
 public class ExampleAccountAliasProvider extends OpenEaiObject implements AccountAliasProvider {
 
     private Category logger = OpenEaiObject.logger;
@@ -143,4 +147,5 @@ public class ExampleAccountAliasProvider extends OpenEaiObject implements Accoun
     private AppConfig getAppConfig() {
         return m_appConfig;
     }
+
 }
