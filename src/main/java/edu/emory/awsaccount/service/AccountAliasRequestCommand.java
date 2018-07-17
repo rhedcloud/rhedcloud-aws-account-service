@@ -62,8 +62,8 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
- * This command handles requests for AccountAlias objects.
- * Specifically, it handles a Query-Request, a Create-Request, 
+ * This command handles requests for AccountAlias objects. Specifically, it
+ * handles a Query-Request, a Create-Request,
  * 
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 12 July 2018
@@ -110,8 +110,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             // An error occurred retrieving a property config from AppConfig.
             // Log it
             // and throw an exception.
-            String errMsg = "An error occurred retrieving a property config from " + "AppConfig. The exception is: "
-                    + ecoe.getMessage();
+            String errMsg = "An error occurred retrieving a property config from " + "AppConfig. The exception is: " + ecoe.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
@@ -119,8 +118,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         // Initialize an AccountAliasProvider
         String className = getProperties().getProperty("accountAliasProviderClassName");
         if (className == null || className.equals("")) {
-            String errMsg = "No accountAliasProviderClassName property "
-                    + "specified. Can't continue.";
+            String errMsg = "No accountAliasProviderClassName property " + "specified. Can't continue.";
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
@@ -135,24 +133,21 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             else
                 logger.info(LOGTAG + "providerClass is not null.");
             provider = (AccountAliasProvider) Class.forName(className).newInstance();
-            logger.info(LOGTAG + "Initializing AccountAliasProvider: "
-                    + provider.getClass().getName());
+            logger.info(LOGTAG + "Initializing AccountAliasProvider: " + provider.getClass().getName());
             provider.init(getAppConfig());
             logger.info(LOGTAG + "AccountAliasProvider initialized.");
             setProvider(provider);
         } catch (ClassNotFoundException cnfe) {
-            String errMsg = "Class named " + className + "not found on the " + "classpath.  The exception is: "
-                    + cnfe.getMessage();
+            String errMsg = "Class named " + className + "not found on the " + "classpath.  The exception is: " + cnfe.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         } catch (IllegalAccessException iae) {
-            String errMsg = "An error occurred getting a class for name: " + className + ". The exception is: "
-                    + iae.getMessage();
+            String errMsg = "An error occurred getting a class for name: " + className + ". The exception is: " + iae.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         } catch (ProviderException pe) {
-            String errMsg = "An error occurred initializing the " + "AccountAliasProvider " + className
-                    + ". The exception is: " + pe.getMessage();
+            String errMsg = "An error occurred initializing the " + "AccountAliasProvider " + className + ". The exception is: "
+                    + pe.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
@@ -162,18 +157,16 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             ProducerPool pool = (ProducerPool) getAppConfig().getObject("SyncPublisher");
             setProducerPool(pool);
         } catch (EnterpriseConfigurationObjectException eoce) {
-            String errMsg = "Error retrieving a ProducerPool object " + "from AppConfig. The exception is: "
-                    + eoce.getMessage();
+            String errMsg = "Error retrieving a ProducerPool object " + "from AppConfig. The exception is: " + eoce.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
-      
+
         // Verify that we have all required objects in the AppConfig.
         // Get a configured AccountAlias from AppConfig.
         AccountAlias alias = new AccountAlias();
         try {
-            alias = (AccountAlias) getAppConfig()
-            	.getObjectByType(alias.getClass().getName());
+            alias = (AccountAlias) getAppConfig().getObjectByType(alias.getClass().getName());
         } catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: " + eoce.getMessage();
             logger.error(LOGTAG + errMsg);
@@ -183,11 +176,9 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         // Get a AccountAliasQuerySpecification from AppConfig.
         AccountAliasQuerySpecification querySpec = new AccountAliasQuerySpecification();
         try {
-            querySpec = (AccountAliasQuerySpecification) getAppConfig()
-            	.getObjectByType(querySpec.getClass().getName());
+            querySpec = (AccountAliasQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
         } catch (EnterpriseConfigurationObjectException eoce) {
-            String errMsg = "Error retrieving an object from AppConfig: " +
-            	"The exception" + "is: " + eoce.getMessage();
+            String errMsg = "Error retrieving an object from AppConfig: " + "The exception" + "is: " + eoce.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
@@ -196,7 +187,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
     }
 
     /**
-     * @param int, the number of the message processed by the consumer
+     * @param int,
+     *            the number of the message processed by the consumer
      * @param Message
      *            , the message for the command to process
      * @throws CommandException
@@ -208,11 +200,11 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
      *             text portion of the message, clears the message body in
      *             preparation for the reply, gets the ControlArea from the XML
      *             document, and verifies that message object of the message is
-     *             a VirtualPrivateCloud and the action is a query,
-     *             generate, update, or delete. Then this method uses the 
-     *             configured StackProvider to perform each
-     *             operation.
+     *             a VirtualPrivateCloud and the action is a query, generate,
+     *             update, or delete. Then this method uses the configured
+     *             StackProvider to perform each operation.
      */
+    @Override
     public final Message execute(int messageNumber, Message aMessage) throws CommandException {
         // Get the execution start time.
         long startTime = System.currentTimeMillis();
@@ -226,8 +218,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         try {
             inDoc = initializeInput(messageNumber, aMessage);
         } catch (Exception e) {
-            String errMsg = "Exception occurred processing input message in "
-                    + "org.openeai.jms.consumer.commands.Command.  Exception: " + e.getMessage();
+            String errMsg = "Exception occurred processing input message in " + "org.openeai.jms.consumer.commands.Command.  Exception: "
+                    + e.getMessage();
             throw new CommandException(errMsg);
         }
 
@@ -259,16 +251,15 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         if (msgObject.equalsIgnoreCase("AccountAlias") == false) {
             String errType = "application";
             String errCode = "OpenEAI-1001";
-            String errDesc = "Unsupported message object: " + msgObject
-                    + ". This command expects 'AccountAlias'.";
+            String errDesc = "Unsupported message object: " + msgObject + ". This command expects 'AccountAlias'.";
             logger.error(LOGTAG + errDesc);
             logger.error(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
             ArrayList errors = new ArrayList();
             errors.add(buildError(errType, errCode, errDesc));
             String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
             return getMessage(msg, replyContents);
-        }    
-        
+        }
+
         // Get the senderApplicationId and the authUserId
         Element eSenderAppId = eControlArea.getChild("Sender").getChild("MessageId").getChild("SenderAppId");
         String senderAppId = eSenderAppId.getValue();
@@ -277,10 +268,10 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         String authUserId = eAuthUserId.getValue();
 
         // Temporary workaround for test suite app
-    	if (authUserId.equalsIgnoreCase("TestSuiteApplication")) {
-    		authUserId = "testsuiteapp@emory.edu/127.0.0.1";
-    	}
-        
+        if (authUserId.equalsIgnoreCase("TestSuiteApplication")) {
+            authUserId = "testsuiteapp@emory.edu/127.0.0.1";
+        }
+
         // Validate the format of the AuthUserId. If the format is invalid,
         // respond with an error.
         if (validateAuthUserId(authUserId) == false) {
@@ -317,8 +308,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
         // Handle a Create-Request.
         if (msgAction.equalsIgnoreCase("Create")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.AccountAlias.Create-Request"
-                    + " message.");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.AccountAlias.Create-Request" + " message.");
             Element eCreateObject = inDoc.getRootElement().getChild("DataArea").getChild("AccountAlias");
 
             // Verify that the object element is not null. If it is
@@ -327,8 +317,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             if (eCreateObject == null) {
                 String errType = "application";
                 String errCode = "OpenEAI-1015";
-                String errDesc = "Invalid element found in the Create-Request "
-                        + "message. This command expects a AccountAlias";
+                String errDesc = "Invalid element found in the Create-Request " + "message. This command expects a AccountAlias";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -347,9 +336,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 // element.
                 String errType = "application";
                 String errCode = "AwsAccountService-2001";
-                String errDesc = "An error occurred building the object from "
-                        + "the DataArea element in the Create-Request message."
-                		+ "The exception " + "is: " + ele.getMessage();
+                String errDesc = "An error occurred building the object from " + "the DataArea element in the Create-Request message."
+                        + "The exception " + "is: " + ele.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -362,10 +350,10 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             logger.info(LOGTAG + "Creating an Stack...");
 
             try {
-            	long generateStartTime = System.currentTimeMillis();
+                long generateStartTime = System.currentTimeMillis();
                 getProvider().create(alias);
                 long generateTime = System.currentTimeMillis() - generateStartTime;
-                logger.info(LOGTAG + "Generate Stack in " + generateTime + " ms." );
+                logger.info(LOGTAG + "Generate Stack in " + generateTime + " ms.");
                 if (eTestId != null)
                     alias.setTestId(testId);
             } catch (Throwable pe) {
@@ -373,8 +361,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 // There was an error generating the identity
                 String errType = "application";
                 String errCode = "AwsAccountService-2003";
-                String errDesc = "An error occurred creating the AccountAlias. The "
-                		+ "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred creating the AccountAlias. The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -384,7 +371,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             }
             logger.info(LOGTAG + "Created AccountAlias: " + alias.toString());
 
-            logger.info(LOGTAG + "Publishing sync... " );
+            logger.info(LOGTAG + "Publishing sync... ");
             // Publish a Create-Sync Message
             try {
                 MessageProducer producer = getProducerPool().getProducer();
@@ -397,26 +384,23 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 alias.createSync((SyncService) producer);
                 logger.info(LOGTAG + "Published AccountAlias.Create-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the AccountAlias.Create-Sync"
-                        + " message after generating a Stack. The " + "exception is: "
-                        + eose.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias.Create-Sync" + " message after generating a Stack. The "
+                        + "exception is: " + eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
                 String errMsg = "An error occurred publishing the AccountAlias.Create-Sync"
-                        + " message after creating the AccountAlias. The " + "exception is: "
-                        + jmse.getMessage();
+                        + " message after creating the AccountAlias. The " + "exception is: " + jmse.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, jmse);
             }
-            
-            logger.info(LOGTAG + "Prepare response... " );          
+
+            logger.info(LOGTAG + "Prepare response... ");
             // Prepare the response.
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
-            	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
-            }
-            else {
-            	localResponseDoc.getRootElement().addContent(new Element("DataArea"));
+                localResponseDoc.getRootElement().getChild("DataArea").removeContent();
+            } else {
+                localResponseDoc.getRootElement().addContent(new Element("DataArea"));
             }
             Element eAccountAlias = null;
             try {
@@ -437,39 +421,33 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
-        
+
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
-            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountAlias."
-                    + "Query-Request message.");
-            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea")
-                    .getChild("AccountAliasQuerySpecification");
+            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountAlias." + "Query-Request message.");
+            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("AccountAliasQuerySpecification");
 
-            // Get a configured query object from AppConfig.            
+            // Get a configured query object from AppConfig.
             AccountAliasQuerySpecification querySpec = new AccountAliasQuerySpecification();
             try {
-                querySpec = (AccountAliasQuerySpecification) getAppConfig().getObjectByType(
-                        querySpec.getClass().getName());
+                querySpec = (AccountAliasQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
             } catch (EnterpriseConfigurationObjectException eoce) {
-                String errMsg = "Error retrieving an object from AppConfig: " +
-                	"The exception" + "is: " + eoce.getMessage();
+                String errMsg = "Error retrieving an object from AppConfig: " + "The exception" + "is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
             }
-            
+
             // If the query object is null, return and error.
             if (eQuerySpec != null) {
-            	try {
+                try {
                     querySpec.buildObjectFromInput(eQuerySpec);
                 } catch (EnterpriseLayoutException ele) {
                     // There was an error building the query object from a query
                     // element.
                     String errType = "application";
                     String errCode = "AwsAccontService-2004";
-                    String errDesc = "An error occurred building the query " 
-                    		+ "object from the DataArea element in the " 
-                    		+ "Query-Request message. The exception " + "is: "
-                            + ele.getMessage();
+                    String errDesc = "An error occurred building the query " + "object from the DataArea element in the "
+                            + "Query-Request message. The exception " + "is: " + ele.getMessage();
                     logger.error(LOGTAG + errDesc);
                     logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                     ArrayList errors = new ArrayList();
@@ -477,38 +455,12 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                     String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                     return getMessage(msg, replyContents);
                 }
-            }
-            else {
+            } else {
                 // The query spec is null.
                 String errType = "application";
                 String errCode = "AwsAccontService-2005";
-                String errDesc = "An error occurred building the query " 
-                		+ "object from the DataArea element in the " 
-                		+ "Query-Request message. The query spec is null.";
-                logger.error(LOGTAG + errDesc);
-                logger.error("Message sent in is: \n" + getMessageBody(inDoc));
-                ArrayList errors = new ArrayList();
-                errors.add(buildError(errType, errCode, errDesc));
-                String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
-                return getMessage(msg, replyContents);  
-            }           
-
-            // Query for the Stack from the provider.
-            logger.info(LOGTAG + "Querying for the AccountAlias...");
-
-            List results = null;
-            try {
-            	long queryStartTime = System.currentTimeMillis();
-                results = getProvider().query(querySpec);
-                long queryTime = System.currentTimeMillis() - queryStartTime;
-                logger.info(LOGTAG + "Queried for AccountAlias in " + queryTime + "ms.");
-            } catch (ProviderException pe) {
-                // There was an error generating the identity
-                String errType = "application";
-                String errCode = "AwsAccountService-2006";
-                String errDesc = "An error occurred querying for the Stack." 
-                		+ "The " + "exception is: "
-                        + pe.getMessage();
+                String errDesc = "An error occurred building the query " + "object from the DataArea element in the "
+                        + "Query-Request message. The query spec is null.";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -516,32 +468,52 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
-            if (results != null) {
-            	logger.info(LOGTAG + "Found " + results.size() + " matching result(s)."); 
+
+            // Query for the Stack from the provider.
+            logger.info(LOGTAG + "Querying for the AccountAlias...");
+
+            List results = null;
+            try {
+                long queryStartTime = System.currentTimeMillis();
+                results = getProvider().query(querySpec);
+                long queryTime = System.currentTimeMillis() - queryStartTime;
+                logger.info(LOGTAG + "Queried for AccountAlias in " + queryTime + "ms.");
+            } catch (ProviderException pe) {
+                // There was an error generating the identity
+                String errType = "application";
+                String errCode = "AwsAccountService-2006";
+                String errDesc = "An error occurred querying for the Stack." + "The " + "exception is: " + pe.getMessage();
+                logger.error(LOGTAG + errDesc);
+                logger.error("Message sent in is: \n" + getMessageBody(inDoc));
+                ArrayList errors = new ArrayList();
+                errors.add(buildError(errType, errCode, errDesc));
+                String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
+                return getMessage(msg, replyContents);
             }
-            else {
-            	logger.info(LOGTAG + "Results are null; no matching AccountAlias found.");
+
+            if (results != null) {
+                logger.info(LOGTAG + "Found " + results.size() + " matching result(s).");
+            } else {
+                logger.info(LOGTAG + "Results are null; no matching AccountAlias found.");
             }
 
             // Prepare the response.
             localProvideDoc.getRootElement().getChild("DataArea").removeContent();
             // If there are results, place them in the response.
             if (results != null && results.size() > 0) {
-            	
+
                 ArrayList accountAliasList = new ArrayList();
                 for (int i = 0; i < results.size(); i++) {
                     Element eAccountAlias = null;
                     try {
-                        alias = (AccountAlias)results.get(i);
+                        alias = (AccountAlias) results.get(i);
                         eAccountAlias = (Element) alias.buildOutputFromObject();
                         accountAliasList.add(eAccountAlias);
                         if (eTestId != null)
                             alias.setTestId(testId);
                     } catch (EnterpriseLayoutException ele) {
-                        String errMsg = "An error occurred serializing "
-                                + "Stack object to an XML element. " 
-                        		+ "The exception is: " + ele.getMessage();
+                        String errMsg = "An error occurred serializing " + "Stack object to an XML element. " + "The exception is: "
+                                + ele.getMessage();
                         logger.error(LOGTAG + errMsg);
                         throw new CommandException(errMsg, ele);
                     }
@@ -553,21 +525,18 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
-              
+
         // Handle a Delete-Request.
         if (msgAction.equalsIgnoreCase("Delete")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
-            	"AccountAlias.Delete-Request message.");
-            Element eAccountAlias = inDoc.getRootElement().getChild("DataArea")
-            	.getChild("DeleteData").getChild("AccountAlias");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." + "AccountAlias.Delete-Request message.");
+            Element eAccountAlias = inDoc.getRootElement().getChild("DataArea").getChild("DeleteData").getChild("AccountAlias");
 
             // Verify that the AccountAlias element is not null. If it is
             // null, reply with an error.
             if (eAccountAlias == null) {
                 String errType = "application";
                 String errCode = "OpenEAI-2015";
-                String errDesc = "Invalid element found in the Delete-Request "
-                        + "message. This command expects an AccountAlias";
+                String errDesc = "Invalid element found in the Delete-Request " + "message. This command expects an AccountAlias";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -575,12 +544,11 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             // Get a configured AccountAlias from AppConfig.
             alias = new AccountAlias();
             try {
-                alias = (AccountAlias) getAppConfig()
-                	.getObjectByType(alias.getClass().getName());
+                alias = (AccountAlias) getAppConfig().getObjectByType(alias.getClass().getName());
             } catch (EnterpriseConfigurationObjectException eoce) {
                 String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
@@ -590,17 +558,16 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             // Now build an AccountAlias object from the element in the message.
             try {
                 alias.buildObjectFromInput(eAccountAlias);
-                if (eTestId != null) testId.buildObjectFromInput(eTestId);
+                if (eTestId != null)
+                    testId.buildObjectFromInput(eTestId);
                 alias.setTestId(testId);
-            } 
-            catch (EnterpriseLayoutException ele) {
+            } catch (EnterpriseLayoutException ele) {
                 // There was an error building the delete object from the
                 // delete element.
                 String errType = "application";
                 String errCode = "AwsAccountService-2007";
-                String errDesc = "An error occurred building the delete object " +
-                		"from the DataArea element in the Delete-Request " +
-                		"message. The exception " + "is: " + ele.getMessage();
+                String errDesc = "An error occurred building the delete object " + "from the DataArea element in the Delete-Request "
+                        + "message. The exception " + "is: " + ele.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -613,17 +580,15 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             logger.info(LOGTAG + "Deleting an AccountAlias...");
 
             try {
-            	long deleteStartTime = System.currentTimeMillis();
-                getProvider().delete(alias); 
+                long deleteStartTime = System.currentTimeMillis();
+                getProvider().delete(alias);
                 long deleteTime = System.currentTimeMillis() - deleteStartTime;
                 logger.info(LOGTAG + "Deleted AccountAlias in " + deleteTime + " ms.");
-            } 
-            catch (ProviderException pe) {
+            } catch (ProviderException pe) {
                 // There was an error deleting the VPC
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred deleting the Stack " +
-                	"The " + "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred deleting the Stack " + "The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -640,26 +605,22 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 alias.deleteSync("delete", (SyncService) producer);
                 logger.info(LOGTAG + "Published AccountAlias.Delete-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the AccountAlias" 
-                        + ".Delete-Sync message after deleting "
-                		+ "the AccountAlias. The " + "exception is: "
-                        + eose.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias" + ".Delete-Sync message after deleting "
+                        + "the AccountAlias. The " + "exception is: " + eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
-            	String errMsg = "An error occurred publishing the AccountAlias" 
-                        + ".Delete-Sync message after deleting "
-                		+ "the AccountAlias. The " + "exception is: "
-                        + jmse.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias" + ".Delete-Sync message after deleting "
+                        + "the AccountAlias. The " + "exception is: " + jmse.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, jmse);
             }
 
             // Remove the DataArea from the primed doc if it exists.
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
-            	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
+                localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply document.
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -672,8 +633,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         }
 
         else {
-            // The messageAction is invalid; it is not a query, generate, 
-        	// create. update, or delete
+            // The messageAction is invalid; it is not a query, generate,
+            // create. update, or delete
             String errType = "application";
             String errCode = "OpenEAI-1002";
             String errDesc = "Unsupported message action: " + msgAction + ". "
@@ -756,7 +717,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
      *         specifically, this is user@domain/ipnumber.
      */
     protected static boolean validateAuthUserId(String authUserId) {
-    	StringTokenizer st = new StringTokenizer(authUserId, "/");
+        StringTokenizer st = new StringTokenizer(authUserId, "/");
 
         // If there are less than two tokens return false.
         if (st.countTokens() < 2) {
