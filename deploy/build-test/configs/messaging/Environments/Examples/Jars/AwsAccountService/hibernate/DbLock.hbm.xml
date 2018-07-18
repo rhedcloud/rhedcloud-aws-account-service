@@ -7,6 +7,6 @@
 </id>
 <property name="KeyValue" column="KEY_VALUE"/>
 <property name="CreateUser" column="CREATE_USER"/>
-<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATE"/>
 </class>
 </hibernate-mapping>
