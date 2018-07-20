@@ -32,9 +32,17 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
+import com.amazonaws.services.identitymanagement.model.AmazonIdentityManagementException;
 import com.amazonaws.services.identitymanagement.model.ListAccountAliasesResult;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
+import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
+import com.amazonaws.services.securitytoken.model.Credentials;
 
 /**
  * An example object provider that maintains an in-memory store of stacks.
@@ -48,7 +56,9 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
 
     private Category logger = OpenEaiObject.logger;
     private AppConfig m_appConfig;
-    private AmazonIdentityManagement m_iam = null;
+    private String m_accessKeyId = null;
+    private String m_secretKey = null;
+    private String m_roleArnPattern = null;
     private String LOGTAG = "[AwsAccountAliasProvider] ";
 
     /**
@@ -65,7 +75,6 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
             pConfig = (PropertyConfig) aConfig.getObject("AccountAliasProviderProperties");
             Properties props = pConfig.getProperties();
             setProperties(props);
-            logger.info(LOGTAG + "Properties: " + getProperties().toString());
         } 
         catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving a PropertyConfig object from " + "AppConfig: The exception is: " + eoce.getMessage();
@@ -75,7 +84,16 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         
         // Get the AWS credentials the provider will use
         String accessKeyId = getProperties().getProperty("accessKeyId");
+        setAccessKeyId(accessKeyId);
         String secretKey = getProperties().getProperty("secretKeyId");
+        setSecretKey(secretKey);
+        String roleArnPattern = getProperties().getProperty("roleArnPattern");
+        if (roleArnPattern == null || roleArnPattern.equals("")) {
+        	String errMsg = "No base roleArnPattern property specified with which to " +
+        		"assume roles in other account. Can't continue.";
+        	throw new ProviderException(errMsg);
+        }
+        setRoleArnPattern(roleArnPattern);
         
         // Instantiate a basic credential provider
         BasicAWSCredentials creds = new BasicAWSCredentials(accessKeyId, secretKey);
@@ -84,10 +102,20 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         
         // Create the IAM client
         AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withCredentials(cp).build();
-        setIamClient(iam);
         
-        // Query for the account alias of the master account to confirm all is working
-        ListAccountAliasesResult result = iam.listAccountAliases();
+        // Query for the account alias of the master account to confirm all is working.
+        
+        ListAccountAliasesResult result = null;
+        try {
+        	iam.listAccountAliases();
+        }
+        catch (AmazonIdentityManagementException aime) {
+        	String errMsg = "An error occured querying for a list of account aliases. " +
+        			"The exception is: " + aime.getMessage();
+        	logger.error(LOGTAG + errMsg);
+        	throw new ProviderException(errMsg, aime);
+        }
+        
         List<String> aliasList = result.getAccountAliases();
         ListIterator it = aliasList.listIterator();
         while (it.hasNext()) {
@@ -105,7 +133,13 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
      */
     @Override
     public List<AccountAlias> query(AccountAliasQuerySpecification querySpec) throws ProviderException {
-
+    	
+    	// If the accountId is null, throw an exception.
+    	if (querySpec.getAccountId() == null || querySpec.getAccountId().equals("")) {
+    		String errMsg = "No accountId provided. AccountAlias query requires an accountId.";
+    		throw new ProviderException(errMsg);
+    	}
+    	
         // Get a configured AccountAlias from AppConfig
         AccountAlias alias = new AccountAlias();
         try {
@@ -116,10 +150,38 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
             throw new ProviderException(errMsg, ecoe);
         }
         
-        // TODO: Assume the appropriate role
+        // Build the roleArn of the role to assume from the base ARN and 
+        // the account number in the query spec.
+        logger.info(LOGTAG + "The account targeted by this request is: " + querySpec.getAccountId());
+        logger.info(LOGTAG + "The roleArnPatter is: " + getRoleArnPattern());
+        String roleArn = getRoleArnPattern().replace("ACCOUNT_NUMBER", querySpec.getAccountId());
+        logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn);
         
+        // Create the STS client
+        // AWSSecurityTokenServiceClient stsClient =  
+        		
+		// Instantiate a basic credential provider
+        BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKeyId(), getSecretKey());
+        AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);      
+        
+        // Create the STS client
+        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withCredentials(cp).build();       
+        
+        // Assume the appropriate role in the appropriate account.
+        AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn).withDurationSeconds(3600);
+
+        AssumeRoleResult assumeResult = sts.assumeRole(assumeRequest);
+        Credentials credentials = assumeResult.getCredentials();
+
+        // Instantiate a credential provider
+        BasicSessionCredentials temporaryCredentials = new BasicSessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(), credentials.getSessionToken());
+        AWSStaticCredentialsProvider credProvider = new AWSStaticCredentialsProvider(temporaryCredentials);
+        
+        // Create the IAM client
+        AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withCredentials(credProvider).build();
+       
         // Query AWS for the AccountAlias
-        ListAccountAliasesResult result = getIamClient().listAccountAliases();
+        ListAccountAliasesResult result = iam.listAccountAliases();
         List<String> aliasList = result.getAccountAliases();
         
         // Add the results to a list.
@@ -183,12 +245,28 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         return m_appConfig;
     }
 
-    private void setIamClient(AmazonIdentityManagement iam) {
-    	m_iam = iam;
+    private void setAccessKeyId(String accessKeyId) {
+    	m_accessKeyId = accessKeyId;
     }
     
-    private AmazonIdentityManagement getIamClient() {
-        return m_iam;
+    private String getAccessKeyId() {
+        return m_accessKeyId;
+    }
+    
+    private void setSecretKey(String secretKey) {
+    	m_secretKey = secretKey;
+    }
+    
+    private String getSecretKey() {
+        return m_secretKey;
+    }
+    
+    private void setRoleArnPattern(String pattern) {
+    	m_roleArnPattern = pattern;
+    }
+    
+    private String getRoleArnPattern() {
+        return m_roleArnPattern;
     }
     
 }
