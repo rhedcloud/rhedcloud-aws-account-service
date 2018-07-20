@@ -182,7 +182,7 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withCredentials(cp).build();       
         
         // Assume the appropriate role in the appropriate account.
-        AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn).withDurationSeconds(3600);
+        AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn).withDurationSeconds(3600).withRoleSessionName("AwsAccountService");
 
         AssumeRoleResult assumeResult = sts.assumeRole(assumeRequest);
         Credentials credentials = assumeResult.getCredentials();
