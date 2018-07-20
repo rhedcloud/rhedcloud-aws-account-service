@@ -57,7 +57,7 @@ import edu.emory.awsaccount.service.provider.ProviderException;
  */
 
 public class AccountAliasRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
-    private static String LOGTAG = "[AwsAccountRequestCommand] ";
+    private static String LOGTAG = "[AwsAccountAliasRequestCommand] ";
     private AccountAliasProvider m_provider;
     private ProducerPool m_producerPool;
     public AccountAliasRequestCommand(CommandConfig cConfig) throws InstantiationException {
