@@ -62,9 +62,9 @@ pipelines:
         - export BUILD_HOME=`pwd`
         - echo version $VERSION_NUMBER build $BITBUCKET_BUILD_NUMBER
         - cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties/awsaccount.properties # copy the servicegen properties to where servicegen needs them
-        - cp deploy/build-test/servicegen-configs/build.custom.properties openeai-servicegen/build.custom.properties # copy the servicegen properties to where servicegen needs them
-        - cp deploy/build-test/servicegen-configs/build.default.properties openeai-servicegen/build.default.properties # copy the servicegen properties to where servicegen needs them
-        - cp deploy/build-test/servicegen-configs/build.webservice.xml openeai-servicegen/build.webservice.xml # copy the servicegen properties to where servicegen needs them
+          #- cp deploy/build-test/servicegen-configs/build.custom.properties openeai-servicegen/build.custom.properties # copy the servicegen properties to where servicegen needs them
+          #- cp deploy/build-test/servicegen-configs/build.default.properties openeai-servicegen/build.default.properties # copy the servicegen properties to where servicegen needs them
+          #- cp deploy/build-test/servicegen-configs/build.webservice.xml openeai-servicegen/build.webservice.xml # copy the servicegen properties to where servicegen needs them
         - cd openeai-servicegen                                                           # change working directory to servicegen home
         - ./gen-webservice awsaccount                                                       # generate the web service facade
         - cat target/awsaccount/emory-awsaccount-webservice/resources/services.xml
