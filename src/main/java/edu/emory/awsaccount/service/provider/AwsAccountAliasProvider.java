@@ -217,7 +217,7 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         	// Set the values of AccountAlias
         	try {
         		a.setAccountId(querySpec.getAccountId());
-        		a.setAppName((String)it.next());
+        		a.setName((String)it.next());
         	}
         	catch (EnterpriseFieldException efe) {
         		String errMsg = "An error occurred setting field values on " +
