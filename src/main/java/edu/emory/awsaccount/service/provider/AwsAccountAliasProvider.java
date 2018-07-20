@@ -84,9 +84,19 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         
         // Get the AWS credentials the provider will use
         String accessKeyId = getProperties().getProperty("accessKeyId");
+        if (accessKeyId == null || accessKeyId.equals("")) {
+        	String errMsg = "No base accessKeyId property specified. Can't continue.";
+        	throw new ProviderException(errMsg);
+        }
         setAccessKeyId(accessKeyId);
-        String secretKey = getProperties().getProperty("secretKeyId");
+        
+        String secretKey = getProperties().getProperty("secretKey");
+        if (accessKeyId == null || accessKeyId.equals("")) {
+        	String errMsg = "No base secretKey property specified. Can't continue.";
+        	throw new ProviderException(errMsg);
+        }
         setSecretKey(secretKey);
+        
         String roleArnPattern = getProperties().getProperty("roleArnPattern");
         if (roleArnPattern == null || roleArnPattern.equals("")) {
         	String errMsg = "No base roleArnPattern property specified with which to " +
@@ -96,18 +106,22 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         setRoleArnPattern(roleArnPattern);
         
         // Instantiate a basic credential provider
+        logger.info(LOGTAG + "Initializing AWS credential provider...");
         BasicAWSCredentials creds = new BasicAWSCredentials(accessKeyId, secretKey);
         AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);
         
-        
         // Create the IAM client
+        logger.info(LOGTAG + "Creating the IAM client...");
         AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withCredentials(cp).build();
         
         // Query for the account alias of the master account to confirm all is working.
-        
         ListAccountAliasesResult result = null;
         try {
-        	iam.listAccountAliases();
+        	logger.info(LOGTAG + "Querying for account aliases...");
+        	long startTime = System.currentTimeMillis();
+        	result = iam.listAccountAliases();
+        	long time = System.currentTimeMillis() - startTime;
+        	logger.info(LOGTAG + "Retrieved account alias list in " + time + " ms.");
         }
         catch (AmazonIdentityManagementException aime) {
         	String errMsg = "An error occured querying for a list of account aliases. " +
