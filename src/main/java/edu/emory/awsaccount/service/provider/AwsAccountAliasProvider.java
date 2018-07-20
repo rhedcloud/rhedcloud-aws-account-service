@@ -65,6 +65,7 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
             pConfig = (PropertyConfig) aConfig.getObject("AccountAliasProviderProperties");
             Properties props = pConfig.getProperties();
             setProperties(props);
+            logger.info(LOGTAG + "Properties: " + getProperties().toString());
         } 
         catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving a PropertyConfig object from " + "AppConfig: The exception is: " + eoce.getMessage();
