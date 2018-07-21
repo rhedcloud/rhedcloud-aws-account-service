@@ -173,7 +173,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
      *             document, and verifies that message object of the message is
      *             a VirtualPrivateCloud and the action is a query, generate,
      *             update, or delete. Then this method uses the configured
-     *             StackProvider to perform each operation.
+     *             AccountAliasProvider to perform each operation.
      */
     @Override
     public final Message execute(int messageNumber, Message aMessage) throws CommandException {
@@ -280,7 +280,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
         // Handle a Create-Request.
         if (msgAction.equalsIgnoreCase("Create")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.AccountAlias.Create-Request" + " message.");
-            Element eCreateObject = inDoc.getRootElement().getChild("DataArea").getChild("AccountAlias");
+            Element eCreateObject = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("AccountAlias");
 
             // Verify that the object element is not null. If it is
             // null, reply
@@ -318,13 +318,13 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
             }
 
             // Create the AccountAlias object using the provider implementation.
-            logger.info(LOGTAG + "Creating an Stack...");
+            logger.info(LOGTAG + "Creating an AccountAlias...");
 
             try {
                 long generateStartTime = System.currentTimeMillis();
                 getProvider().create(alias);
                 long generateTime = System.currentTimeMillis() - generateStartTime;
-                logger.info(LOGTAG + "Generate Stack in " + generateTime + " ms.");
+                logger.info(LOGTAG + "Created AccountAlias in " + generateTime + " ms.");
                 if (eTestId != null)
                     alias.setTestId(testId);
             } catch (Throwable pe) {
@@ -355,8 +355,9 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 alias.createSync((SyncService) producer);
                 logger.info(LOGTAG + "Published AccountAlias.Create-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the AccountAlias.Create-Sync" + " message after generating a Stack. The "
-                        + "exception is: " + eose.getMessage();
+                String errMsg = "An error occurred publishing the AccountAlias.Create-Sync" + 
+                		" message after creating an AccountAlias. The exception is: "
+                		+ eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
@@ -440,7 +441,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 return getMessage(msg, replyContents);
             }
 
-            // Query for the Stack from the provider.
+            // Query for the AccountAlias using the provider.
             logger.info(LOGTAG + "Querying for the AccountAlias...");
 
             List results = null;
@@ -453,7 +454,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 // There was an error generating the identity
                 String errType = "application";
                 String errCode = "AwsAccountService-2006";
-                String errDesc = "An error occurred querying for the Stack." + "The " + "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred querying for the AccountAlias." + "The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -483,8 +484,9 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                         if (eTestId != null)
                             alias.setTestId(testId);
                     } catch (EnterpriseLayoutException ele) {
-                        String errMsg = "An error occurred serializing " + "Stack object to an XML element. " + "The exception is: "
-                                + ele.getMessage();
+                        String errMsg = "An error occurred serializing " +
+                                "AccountAlias object to an XML element. " + 
+                        		"The exception is: " + ele.getMessage();
                         logger.error(LOGTAG + errMsg);
                         throw new CommandException(errMsg, ele);
                     }
@@ -559,7 +561,7 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
                 // There was an error deleting the VPC
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred deleting the Stack " + "The " + "exception is: " + pe.getMessage();
+                String errDesc = "An error occurred deleting the AccountAlias " + "The " + "exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
@@ -620,10 +622,9 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
     }
 
     /**
-     * @param StackProvider
-     *            , the Stack provider
-     *            <P>
-     *            Sets the Stack provider for this command.
+     * @param AccountAliasProvider, the provider
+     * <P>
+     * Sets the AccountAliasProvider for this command.
      */
     protected void setProvider(AccountAliasProvider provider) {
         m_provider = provider;
@@ -631,8 +632,8 @@ public class AccountAliasRequestCommand extends AwsAccountRequestCommand impleme
 
     /**
      * @return AccountAliasProvider, the provider
-     *         <P>
-     *         Gets the provider for this command.
+     * <P>
+     * Gets the provider for this command.
      */
     protected AccountAliasProvider getProvider() {
         return m_provider;
