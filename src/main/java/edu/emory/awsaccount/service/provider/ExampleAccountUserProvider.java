@@ -39,6 +39,7 @@ import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
+import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
@@ -98,14 +99,31 @@ implements AccountUserProvider {
 		}
 		
 		// Create an AccountUser
+		AccountUser au = new AccountUser();
 		
-		
-		// Otherwise return the Stack from the VPC map
-		else {
-			List<Stack> stackList = new ArrayList();
-			stackList.add((Stack)m_stackMap.get(querySpec.getStackId()));
-			return stackList;
+		try {
+			au.setAccountId(querySpec.getAccountId());
+			au.setUserId("P999999");
+			au.setFullName("Ziggy Stardust");
+			
+			EmailAddress emailAddress = au.newEmailAddress();
+			emailAddress.setType("primary");
+			emailAddress.setEmail("ziggy@stardust.net");
+			au.setEmailAddress(emailAddress);
+			
+			au.addRoleName("RHEDcloudAdministrator");
 		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the field values " +
+				"of AccountUser. The exception is: " + efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+		
+		List<AccountUser> accountUserList = new ArrayList();
+		accountUserList.add(au);
+		return accountUserList;
+		
 	}
 
 }
