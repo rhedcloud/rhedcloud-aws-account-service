@@ -98,6 +98,7 @@ pipelines:
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
         - jar uf axis2.war WEB-INF/lib/*
         - jar uf axis2.war WEB-INF/classes
+        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
         - rm -Rf WEB-INF
         # Create the axis2.war file for DEV
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
@@ -114,6 +115,7 @@ pipelines:
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
         - jar uf axis2.war WEB-INF/lib/*
         - jar uf axis2.war WEB-INF/classes
+        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for TEST
@@ -131,6 +133,7 @@ pipelines:
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
         - jar uf axis2.war WEB-INF/lib/*
         - jar uf axis2.war WEB-INF/classes
+        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for STAGE, almost the same as TEST except .aar
@@ -148,6 +151,7 @@ pipelines:
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
         - jar uf axis2.war WEB-INF/lib/*
         - jar uf axis2.war WEB-INF/classes
+        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
         - rm -Rf WEB-INF
         - jar tf axis2.war
         # Create the axis2.war file for PROD
@@ -165,6 +169,7 @@ pipelines:
         - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
         - jar uf axis2.war WEB-INF/lib/*
         - jar uf axis2.war WEB-INF/classes
+        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
         - rm -Rf WEB-INF
         - jar tf axis2.war
         artifacts:
