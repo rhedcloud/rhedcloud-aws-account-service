@@ -26,7 +26,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
- * @version 1.0 - 12 July 2018
+ * @version 1.0 - 22 July 2018
  */
 public interface AccountUserProvider {
     /**
