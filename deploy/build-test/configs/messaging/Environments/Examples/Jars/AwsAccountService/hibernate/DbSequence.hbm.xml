@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.openeai.moa.jmsobjects.coremessaging.v1_0">
-<class name="Scalar" table="T_SCALAR">
-<id name="ScalarValue" column="SCALAR_VALUE" type="OpenEaiLong" >
-<generator class="OpenEaiSequence">
-<param name="sequence">T_SEQUENCE</param>
-</generator>
+<class name="DbSequence" table="T_SEQUENCE">
+<id name="SequenceName" column="SEQUENCE_NAME" >
+<generator class="assigned"/>
 </id>
+<property name="SequenceValue" column="SEQUENCE_VALUE"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATE"/>
+<property name="ModUser" column="MOD_USER"/>
+<property name="ModDatetime" type="OpenEaiDatetime" column="MOD_DATE"/>
 </class>
 </hibernate-mapping>
