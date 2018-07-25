@@ -33,6 +33,7 @@ pipelines:
         script:
         - ls -la
         - echo $HOME
+        - cp lib/*.jar deploy/build-test/libs/AwsAccountService
         - cp target/*.jar deploy/build-test/libs/AwsAccountService
         - cp -R deploy/* $HOME/deploy
         - cd
