@@ -1,2 +1,7 @@
 /target/
 /openeai-servicegen/
+/apache-tomcat-8.0.50/
+apache-tomcat-8.0.50.tar.gz
+deploy/esb-dev/libs/
+deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
+deploy/build-test/libs/AwsAccountService/openeai.jar
