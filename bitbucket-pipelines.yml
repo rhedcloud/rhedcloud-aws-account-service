@@ -85,6 +85,8 @@ pipelines:
         # Create the htpasswd file for beanstalk.
         - htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
         - ls -laR $BUILD_HOME/.ebextensions
+        - cp $BUILD_HOME/lib/openeai.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
+        - cp $BUILD_HOME/lib/aws-moa.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         # Create the axis2.war file for build environment
         - cd $BUILD_HOME/deploy/build-test/libs/Axis2
         - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
