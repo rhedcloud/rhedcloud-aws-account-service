@@ -301,7 +301,7 @@ public class AccountUserRequestCommand extends AwsAccountRequestCommand implemen
                     .getChild("AccountUserQuerySpecification");
 
             // Get a configured query object from AppConfig.            
-            AccountUserQuerySpecification querySpec = null;
+            AccountUserQuerySpecification querySpec = new AccountUserQuerySpecification();
             try {
                 querySpec = (AccountUserQuerySpecification) getAppConfig().getObjectByType(
                         querySpec.getClass().getName());
