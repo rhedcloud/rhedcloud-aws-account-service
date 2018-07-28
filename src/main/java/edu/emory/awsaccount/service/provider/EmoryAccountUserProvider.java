@@ -58,7 +58,6 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     private AppConfig m_appConfig;
     private ProducerPool m_awsAccountServiceProducerPool = null;
     private ProducerPool m_idmServiceProducerPool = null;
-    private ProducerPool m_identityServiceProducerPool = null;
     private ProducerPool m_directoryServiceProducerPool = null;
     private String m_adminRoleDnTemplate = null;
     private String m_auditorRoleDnTemplate = null;
@@ -146,13 +145,13 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			throw new ProviderException(errMsg);
 		}
 		
-		// This provider needs to send messages to the IdentityService
-		// to query for the FullPerson object.
+		// This provider needs to send messages to the DirectoryService
+		// to query for the DirectoryPerson object.
 		ProducerPool p2p3 = null;
 		try {
 			p2p3 = (ProducerPool)getAppConfig()
-				.getObject("IdentityServiceProducerPool");
-			setIdentityServiceProducerPool(p2p3);
+				.getObject("DirectoryServiceProducerPool");
+			setDirectoryServiceProducerPool(p2p3);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			// An error occurred retrieving an object from AppConfig. Log it and
@@ -388,8 +387,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, efe);
 			}
-				
-				
+			
 			// Query the DirectoryService for DirectoryPerson
 			// Get a RequestService to use for this transaction.
 			try {
@@ -491,6 +489,10 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			
 			accountUserList.add(au);
 		}
+		
+		
+		
+		
 		return accountUserList;
 	
     }
@@ -519,12 +521,9 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		return m_idmServiceProducerPool;
 	}
 	
-	private void setIdentityServiceProducerPool(ProducerPool pool) {
-		m_identityServiceProducerPool = pool;
-	}
-	
-	private ProducerPool getIdentityServiceProducerPool() {
-		return m_identityServiceProducerPool;
+	private void setDirectoryServiceProducerPool(ProducerPool pool) {
+		m_directoryServiceProducerPool = pool;
+
 	}
 	
 	private void getDirectoryServiceProducerPool(ProducerPool pool) {
