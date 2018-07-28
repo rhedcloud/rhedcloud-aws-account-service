@@ -98,9 +98,18 @@ implements AccountUserProvider {
 			throw new ProviderException(errMsg);
 		}
 		
-		// Create an AccountUser
+		// Get a new AccountUser from AppConfig
 		AccountUser au = new AccountUser();
+		try {
+            au = (AccountUser) m_appConfig.getObjectByType(au.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException eoce) {
+            String errMsg = "Error retrieving an object from AppConfig. " +
+            	"The exception" + "is: " + eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eoce);
+        }
 		
+		// Set the values of AccountUser
 		try {
 			au.setAccountId(querySpec.getAccountId());
 			au.setUserId("P999999");
