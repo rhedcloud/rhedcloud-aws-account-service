@@ -204,7 +204,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			accountUser = (AccountUser)m_appConfig
 					.getObjectByType(accountUser.getClass().getName());
 			roleAssignment = (RoleAssignment)m_appConfig
-				.getObjectByType(querySpec.getClass().getName());
+				.getObjectByType(roleAssignment.getClass().getName());
 			querySpec = (RoleAssignmentQuerySpecification)m_appConfig
 				.getObjectByType(querySpec.getClass().getName());
 		}
