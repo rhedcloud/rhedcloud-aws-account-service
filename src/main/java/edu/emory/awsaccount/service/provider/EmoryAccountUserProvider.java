@@ -42,6 +42,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 
 /**
@@ -405,10 +406,14 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		// DirectoryService for DirectoryPerson and the AWS Account Service
 		// for the UserProfile.
 		List<AccountUser> accountUserList = new ArrayList<AccountUser>();
+		
+		// Start with the administrator users...
 		ListIterator adminListIterator = adminRoleAssignments.listIterator();
 		while (adminListIterator.hasNext()) {
 			RoleAssignment ra = (RoleAssignment)adminListIterator.next();
-			String userId = parseUserId(ra.getIdentityDN());
+			ExplicitIdentityDNs eids = ra.getExplicitIdentityDNs();
+			String dn = eids.getDistinguishedName(0);
+			String userId = parseUserId(dn);
 			try {
 				dpqs.setKey(userId);
 				upqs.setUserId(userId);
