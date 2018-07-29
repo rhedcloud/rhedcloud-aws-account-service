@@ -454,7 +454,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			}
 			// In any case, release the producer back to the pool.
 			finally {
-				getIdmServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+				getDirectoryServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 	    	}
 			
 			// Query the AWS Account Service for the UserProfile
@@ -486,7 +486,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			}
 			// In any case, release the producer back to the pool.
 			finally {
-				getIdmServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 	    	}
 			
 			// Get the DirectoryPerson
