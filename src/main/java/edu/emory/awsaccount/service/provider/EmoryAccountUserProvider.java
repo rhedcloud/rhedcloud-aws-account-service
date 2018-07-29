@@ -30,6 +30,7 @@ import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
@@ -199,7 +200,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	String LOGTAG = "[EmoryAccountUserProvider.query(String accountId)] ";
     	
-    	logger.info(LOGTAG + "Gettinh query objects from AppConfig...");
+    	logger.info(LOGTAG + "Getting query objects from AppConfig...");
     	
     	// Query the IDM service for all users in the RHEDcloudAdministrator role
     	// Get a configured AccountUser, RoleAssignment, and 
@@ -227,6 +228,12 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			querySpec.setRoleDN(getAdminRoleDn(accountId));
 			querySpec.setIdentityType("USER");
 			querySpec.setDirectAssignOnly("true");
+			try {
+				logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
+			}
+			catch (XmlEnterpriseObjectException xeoe) {
+				logger.error(xeoe.getMessage());
+			}
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
@@ -247,14 +254,15 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, jmse);
 		}
-		// Query for the RoleAssignments.
+		// Query for the RoleAssignments for the Administrator Role.
 		List adminRoleAssignments = null;
 		try {
 			long startTime = System.currentTimeMillis();
 			adminRoleAssignments = roleAssignment.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for RoleAssignment " +
-				"objects in " + time + " ms.");
+			logger.info(LOGTAG + "Queried for Administrator RoleAssignment " +
+				"objects in " + time + " ms. Returned " + 
+				adminRoleAssignments.size() + " users in the Administrator role.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred queryign for the " +
@@ -272,6 +280,12 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		// Set the values of the querySpec.
 		try {
 			querySpec.setRoleDN(getAuditorRoleDn(accountId));
+			try {
+				logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
+			}
+			catch (XmlEnterpriseObjectException xeoe) {
+				logger.error(xeoe.getMessage());
+			}
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
@@ -297,8 +311,9 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			long startTime = System.currentTimeMillis();
 			auditorRoleAssignments = roleAssignment.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for RoleAssignment " +
-				"objects in " + time + " ms.");
+			logger.info(LOGTAG + "Queried for Auditor RoleAssignment " +
+				"objects in " + time + " ms. Returned " + 
+				auditorRoleAssignments.size() + " users in the Auditor role.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the " +
@@ -315,6 +330,12 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Query the IDM service for all users in the AwsCentralAdministrators role
 		try {
 			querySpec.setRoleDN(getAuditorRoleDn(accountId));
+			try {
+				logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
+			}
+			catch (XmlEnterpriseObjectException xeoe) {
+				logger.error(xeoe.getMessage());
+			}
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
@@ -340,8 +361,10 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			long startTime = System.currentTimeMillis();
 			centralAdminRoleAssignments = roleAssignment.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for RoleAssignment " +
-				"objects in " + time + " ms.");
+			logger.info(LOGTAG + "Queried for CentralAdministrator " +
+				"RoleAssignment objects in " + time + " ms. Returned " + 
+				centralAdminRoleAssignments.size() + 
+				" users in the CentralAdministrator role.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the " +
