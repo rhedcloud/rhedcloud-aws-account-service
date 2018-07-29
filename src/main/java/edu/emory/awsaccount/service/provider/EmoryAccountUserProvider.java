@@ -177,6 +177,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     @Override
     public List<AccountUser> query(AccountUserQuerySpecification querySpec)
     	throws ProviderException {
+    	
+    	String LOGTAG = "[EmoryAccountUserProvider.query(AccountUserQuerySpecification querySpec)] ";
 
         // If the AccountId in the querySpec is null, query for all accounts.
         if (querySpec.getAccountId() == null || querySpec.getAccountId().equals("")) {
@@ -187,12 +189,17 @@ public class EmoryAccountUserProvider extends OpenEaiObject
         }
         // Otherwise, query for a specific account.
         else {
+        	logger.info(LOGTAG + "The accountId is not null. Querying for the specific account: " + querySpec.getAccountId());
         	List<AccountUser> accountUserList = query(querySpec.getAccountId());
         	return accountUserList;
         }
     }
     
     private List<AccountUser> query(String accountId) throws ProviderException {
+    	
+    	String LOGTAG = "[EmoryAccountUserProvider.query(String accountId)] ";
+    	
+    	logger.info(LOGTAG + "Gettinh query objects from AppConfig...");
     	
     	// Query the IDM service for all users in the RHEDcloudAdministrator role
     	// Get a configured AccountUser, RoleAssignment, and 
@@ -214,14 +221,16 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, ecoe);
 		}
-
+		
 		// Set the values of the querySpec.
 		try {
 			querySpec.setRoleDN(getAdminRoleDn(accountId));
+			querySpec.setIdentityType("USER");
+			querySpec.setDirectAssignOnly("true");
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
-				"Stack object. The exception is: " + 
+				"query specification object. The exception is: " + 
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, efe);
@@ -248,8 +257,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 				"objects in " + time + " ms.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred creating the " +
-					"UserNotification object The exception is: " + 
+			String errMsg = "An error occurred queryign for the " +
+					"RoleAssignment objects The exception is: " + 
 					eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoqe);
@@ -266,7 +275,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
-				"Stack object. The exception is: " + 
+				"query specification object. The exception is: " + 
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, efe);
@@ -292,8 +301,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 				"objects in " + time + " ms.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred creating the " +
-					"UserNotification object The exception is: " + 
+			String errMsg = "An error occurred querying for the " +
+					"RoleAssignment objects The exception is: " + 
 					eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoqe);
@@ -309,7 +318,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
-				"Stack object. The exception is: " + 
+				"query specification object. The exception is: " + 
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, efe);
@@ -335,8 +344,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 				"objects in " + time + " ms.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred creating the " +
-					"UserNotification object The exception is: " + 
+			String errMsg = "An error occurred querying for the " +
+					"RoleAssignment objects The exception is: " + 
 					eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoqe);
@@ -544,7 +553,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 	
 	private String getAdminRoleDn(String accountId) {
 		String adminRoleDn = getAdminRoleDnTemplate()
-			.replace("AWS_ACCOUNT_NUMBER", accountId);
+			.replace("ACCOUNT_NUMBER", accountId);
 		return adminRoleDn;
 	}
 	
@@ -558,7 +567,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 	
 	private String getAuditorRoleDn(String accountId) {
 		String auditorRoleDn = getAuditorRoleDnTemplate()
-			.replace("AWS_ACCOUNT_NUMBER", accountId);
+			.replace("ACCOUNT_NUMBER", accountId);
 		return auditorRoleDn;
 	}
 	
@@ -572,7 +581,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 	
 	private String getCentralAdminRoleDn(String accountId) {
 		String centralAdminRoleDn = getCentralAdminRoleDnTemplate()
-			.replace("AWS_ACCOUNT_NUMBER", accountId);
+			.replace("ACCOUNT_NUMBER", accountId);
 		return centralAdminRoleDn;
 	}
 	
