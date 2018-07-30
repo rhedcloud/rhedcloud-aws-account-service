@@ -28,6 +28,7 @@ mkdir -p WEB-INF/services
 mkdir -p WEB-INF/lib
 mkdir -p WEB-INF/classes
 cp ../../../../lib/aws-moa.jar WEB-INF/lib
+cp ../../../../lib/emory-moa-1.2.jar WEB-INF/lib
 cp ../../../../lib/openeai.jar WEB-INF/lib
 cp ../../../../target/*.jar WEB-INF/lib
 cp ../../../build-test/libs/AwsAccountService/* WEB-INF/lib
@@ -43,6 +44,8 @@ rm -Rf WEB-INF
 
 cp axis2.war ../../../../apache-tomcat-8.0.50/webapps
 cd ../../../../apache-tomcat-8.0.50/bin
+rm logs/*
+rm ../logs/*
 export TOMCAT_HOME=..
 export CATALINA_HOME=..
 ./startup.sh
