@@ -490,8 +490,14 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 	    	}
 			
 			// Get the DirectoryPerson
+			// TODO: check for null
 			DirectoryPerson dp = (DirectoryPerson)directoryPersonList.get(0);
-			UserProfile up = (UserProfile)userProfileList.get(0);		
+			
+			// Get the UserProfile if it exists
+			UserProfile up = null;
+			if (userProfileList != null) {
+				up = (UserProfile)userProfileList.get(0);
+			}
 			
 			// Build the AccountUser
 			AccountUser au = null;
