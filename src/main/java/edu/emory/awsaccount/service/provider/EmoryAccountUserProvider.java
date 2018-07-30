@@ -495,7 +495,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			
 			// Get the UserProfile if it exists
 			UserProfile up = null;
-			if (userProfileList != null) {
+			if (userProfileList != null && userProfileList.size() > 0) {
 				up = (UserProfile)userProfileList.get(0);
 			}
 			
