@@ -37,6 +37,8 @@ import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.EnterpriseObjectCreateException;
+import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 import org.openeai.xml.XmlDocumentReader;
 import org.openeai.xml.XmlDocumentReaderException;
@@ -44,11 +46,16 @@ import org.openeai.xml.XmlDocumentReaderException;
 //AWS Message Object API (MOA)
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
+
+import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 
 /**
  *  An example object provider that maintains an in-memory
@@ -123,13 +130,76 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg);
 		}
 		
-		// Get the list of UserIds from the properties.
-		String strUserIds = getProperties().getProperty(accountId);
-		List<String> userIds = Arrays.asList(strUserIds.split("\\s*,\\s*"));
-		return userIds;
+    	// Get a configured AccountUser and query spec from AppConfig
+    	AccountUser accountUser = new AccountUser();
+    	AccountUserQuerySpecification querySpec = new AccountUserQuerySpecification();
+		try {
+			accountUser = (AccountUser)m_appConfig
+					.getObjectByType(accountUser.getClass().getName());
+			querySpec = (AccountUserQuerySpecification)m_appConfig
+				.getObjectByType(querySpec.getClass().getName());
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, ecoe);
+		}
 		
-		// TODO: Query the AWS Account Service for all users associated with this account.
-		// Build a list of UserIds and return it.
+		// Set the values of the querySpec.
+		try {
+			querySpec.setAccountId(accountId);
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"query specification object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+    	
+    	// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Query for the AccountUsers for this account.
+		List accountUserList = null;
+		try {
+			long startTime = System.currentTimeMillis();
+			accountUserList = accountUser.query(querySpec, rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Queried for AccountUser for account " +
+				accountId + " objects in " + time + " ms. Returned " + 
+				accountUserList.size() + " users.");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the " +
+					"AccountUser objects The exception is: " + 
+					eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoqe);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+    	}
+		
+		// Add UserIds to a list
+		ArrayList<String> userIds = new ArrayList<String>();
+		ListIterator li = accountUserList.listIterator();
+		while (li.hasNext()) {
+			AccountUser au = (AccountUser)li.next();
+			userIds.add(au.getUserId());
+		}
+		
+		return userIds;
 		
 	}
 
@@ -159,6 +229,7 @@ implements UserNotificationProvider {
 			uNotification.setPriority(aNotification.getPriority());
 			uNotification.setSubject(aNotification.getSubject());
 			uNotification.setText(aNotification.getText());
+			uNotification.setReferenceId(aNotification.getReferenceId());
 			uNotification.setUserId(userId);
 			uNotification.setRead("false");
 			uNotification.setCreateUser("AwsAccountService");

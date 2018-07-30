@@ -522,6 +522,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 				au.setEmailAddress(emailAddress);
 				
 				au.addRoleName("RHEDcloudAdministrator");
+				
 			}
 			catch (EnterpriseFieldException efe) {
 				String errMsg = "An error occurred setting field values of " +
@@ -533,7 +534,10 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			accountUserList.add(au);
 		}
 		
+		// Next, add the auditor users...
 		
+		
+		// Finally, add the central administrator users...
 		
 		
 		return accountUserList;
