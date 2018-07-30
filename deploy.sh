@@ -1,5 +1,6 @@
 ####build and start service locally using local tomcat, install and use dev envivironment including appConfig,sample message and EOs
-####
+####  uncomment ./gen-webservice awsaccount to generate ws
+git pull
 mvn package
 
 echo  ************Preparing tomcat and axis2...***************
@@ -14,7 +15,7 @@ if [! test -d 'openeai-servicegen']; then
 fi
 cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties
 cd openeai-servicegen
-#./gen-webservice awsaccount
+./gen-webservice awsaccount
 cd ..
 
 mkdir -p deploy/esb-dev/libs/Axis2
