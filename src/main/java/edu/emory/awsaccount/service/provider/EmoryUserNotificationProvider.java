@@ -70,6 +70,7 @@ implements UserNotificationProvider {
 	private Category logger = OpenEaiObject.logger;
 	private AppConfig m_appConfig;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
+	private HashMap<String, List> m_userIdLists = new HashMap<String, List>();
 	private String LOGTAG = "[EmoryUserNotificationProvider] ";
 	
 	/**
@@ -183,8 +184,17 @@ implements UserNotificationProvider {
 			String errMsg = "An error occurred querying for the " +
 					"AccountUser objects The exception is: " + 
 					eoqe.getMessage();
-				logger.error(LOGTAG + errMsg);
+			logger.warn(LOGTAG + errMsg);
+			
+			// If there is a caches list of users, return it.
+			if (getUserIdList(accountId) != null) {
+				logger.warn(LOGTAG + "Returning cached AccountUser list.");
+				return getUserIdList(accountId);
+			}
+			else {
+				logger.error(LOGTAG + "No cached AccountUser list found.");
 				throw new ProviderException(errMsg, eoqe);
+			}
 		}
 		// In any case, release the producer back to the pool.
 		finally {
@@ -199,6 +209,7 @@ implements UserNotificationProvider {
 			userIds.add(au.getUserId());
 		}
 		
+		setUserIdList(accountId, userIds);
 		return userIds;
 		
 	}
@@ -289,6 +300,15 @@ implements UserNotificationProvider {
 	
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
+	}
+	
+	private List getUserIdList(String accountId) {
+		List userIdList = m_userIdLists.get(accountId);
+		return userIdList;
+	}
+	
+	private void setUserIdList (String accountId, List userIdList) {
+		m_userIdLists.put(accountId, userIdList);
 	}
 
 }
