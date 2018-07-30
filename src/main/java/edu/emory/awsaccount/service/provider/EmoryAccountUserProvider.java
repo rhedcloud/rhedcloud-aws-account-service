@@ -521,7 +521,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 				emailAddress.setEmail(dp.getEmail().getEmailAddress());
 				au.setEmailAddress(emailAddress);
 				
-				au.addRoleName("RHEDcloudAdministrator");
+				au.addRoleName("RHEDcloudAdministratorRole");
 				
 			}
 			catch (EnterpriseFieldException efe) {
@@ -535,10 +535,274 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		}
 		
 		// Next, add the auditor users...
-		
-		
+		ListIterator auditorListIterator = auditorRoleAssignments.listIterator();
+		while (auditorListIterator.hasNext()) {
+			RoleAssignment ra = (RoleAssignment)auditorListIterator.next();
+			ExplicitIdentityDNs eids = ra.getExplicitIdentityDNs();
+			String dn = eids.getDistinguishedName(0);
+			String userId = parseUserId(dn);
+			try {
+				dpqs.setKey(userId);
+				upqs.setUserId(userId);
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting field values of " +
+					"an object. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, efe);
+			}
+			
+			// Query the DirectoryService for DirectoryPerson
+			// Get a RequestService to use for this transaction.
+			try {
+				rs = (RequestService)getDirectoryServiceProducerPool().getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a request service to use " +
+					"in this transaction. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, jmse);
+			}
+			// Perform the query
+			List directoryPersonList = null;
+			try {
+				long startTime = System.currentTimeMillis();
+				directoryPersonList = directoryPerson.query(dpqs, rs);
+				long time = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for DirectoryPerson " +
+					"objects in " + time + " ms.");
+			}
+			catch (EnterpriseObjectQueryException eoqe) {
+				String errMsg = "An error occurred creating the " +
+						"UserNotification object The exception is: " + 
+						eoqe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, eoqe);
+			}
+			// In any case, release the producer back to the pool.
+			finally {
+				getDirectoryServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+	    	}
+			
+			// Query the AWS Account Service for the UserProfile
+			// Get a RequestService to use for this transaction.
+			try {
+				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a request service to use " +
+					"in this transaction. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, jmse);
+			}
+			// Perform the query
+			List userProfileList = null;
+			try {
+				long startTime = System.currentTimeMillis();
+				userProfileList = userProfile.query(upqs, rs);
+				long time = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for UserProfile " +
+					"objects in " + time + " ms.");
+			}
+			catch (EnterpriseObjectQueryException eoqe) {
+				String errMsg = "An error occurred creating the " +
+						"UserNotification object The exception is: " + 
+						eoqe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, eoqe);
+			}
+			// In any case, release the producer back to the pool.
+			finally {
+				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+	    	}
+			
+			// Get the DirectoryPerson
+			// TODO: check for null
+			DirectoryPerson dp = (DirectoryPerson)directoryPersonList.get(0);
+			
+			// Get the UserProfile if it exists
+			UserProfile up = null;
+			if (userProfileList != null && userProfileList.size() > 0) {
+				up = (UserProfile)userProfileList.get(0);
+			}
+			
+			// If the user already exists in the list, add the auditor
+			// role to their AccountUser object
+			if (isAccountUserInList(accountUserList, userId)) {
+				AccountUser au = getAccountUserFromList(accountUserList, userId);
+				au.addRoleName("RHEDcloudAuditorRole");
+			}
+			
+			// If the user does not exist, build the user and add it to the list.
+			// Build the AccountUser
+			AccountUser au = null;
+			try {
+				au = (AccountUser)accountUser.clone();
+			}
+			catch (CloneNotSupportedException cnse) {
+				String errMsg = "An error occurred cloning an object. " +
+						"The exception is: " + cnse.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, cnse);
+			}
+			
+			try {
+				au.setAccountId(accountId);
+				au.setUserId(userId);
+				au.setFullName(dp.getFullName());
+				
+				EmailAddress emailAddress = au.newEmailAddress();
+				emailAddress.setType(dp.getEmail().getType());
+				emailAddress.setEmail(dp.getEmail().getEmailAddress());
+				au.setEmailAddress(emailAddress);
+				
+				au.addRoleName("RHEDcloudAuditorRole");
+				
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting field values of " +
+					"an object. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, efe);
+			}
+			
+			accountUserList.add(au);
+		}
+			
 		// Finally, add the central administrator users...
-		
+		ListIterator centralAdministratorListIterator = centralAdminRoleAssignments.listIterator();
+		while (centralAdministratorListIterator.hasNext()) {
+			RoleAssignment ra = (RoleAssignment)centralAdministratorListIterator.next();
+			ExplicitIdentityDNs eids = ra.getExplicitIdentityDNs();
+			String dn = eids.getDistinguishedName(0);
+			String userId = parseUserId(dn);
+			try {
+				dpqs.setKey(userId);
+				upqs.setUserId(userId);
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting field values of " +
+					"an object. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, efe);
+			}
+			
+			// Query the DirectoryService for DirectoryPerson
+			// Get a RequestService to use for this transaction.
+			try {
+				rs = (RequestService)getDirectoryServiceProducerPool().getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a request service to use " +
+					"in this transaction. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, jmse);
+			}
+			// Perform the query
+			List directoryPersonList = null;
+			try {
+				long startTime = System.currentTimeMillis();
+				directoryPersonList = directoryPerson.query(dpqs, rs);
+				long time = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for DirectoryPerson " +
+					"objects in " + time + " ms.");
+			}
+			catch (EnterpriseObjectQueryException eoqe) {
+				String errMsg = "An error occurred creating the " +
+						"UserNotification object The exception is: " + 
+						eoqe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, eoqe);
+			}
+			// In any case, release the producer back to the pool.
+			finally {
+				getDirectoryServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+	    	}
+			
+			// Query the AWS Account Service for the UserProfile
+			// Get a RequestService to use for this transaction.
+			try {
+				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a request service to use " +
+					"in this transaction. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, jmse);
+			}
+			// Perform the query
+			List userProfileList = null;
+			try {
+				long startTime = System.currentTimeMillis();
+				userProfileList = userProfile.query(upqs, rs);
+				long time = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for UserProfile " +
+					"objects in " + time + " ms.");
+			}
+			catch (EnterpriseObjectQueryException eoqe) {
+				String errMsg = "An error occurred creating the " +
+						"UserNotification object The exception is: " + 
+						eoqe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, eoqe);
+			}
+			// In any case, release the producer back to the pool.
+			finally {
+				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+	    	}
+			
+			// Get the DirectoryPerson
+			// TODO: check for null
+			DirectoryPerson dp = (DirectoryPerson)directoryPersonList.get(0);
+			
+			// Get the UserProfile if it exists
+			UserProfile up = null;
+			if (userProfileList != null && userProfileList.size() > 0) {
+				up = (UserProfile)userProfileList.get(0);
+			}
+			
+			// If the user already exists in the list, add the central
+			// administrator role to their AccountUser object
+			if (isAccountUserInList(accountUserList, userId)) {
+				AccountUser au = getAccountUserFromList(accountUserList, userId);
+				au.addRoleName("RHEDcloudCentralAdministratorRole");
+			}
+			
+			// If the user does not exist, build the user and add it to the list.
+			// Build the AccountUser
+			AccountUser au = null;
+			try {
+				au = (AccountUser)accountUser.clone();
+			}
+			catch (CloneNotSupportedException cnse) {
+				String errMsg = "An error occurred cloning an object. " +
+						"The exception is: " + cnse.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, cnse);
+			}
+			
+			try {
+				au.setAccountId(accountId);
+				au.setUserId(userId);
+				au.setFullName(dp.getFullName());
+				
+				EmailAddress emailAddress = au.newEmailAddress();
+				emailAddress.setType(dp.getEmail().getType());
+				emailAddress.setEmail(dp.getEmail().getEmailAddress());
+				au.setEmailAddress(emailAddress);
+				
+				au.addRoleName("RHEDcloudCentralAdministratorRole");
+				
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting field values of " +
+					"an object. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, efe);
+			}
+			
+			accountUserList.add(au);
+		}
 		
 		return accountUserList;
 	
@@ -630,6 +894,25 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		st2.nextToken();
 		String userId = st2.nextToken();
 		return userId;
+	}
+	
+	private AccountUser getAccountUserFromList(List<AccountUser> accountUserList, String userId) {
+		AccountUser accountUser = null;
+		ListIterator li = accountUserList.listIterator();
+		while (li.hasNext()) {
+			AccountUser au = (AccountUser)li.next();
+			if (au.getUserId().equals(userId)) accountUser = au;
+		}
+		
+		return accountUser;
+	}
+	
+	private boolean isAccountUserInList(List<AccountUser> accountUserList, String userId) {
+		AccountUser accountUser = getAccountUserFromList(accountUserList, userId);
+		if (accountUser != null) {
+			return true;
+		}
+		else return false;
 	}
 	
 }
