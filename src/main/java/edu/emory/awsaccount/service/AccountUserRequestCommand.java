@@ -261,24 +261,24 @@ public class AccountUserRequestCommand extends AwsAccountRequestCommand implemen
         
         // Validate the format of the AuthUserId. If the format is invalid,
         // respond with an error.
-        if (validateAuthUserId(authUserId) == false) {
-            String errType = "application";
-            String errCode = "AwsAccountService-1001";
-            String errDesc = "Invalid AuthUserId. The value '" + authUserId
-                    + "' is not valid. The expected format is user@domain/ip number.";
-            logger.fatal(LOGTAG + errDesc);
-            logger.fatal(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
-            ArrayList errors = new ArrayList();
-            errors.add(buildError(errType, errCode, errDesc));
-            String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
-            return getMessage(msg, replyContents);
-        }
+        //if (validateAuthUserId(authUserId) == false) {
+        //    String errType = "application";
+        //    String errCode = "AwsAccountService-1001";
+        //    String errDesc = "Invalid AuthUserId. The value '" + authUserId
+        //            + "' is not valid. The expected format is user@domain/ip number.";
+        //    logger.fatal(LOGTAG + errDesc);
+        //    logger.fatal(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
+        //    ArrayList errors = new ArrayList();
+        //    errors.add(buildError(errType, errCode, errDesc));
+        //    String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
+        //    return getMessage(msg, replyContents);
+        //}
 
         // Get the IP number from the AuthUserId.
-        String ipNumber = getIpNumberFromAuthUserId(authUserId);
+        //String ipNumber = getIpNumberFromAuthUserId(authUserId);
 
         // Get the EPPN from from AuthUserId.
-        String eppn = getEppnFromAuthUserId(authUserId);
+        //String eppn = getEppnFromAuthUserId(authUserId);
 
         // Get a configured AccountAlias from AppConfig.
         AccountUser user = new AccountUser();
