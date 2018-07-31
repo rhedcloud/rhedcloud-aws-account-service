@@ -40,7 +40,7 @@ import com.amazonaws.services.identitymanagement.model.SAMLProviderListEntry;
 /**
  *
  */
-public class AwsSamlProviderProvider extends AwsAbstractCrudProvider<SamlProvider, SamlProviderQuerySpecification> {
+public class AwsSamlProviderProvider extends AbstractAwsCrudProvider<SamlProvider, SamlProviderQuerySpecification> {
 
     private static Logger logger = Logger.getLogger(AwsSamlProviderProvider.class);
     private String LOGTAG = "[AwsSamlProviderProvider] ";
