@@ -46,7 +46,7 @@
 
 <component name="ServiceTestPlan" class="com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan">
 
-<property name="ServiceId" column="SERVICE_ID"/>
+<property name="ServiceId" column="SERVICE_TEST_PLAN_SERVICE_ID"/>
 <!--TODO simply modeling?
 <property name="ServiceTestRequirement" column="SERVICE_TEST_REQUIREMENT"/>
 -->

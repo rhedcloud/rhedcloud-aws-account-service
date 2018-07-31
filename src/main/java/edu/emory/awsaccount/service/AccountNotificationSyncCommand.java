@@ -307,7 +307,11 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 			logger.info(LOGTAG + "Retrieved list of users in " + time + "ms.");
 		}
 		catch (ProviderException pe) {
-			
+			String errMsg = "An error occurred querying for the list of UserIds"
+				+ " associated with the account. The exception is: " +
+				pe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			//TODO: publish a Sync.Error-Sync
 		}
 			
 		// Create a UserNotification from the AccountNotification for each UserId.
