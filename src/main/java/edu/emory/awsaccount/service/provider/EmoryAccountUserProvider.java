@@ -535,7 +535,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 			getDirectoryServiceProducerPool().releaseProducer((PointToPointProducer)rs);
     	}
 		
-		if (directoryPersonList.size() != 1) {
+		if (directoryPersonList.size() != 0) {
 			String errMsg = "Inappropriate number of DirectoryPerson " +
 				"results. Expected 1 got " + directoryPersonList.size() +
 				".";
