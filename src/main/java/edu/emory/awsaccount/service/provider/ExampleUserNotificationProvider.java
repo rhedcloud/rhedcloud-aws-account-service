@@ -96,7 +96,11 @@ implements UserNotificationProvider {
 	public List<String> getUserIdsForAccount(String accountId)
 			throws ProviderException {
 
-		// If the AccountId is null, throw an exception.
+		String LOGTAG = "[ExampleUserNotificationProvider.getUserIdsForAccount] ";
+		logger.info(LOGTAG + "Getting UserIds for account: " + accountId);
+		
+		
+	    // If the AccountId is null, throw an exception.
 		if (accountId == null || accountId.equals("")) {
 			String errMsg = "The accountId is null.";
 			throw new ProviderException(errMsg);
