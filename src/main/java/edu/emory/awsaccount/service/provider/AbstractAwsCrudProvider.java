@@ -41,14 +41,14 @@ import com.amazonaws.services.securitytoken.model.Credentials;
  *
  */
 
-public class AwsAbstractCrudProvider<M, Q> extends AbstractCrudProvider<M, Q> {
-    private static Logger logger = Logger.getLogger(AwsAbstractCrudProvider.class);
-    private AppConfig m_appConfig;
+public class AbstractAwsCrudProvider<M, Q> extends AbstractCrudProvider<M, Q> {
+    private static Logger logger = Logger.getLogger(AbstractAwsCrudProvider.class);
+    // private AppConfig m_appConfig;
     private String m_accessKeyId = null;
     private String m_secretKey = null;
     private String m_roleArnPattern = null;
     private int m_roleAssumptionDurationSeconds = 0;
-    private String LOGTAG = "[AwsAbstractCrudProvider] ";
+    private String LOGTAG = "[AbstractAwsCrudProvider] ";
 
     /**
      * @throws org.openeai.jms.consumer.commands.provider.ProviderException
@@ -241,140 +241,5 @@ public class AwsAbstractCrudProvider<M, Q> extends AbstractCrudProvider<M, Q> {
 
         return iam;
     }
-
-    // /**
-    // * @see AccountAliasProvider.java
-    // *
-    // * Note: this implementation queries by AccountId only.
-    // */
-    // @Override
-    // public List<AccountAlias> query(AccountAliasQuerySpecification querySpec)
-    // throws ProviderException {
-    //
-    // // If the accountId is null, throw an exception.
-    // if (querySpec.getAccountId() == null ||
-    // querySpec.getAccountId().equals("")) {
-    // String errMsg = "No accountId provided. AccountAlias query requires an
-    // accountId.";
-    // throw new ProviderException(errMsg);
-    // }
-    //
-    // // Get a configured AccountAlias from AppConfig
-    // AccountAlias alias = new AccountAlias();
-    // try {
-    // alias = (AccountAlias)
-    // getAppConfig().getObjectByType(alias.getClass().getName());
-    // } catch (EnterpriseConfigurationObjectException ecoe) {
-    // String errMsg = "An error occurred getting an object from AppConfig. " +
-    // "The exception is: " + ecoe.getMessage();
-    // logger.error(LOGTAG + errMsg);
-    // throw new ProviderException(errMsg, ecoe);
-    // }
-    //
-    // // Build the IAM client
-    // AmazonIdentityManagement iam = buildIamClient(querySpec.getAccountId());
-    //
-    // // Query AWS for the AccountAlias
-    // ListAccountAliasesResult result = null;
-    // try {
-    // result = iam.listAccountAliases();
-    // }
-    // catch (AmazonIdentityManagementException aime) {
-    // String errMsg = "An error occurred querying for the list " +
-    // "of account aliases. The exception is: " + aime.getMessage();
-    // logger.error(LOGTAG + errMsg);
-    // throw new ProviderException(errMsg, aime);
-    // }
-    //
-    // // Get the results.
-    // List<String> aliasList = result.getAccountAliases();
-    //
-    // // Add the results to a alias list.
-    // List<AccountAlias> accountAliasList = new ArrayList<AccountAlias>();
-    // ListIterator it = aliasList.listIterator();
-    // while (it.hasNext()) {
-    // // Clone the AccountAlias object
-    // AccountAlias a = null;
-    // try {
-    // a = (AccountAlias)alias.clone();
-    // }
-    // catch (CloneNotSupportedException cnse) {
-    // String errMsg = "An error occurred cloning a message object. " +
-    // "The exception is: " + cnse.getMessage();
-    // logger.error(LOGTAG + errMsg);
-    // throw new ProviderException(errMsg, cnse);
-    // }
-    //
-    // // Set the values of AccountAlias
-    // try {
-    // a.setAccountId(querySpec.getAccountId());
-    // a.setName((String)it.next());
-    // }
-    // catch (EnterpriseFieldException efe) {
-    // String errMsg = "An error occurred setting field values on " +
-    // "the object. The exception is: " + efe.getMessage();
-    // logger.error(LOGTAG + errMsg);
-    // throw new ProviderException(errMsg, efe);
-    // }
-    //
-    // accountAliasList.add(a);
-    // }
-    //
-    // return accountAliasList;
-    // }
-    //
-    // /**
-    // * @see AccountAliasProvider.java
-    // */
-    // @Override
-    // public void create(AccountAlias alias) throws ProviderException {
-    //
-    // // Create the account alias request and set values
-    // CreateAccountAliasRequest createRequest = new
-    // CreateAccountAliasRequest();
-    // createRequest.setAccountAlias(alias.getName());
-    //
-    // // Build the IAM client
-    // AmazonIdentityManagement iam = buildIamClient(alias.getAccountId());
-    //
-    // // Create the alias
-    // CreateAccountAliasResult result = null;
-    // try {
-    // result = iam.createAccountAlias(createRequest);
-    // }
-    // catch (AmazonIdentityManagementException aime) {
-    // String errMsg = "An error occurred creating the account alias. " +
-    // "The exception is: " + aime.getMessage();
-    // logger.error(LOGTAG + errMsg);
-    // throw new ProviderException(errMsg, aime);
-    // }
-    // }
-    //
-    // /**
-    // * @see AccountAliasProvider.java
-    // */
-    // @Override
-    // public void delete(AccountAlias alias) throws ProviderException {
-    //
-    // // Create the account alias request and set values
-    // DeleteAccountAliasRequest deleteRequest = new
-    // DeleteAccountAliasRequest();
-    // deleteRequest.setAccountAlias(alias.getName());
-    //
-    // // Build the IAM client
-    // AmazonIdentityManagement iam = buildIamClient(alias.getAccountId());
-    //
-    // // Create the alias
-    // DeleteAccountAliasResult result = null;
-    // try {
-    // result = iam.deleteAccountAlias(deleteRequest);
-    // }
-    // catch (AmazonIdentityManagementException aime) {
-    // String errMsg = "An error occurred deleting the account alias. " +
-    // "The exception is: " + aime.getMessage();
-    // logger.error(LOGTAG + errMsg);
-    // throw new ProviderException(errMsg, aime);
-    // }
-    // }
 
 }
