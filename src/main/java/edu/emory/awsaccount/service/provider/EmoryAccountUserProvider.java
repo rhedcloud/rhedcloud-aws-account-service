@@ -115,7 +115,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
         		"with which to build queries. Can't continue.";
         	throw new ProviderException(errMsg);
         }
-        setCentralAdminRoleDnTemplate(adminRoleDnTemplate);
+        setCentralAdminRoleDnTemplate(centralAdminRoleDnTemplate);
         		
 		// This provider needs to send messages to the AWS account service
 		// to query for UserProfiles.
