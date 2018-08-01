@@ -137,7 +137,7 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 	</querylanguage>
 	<querylanguage>
 		<UserNotificationQuerySpecification>
-			<QueryLanguage max="500" type="hql" name="byUserId" value="from UserNotification where UserId = :UserId">
+			<QueryLanguage max="200" type="hql" name="byUserId" value="from UserNotification where UserId = :UserId">
 				<Parameter name="UserId"/>
 			</QueryLanguage>
 		</UserNotificationQuerySpecification>
