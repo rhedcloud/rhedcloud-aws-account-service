@@ -136,6 +136,11 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</AccountNotificationQuerySpecification>
 	</querylanguage>
 	<querylanguage>
+		<UserNotificationQuerySpecification>
+			<QueryLanguage max="500" type="hql" name="byUserId" value="from UserNotification where UserId = :UserId">
+				<Parameter name="UserId"/>
+			</QueryLanguage>
+		</UserNotificationQuerySpecification>
 		<!-- Get all UserNotifications created between start and end dates -->
 		<UserNotificationQuerySpecification>
 			<QueryLanguage type="hql" name="findUserNotificationsBetweenDates" value="from UserNotification where CreateDatetime between to_date(:startDate,'YYYY-MM-DD HH24:MI:SS') and to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
