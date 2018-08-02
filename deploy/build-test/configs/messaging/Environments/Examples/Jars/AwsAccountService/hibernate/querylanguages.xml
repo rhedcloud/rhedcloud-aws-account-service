@@ -109,7 +109,7 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 	</querylanguage>
 	<querylanguage>
 		<AccountNotificationQuerySpecification>
-			<QueryLanguage max="200" type="hql" name="byAccountId" value="from ServiceSecurityAssessment where AccountId=:AccountId">
+			<QueryLanguage max="200" type="hql" name="byAccountId" value="from AccountNotification where AccountId=:AccountId">
 				<Parameter name="AccountId"/>
 			</QueryLanguage>
 		</AccountNotificationQuerySpecification>
