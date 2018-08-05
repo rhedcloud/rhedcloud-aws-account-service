@@ -292,7 +292,7 @@ implements UserNotificationProvider {
 	
 	public void processAdditionalNotifications(UserNotification notification) {
 		
-		String LOGTAG = "[ExampleUserNotificationProvider.processAdditionalNotifications] ";
+		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
 		logger.info(LOGTAG + "Not yet implemented. No additional notifications to send.");
 		
 		
