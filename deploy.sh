@@ -20,25 +20,32 @@ cd ..
 
 mkdir -p deploy/esb-dev/libs/Axis2
 cp openeai-servicegen/target/awsaccount/emory-awsaccount-webservice/build/lib/emory-awsaccount-webservice-1.0-wsdl-classes.jar deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar
-cp openeai-servicegen/target/awsaccount/emory-awsaccount-webservice/build/lib/emory-awsaccount-webservice-1.0-dev.aar deploy/esb-dev/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+cp openeai-servicegen/target/awsaccount/emory-awsaccount-webservice/build/lib/emory-awsaccount-webservice-1.0-localhost.aar deploy/esb-dev/libs/Axis2/emory-awsaccount-webservice-1.0.aar
 
 cd deploy/esb-dev/libs/Axis2
 unzip -o ../../../../resources/axis2-1.5.2-war.zip axis2.war
 mkdir -p WEB-INF/services
 mkdir -p WEB-INF/lib
 mkdir -p WEB-INF/classes
+mkdir -p WEB-INF/modules
+mkdir -p WEB-INF/conf
 cp ../../../../lib/aws-moa.jar WEB-INF/lib
 cp ../../../../lib/emory-moa-1.2.jar WEB-INF/lib
 cp ../../../../lib/openeai.jar WEB-INF/lib
 cp ../../../../target/*.jar WEB-INF/lib
 cp ../../../build-test/libs/AwsAccountService/* WEB-INF/lib
+cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib
 cp ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar WEB-INF/lib
+cp ../../../build-test/libs/Axis2/openeai-authorization-module.mar WEB-INF/modules
+cp ../../../build-test/libs/Axis2/axis2.xml WEB-INF/conf
 cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
 cp ../../hibernate.cfg.xml WEB-INF/classes
 cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
 jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
 jar uf axis2.war WEB-INF/lib/*
 jar uf axis2.war WEB-INF/classes
+jar uf axis2.war WEB-INF/modules
+jar uf axis2.war WEB-INF/conf
 zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
 rm -Rf WEB-INF
 
