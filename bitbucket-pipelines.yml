@@ -239,10 +239,10 @@ pipelines:
         - ./startup.sh
         - sleep 30
         - tail -1000  ../logs/catalina.out
-        - wget http://localhost:8080/axis2/services/listServices
-        - cat listServices
-        - wget http://localhost:8080/axis2/services/AwsAccountService?wsdl
-        - cat AwsAccountService?wsdl
+        #- wget http://localhost:8080/axis2/services/listServices
+        #- cat listServices
+        #- wget http://localhost:8080/axis2/services/AwsAccountService?wsdl
+        #- cat AwsAccountService?wsdl
         # everything needs to run locally to test: activeMQ, database, sampleMessage and EOs
         #- $BUILD_HOME/tests/post.curl.sh
         #- cat ../logs/catalina.out
