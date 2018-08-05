@@ -156,6 +156,14 @@ implements UserNotificationProvider {
 		// Return the object.
 		return uNotification;
 	}
+	
+	public void processAdditionalNotifications(UserNotification notification) {
+		
+		String LOGTAG = "[ExampleUserNotificationProvider.processAdditionalNotifications] ";
+		logger.info(LOGTAG + "Not yet implemented. No additional notifications to send.");
+		
+		
+	}
 
 	
 	private synchronized long incrementUserNotificationId() {

@@ -34,25 +34,27 @@ import edu.emory.awsaccount.service.provider.UserNotificationProvider;
 
 
 /**
- * This command consumes an AccountNotification message and sends 
- * UserNotification messages to all users associated with the account.
+ * This command consumes a UserNotification message and passes
+ * it off to a provider, which determines whether any other
+ * notification modalities such as e-mail and text messages
+ * are desired.
  * 
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 4 July 2018
  * 
  */
-public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
+public class UserNotificationSyncCommand extends AwsAccountSyncCommand
 	implements SyncCommand {
 
 	private boolean m_verbose = false;
 	private UserNotificationProvider m_provider = null;
-	private String LOGTAG = "[AccountNotificationSyncCommand] ";
+	private String LOGTAG = "[UserNotificationSyncCommand] ";
 	private Category logger = org.openeai.OpenEaiObject.logger;
 
 	/**
 	 * Constructor
 	 */
-	public AccountNotificationSyncCommand(CommandConfig cConfig)
+	public UserNotificationSyncCommand(CommandConfig cConfig)
 			throws InstantiationException {
 
 		super(cConfig);
@@ -62,24 +64,11 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 
 
 		// Verify that the necessary message objects are in the AppConfig.
-		// Get a AccountNotification message object from AppConfig.
-		com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification aNotification =
-			new com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification();
-		try {
-			aNotification = (com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification)
-					getAppConfig().getObjectByType(aNotification.getClass().getName());
-		} catch (EnterpriseConfigurationObjectException ecoe) {
-			String errMsg = "An error occurred getting an object from AppConfig. "
-					+ "The exception is: " + ecoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new InstantiationException(errMsg);
-		}
-		
 		// Get a UserNotification message object from AppConfig.
 		com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification uNotification =
-				new com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification();
+			new com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification();
 		try {
-			uNotification = (com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification) 
+		uNotification = (com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification)
 					getAppConfig().getObjectByType(uNotification.getClass().getName());
 		} catch (EnterpriseConfigurationObjectException ecoe) {
 			String errMsg = "An error occurred getting an object from AppConfig. "
@@ -137,12 +126,11 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 	 * @param messageNumber
 	 * @param aMessage
 	 * 
-	 *            Parses the AccountNotification message and creates a
-	 *            User notification message for every user affiliated 
-	 *            with the account.
+	 * Parses the UserNotification message and passes it off to a provider for 
+	 * handling.
 	 */
 	public void execute(int messageNumber, Message aMessage) {
-		String LOGTAG = "[AccountNotificationSyncCommand.execute] ";
+		String LOGTAG = "[UserNotificationSyncCommand.execute] ";
 		logger.info(LOGTAG + "Handling sync message.");
 
 		// Convert the JMS Message to an XML Document
@@ -188,7 +176,7 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 		// Verify that the message object we are dealing with is an
 		// AccountNotification object; if not, publish a Sync.Error-Sync.
 		logger.info(LOGTAG + "Message object is: " + msgObject);
-		if (msgObject.equalsIgnoreCase("AccountNotification") == false) {
+		if (msgObject.equalsIgnoreCase("UserNotification") == false) {
 			String errType = "application";
 			String errCode = "OpenEAI-1001";
 			String errDesc = "Unsupported message object: " + msgObject
@@ -234,7 +222,7 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 			return;
 		}	
 
-		// Get the AccountNotification element from the message passed in.
+		// Get the UserNotification element from the message passed in.
 		Element eDataArea = inDoc.getRootElement().getChild("DataArea");
 		Element eNewData = null;
 		Element eAccountNotification = null;
@@ -242,22 +230,22 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 		if (eDataArea != null) {
 			eNewData = eDataArea.getChild("NewData");
 			if (eNewData != null) {
-				eAccountNotification = eNewData.getChild("AccountNotification");
+				eAccountNotification = eNewData.getChild("UserNotification");
 			} else {
-				missingElement = "AccountNotification";
+				missingElement = "UserNotification";
 			}
 		} else {
 			missingElement = "NewData";
 		}
 		if (missingElement == null && eAccountNotification == null) {
-			missingElement = "AccountNotification";
+			missingElement = "UserNotification";
 		}
 
-		// If there is no AccountNotification element, publish a Sync.Error-Sync
+		// If there is no UserNotification element, publish a Sync.Error-Sync
 		if (missingElement != null | eAccountNotification == null) {
 			String errType = "application";
 			String errCode = "AccountNotificationSyncCommand-1001";
-			String errDesc = "An error occurred getting the AccountNotification element "
+			String errDesc = "An error occurred getting the UserNotification element "
 					+ "from the message passed in. Missing element: "
 					+ missingElement;
 			logger.error(LOGTAG + errDesc);
@@ -267,12 +255,12 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 			return;
 		}
 
-		// Get a AccountNotification message object from AppConfig.
-		com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification aNotification =
-			new com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification();
+		// Get a UserNotification message object from AppConfig.
+		com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification uNotification =
+			new com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification();
 		try {
-			aNotification = (com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification)
-					getAppConfig().getObjectByType(aNotification.getClass().getName());
+			uNotification = (com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification)
+					getAppConfig().getObjectByType(uNotification.getClass().getName());
 		} catch (EnterpriseConfigurationObjectException ecoe) {
 			String errMsg = "An error occurred getting an object from AppConfig. "
 					+ "The exception is: " + ecoe.getMessage();
@@ -280,14 +268,14 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 		}
 			
 		
-		// Build the AccountNotification object from the element passed in.
+		// Build the UserNotification object from the element passed in.
 		try {
-			aNotification.buildObjectFromInput(eAccountNotification);
+			uNotification.buildObjectFromInput(eAccountNotification);
 		} catch (EnterpriseLayoutException ele) {
 			String errType = "application";
-			String errCode = "AccountNotificationSyncCommand-1002";
-			String errDesc = "An error occurred building the AccountNotification object"
-					+ " from the AccountNotification element passed in. The exception is: "
+			String errCode = "AwsAccountService-8002";
+			String errDesc = "An error occurred building the UserNotification object"
+					+ " from the UserNotification element passed in. The exception is: "
 					+ ele.getMessage();
 			logger.error(LOGTAG + errDesc);
 			ArrayList errors = new ArrayList();
@@ -296,37 +284,21 @@ public class AccountNotificationSyncCommand extends AwsAccountSyncCommand
 			return;
 		}
 		
-		// Retrieve the list of UserIds for UserNotifications.
-		String accountId = aNotification.getAccountId();
-		List<String> userIds = null;
+		// Process any additional notification methods for this notification.
 		try {
-			logger.info(LOGTAG + "Retrieving list of users for account: " + accountId);
+			logger.info(LOGTAG + "Process additional notifications for " +
+				"UserNotification: " + uNotification.getUserNotificationId());
 			long startTime = System.currentTimeMillis();
-			userIds = getProvider().getUserIdsForAccount(accountId);
+			getProvider().processAdditionalNotifications(uNotification);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Retrieved list of users in " + time + "ms.");
+			logger.info(LOGTAG + "Processed additional notifications in "
+				+ time + "ms.");
 		}
 		catch (ProviderException pe) {
-			String errMsg = "An error occurred querying for the list of UserIds"
-				+ " associated with the account. The exception is: " +
-				pe.getMessage();
+			String errMsg = "An error occurred processing additional " +
+				"notifications. The exception is: " + pe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			//TODO: publish a Sync.Error-Sync
-		}
-			
-		// Create a UserNotification from the AccountNotification for each UserId.
-		ListIterator userIdIterator = userIds.listIterator();
-		while(userIdIterator.hasNext()) {
-			try {
-				String userId = (String)userIdIterator.next();
-				logger.info(LOGTAG + "Generating a UserNotfication for user: " + userId);
-				long startTime = System.currentTimeMillis();
-				getProvider().generate(userId, aNotification);
-			}
-			catch (ProviderException pe) {
-				
-			}
-			
 		}
 		
 		return;
