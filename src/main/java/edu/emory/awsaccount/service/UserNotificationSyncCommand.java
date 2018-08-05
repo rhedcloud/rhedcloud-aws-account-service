@@ -161,7 +161,7 @@ public class UserNotificationSyncCommand extends AwsAccountSyncCommand
 			logger.error(LOGTAG + errMsg);
 		}
 
-		// Verify that this is an AccountNotification message.
+		// Verify that this is an UserNotification message.
 		// Get the ControlArea from XML document.
 		Element eControlArea = getControlArea(inDoc.getRootElement());
 
@@ -174,13 +174,13 @@ public class UserNotificationSyncCommand extends AwsAccountSyncCommand
 		String msgRelease = eControlArea.getAttributeValue("messageRelease");
 
 		// Verify that the message object we are dealing with is an
-		// AccountNotification object; if not, publish a Sync.Error-Sync.
+		// UserNotification object; if not, publish a Sync.Error-Sync.
 		logger.info(LOGTAG + "Message object is: " + msgObject);
 		if (msgObject.equalsIgnoreCase("UserNotification") == false) {
 			String errType = "application";
 			String errCode = "OpenEAI-1001";
 			String errDesc = "Unsupported message object: " + msgObject
-					+ ". This command expects 'AccountNotification'.";
+					+ ". This command expects 'UserNotification'.";
 			logger.error(LOGTAG + errDesc);
 			logger.error(LOGTAG + "Message sent in is: \n"
 					+ getMessageBody(inDoc));
@@ -225,26 +225,26 @@ public class UserNotificationSyncCommand extends AwsAccountSyncCommand
 		// Get the UserNotification element from the message passed in.
 		Element eDataArea = inDoc.getRootElement().getChild("DataArea");
 		Element eNewData = null;
-		Element eAccountNotification = null;
+		Element eUserNotification = null;
 		String missingElement = null;
 		if (eDataArea != null) {
 			eNewData = eDataArea.getChild("NewData");
 			if (eNewData != null) {
-				eAccountNotification = eNewData.getChild("UserNotification");
+				eUserNotification = eNewData.getChild("UserNotification");
 			} else {
 				missingElement = "UserNotification";
 			}
 		} else {
 			missingElement = "NewData";
 		}
-		if (missingElement == null && eAccountNotification == null) {
+		if (missingElement == null && eUserNotification == null) {
 			missingElement = "UserNotification";
 		}
 
 		// If there is no UserNotification element, publish a Sync.Error-Sync
-		if (missingElement != null | eAccountNotification == null) {
+		if (missingElement != null || eUserNotification == null) {
 			String errType = "application";
-			String errCode = "AccountNotificationSyncCommand-1001";
+			String errCode = "AwsAccountService-8001";
 			String errDesc = "An error occurred getting the UserNotification element "
 					+ "from the message passed in. Missing element: "
 					+ missingElement;
@@ -270,7 +270,7 @@ public class UserNotificationSyncCommand extends AwsAccountSyncCommand
 		
 		// Build the UserNotification object from the element passed in.
 		try {
-			uNotification.buildObjectFromInput(eAccountNotification);
+			uNotification.buildObjectFromInput(eUserNotification);
 		} catch (EnterpriseLayoutException ele) {
 			String errType = "application";
 			String errCode = "AwsAccountService-8002";
