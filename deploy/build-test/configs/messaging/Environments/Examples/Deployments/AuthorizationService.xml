@@ -65,7 +65,7 @@ TODO: remove v1_0 stuff
 					</Property>
 					<Property>
 						<PropertyName>log4j.appender.AuthorizationService.File</PropertyName>
-						<PropertyValue>/var/log/jboss/AuthorizationService.log</PropertyValue>
+						<PropertyValue>logs/AuthorizationService.log</PropertyValue>
 					</Property>
 					<Property>
 						<PropertyName>log4j.appender.AuthorizationService.layout</PropertyName>
