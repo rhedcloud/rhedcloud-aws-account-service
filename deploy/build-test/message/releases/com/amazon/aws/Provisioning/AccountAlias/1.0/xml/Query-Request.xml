@@ -10,7 +10,7 @@
 				<MessageSeq>1024</MessageSeq>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>Account</AuthUserId>
+				<AuthUserId>AccountAlias@emory.edu/192.168.0.1</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>

@@ -48,6 +48,8 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT AccountProvisioningAuthorization (UserId, IsAuthorized, AuthorizedUserDescription, UnauthorizedReason*)>
 <!ELEMENT AccountProvisioningAuthorizationQuerySpecification (UserId)>
 <!ELEMENT AccountQuerySpecification (Comparison*, QueryLanguage?, AccountId?, AccountName?, EmailAddress?, AccountOwnerId?, FinancialAccountNumber?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT AccountUser (AccountId, UserId, FullName, EmailAddress, RoleName+, Property*)>
+<!ELEMENT AccountUserQuerySpecification (AccountId?, UserId?)>
 <!ELEMENT Annotation (Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
@@ -62,10 +64,12 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Property (Key, Value)>
 <!ELEMENT ProvisioningStep (ProvisioningStepId?,ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT RemediationResult (Status, Description, Error*)>
-<!ELEMENT SamlProvider (AccountId, Name, SamlMetadataDocument)>
-<!ELEMENT SamlProviderQuerySpecification (AccountId)>
+<!ELEMENT SamlProvider (AccountId,Arn?, Name?, SamlMetadataDocument?)>
+<!ELEMENT SamlProviderRequisition (AccountId, Name, SamlMetadataDocument)>
+<!ELEMENT SamlProviderQuerySpecification (AccountId?,Arn?)>
 <!ELEMENT SecurityRisk (SecurityRiskId?, ServiceId, SequenceNumber, ServiceRiskName, RiskLevel, Description, AssessorId, AssessmentDatetime, Countermeasure*)>
-<!ELEMENT SecurityRiskDetection (AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT SecurityRiskDetectionQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskDetectionId?, AccountId?, SecurityRiskDetector?, SecurityRiskRemediator?, DetectedSecurityRisk*)>
 <!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?)>
 <!ELEMENT SensitiveDataTypeAuthorization (IsAuthorized, AuthorizedSensitiveDataTypeDescription, UnauthorizedReason*)>
 <!ELEMENT SensitiveDataTypeAuthorizationQuerySpecification (SensitiveDataType*)>
@@ -92,7 +96,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT TermsOfUseQuerySpecification (Comparison*, QueryLanguage?, TermsOfUseId?, Revision?, EffectiveDate?, ExpirationDate?)>
 <!ELEMENT UserAction (UserActionId?, UserId, Action, Description, Detail?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT UserActionQuerySpecification (Comparison*, QueryLanguage?, UserId, Action)>
-<!ELEMENT UserNotification (UserNotificationId?, AccountNotificationId?, UserId, Type?, Priority?, Subject?, Text?, Read, ReadDatetime?, SentToEmailAddress?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT UserNotification (UserNotificationId?, AccountNotificationId?, UserId, Type?, Priority?, Subject?, Text?, ReferenceId?, Read, ReadDatetime?, SentToEmailAddress?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT UserNotificationQuerySpecification (Comparison*, QueryLanguage?, UserNotificationId?, AccountNotificationId?, AccountId?, UserId?, Type?, Priority?, Read?)>
 <!ELEMENT UserProfile (UserId, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?, LastLoginDatetime)>
 <!ELEMENT UserProfileQuerySpecification (UserId?, Property*)>

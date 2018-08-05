@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE com.amazon.aws.Services.ServiceSecurityAssessment.Update SYSTEM "../dtd/Update-Request.dtd">
 <com.amazon.aws.Services.ServiceSecurityAssessment.Update>
-	<ControlAreaRequest messageCategory="com.amazon.aws.Services" messageObject="SecurityAssessment"
+	<ControlAreaRequest messageCategory="com.amazon.aws.Services" messageObject="ServiceSecurityAssessment"
 		messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>

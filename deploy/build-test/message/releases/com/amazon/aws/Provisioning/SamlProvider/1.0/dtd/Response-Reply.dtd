@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Defines a response message for VirtualPrivateCloudProvisioning generate requests.
+-->
+<!-- AWS Account Service
+	Copyright 2017 Emory University. All rights reserved.
+-->
+<!--Release History (this information is manually updated when the message is released)
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT com.amazon.aws.Provisioning.SamlProvider.Response (ControlAreaReply, DataArea)>
+<!ELEMENT DataArea (SamlProvider?)>

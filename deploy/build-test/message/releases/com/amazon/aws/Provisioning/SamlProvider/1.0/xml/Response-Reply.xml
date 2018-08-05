@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
-<!DOCTYPE com.amazon.aws.Provisioning.SamlProvider.Provide SYSTEM "../dtd/Provide-Reply.dtd">
-<com.amazon.aws.Provisioning.SamlProvider.Provide>
-	<ControlAreaReply messageCategory="com.amazon.aws.Provisioning" messageObject="SamlProvider"
-		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE com.amazon.aws.Provisioning.SamlProvider.Response SYSTEM "../dtd/Response-Reply.dtd">
+<com.amazon.aws.Provisioning.SamlProvider.Response>
+	<ControlAreaReply messageCategory="com.amazon.aws.Provisioning" messageObject="SamlProvider" messageAction="Response" messagePriority="9" messageType="Reply" messageRelease="1.0">
 		<Sender>
 			<MessageId>
-				<SenderAppId>Account</SenderAppId>
-				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
-				<MessageSeq>1024</MessageSeq>
+				<SenderAppId>org.openeai.tutorial.Samples.VirtualPrivateCloud</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>AwsAccountService@emory.edu/192.168.0.1</AuthUserId>
+				<AuthUserId>i2s</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>
-			<Year>2010</Year>
-			<Month>11</Month>
-			<Day>17</Day>
+			<Year>2001</Year>
+			<Month>1</Month>
+			<Day>1</Day>
 			<Hour>13</Hour>
-			<Minute>47</Minute>
-			<Second>30</Second>
-			<SubSecond>423</SubSecond>
-			<Timezone>6:00-GMT</Timezone>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>762</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
 		</Datetime>
-		<Result action="Query" status="success">
+		<Result action="Generate" status="success">
 			<ProcessedMessageId>
-				<SenderAppId>Account</SenderAppId>
-				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
-				<MessageSeq>86</MessageSeq>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>producer1</ProducerId>
+				<MessageSeq>1</MessageSeq>
 			</ProcessedMessageId>
 		</Result>
 	</ControlAreaReply>
 	<DataArea>
 		<SamlProvider>
 			<AccountId>455327104748</AccountId>
+			<Arn>arn:aws:iam::455327104748:saml-provider/ADFSProvider</Arn>
 			<Name>SERVICEFORGE_PROD_IDP</Name>
 			<SamlMetadataDocument>
 				<![CDATA[
@@ -42,18 +42,18 @@
 <!--
      This is example metadata only. Do *NOT* supply it as is without review,
      and do *NOT* provide it in real time to your partners.
-
+     
      This metadata is not dynamic - it will not change as your configuration changes.
 -->
 <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://idp.serviceforge.net/idp/shibboleth">
 
     <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
-
+    
         <Extensions>
             <shibmd:Scope regexp="false">serviceforge.net</shibmd:Scope>
 <!--
     Fill in the details for your IdP here 
-
+    
             <mdui:UIInfo>
                 <mdui:DisplayName xml:lang="en">A Name for the IdP at idp.serviceforge.net</mdui:DisplayName>
                 <mdui:Description xml:lang="en">Enter a description of your IdP at idp.serviceforge.net</mdui:Description>
@@ -61,7 +61,7 @@
             </mdui:UIInfo>
 -->
         </Extensions>
-
+        
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
                     <ds:X509Data>
@@ -87,7 +87,7 @@ GAhcgcsV6y9PJXWeN4at
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
+            
         </KeyDescriptor>
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
@@ -114,7 +114,7 @@ p24QE7mG7Y5OpN7nBqsN
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
+            
         </KeyDescriptor>
         <KeyDescriptor use="encryption">
             <ds:KeyInfo>
@@ -141,33 +141,33 @@ P2nU+Je/TJIQp5Ygh2i+
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
+            
         </KeyDescriptor>
-
+        
         <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://idp.serviceforge.net:8443/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
         <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.serviceforge.net:8443/idp/profile/SAML2/SOAP/ArtifactResolution" index="2"/>
-
+        
         <!--
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.serviceforge.net/idp/profile/SAML2/Redirect/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.serviceforge.net/idp/profile/SAML2/POST/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://idp.serviceforge.net/idp/profile/SAML2/POST-SimpleSign/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.serviceforge.net:8443/idp/profile/SAML2/SOAP/SLO"/>
         -->
-
+        
         <SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest" Location="https://idp.serviceforge.net/idp/profile/Shibboleth/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.serviceforge.net/idp/profile/SAML2/POST/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://idp.serviceforge.net/idp/profile/SAML2/POST-SimpleSign/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.serviceforge.net/idp/profile/SAML2/Redirect/SSO"/>
-
+        
     </IDPSSODescriptor>
-
-
+    
+    
     <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol">
-
+    
         <Extensions>
             <shibmd:Scope regexp="false">serviceforge.net</shibmd:Scope>
         </Extensions>
-
+        
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
                     <ds:X509Data>
@@ -193,7 +193,7 @@ GAhcgcsV6y9PJXWeN4at
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
+            
         </KeyDescriptor>
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
@@ -220,7 +220,7 @@ p24QE7mG7Y5OpN7nBqsN
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
+            
         </KeyDescriptor>
         <KeyDescriptor use="encryption">
             <ds:KeyInfo>
@@ -247,18 +247,18 @@ P2nU+Je/TJIQp5Ygh2i+
                         </ds:X509Certificate>
                     </ds:X509Data>
             </ds:KeyInfo>
-
+            
         </KeyDescriptor>
-
+        
         <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://idp.serviceforge.net:8443/idp/profile/SAML1/SOAP/AttributeQuery"/>
         <!-- <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.serviceforge.net:8443/idp/profile/SAML2/SOAP/AttributeQuery"/> -->
         <!-- If you uncomment the above you should add urn:oasis:names:tc:SAML:2.0:protocol to the protocolSupportEnumeration above -->
-
+        
     </AttributeAuthorityDescriptor>
-
+    
 </EntityDescriptor>
 				]]>
 			</SamlMetadataDocument>
 		</SamlProvider>
 	</DataArea>
-</com.amazon.aws.Provisioning.SamlProvider.Provide>
+</com.amazon.aws.Provisioning.SamlProvider.Response>

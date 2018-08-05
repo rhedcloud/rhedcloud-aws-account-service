@@ -64,6 +64,7 @@
 <!ELEMENT EmoryHipaaEligible %STRDOM;>
 <!ELEMENT EndDate %DATE;>
 <!ELEMENT FinancialAccountNumber %STRDOM;>
+<!ELEMENT FullName %STRDOM;>
 <!ELEMENT InvoiceDatetime %DATETIME;>
 <!ELEMENT InvoiceId %STRDOM;>
 <!ELEMENT IsAuthorized %STRDOM;>
@@ -106,9 +107,11 @@
 <!ELEMENT Revision %STRDOM;>
 <!ELEMENT RiskLevel %STRDOM;>
 <!ELEMENT RoleArn %STRDOM;>
+<!ELEMENT RoleName %STRDOM;>
 <!ELEMENT SamlMetadataDocument %STRDOM;>
 <!ELEMENT SecretKey %STRDOM;>
 <!ELEMENT SecurityRiskDetector %STRDOM;>
+<!ELEMENT SecurityRiskDetectionId %STRDOM;>
 <!ELEMENT SecurityRiskId %STRDOM;>
 <!ELEMENT SecurityRiskRemediator %STRDOM;>
 <!ELEMENT SellerOfRecord %STRDOM;>
