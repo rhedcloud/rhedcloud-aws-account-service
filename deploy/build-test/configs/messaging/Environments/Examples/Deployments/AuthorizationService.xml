@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!--		$Revision: $
+		$Date: $
+		$Source: $
+-->
+<!--This file is part of the OpenEAI Authorization Service originally
+created by Emory University.
+
+Copyright (C) 2010 The OpenEAI Software Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+For specific licensing details and Examples of how this software
+can be used to implement integrations for your enterprise, visit
+http://www.OpenEai.org/licensing.-->
+<!--Release History
+	08/09/2010	1.0		steve@openeai.org
+		- Initial Version
+
+PLEASE NOTE:
+-version 1.1 12/20/2012 george.wang@emory.edu
+This config is used by both AuthorizationService WebService and openeai-authorization-module
+added pathToPermission mapping such that it can also be used by openeai-authorization-module
+-added InternalIpAddress used by authorization module, gwang28 10/14/2014
+
+TODO: remove v1_0 stuff
+-->
+<!DOCTYPE Deployment SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/Deployment.dtd">
+<Deployment name="Authorization Service" type="development" status="deployed" baseURI="none">
+	<Servlet id="edu.emory.AuthorizationWebService">
+		<FullName>Authorization Web Service</FullName>
+		<Description>This web service handles SOAP requests for the Authorization Web Service and relays them to the gateway.</Description>
+		<Configuration>
+			<LoggerConfigs>
+				<LoggerConfig name="ServiceLoggerConfig">
+					<ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
+					<!--<Property>
+						<PropertyName>log4j.rootCategory</PropertyName>
+						<PropertyValue>DEBUG, A1</PropertyValue>
+					</Property>-->
+					<Property>
+						<PropertyName>log4j.category.org.openeai.www.authorizationservice</PropertyName>
+						<PropertyValue>INFO, AuthorizationService</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>log4j.category.org.openeai.authorization</PropertyName>
+						<PropertyValue>INFO, AuthorizationService</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>log4j.appender.AuthorizationService</PropertyName>
+						<PropertyValue>org.apache.log4j.FileAppender</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>log4j.appender.AuthorizationService.File</PropertyName>
+						<PropertyValue>/var/log/jboss/AuthorizationService.log</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>log4j.appender.AuthorizationService.layout</PropertyName>
+						<PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>log4j.appender.AuthorizationService.layout.ConversionPattern</PropertyName>
+						<PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m-%C{1}.%M%L%n</PropertyValue>
+					</Property>
+				</LoggerConfig>
+			</LoggerConfigs>
+			<ProducerConfigs startOnInitialization="true">
+				<ConnectionFactoryName>cn=AuthorizationServiceProducerQCF</ConnectionFactoryName>
+				<InitialContextFactory>com.sonicsw.jndi.mfcontext.MFContextFactory</InitialContextFactory>
+				<ProviderURL>tcp://intsonicdev1.cc.emory.edu:2506</ProviderURL>
+				<SecurityPrincipal>AuthorizationService</SecurityPrincipal>
+				<SecurityCredentials>Titaspw2.1</SecurityCredentials>
+				<ProducerIdURL>localhost</ProducerIdURL>
+				<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+				<ProducerConfig numberOfProducers="5" tempQueuePoolSize="5" name="AuthorizationServiceProducer">
+					<DestinationName>cn=AuthorizationServiceQueue</DestinationName>
+					<ObjectClass>org.openeai.jms.producer.PointToPointProducer</ObjectClass>
+				</ProducerConfig>
+			</ProducerConfigs>
+			<MessageObjectConfigs translationType="application" xmlDocumentValidation="false">
+				<SenderAppId>edu.any-openeai-enterprise.AuthorizationService</SenderAppId>
+				<Authentication>
+					<UserId>authzns</UserId>
+				</Authentication>
+				<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+				<LayoutManager>
+					<InputLayout type="xml">
+						<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+					</InputLayout>
+					<OutputLayout type="xml">
+						<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+					</OutputLayout>
+				</LayoutManager>
+				<MessageObjectConfig name="Authorization">
+					<CommandName/>
+					<PrimedXmlDocuments>
+						<PrimedXmlDocument type="query">message/releases/org/any-openeai-enterprise/Services/Authorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+					</PrimedXmlDocuments>
+					<ObjectClass>org.any_openeai_enterprise.moa.jmsobjects.services.v1_0.Authorization</ObjectClass>
+					<EnterpriseObjectDocument docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/any-openeai-enterprise/Services/1.0/AuthorizationEO.xml" ignoreMissingFields="true" ignoreValidation="false"/>
+				</MessageObjectConfig>
+				<MessageObjectConfig name="AuthorizationQuerySpecification">
+					<CommandName>AuthorizationRequest</CommandName>
+					<ObjectClass>org.any_openeai_enterprise.moa.objects.resources.v1_0.AuthorizationQuerySpecification</ObjectClass>
+					<EnterpriseObjectDocument docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/any-openeai-enterprise/Resources/1.0/AuthorizationQuerySpecificationEO.xml" ignoreMissingFields="true" ignoreValidation="false"/>
+				</MessageObjectConfig>
+				<MessageObjectConfig deferInitialization="false" name="Authorization.v2_0" translationType="application" xmlDocumentValidation="false">
+					<SenderAppId>edu.any-openeai-enterprise.AuthorizationService</SenderAppId>
+					<Authentication>
+						<UserId>authzns</UserId>
+					</Authentication>
+					<CommandName>AuthorizationRequest</CommandName>
+					<PrimedXmlDocuments>
+						<PrimedXmlDocument type="query">message/releases/org/any-openeai-enterprise/Services/Authorization/2.0/xml/Query-Request.xml</PrimedXmlDocument>
+					</PrimedXmlDocuments>
+					<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+					<ObjectClass>org.any_openeai_enterprise.moa.jmsobjects.services.v2_0.Authorization</ObjectClass>
+					<EnterpriseObjectDocument docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/any-openeai-enterprise/Services/2.0/AuthorizationEO.xml" ignoreMissingFields="true" ignoreValidation="false"/>
+					<LayoutManager>
+						<InputLayout type="xml">
+							<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+						</InputLayout>
+						<OutputLayout type="xml">
+							<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+						</OutputLayout>
+					</LayoutManager>
+				</MessageObjectConfig>
+				<MessageObjectConfig deferInitialization="false" name="AuthorizationQuerySpecification.v2_0" translationType="application" xmlDocumentValidation="false">
+					<SenderAppId>edu.any-openeai-enterprise.AuthorizationService</SenderAppId>
+					<Authentication>
+						<UserId>authzns</UserId>
+					</Authentication>
+					<CommandName/>
+					<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+					<ObjectClass>org.any_openeai_enterprise.moa.objects.resources.v2_0.AuthorizationQuerySpecification</ObjectClass>
+					<EnterpriseObjectDocument docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/any-openeai-enterprise/Resources/2.0/AuthorizationQuerySpecificationEO.xml" ignoreMissingFields="true" ignoreValidation="false"/>
+					<LayoutManager>
+						<InputLayout type="xml">
+							<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+						</InputLayout>
+						<OutputLayout type="xml">
+							<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+						</OutputLayout>
+					</LayoutManager>
+				</MessageObjectConfig>
+			</MessageObjectConfigs>
+			<PropertyConfigs>
+				<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+				<PropertyConfig name="GeneralProperties">
+					<Property>
+						<PropertyName>authorizationServiceClientClassName</PropertyName>
+						<PropertyValue>org.openeai.services.authorization.v2_0.client.JmsAuthorizationServiceClient</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>testAccount</PropertyName>
+						<PropertyValue>ewsr_client_acct</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>isUseTestAccount</PropertyName>
+						<PropertyValue>false</PropertyValue>
+					</Property>
+				</PropertyConfig>
+				<!-- for authorization module -->
+				<PropertyConfig name="InternalIpAddress">
+					<Property>
+						<PropertyName>internalDomains</PropertyName>
+						<!-- ip startsWith these -->
+						<PropertyValue>170.140.,163.246.,138.33.,192.168.20.,10.</PropertyValue>
+					</Property>
+					<Property>
+						<!--  Emory and Healthcare Guest  and wireless NAT adrs are external-->
+						<PropertyName>internalExceptions</PropertyName>
+						<PropertyValue>170.140.105.120,170.140.105.121,170.140.105.122,170.140.105.123,206.57.79.197,206.57.79.198,206.57.79.199,206.57.79.200</PropertyValue>
+					</Property>
+					<Property>						
+						<PropertyName>restrictedPaths</PropertyName>
+						<!-- apps which has these paths are restricted to emory internal ip users -->
+						<PropertyValue>jmssend,JmsSendService,hals</PropertyValue>
+					</Property>
+				</PropertyConfig>
+				<PropertyConfig name="pathToPermission">
+<!--
+On change of this file, openeai-authorization-module will be reloaded to reflect the change				
+-->
+					<!--appPath permission pair for web services-->
+					<Property>
+						<PropertyName>JmsSendService</PropertyName>
+						<PropertyValue>edu.emory.JmsSendWebappProd.query</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>MppiService</PropertyName>
+						<PropertyValue>edu.emory.MppiService.use</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>AuthorizationService</PropertyName>
+						<PropertyValue>edu.emory.AuthorizationService.query</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>DirectoryService</PropertyName>
+						<PropertyValue>edu.emory.DirectoryService.directoryPersonQuery</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>DirectoryInternalViewService</PropertyName>
+						<PropertyValue>edu.emory.DirectoryServiceInternalView.directoryPersonQuery</PropertyValue>
+					</Property>
+                    <Property>
+						<PropertyName>FullPersonRequestProxy</PropertyName>
+						<PropertyValue>edu.emory.FullPersonRequestProxy.View</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>PeopleSoftServiceFs</PropertyName>
+						<PropertyValue>edu.emory.PeopleSoftServiceFs.query</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>SubjectRegistryService</PropertyName>
+						<PropertyValue>edu.emory.SubjectRegistryService.update</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>HipaaAuditLogService</PropertyName>
+						<PropertyValue>edu.emory.HalsWebService.operate</PropertyValue>
+					</Property>															
+					<!--not activated for these
+					Property>
+						<PropertyName>AwsAccountService</PropertyName>
+						<PropertyValue>edu.emory.awsaccount.operate</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>BlackboardMobileService</PropertyName>
+						<PropertyValue>edu.emory.Course.use</PropertyValue>
+					</Property>
+-->
+					<!--appPath permission pair for webapps-->
+					<!-- PropertyName should be the first part of context such as
+                         jmssend in https://dev.app.emory.edu/jmssend/auth/ -->
+					<!--
+					<Property>
+						<PropertyName>jmssend</PropertyName>
+						<PropertyValue>edu.emory.JmsSendWebappProd.query</PropertyValue>
+					</Property>
+					-->
+					<Property>
+						<PropertyName>hals</PropertyName>
+						<PropertyValue>edu.emory.JmsSendWebappProd.query</PropertyValue>
+					</Property>
+					<Property>
+						<PropertyName>apperian</PropertyName>
+						<PropertyValue>edu.emory.JmsSendWebappProd.query</PropertyValue>
+					</Property>
+				</PropertyConfig>
+			</PropertyConfigs>
+		</Configuration>
+	</Servlet>
+</Deployment>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.User.AccountUser.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<com.amazon.aws.User.AccountUser.Provide>
+	<ControlAreaReply messageCategory="com.amazon.aws.User" messageObject="AccountUser"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>AwsAccountService</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>6</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>31</Second>
+			<SubSecond>901</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+				<MessageSeq>86</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<AccountUser>
+			<AccountId>828157132492</AccountId>
+			<UserId>P0934572</UserId>
+			<FullName>Stephen Wheat</FullName>
+			<EmailAddress>
+				<Type>primary</Type>
+				<Email>swheat@emory.edu</Email>
+			</EmailAddress>
+			<RoleName>RHEDcloudCentralAdministratorRole</RoleName>
+			<Property>
+				<Key>sendEmailNotifications</Key>
+				<Value>true</Value>
+			</Property>
+		</AccountUser>
+		<AccountUser>
+			<AccountId>828157132492</AccountId>
+			<UserId>P7247525</UserId>
+			<FullName>Tod Jackson</FullName>
+			<EmailAddress>
+				<Type>primary</Type>
+				<Email>jtjacks@emory.edu</Email>
+			</EmailAddress>
+			<RoleName>RHEDcloudCentralAdministratorRole</RoleName>
+			<Property>
+				<Key>sendEmailNotifications</Key>
+				<Value>true</Value>
+			</Property>
+		</AccountUser>
+	</DataArea>
+</com.amazon.aws.User.AccountUser.Provide>

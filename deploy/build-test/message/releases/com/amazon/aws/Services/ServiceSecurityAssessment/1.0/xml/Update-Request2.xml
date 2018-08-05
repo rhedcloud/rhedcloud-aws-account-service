@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Services.ServiceSecurityAssessment.Update SYSTEM "../dtd/Update-Request.dtd">
+<com.amazon.aws.Services.ServiceSecurityAssessment.Update>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Services" messageObject="ServiceSecurityAssessment"
+		messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>5b9c7fb5-5f7a-4141-aee0-b5e21ef2b89d</ProducerId>
+				<MessageSeq>22</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>TestSuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>7</Month>
+			<Day>1</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>428</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<ServiceSecurityAssessment>
+				<ServiceSecurityAssessmentId>1</ServiceSecurityAssessmentId>
+				<ServiceId>1</ServiceId>
+				<Status>In Progress</Status>
+			</ServiceSecurityAssessment>
+		</NewData>
+		<BaselineData>
+			<ServiceSecurityAssessment>
+				<ServiceSecurityAssessmentId>1</ServiceSecurityAssessmentId>
+				<ServiceId>1</ServiceId>
+				<Status>In Progress</Status>
+			</ServiceSecurityAssessment>
+		</BaselineData>
+	</DataArea>
+</com.amazon.aws.Services.ServiceSecurityAssessment.Update>
