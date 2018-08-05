@@ -66,4 +66,15 @@ public interface UserNotificationProvider {
     public List<String> getUserIdsForAccount(String accountId) 
     	throws ProviderException;
     
+    /**
+     * 
+     * <P>
+     * 
+     * @param UserNotification, the UserNotification.
+     *         <P>
+     * @throws ProviderException with details of the error generating the stack.
+     */
+    public void processAdditionalNotifications(UserNotification notification) 
+    	throws ProviderException; 
+    
 }

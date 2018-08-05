@@ -290,6 +290,14 @@ implements UserNotificationProvider {
 		return uNotification;
 	}
 	
+	public void processAdditionalNotifications(UserNotification notification) {
+		
+		String LOGTAG = "[ExampleUserNotificationProvider.processAdditionalNotifications] ";
+		logger.info(LOGTAG + "Not yet implemented. No additional notifications to send.");
+		
+		
+	}
+	
 	private AppConfig getAppConfig() {
 		return m_appConfig;
 	}
