@@ -109,13 +109,13 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 	</querylanguage>
 	<querylanguage>
 		<AccountNotificationQuerySpecification>
-			<QueryLanguage max="200" type="hql" name="byAccountId" value="from AccountNotification where AccountId=:AccountId">
+			<QueryLanguage max="200" type="hql" name="byAccountId" value="from AccountNotification order by CreateDatetime desc where AccountId=:AccountId">
 				<Parameter name="AccountId"/>
 			</QueryLanguage>
 		</AccountNotificationQuerySpecification>
 		<!-- Get all AccountNotifications created between start and end dates -->
 		<AccountNotificationQuerySpecification>
-			<QueryLanguage type="hql" name="findAccountNotificationsBetweenDates" value="from AccountNotification where CreateDatetime between to_date(:startDate,'YYYY-MM-DD HH24:MI:SS') and to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
+			<QueryLanguage type="hql" name="findAccountNotificationsBetweenDates" value="from AccountNotification order by CreateDatetime desc where CreateDatetime between to_date(:startDate,'YYYY-MM-DD HH24:MI:SS') and to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
 				<Parameter name="startDate"/>
 				<Parameter name="endDate"/>
 			</QueryLanguage>
@@ -123,37 +123,37 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		
 		<!-- Get all AccountNotifications created before end date -->
 		<AccountNotificationQuerySpecification>
-			<QueryLanguage type="hql" name="findAccountNotificationsBeforeDate" value="from AccountNotification where CreateDatetime &lt;= to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
+			<QueryLanguage type="hql" name="findAccountNotificationsBeforeDate" value="from AccountNotification order by CreateDatetime desc where CreateDatetime &lt;= to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
 				<Parameter name="endDate"/>
 			</QueryLanguage>
 		</AccountNotificationQuerySpecification>
 
 		<!-- Get all AccountNotifications created after start date -->
 		<AccountNotificationQuerySpecification>
-			<QueryLanguage type="hql" name="findAccountNotificationsAfterDate" value="from AccountNotification where CreateDatetime &gt;= to_date(:startDate,'YYYY-MM-DD HH24:MI:SS')">
+			<QueryLanguage type="hql" name="findAccountNotificationsAfterDate" value="from AccountNotification order by CreateDatetime desc where CreateDatetime &gt;= to_date(:startDate,'YYYY-MM-DD HH24:MI:SS')">
 				<Parameter name="startDate"/>
 			</QueryLanguage>
 		</AccountNotificationQuerySpecification>
 	</querylanguage>
 	<querylanguage>
 		<UserNotificationQuerySpecification>
-			<QueryLanguage max="200" type="hql" name="byUserId" value="from UserNotification where UserId = :UserId">
+			<QueryLanguage max="200" type="hql" name="byUserId" value="from UserNotification order by CreateDatetime desc where UserId = :UserId">
 				<Parameter name="UserId"/>
 			</QueryLanguage>
 		</UserNotificationQuerySpecification>
 		<UserNotificationQuerySpecification>
-			<QueryLanguage max="5" type="hql" name="unreadByUserId" value="from UserNotification where UserId = :UserId and Read='false'">
+			<QueryLanguage max="5" type="hql" name="unreadByUserId" value="from UserNotification order by CreateDatetime desc where UserId = :UserId and Read='false'">
 				<Parameter name="UserId"/>
 			</QueryLanguage>
 		</UserNotificationQuerySpecification>
 		<UserNotificationQuerySpecification>
-			<QueryLanguage max="200" type="hql" name="unreadMaxByUserId" value="from UserNotification where UserId = :UserId and Read='false'">
+			<QueryLanguage max="200" type="hql" name="unreadMaxByUserId" value="from UserNotification order by CreateDatetime desc where UserId = :UserId and Read='false'">
 				<Parameter name="UserId"/>
 			</QueryLanguage>
 		</UserNotificationQuerySpecification>
 		<!-- Get all UserNotifications created between start and end dates -->
 		<UserNotificationQuerySpecification>
-			<QueryLanguage type="hql" name="findUserNotificationsBetweenDates" value="from UserNotification where CreateDatetime between to_date(:startDate,'YYYY-MM-DD HH24:MI:SS') and to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
+			<QueryLanguage type="hql" name="findUserNotificationsBetweenDates" value="from UserNotification order by CreateDatetime desc where CreateDatetime between to_date(:startDate,'YYYY-MM-DD HH24:MI:SS') and to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
 				<Parameter name="startDate"/>
 				<Parameter name="endDate"/>
 			</QueryLanguage>
@@ -161,14 +161,14 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		
 		<!-- Get all UserNotifications created before end date -->
 		<UserNotificationQuerySpecification>
-			<QueryLanguage type="hql" name="findUserNotificationsBeforeDate" value="from UserNotification where CreateDatetime &lt;= to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
+			<QueryLanguage type="hql" name="findUserNotificationsBeforeDate" value="from UserNotification order by CreateDatetime desc where CreateDatetime &lt;= to_date(:endDate,'YYYY-MM-DD HH24:MI:SS')">
 				<Parameter name="endDate"/>
 			</QueryLanguage>
 		</UserNotificationQuerySpecification>
 
 		<!-- Get all UserNotifications created after start date -->
 		<UserNotificationQuerySpecification>
-			<QueryLanguage type="hql" name="findUserNotificationsAfterDate" value="from UserNotification where CreateDatetime &gt;= to_date(:startDate,'YYYY-MM-DD HH24:MI:SS')">
+			<QueryLanguage type="hql" name="findUserNotificationsAfterDate" value="from UserNotification order by CreateDatetime desc where CreateDatetime &gt;= to_date(:startDate,'YYYY-MM-DD HH24:MI:SS')">
 				<Parameter name="startDate"/>
 			</QueryLanguage>
 		</UserNotificationQuerySpecification>
