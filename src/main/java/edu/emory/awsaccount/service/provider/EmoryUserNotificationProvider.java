@@ -293,9 +293,16 @@ implements UserNotificationProvider {
 	public void processAdditionalNotifications(UserNotification notification) {
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
-		logger.info(LOGTAG + "Not yet implemented. No additional notifications to send.");
+		logger.info(LOGTAG + "Not yet implement. No additional notifications will be sent.");
 		
+		// Get the AccountUser object for the user.
 		
+		// If they have a property called EmailNotifications with a value of
+		// true, send them and e-mail.
+		
+		// Otherwise log that no additional notification methods were requested.
+		
+		return;
 	}
 	
 	private AppConfig getAppConfig() {
