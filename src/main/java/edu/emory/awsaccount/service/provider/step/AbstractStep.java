@@ -280,7 +280,7 @@ public abstract class AbstractStep {
 	 * <P>
 	 * This method returns the value of the AppConfig
 	 */
-	private AppConfig getAppConfig() {
+	protected AppConfig getAppConfig() {
 		return m_appConfig;
 	}
 	
@@ -650,7 +650,9 @@ public abstract class AbstractStep {
 	}
 	
 	
-	private ProvisioningStep getProvisioningStep(String stepId) {
+	protected ProvisioningStep getProvisioningStep(int stepNumber) {
+		
+		String stepId = Integer.toString(stepNumber);
 		
 		ProvisioningStep pStep = null;
 		VirtualPrivateCloudProvisioning vpcp = 
@@ -665,6 +667,23 @@ public abstract class AbstractStep {
 		}
 		return pStep;
 	}
+	
+	protected ProvisioningStep getProvisioningStep(String stepType) {
+		
+		ProvisioningStep pStep = null;
+		VirtualPrivateCloudProvisioning vpcp = 
+			getVirtualPrivateCloudProvisioning();
+		List steps = vpcp.getProvisioningStep();
+		ListIterator li = steps.listIterator();
+		while (li.hasNext()) {
+			ProvisioningStep step = (ProvisioningStep)li.next();
+			if (step.getType().equalsIgnoreCase(stepType)) {
+				pStep = step;
+			}
+		}
+		return pStep;
+	}
+	
 	
 	protected Property buildProperty(String key, String value) {
 		Property prop = m_vpcp.newProvisioningStep().newProperty();
@@ -687,6 +706,31 @@ public abstract class AbstractStep {
 	
 	protected List<Property> getResultProperties() {
 		return m_resultProperties;
+	}
+	
+	protected String getResultProperty(String key) {
+		String value = null;
+		ListIterator li = m_resultProperties.listIterator();
+		while (li.hasNext()) {
+			Property prop = (Property)li.next();
+			if (prop.getKey().equalsIgnoreCase(key)) {
+				value = prop.getValue();
+			}
+		}
+		return value;
+	}
+	
+	protected String getResultProperty(ProvisioningStep step, String key) {
+		String value = null;
+		List<Property> resultProperties = step.getProperty();
+		ListIterator li = resultProperties.listIterator();
+		while (li.hasNext()) {
+			Property prop = (Property)li.next();
+			if (prop.getKey().equalsIgnoreCase(key)) {
+				value = prop.getValue();
+			}
+		}
+		return value;
 	}
 	
 	public void update(String status, String result,

@@ -102,6 +102,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 	private String m_primedDocUrl = null;
 	private boolean m_verbose = false;
 	private Sequence m_provisioningIdSequence = null;
+	private Sequence m_accountSequence = null;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private ThreadPool m_threadPool = null;
 	private int m_threadPoolSleepInterval = 1000;
@@ -146,13 +147,28 @@ implements VirtualPrivateCloudProvisioningProvider {
 		setPrimedDocumentUrl(primedDocUrl);
 		logger.info(LOGTAG + "primedDocumentUrl property is: " + primedDocUrl);
 		
-		// Get the sequence to use.
+		// Get the sequences to use.
 		// This provider needs a sequence to generate a unique ProvisioningId
 		// for each transaction in multiple threads and multiple instances.
 		Sequence seq = null;
 		try {
 			seq = (Sequence)getAppConfig().getObject("ProvisioningIdSequence");
 			setProvisioningIdSequence(seq);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		// This provider needs a sequence to generate a unique account name.
+		Sequence accountSeq = null;
+		try {
+			accountSeq = (Sequence)getAppConfig().getObject("AccountSequence");
+			setAccountSequence(accountSeq);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			// An error occurred retrieving an object from AppConfig. Log it and
@@ -564,6 +580,24 @@ implements VirtualPrivateCloudProvisioningProvider {
      */
     private Sequence getProvisioningIdSequence() {
         return  m_provisioningIdSequence;
+    }
+    
+	/**
+     * @param Sequence, the Account sequence.
+     *            <P>
+     *            This method sets the Account sequence.
+     */
+    private void setAccountSequence(Sequence seq) {
+        m_accountSequence = seq;
+    }
+
+    /**
+     * @return Sequence, the Account sequence.
+     *         <P>
+     *         This method returns a reference to the Account sequence.
+     */
+    private Sequence getAccountSequence() {
+        return  m_accountSequence;
     }
 	
     /**
