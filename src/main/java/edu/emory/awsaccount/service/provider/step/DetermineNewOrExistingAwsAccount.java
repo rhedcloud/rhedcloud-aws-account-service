@@ -51,11 +51,22 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 			getVirtualPrivateCloudProvisioning()
 			.getVirtualPrivateCloudRequisition();
 		
+		if (vpcr != null) {
+			logger.info(LOGTAG + "The VirtualPrivateCloudRequisition " +
+				"is not null.");
+			String accountId = vpcr.getAccountId();
+			if (accountId != null) {
+				logger.info(LOGTAG + "The AccountId in the requisition is: "
+					+ vpcr.getAccountId());
+			}
+			else {
+				logger.info(LOGTAG + "The AccountId in the requisition is null.");
+			}
+		}
+		
 		// If there is no AWS account ID specified, a new account is 
 		// needed.
-		if (vpcr.getAccountId() == null || 
-			vpcr.getAccountId().equals("") == true) {
-			
+		if (vpcr.getAccountId() == null) {
 			allocateNewAccount = true;
 		}
 		
