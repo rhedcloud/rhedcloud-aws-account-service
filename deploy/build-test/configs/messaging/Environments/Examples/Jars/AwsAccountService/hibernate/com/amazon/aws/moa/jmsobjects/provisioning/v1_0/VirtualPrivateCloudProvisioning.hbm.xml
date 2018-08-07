@@ -20,6 +20,12 @@
 
 <property name="Type" column="TYPE_"/>
 <property name="ComplianceClass" column="COMPLIANCE_CLASS"/>
+
+<bag name="SensitiveDataType" table="VRTL_PRVT_CLD_PRVSNNG_SNSTDT_" >
+<key column="PROVISIONING_ID" unique="false"/>
+<element type="string" column="SENSITIVE_DATA_TYPE" />
+</bag>
+<property name="Purpose" column="PURPOSE"/>
 <property name="NotifyAdmins" column="NOTIFY_ADMINS"/>
 </component>
 <property name="Status" column="STATUS"/>
