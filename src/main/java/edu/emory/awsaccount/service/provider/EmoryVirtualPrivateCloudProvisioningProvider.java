@@ -474,12 +474,12 @@ implements VirtualPrivateCloudProvisioningProvider {
 		// Create the VirtualPrivateCloudProvisioningObject.
 		try {
 			long startTime = System.currentTimeMillis();
-			vpcp.create(rs);
+			vpcp.update(rs);
 			long time = System.currentTimeMillis() - startTime;
 			logger.info(LOGTAG + "Updated VirtualPrivateCloudProvisioning " +
 				"object in " + time + " ms.");
 		}
-		catch (EnterpriseObjectCreateException eoce) {
+		catch (EnterpriseObjectUpdateException eoce) {
 			String errMsg = "An error occurred updating the VirtualPrivate" +
 					"CloudProvisioning object The exception is: " + 
 					eoce.getMessage();
