@@ -84,7 +84,9 @@ pipelines:
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
         # Create the htpasswd file for beanstalk.
         - htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
-        - sed -i 's,LDAP_WEBSERVICES_PASSWORD,'"$WS_PASSWORD"',g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        # Use sed to replace the LDAP info in the apache config
+        - sed -i 's/WS_LDAP_BIND_PASSWORD/'"$WS_LDAP_BIND_PASSWORD"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - sed -i 's/WS_LDAP_BIND_DN/'"$WS_LDAP_BIND_DN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - ls -laR $BUILD_HOME/.ebextensions
         - cp $BUILD_HOME/lib/openeai.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         - cp $BUILD_HOME/lib/aws-moa.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
