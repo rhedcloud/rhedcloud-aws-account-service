@@ -112,6 +112,8 @@ public abstract class AbstractStep {
 		setAppConfig(aConfig);
 		setProvisioningId(provisioningId);
 		setStepId(props.getProperty("stepId"));
+		setType(props.getProperty("type"));
+		setDescription(props.getProperty("description"));
 		setSkipStep(Boolean.valueOf(props.getProperty("skipStep", "false")));
 		setSimulateStep(Boolean.valueOf(props.getProperty("simulateStep", "false")));
 		setFailStep(Boolean.valueOf(props.getProperty("failStep", "false")));
