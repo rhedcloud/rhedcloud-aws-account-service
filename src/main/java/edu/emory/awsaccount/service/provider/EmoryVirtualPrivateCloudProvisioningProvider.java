@@ -381,6 +381,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 	    String seq = null;
 	    try {
 	    	seq = getProvisioningIdSequence().next();
+	    	logger.info(LOGTAG + "The ProvisioningIdSequence value is: " + seq);
 	    }
 	    catch (SequenceException se) {
 	    	String errMsg = "An error occurred getting the next value " +
@@ -393,6 +394,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 		// Set the values of the VPCP.	
 		try {
 			vpcp.setProvisioningId("emory-vpcp-" + seq);
+			logger.info(LOGTAG + "The ProvisioningId is: " + vpcp.getProvisioningId());
 			vpcp.setVirtualPrivateCloudRequisition(vpcr);
 			vpcp.setStatus(PENDING_STATUS);
 			vpcp.setCreateUser("AwsAccountService");
@@ -409,10 +411,12 @@ implements VirtualPrivateCloudProvisioningProvider {
 		// Set the ProvisioningId on all of the process steps.
 		List steps = vpcp.getProvisioningStep();
 		ListIterator stepIterator = steps.listIterator();
+		int i = 0;
 		while (stepIterator.hasNext()) {
 			ProvisioningStep step = (ProvisioningStep)stepIterator.next();
 			try {
 				step.setProvisioningId(vpcp.getProvisioningId());
+				i++;
 			}
 			catch (EnterpriseFieldException efe) {
 				String errMsg = "An error occurred setting the field values " +
@@ -422,10 +426,15 @@ implements VirtualPrivateCloudProvisioningProvider {
 				throw new ProviderException(errMsg);
 			}
 		}
+		logger.info(LOGTAG + "Set ProvisioningId " + vpcp.getProvisioningId()
+			+ " on " + i + " provisioning steps.");
 		
 		// Create the VPCP.
 		try {
+			long createStartTime = System.currentTimeMillis();
 			create(vpcp);
+			long createTime = System.currentTimeMillis() - createStartTime;
+			logger.info(LOGTAG + "Created VPCP in " + createTime + " ms.");
 		}
 		catch (ProviderException pe) {
 			String errMsg = "An error occurred performing the VPCP create. " +
