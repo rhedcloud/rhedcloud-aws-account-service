@@ -70,13 +70,19 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 			allocateNewAccount = true;
 		}
 		
+		logger.info(LOGTAG + "allocateNetAccount is: " + allocateNewAccount);
+		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
 		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
 		props.add(buildProperty("allocateNewAccount", 
 			Boolean.toString(allocateNewAccount)));
 		
+	
+		logger.info(LOGTAG + "Set return props.");
+		
 		// Update the step.
+		logger.info(LOGTAG + "Performing update...");
     	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
     	
     	// Log completion time.
