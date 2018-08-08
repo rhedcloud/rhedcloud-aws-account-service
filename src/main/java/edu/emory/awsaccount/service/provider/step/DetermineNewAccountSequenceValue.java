@@ -52,7 +52,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
-		ProvisioningStep step = getProvisioningStep("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
+		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
 		

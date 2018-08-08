@@ -176,7 +176,7 @@ public abstract class AbstractStep {
 		// If the VPCP object is not null, look for the step.
 		ProvisioningStep step = null;
 		if (getVirtualPrivateCloudProvisioning() != null) {
-			step = getProvisioningStep(getStepId());
+			step = getProvisioningStepById(getStepId());
 		
 			// If the provisioning step is present, set the initial values of this
 			// step from those of the provisioning step. 
@@ -652,9 +652,7 @@ public abstract class AbstractStep {
 	}
 	
 	
-	protected ProvisioningStep getProvisioningStep(int stepNumber) {
-		
-		String stepId = Integer.toString(stepNumber);
+	protected ProvisioningStep getProvisioningStepById(String stepId) {
 		
 		ProvisioningStep pStep = null;
 		VirtualPrivateCloudProvisioning vpcp = 
@@ -670,7 +668,7 @@ public abstract class AbstractStep {
 		return pStep;
 	}
 	
-	protected ProvisioningStep getProvisioningStep(String stepType) {
+	protected ProvisioningStep getProvisioningStepByType(String stepType) {
 		
 		ProvisioningStep pStep = null;
 		VirtualPrivateCloudProvisioning vpcp = 
@@ -745,7 +743,7 @@ public abstract class AbstractStep {
 		
 		
 		// Get the corresponding provisioning step.
-		ProvisioningStep pStep = getProvisioningStep(getStepId());
+		ProvisioningStep pStep = getProvisioningStepById(getStepId());
 		
 		// Update the step values.
 		try {
