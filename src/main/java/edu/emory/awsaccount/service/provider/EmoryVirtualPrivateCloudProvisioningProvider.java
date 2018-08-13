@@ -250,7 +250,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 			Properties sp = (Properties)stepPropsIterator.next();
 			String className = sp.getProperty("className");
 			String stepId = sp.getProperty("stepId");
-			String stepType = sp.getProperty("stepType");
+			String stepType = sp.getProperty("type");
 			if (className != null) {
 				// Instantiate the step
 				Step step = null;

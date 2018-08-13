@@ -28,7 +28,7 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 21 May 2017
  **/
-public class VerifyNewAcccountAdminDistroList extends AbstractStep implements Step {
+public class VerifyNewAccountAdminDistroList extends AbstractStep implements Step {
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
