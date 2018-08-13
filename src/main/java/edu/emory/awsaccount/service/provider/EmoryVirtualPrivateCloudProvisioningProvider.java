@@ -213,6 +213,75 @@ implements VirtualPrivateCloudProvisioningProvider {
 			throw new ProviderException(errMsg);
 		}
 		
+		// Initialize all provisioning steps this provider will use to 
+		// verify the runtime configuration as best we can.
+		// Get a list of all step properties.
+		List<PropertyConfig> stepPropConfigs = null;
+		try {
+			stepPropConfigs = getAppConfig().getObjectsLike("ProvisioningStep");
+		}
+		catch (EnterpriseConfigurationObjectException eoce) {
+			String errMsg = "An error occurred getting ProvisioningStep " +
+				"properties from AppConfig. The exception is: " +
+				eoce.getMessage();
+			logger.error(LOGTAG + errMsg);
+			return;
+		}
+		logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
+		
+		// Convert property configs to properties
+		List<Properties> stepProps = new ArrayList<Properties>();
+		ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
+		while (stepPropConfigsIterator.hasNext()) {
+			PropertyConfig stepConfig = (PropertyConfig)stepPropConfigsIterator.next();
+			Properties stepProp = stepConfig.getProperties();
+			stepProps.add(stepProp);
+		}
+		
+		// Sort the list by stepId integer.
+		stepProps.sort(new StepPropIdComparator(1));
+		
+		// For each property instantiate the step and log out its details.
+		List<Step> completedSteps = new ArrayList();
+		ListIterator stepPropsIterator = stepProps.listIterator();
+		int i = 0;
+		while (stepPropsIterator.hasNext()) {
+			i++;
+			Properties sp = (Properties)stepPropsIterator.next();
+			String className = sp.getProperty("className");
+			String stepId = sp.getProperty("stepId");
+			String stepType = sp.getProperty("stepType");
+			if (className != null) {
+				// Instantiate the step
+				Step step = null;
+				try {
+					logger.info(LOGTAG + "Step " + stepId + ": " + stepType);
+					Class stepClass = Class.forName(className);
+					step = (Step)stepClass.newInstance();
+					logger.info(LOGTAG + "Verified class for step " 
+						+ stepId +": " + className);
+				}
+				catch (ClassNotFoundException cnfe) {
+					String errMsg = "An error occurred instantiating " +
+						"a step. The exception is: " + cnfe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, cnfe);
+				}
+				catch (IllegalAccessException iae) {
+					String errMsg = "An error occurred instantiating " +
+						"a step. The exception is: " + iae.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, iae);
+				}
+				catch (InstantiationException ie) {
+					String errMsg = "An error occurred instantiating " +
+						"a step. The exception is: " + ie.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, ie);
+				}
+			}	
+		}
+		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 
@@ -712,6 +781,64 @@ implements VirtualPrivateCloudProvisioningProvider {
 		return this;
 	}
 	
+	private class StepPropIdComparator implements Comparator<Properties> {
+
+		int m_order = 1;
+		
+		public StepPropIdComparator(int order) {
+			m_order = order;
+		}
+		
+	    public int compare(Properties prop1, Properties prop2) {
+	        int returnVal = 0;
+	        
+	        // Convert stepIds to integers
+	        int stepId1 = Integer.valueOf(prop1.getProperty("stepId"));
+	        int stepId2 = Integer.valueOf(prop2.getProperty("stepId"));
+	        
+	        // Compare integer stepIds.
+	        if (stepId1 < stepId2) {
+	        	returnVal =  -1;
+	        }
+	        else if (stepId1 > stepId2) {
+	        	returnVal =  1;
+	        }
+	        else if (stepId1 == stepId2) {
+	        	returnVal =  0;
+	        }
+	        return (returnVal * m_order);
+	    }
+	}
+	
+	private class StepIdComparator implements Comparator<Step> {
+
+		int m_order = 1;
+		
+		public StepIdComparator(int order) {
+			m_order = order;
+		}
+		
+	    public int compare(Step step1, Step step2) {
+	        int returnVal = 0;
+	        
+	        // Convert stepIds to integers
+	        int stepId1 = Integer.valueOf(step1.getStepId());
+	        int stepId2 = Integer.valueOf(step2.getStepId());
+	        
+	        // Compare integer stepIds.
+	        if (stepId1 < stepId2) {
+	        	returnVal =  -1;
+	        }
+	        else if (stepId1 > stepId2) {
+	        	returnVal =  1;
+	        }
+	        else if (stepId1 == stepId2) {
+	        	returnVal =  0;
+	        }
+	        return (returnVal * m_order);
+	    }
+	}
+	
 	/**
 	 * A transaction to process virtual private cloud provisioning.
 	 */
@@ -866,63 +993,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 			
 		}
 		
-		private class StepPropIdComparator implements Comparator<Properties> {
 
-			int m_order = 1;
-			
-			public StepPropIdComparator(int order) {
-				m_order = order;
-			}
-			
-		    public int compare(Properties prop1, Properties prop2) {
-		        int returnVal = 0;
-		        
-		        // Convert stepIds to integers
-		        int stepId1 = Integer.valueOf(prop1.getProperty("stepId"));
-		        int stepId2 = Integer.valueOf(prop2.getProperty("stepId"));
-		        
-		        // Compare integer stepIds.
-		        if (stepId1 < stepId2) {
-		        	returnVal =  -1;
-		        }
-		        else if (stepId1 > stepId2) {
-		        	returnVal =  1;
-		        }
-		        else if (stepId1 == stepId2) {
-		        	returnVal =  0;
-		        }
-		        return (returnVal * m_order);
-		    }
-		}
-		
-		private class StepIdComparator implements Comparator<Step> {
-
-			int m_order = 1;
-			
-			public StepIdComparator(int order) {
-				m_order = order;
-			}
-			
-		    public int compare(Step step1, Step step2) {
-		        int returnVal = 0;
-		        
-		        // Convert stepIds to integers
-		        int stepId1 = Integer.valueOf(step1.getStepId());
-		        int stepId2 = Integer.valueOf(step2.getStepId());
-		        
-		        // Compare integer stepIds.
-		        if (stepId1 < stepId2) {
-		        	returnVal =  -1;
-		        }
-		        else if (stepId1 > stepId2) {
-		        	returnVal =  1;
-		        }
-		        else if (stepId1 == stepId2) {
-		        	returnVal =  0;
-		        }
-		        return (returnVal * m_order);
-		    }
-		}
 		
 		private void rollbackCompletedSteps(List<Step> completedSteps) {
 			logger.info(LOGTAG + "Starting rollback of completed steps...");
