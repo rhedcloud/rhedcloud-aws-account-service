@@ -225,7 +225,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 				"properties from AppConfig. The exception is: " +
 				eoce.getMessage();
 			logger.error(LOGTAG + errMsg);
-			return;
+			throw new ProviderException(errMsg, eoce);
 		}
 		logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
 		
@@ -434,17 +434,6 @@ implements VirtualPrivateCloudProvisioningProvider {
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new ProviderException(errMsg, ecoe);
 	    }
-	    	
-	    // Build the VirtualPrivateCloudProvisioning object from the XML element.	
-	    try {
-	    	vpcp.buildObjectFromInput(e);
-	    }
-	    catch (EnterpriseLayoutException ele) {
-	    	String errMsg = "An error occurred building the object from " +
-	    	  "the XML element. The exception is: " + ele.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new ProviderException(errMsg, ele);
-	    }
 	    
 	    // Get the next sequence number to identify the VPCP.
 	    String seq = null;
@@ -477,26 +466,68 @@ implements VirtualPrivateCloudProvisioningProvider {
 			throw new ProviderException(errMsg, efe);
 		}
 		
-		// Set the ProvisioningId on all of the process steps.
-		List steps = vpcp.getProvisioningStep();
-		ListIterator stepIterator = steps.listIterator();
+		// Add all of the steps.
+		// Initialize all provisioning steps this provider will use to 
+		// verify the runtime configuration as best we can.
+		// Get a list of all step properties.
+		List<PropertyConfig> stepPropConfigs = null;
+		try {
+			stepPropConfigs = getAppConfig().getObjectsLike("ProvisioningStep");
+		}
+		catch (EnterpriseConfigurationObjectException eoce) {
+			String errMsg = "An error occurred getting ProvisioningStep " +
+				"properties from AppConfig. The exception is: " +
+				eoce.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, eoce);
+		}
+		logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
+		
+		// Convert property configs to properties
+		List<Properties> stepProps = new ArrayList<Properties>();
+		ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
+		while (stepPropConfigsIterator.hasNext()) {
+			PropertyConfig stepConfig = (PropertyConfig)stepPropConfigsIterator.next();
+			Properties stepProp = stepConfig.getProperties();
+			stepProps.add(stepProp);
+		}
+		
+		// Sort the list by stepId integer.
+		stepProps.sort(new StepPropIdComparator(1));
+		
+		// For each property instantiate a provisioning step
+		// and add it to the provisioning object.
+		ListIterator stepPropsIterator = stepProps.listIterator();
 		int i = 0;
-		while (stepIterator.hasNext()) {
-			ProvisioningStep step = (ProvisioningStep)stepIterator.next();
+		while (stepPropsIterator.hasNext()) {
+			i++;
+			Properties sp = (Properties)stepPropsIterator.next();
+			String stepId = sp.getProperty("stepId");
+			String stepType = sp.getProperty("type");
+			String stepDesc = sp.getProperty("description");
+			String stepAnticipatedTime = sp.getProperty("anticipatedTime");
+			
+			ProvisioningStep pStep = vpcp.newProvisioningStep();
 			try {
-				step.setProvisioningId(vpcp.getProvisioningId());
-				i++;
+				pStep.setProvisioningId(vpcp.getProvisioningId());
+				pStep.setStepId(stepId);
+				pStep.setType(stepType);
+				pStep.setDescription(stepDesc);
+				pStep.setStatus(PENDING_STATUS);
+				pStep.setAnticipatedTime(stepAnticipatedTime);
+				
+				vpcp.addProvisioningStep(pStep);
 			}
 			catch (EnterpriseFieldException efe) {
-				String errMsg = "An error occurred setting the field values " +
-					"of a ProvisinoingStep. The exception is: " +
+				String errMsg = "An error occurred setting field values of " +
+					"the provisioning object. The exception is: " +
 					efe.getMessage();
 				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg);
+				throw new ProviderException(errMsg, efe);
+				
 			}
+			logger.info(LOGTAG + "Added step " + i + "to the provisioning object.");
 		}
-		logger.info(LOGTAG + "Set ProvisioningId " + vpcp.getProvisioningId()
-			+ " on " + i + " provisioning steps.");
 		
 		// Create the VPCP.
 		try {
