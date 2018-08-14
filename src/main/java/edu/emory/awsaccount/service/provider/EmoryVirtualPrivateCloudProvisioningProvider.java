@@ -1013,14 +1013,10 @@ implements VirtualPrivateCloudProvisioningProvider {
 				}
 			}
 			
-			// If the step fails, log it, sort the list of successful steps from
-			// last to first, and iterate over the list calling the rollback
-			// method of each step.
-			
+			// If all steps complete successfully, set the status of the provisioning to
+			// complete and the result to success.
 			
 		}
-		
-
 		
 		private void rollbackCompletedSteps(List<Step> completedSteps) {
 			logger.info(LOGTAG + "Starting rollback of completed steps...");
