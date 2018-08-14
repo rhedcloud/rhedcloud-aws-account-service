@@ -750,6 +750,8 @@ public abstract class AbstractStep {
 			pStep.setStatus(getStatus());
 			pStep.setStepResult(getResult());
 			pStep.setProperty(getResultProperties());
+			pStep.setLastUpdateUser("AwsAccountService");
+			pStep.setLastUpdateDatetime(new Datetime("LastUpdate", System.currentTimeMillis()));
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the field values " +
