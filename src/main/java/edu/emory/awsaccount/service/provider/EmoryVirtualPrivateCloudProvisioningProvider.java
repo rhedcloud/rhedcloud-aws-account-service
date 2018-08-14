@@ -549,7 +549,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 			try {
 				logger.info(LOGTAG + "Adding job to threadpool for " +
 					"ProvisioningId: " + vpcp.getProvisioningId());
-				getThreadPool().addJob(new VirtualPrivateCloudProvisioningTransaction(vpcp.getProvisioningId()));
+				getThreadPool().addJob(new VirtualPrivateCloudProvisioningTransaction(vpcp));
 				jobAdded = true;
 			}
 			catch (ThreadPoolException tpe) {
@@ -871,19 +871,20 @@ implements VirtualPrivateCloudProvisioningProvider {
 	 */
 	private class VirtualPrivateCloudProvisioningTransaction implements java.lang.Runnable {
 
-		String m_provisioningId = null;
+		VirtualPrivateCloudProvisioning m_vpcp = null;
 
-		public VirtualPrivateCloudProvisioningTransaction(String provisioningId) {
+		public VirtualPrivateCloudProvisioningTransaction(VirtualPrivateCloudProvisioning vpcp) {
 			logger.info(LOGTAG + "Initializing provisioning process for " +
-				"ProvisioningId: " + provisioningId);
-			m_provisioningId = provisioningId;
+				"ProvisioningId: " + vpcp.getProvisioningId());
+			m_vpcp = vpcp;
 		}
 		
 		public void run() {
+			long executionStartTime = System.currentTimeMillis();
 			String LOGTAG = "[VirtualPrivateCloudProvisioningTransaction{" + 
-				m_provisioningId + "}] ";
+				getProvisioningId() + "}] ";
 			logger.info(LOGTAG +  "Processing ProvisioningId number: " 
-				+ m_provisioningId);
+				+ getProvisioningId());
 			
 			// Get a list of all step properties.
 			List<PropertyConfig> stepPropConfigs = null;
@@ -928,7 +929,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						Class stepClass = Class.forName(className);
 						step = (Step)stepClass.newInstance();
 						logger.info(LOGTAG + "Initializing step " + i + ".");
-						step.init(m_provisioningId, props, getAppConfig(), 
+						step.init(getProvisioningId(), props, getAppConfig(), 
 							getVirtualPrivateCloudProvisioningProvider());
 					}
 					catch (ClassNotFoundException cnfe) {
@@ -1013,8 +1014,84 @@ implements VirtualPrivateCloudProvisioningProvider {
 				}
 			}
 			
-			// If all steps complete successfully, set the status of the provisioning to
-			// complete and the result to success.
+			// All steps completed successfully. 
+			// Set the end of execution.
+			long executionTime = System.currentTimeMillis() - executionStartTime;
+			
+			// of the provisioning process.
+			// Get a configured query spec from AppConfig
+			VirtualPrivateCloudProvisioningQuerySpecification vpcpqs = new
+				VirtualPrivateCloudProvisioningQuerySpecification();
+		    try {
+		    	vpcpqs = (VirtualPrivateCloudProvisioningQuerySpecification)getAppConfig()
+			    		.getObjectByType(vpcpqs.getClass().getName());
+		    }
+		    catch (EnterpriseConfigurationObjectException ecoe) {
+		    	String errMsg = "An error occurred retrieving an object from " +
+		    	  "AppConfig. The exception is: " + ecoe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+		    }
+			
+		    // Set the values of the query spec.
+		    try {
+		    	vpcpqs.setProvisioningId(getProvisioningId());
+		    }
+		    catch (EnterpriseFieldException efe) {
+		    	String errMsg = "An error occurred setting the values of the " +
+		  	    	  "VPCP query spec. The exception is: " + efe.getMessage();
+		  	    logger.error(LOGTAG + errMsg);
+		    }
+		    
+		    // Log the state of the query spec.
+		    try {
+		    	logger.info(LOGTAG + "Query spec is: " + vpcpqs.toXmlString());
+		    }
+		    catch (XmlEnterpriseObjectException xeoe) {
+		    	String errMsg = "An error occurred serializing the query spec " +
+		  	    	  "to XML. The exception is: " + xeoe.getMessage();
+	  	    	logger.error(LOGTAG + errMsg);
+		    }
+		    
+			List results = null;
+			try { 
+				results = getVirtualPrivateCloudProvisioningProvider()
+					.query(vpcpqs);
+			}
+			catch (ProviderException pe) {
+				String errMsg = "An error occurred querying for the  " +
+		    	  "current state of a VirtualPrivateCloudProvisioning object. " +
+		    	  "The exception is: " + pe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+			}
+			VirtualPrivateCloudProvisioning vpcp = 
+				(VirtualPrivateCloudProvisioning)results.get(0);
+			
+			// Set the status to complete, the result to success, and the
+			// execution time.
+			try {
+				vpcp.setStatus(COMPLETED_STATUS);
+				vpcp.setProvisioningResult(SUCCESS_RESULT);
+				vpcp.setActualTime(Long.toString(executionTime));
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error setting field values on the " +
+			    	  "VPCP object. The exception is: " + efe.getMessage();
+			    logger.error(LOGTAG + errMsg);
+			}
+			
+			// Update the VPCP object.
+			try { 
+				getVirtualPrivateCloudProvisioningProvider().update(vpcp);
+			}
+			catch (ProviderException pe) {
+				String errMsg = "An error occurred querying for the  " +
+		    	  "current state of a VirtualPrivateCloudProvisioning object. " +
+		    	  "The exception is: " + pe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+			}
+			
+			// And we're done.
+			return;
 			
 		}
 		
@@ -1077,8 +1154,12 @@ implements VirtualPrivateCloudProvisioningProvider {
 			return stringProps;
 		}
 		
+		private String getProvisioningId() {
+			return m_vpcp.getProvisioningId();
+		}
+		
+		
 	}
-	
 		
 }		
 	
