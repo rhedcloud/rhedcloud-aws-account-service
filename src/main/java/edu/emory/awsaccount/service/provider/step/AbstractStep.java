@@ -750,7 +750,7 @@ public abstract class AbstractStep {
 		m_executionTime = System.currentTimeMillis() - m_executionStartTime;
 	}
 	
-	protected long getExecutionTime() {
+	protected long getExecutionTime() {	
 		return m_executionTime;
 	}
 	
@@ -761,6 +761,7 @@ public abstract class AbstractStep {
 		setStatus(status);
 		setResult(result);
 		setResultProperties(props);
+		setExecutionTime();
 		
 		// Get the corresponding provisioning step.
 		ProvisioningStep pStep = getProvisioningStepById(getStepId());

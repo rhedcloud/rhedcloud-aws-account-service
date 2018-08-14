@@ -52,9 +52,16 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
-		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
+		String depStepType = "DETERMINE_NEW_OR_EXISTING_ACCOUNT";
+		logger.info(LOGTAG + "Getting dependent step by type: " + depStepType);
+		ProvisioningStep step = getProvisioningStepByType(depStepType);
+		if (step != null) logger.info(LOGTAG + "Dependent step found: " + step.getType());
+		else logger.error(LOGTAG + "Dependent step " + deStepType + " not found.");
+		logger.info(LOGTAG + "Getting dependent steps properties...");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
+		logger.info(LOGTAG + "allocateNewAccount property is: " + allocateNewAccount);
+		
 		
 		// If allocateNewAccount is true, increment the sequence number and
 		// set the accountSequenceNumber property.
@@ -76,6 +83,8 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 			// Increment the sequence value
 			try {
 				accountSequenceNumber = accountSeq.next();
+				logger.info(LOGTAG + "Account sequence was intremented to: " 
+						+ accountSequenceNumber);
 			}
 			catch (SequenceException se) {
 				String errMsg = "An error occurred incrementing the " +
