@@ -56,7 +56,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		logger.info(LOGTAG + "Getting dependent step by type: " + depStepType);
 		ProvisioningStep step = getProvisioningStepByType(depStepType);
 		if (step != null) logger.info(LOGTAG + "Dependent step found: " + step.getType());
-		else logger.error(LOGTAG + "Dependent step " + deStepType + " not found.");
+		else logger.error(LOGTAG + "Dependent step " + depStepType + " not found.");
 		logger.info(LOGTAG + "Getting dependent steps properties...");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
