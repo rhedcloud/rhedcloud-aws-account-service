@@ -396,31 +396,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 	 */
 	public VirtualPrivateCloudProvisioning generate(VirtualPrivateCloudRequisition vpcr)
 			throws ProviderException {
-
-		// Read the VirtualPrivateCloudProvisioning object out of a template 
-	  	// Response-Reply message so we can manage the process steps and their
-		// descriptions externally.
-	  	XmlDocumentReader xmlReader = new XmlDocumentReader();
-	    Document replyDoc = null;
-	    
-	    try {
-	    	if (getVerbose()) logger.info(LOGTAG + "Reading primed document for template object...");
-	    	replyDoc = xmlReader.initializeDocument(getPrimedDocumentUrl(), false);
-	    	if (getVerbose()) logger.info(LOGTAG + "Read primed document for template object.");
-	    }
-	    catch (XmlDocumentReaderException xdre) {
-	    	String errMsg = "An error occurred reading the XML document. The " +
-	    		"exception is: " + xdre.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new ProviderException(errMsg, xdre);
-	    }
-	    
-	    logger.info(LOGTAG + "primedDoc: " + replyDoc.toString());
-	    
-	    Element e = replyDoc.getRootElement().getChild("DataArea")
-	    	.getChild("VirtualPrivateCloudProvisioning");
-	       
-	     
+     
 	    // Get a configured VirtualPrivateCloudProvisioning object from AppConfig
 	    VirtualPrivateCloudProvisioning vpcp = 
 	    	new VirtualPrivateCloudProvisioning();
@@ -499,6 +475,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 		// and add it to the provisioning object.
 		ListIterator stepPropsIterator = stepProps.listIterator();
 		int i = 0;
+		int totalAnticipatedTime = 0;
 		while (stepPropsIterator.hasNext()) {
 			i++;
 			Properties sp = (Properties)stepPropsIterator.next();
@@ -506,6 +483,8 @@ implements VirtualPrivateCloudProvisioningProvider {
 			String stepType = sp.getProperty("type");
 			String stepDesc = sp.getProperty("description");
 			String stepAnticipatedTime = sp.getProperty("anticipatedTime");
+			int anticipatedTime = Integer.parseInt(stepAnticipatedTime);
+			totalAnticipatedTime = totalAnticipatedTime + anticipatedTime;
 			
 			ProvisioningStep pStep = vpcp.newProvisioningStep();
 			try {
@@ -515,6 +494,9 @@ implements VirtualPrivateCloudProvisioningProvider {
 				pStep.setDescription(stepDesc);
 				pStep.setStatus(PENDING_STATUS);
 				pStep.setAnticipatedTime(stepAnticipatedTime);
+				pStep.setCreateUser("AwsAccountService");
+				Datetime createDatetime = pStep.newCreateDatetime();
+				pStep.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
 				
 				vpcp.addProvisioningStep(pStep);
 			}
@@ -527,6 +509,20 @@ implements VirtualPrivateCloudProvisioningProvider {
 				
 			}
 			logger.info(LOGTAG + "Added step " + i + "to the provisioning object.");
+			logger.info(LOGTAG + "Total anticipated time of this provisioning " +
+				"process is " + totalAnticipatedTime + " ms.");
+		}
+		
+		// update the VPCP anticipated time.
+		try {
+			vpcp.setAnticipatedTime(Integer.toString(totalAnticipatedTime));
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting field values of " +
+				"the provisioning object. The exception is: " +
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
 		}
 		
 		// Create the VPCP.
