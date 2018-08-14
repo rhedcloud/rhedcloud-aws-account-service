@@ -235,6 +235,7 @@ public abstract class AbstractStep {
 		if (getSkipStep()) {
 			logger.info(LOGTAG + "skipStep is true, skipping this step.");
 			props.add(buildProperty("stepExecutionMethod", "skipped"));
+			setExecutionTime();
 			return props;
 		}
 		
@@ -242,21 +243,25 @@ public abstract class AbstractStep {
 		if (getSimulateStep()) {
 			logger.info(LOGTAG + "simulateStep is true, simulating this step.");
 			props = simulate();
+			setExecutionTime();
+			return props;
 		}
 		
 		// If failStep is true, log it and call the fail method.
 		if (getFailStep()) {
 			logger.info(LOGTAG + "failStep is true, failing this step.");
 			props = fail();
+			setExecutionTime();
+			return props;
 		}
+		
 		// Otherwise run the step logic.
 		else {
 			logger.info(LOGTAG + "Running the step.");
 			props = run();
+			setExecutionTime();
+			return props;
 		}
-		
-		setExecutionTime();
-		return props;
 	}
 	
 	protected abstract List<Property> simulate() throws StepException;
