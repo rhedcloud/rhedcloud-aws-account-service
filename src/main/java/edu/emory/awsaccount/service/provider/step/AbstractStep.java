@@ -747,6 +747,7 @@ public abstract class AbstractStep {
 	}
 	
 	protected void setExecutionTime() {
+		logger.info(LOGTAG + "Setting execution time: " + m_executionTime + " = " + System.currentTimeMillis() + " - " + m_executionStartTime);
 		m_executionTime = System.currentTimeMillis() - m_executionStartTime;
 	}
 	
