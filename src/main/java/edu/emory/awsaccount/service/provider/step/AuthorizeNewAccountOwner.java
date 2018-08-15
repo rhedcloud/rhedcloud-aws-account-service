@@ -35,7 +35,7 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2018
  **/
-public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
+public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -91,14 +91,14 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		    	throw new StepException(errMsg, ecoe);
 		    }
 			
-		    // Get the UserId of the account requestor.
-		    String requestorUserId = getVirtualPrivateCloudProvisioning()
-		    	.getVirtualPrivateCloudRequisition().getAuthenticatedRequestorUserId();
-		    props.add(buildProperty("requestorUserId", requestorUserId));
+		    // Get the UserId of the account owner.
+		    String ownerUserId = getVirtualPrivateCloudProvisioning()
+		    	.getVirtualPrivateCloudRequisition().getAccountOwnerUserId();
+		    props.add(buildProperty("ownerUserId", ownerUserId));
 		    
 		    // Set the values of the query spec.
 		    try {
-		    	apaqs.setUserId(requestorUserId);
+		    	apaqs.setUserId(ownerUserId);
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
