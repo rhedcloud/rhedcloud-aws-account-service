@@ -75,7 +75,6 @@ public abstract class AbstractStep {
 	private String m_status = null;
 	private String m_result = null;
 	private String m_executionType = null;
-	private long m_completionTime = 0;
 	private List<Property> m_resultProperties = null;
 	private String m_createUser = null;
 	private Datetime m_createDatetime = null;
@@ -100,6 +99,8 @@ public abstract class AbstractStep {
 	protected String SKIPPED_EXEC_TYPE = "skipped";
 	protected String FAILURE_EXEC_TYPE = "failure";
 	protected String m_stepTag = null;
+	protected long m_executionStartTime = 0;
+	protected long m_executionTime = 0;
 
 	public void init (String provisioningId, Properties props, 
 		AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -220,13 +221,13 @@ public abstract class AbstractStep {
 	}
 	
 	public List<Property> execute() throws StepException {
-		long startTime = System.currentTimeMillis();
+		setExecutionStartTime();
 		String LOGTAG = getStepTag() + 
 			"[AbstractStep.execute] ";
 		logger.info(LOGTAG + "Determining execution method.");
 		
 		// There are the return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
+		List<Property> props = new ArrayList<Property>();
 		
 		// Determine if the step should be skipped, simulated, or failed.
 		// If skipStep is true, log it skip it and return a property indicating
@@ -234,24 +235,32 @@ public abstract class AbstractStep {
 		if (getSkipStep()) {
 			logger.info(LOGTAG + "skipStep is true, skipping this step.");
 			props.add(buildProperty("stepExecutionMethod", "skipped"));
+			setExecutionTime();
 			return props;
 		}
 		
 		// If simulateStep is true, log it and call the simulate method.
 		if (getSimulateStep()) {
 			logger.info(LOGTAG + "simulateStep is true, simulating this step.");
-			return simulate();
+			props = simulate();
+			setExecutionTime();
+			return props;
 		}
 		
 		// If failStep is true, log it and call the fail method.
 		if (getFailStep()) {
 			logger.info(LOGTAG + "failStep is true, failing this step.");
-			return fail();
+			props = fail();
+			setExecutionTime();
+			return props;
 		}
+		
 		// Otherwise run the step logic.
 		else {
 			logger.info(LOGTAG + "Running the step.");
-			return run();
+			props = run();
+			setExecutionTime();
+			return props;
 		}
 	}
 	
@@ -733,6 +742,18 @@ public abstract class AbstractStep {
 		return value;
 	}
 	
+	protected void setExecutionStartTime() {
+		m_executionStartTime = System.currentTimeMillis();
+	}
+	
+	protected void setExecutionTime() {
+		m_executionTime = System.currentTimeMillis() - m_executionStartTime;
+	}
+	
+	protected long getExecutionTime() {	
+		return m_executionTime;
+	}
+	
 	public void update(String status, String result,
 		List props) throws StepException {
 		
@@ -740,7 +761,7 @@ public abstract class AbstractStep {
 		setStatus(status);
 		setResult(result);
 		setResultProperties(props);
-		
+		setExecutionTime();
 		
 		// Get the corresponding provisioning step.
 		ProvisioningStep pStep = getProvisioningStepById(getStepId());
@@ -750,6 +771,9 @@ public abstract class AbstractStep {
 			pStep.setStatus(getStatus());
 			pStep.setStepResult(getResult());
 			pStep.setProperty(getResultProperties());
+			pStep.setLastUpdateUser("AwsAccountService");
+			pStep.setLastUpdateDatetime(new Datetime("LastUpdate", System.currentTimeMillis()));
+			pStep.setActualTime(Long.toString(getExecutionTime()));
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the field values " +
