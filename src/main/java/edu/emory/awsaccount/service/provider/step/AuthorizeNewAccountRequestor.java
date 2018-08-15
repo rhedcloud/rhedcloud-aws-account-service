@@ -46,7 +46,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineNewAccountSequence.run] ";
+		String LOGTAG = getStepTag() + "[AuthorizeNewAccountRequestor.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean isAuthorized = false;
@@ -57,6 +57,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
