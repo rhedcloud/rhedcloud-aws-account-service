@@ -41,12 +41,10 @@ import org.openeai.moa.objects.resources.Authentication;
 import org.openeai.moa.objects.testsuite.TestId;
 import org.openeai.transport.SyncService;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
-
-import edu.emory.awsaccount.service.provider.AccountAliasProvider;
+import edu.emory.awsaccount.service.provider.AccountProvisioningAuthorizationProvider;
 import edu.emory.awsaccount.service.provider.ProviderException;
 
 /**
@@ -60,7 +58,7 @@ import edu.emory.awsaccount.service.provider.ProviderException;
 
 public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
     private static String LOGTAG = "[AccountProvisioningAuthorizationRequestCommand] ";
-    private AccountAliasProvider m_provider;
+    private AccountProvisioningAuthorizationProvider m_provider;
     private ProducerPool m_producerPool;
     public AccountProvisioningAuthorizationRequestCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
@@ -98,7 +96,7 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
         }
         logger.info(LOGTAG + "accountProvisioningAuthorizationProviderClassName is: " + className);
 
-        AccountAliasProvider provider = null;
+        AccountProvisioningAuthorizationProvider provider = null;
         try {
             logger.info(LOGTAG + "Getting class for name: " + className);
             Class providerClass = Class.forName(className);
@@ -106,7 +104,7 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
                 logger.info(LOGTAG + "providerClass is null.");
             else
                 logger.info(LOGTAG + "providerClass is not null.");
-            provider = (AccountAliasProvider) Class.forName(className).newInstance();
+            provider = (AccountProvisioningAuthorizationProvider) Class.forName(className).newInstance();
             logger.info(LOGTAG + "Initializing AccountProvisioningAuthorizationProvider: " + provider.getClass().getName());
             provider.init(getAppConfig());
             logger.info(LOGTAG + "AccountProvisioningAuthorizationProvider initialized.");
@@ -264,10 +262,10 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
         String eppn = getEppnFromAuthUserId(authUserId);
 
         // Get a configured AccountAlias from AppConfig.
-        AccountAlias alias = new AccountAlias();
+        AccountProvisioningAuthorization apa = new AccountProvisioningAuthorization();
         TestId testId = new TestId();
         try {
-            alias = (AccountAlias) getAppConfig().getObjectByType(alias.getClass().getName());
+            apa = (AccountProvisioningAuthorization) getAppConfig().getObjectByType(apa.getClass().getName());
             testId = (TestId) getAppConfig().getObjectByType(testId.getClass().getName());
         } catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: " + eoce.getMessage();
@@ -278,13 +276,13 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
 
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
-            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountAlias." + "Query-Request message.");
+            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountProvisioningAuthorization." + "Query-Request message.");
             Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("AccountAliasQuerySpecification");
 
             // Get a configured query object from AppConfig.
-            AccountAliasQuerySpecification querySpec = new AccountAliasQuerySpecification();
+            AccountProvisioningAuthorizationQuerySpecification querySpec = new AccountProvisioningAuthorizationQuerySpecification();
             try {
-                querySpec = (AccountAliasQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
+                querySpec = (AccountProvisioningAuthorizationQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
             } catch (EnterpriseConfigurationObjectException eoce) {
                 String errMsg = "Error retrieving an object from AppConfig: " + "The exception" + "is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
@@ -403,20 +401,20 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
     }
 
     /**
-     * @param AccountAliasProvider, the provider
+     * @param AccountProvisioningAuthorizationProvider, the provider
      * <P>
-     * Sets the AccountAliasProvider for this command.
+     * Sets the AccountProvisioningAuthorizationProvider for this command.
      */
-    protected void setProvider(AccountAliasProvider provider) {
+    protected void setProvider(AccountProvisioningAuthorizationProvider provider) {
         m_provider = provider;
     }
 
     /**
-     * @return AccountAliasProvider, the provider
+     * @return AccountProvisioningAuthorizationProvider, the provider
      * <P>
      * Gets the provider for this command.
      */
-    protected AccountAliasProvider getProvider() {
+    protected AccountProvisioningAuthorizationProvider getProvider() {
         return m_provider;
     }
 
