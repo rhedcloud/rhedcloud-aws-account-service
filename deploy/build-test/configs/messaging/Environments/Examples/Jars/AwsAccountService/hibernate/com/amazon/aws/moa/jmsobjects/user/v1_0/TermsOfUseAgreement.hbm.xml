@@ -2,8 +2,10 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.jmsobjects.user.v1_0">
 <class name="TermsOfUseAgreement" table="TERMS_OF_USE_AGREEMENT">
-<id name="TermsOfUseAgreementId" column="TERMS_OF_USE_AGREEMENT_ID">
-<generator class="assigned"/>
+<id name="TermsOfUseAgreementId" column="TERMS_OF_USE_AGREEMENT_ID" type="OpenEaiLong">
+<generator class="OpenEaiSequence">
+<param name="sequence">H_TERMS_OF_USE_AGREEMENT_SEQ</param>
+</generator>
 </id>
 <property name="TermsOfUseId" column="TERMS_OF_USE_ID"/>
 <property name="UserId" column="USER_ID"/>
