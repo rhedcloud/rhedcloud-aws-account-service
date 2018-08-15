@@ -18,7 +18,7 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthor
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 
 /**
- * Interface for all AccountAlias object providers.
+ * Interface for all AccountProvisioningAuthorization object providers.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
@@ -42,9 +42,9 @@ public interface AccountProvisioningAuthorizationProvider {
      * 
      * <P>
      * 
-     * @param AccountAliasQuerySpecficiation,
+     * @param AccountProvisioningAuthorizationQuerySpecficiation,
      *            the query parameter.
-     * @return List, a list of matching AccountAlias objects.
+     * @return List, a list of matching AccountProvisioningAuthorization objects.
      *         <P>
      * @throws ProviderException
      *             with details of the providing the list.

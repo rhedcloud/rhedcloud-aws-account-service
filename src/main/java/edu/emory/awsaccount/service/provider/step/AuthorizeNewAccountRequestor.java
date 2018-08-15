@@ -177,7 +177,9 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		}
 		
 		// Update the step.
-		if (isAuthorized) update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+		if (allocateNewAccount == false || isAuthorized == true) {
+			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+		}
 		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
     	
     	// Log completion time.

@@ -25,24 +25,18 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.log4j.PropertyConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
+
 // OpenEAI foundation components
 import org.openeai.config.CommandConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.LoggerConfig;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.consumer.commands.CommandException;
-import org.openeai.jms.consumer.commands.GenericCrudRequestCommand;
 import org.openeai.jms.consumer.commands.RequestCommand;
-import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
-import org.openeai.moa.EnterpriseObjectSyncException;
-import org.openeai.moa.objects.resources.Authentication;
 import org.openeai.moa.objects.testsuite.TestId;
-import org.openeai.transport.SyncService;
-
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import edu.emory.awsaccount.service.provider.AccountProvisioningAuthorizationProvider;
 import edu.emory.awsaccount.service.provider.ProviderException;
@@ -167,7 +161,7 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
      *             document, and verifies that message object of the message is
      *             a VirtualPrivateCloud and the action is a query, generate,
      *             update, or delete. Then this method uses the configured
-     *             AccountAliasProvider to perform each operation.
+     *             AccountProvisioningAuthorizationProvider to perform each operation.
      */
     @Override
     public final Message execute(int messageNumber, Message aMessage) throws CommandException {
@@ -261,7 +255,7 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
         // Get the EPPN from from AuthUserId.
         String eppn = getEppnFromAuthUserId(authUserId);
 
-        // Get a configured AccountAlias from AppConfig.
+        // Get a configured AccountProvisioningAuthorization from AppConfig.
         AccountProvisioningAuthorization apa = new AccountProvisioningAuthorization();
         TestId testId = new TestId();
         try {
@@ -277,7 +271,7 @@ public class AccountProvisioningAuthorizationRequestCommand extends AwsAccountRe
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
             logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountProvisioningAuthorization." + "Query-Request message.");
-            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("AccountAliasQuerySpecification");
+            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("AccountProvisioningAuthorizationQuerySpecification");
 
             // Get a configured query object from AppConfig.
             AccountProvisioningAuthorizationQuerySpecification querySpec = new AccountProvisioningAuthorizationQuerySpecification();
