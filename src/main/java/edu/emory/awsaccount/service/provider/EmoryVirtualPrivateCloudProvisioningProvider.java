@@ -321,6 +321,8 @@ implements VirtualPrivateCloudProvisioningProvider {
 			RequestService rs = null;
 			try {
 				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+				PointToPointProducer p2p = (PointToPointProducer)rs;
+				p2p.setRequestTimeoutInterval(1000000);
 			}
 			catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a request service to use " +
