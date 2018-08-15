@@ -101,6 +101,7 @@ public abstract class AbstractStep {
 	protected String m_stepTag = null;
 	protected long m_executionStartTime = 0;
 	protected long m_executionTime = 0;
+	protected Properties m_props = null;
 
 	public void init (String provisioningId, Properties props, 
 		AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -119,6 +120,7 @@ public abstract class AbstractStep {
 		setSimulateStep(Boolean.valueOf(props.getProperty("simulateStep", "false")));
 		setFailStep(Boolean.valueOf(props.getProperty("failStep", "false")));
 		setVirtualPrivateCloudProvisioningProvider(vpcpp);
+		setProperties(props);
 		
 		// Query for the VPCP object in the AWS Account Service.
 		// Get a configured query spec from AppConfig
@@ -540,6 +542,24 @@ public abstract class AbstractStep {
 		}
 		
 		m_status = status;
+	}
+	
+	/**
+	 * @return Properties, the step properties
+	 * <P>
+	 * This method returns the value of the step properties
+	 */
+	public Properties getProperties() {
+		return m_props;
+	}
+
+	/**
+	 * @param Properties, the step properties
+	 * <P>
+	 * This method sets the step properties
+	 */
+	private void setProperties(Properties props)  {		
+		m_props = props;
 	}
 	
 	/**
