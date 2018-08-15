@@ -59,9 +59,23 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
-		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
-		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-		props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+		boolean allocateNewAccount = false;
+		if (step != null) {
+			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
+			String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
+			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
+			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
+				"step is: " + allocateNewAccount);
+		}
+		else {
+			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found. " +
+				"Cannot determine whether or not to authorize the new account " +
+				"requestor.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
 		
 		// If allocateNewAccount is true, send an AccountProvisioningAuthorization.Query-Request
 		// to the AWS Account Service
