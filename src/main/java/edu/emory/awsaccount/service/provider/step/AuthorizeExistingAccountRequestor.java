@@ -221,7 +221,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			.replace("ACCOUNT_NUMBER", accountId);
 		return centralAdminRoleDn;
 	}
-	
+/**	
 	private List<RoleAssignment> roleAssignmentQuery(String roleDn, String userId) 
 		throws ProviderException {
 		
@@ -296,5 +296,5 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		
 		return roleAssignments;
 	}
-	
+**/	
 }
