@@ -212,8 +212,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequence.simulate] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -234,8 +233,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequence.fail] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -254,9 +252,11 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	}
 	
 	public void rollback() throws StepException {
+		
+		super.rollback();
+		
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequence.rollback] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT, null);
