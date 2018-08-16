@@ -14,9 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jms.JMSException;
+
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
+import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -24,6 +28,8 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthor
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+
+import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
@@ -36,12 +42,36 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  * @version 1.0 - 5 August 2018
  **/
 public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
+	
+	private ProducerPool m_awsAccountServiceProducerPool = null;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
 			throws StepException {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
+		
+		String LOGTAG = getStepTag() + "[AuthorizeNewAccountRequestor.init] ";
+		
+		// This step needs to send messages to the AWS account service
+		// to authorize requestors.
+		ProducerPool p2p1 = null;
+		try {
+			p2p1 = (ProducerPool)getAppConfig()
+				.getObject("AwsAccountServiceProducerPool");
+			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
+		logger.info(LOGTAG + "Initialization complete.");
+		
 	}
 	
 	protected List<Property> run() throws StepException {
@@ -130,26 +160,30 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }
-		    
-		    // Get a request service to use.
+		    }    
+			
+			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				rs = (RequestService)getAppConfig()
-					.getObject("AwsAccountServiceProducerPool");
+				rs = (RequestService)getAwsAccountServiceProducerPool()
+					.getExclusiveProducer();
 			}
-			catch (EnterpriseConfigurationObjectException ecoe) {
-				// An error occurred retrieving an object from AppConfig. Log it and
-				// throw an exception.
-				String errMsg = "An error occurred retrieving an object from " +
-						"AppConfig. The exception is: " + ecoe.getMessage();
-				logger.fatal(LOGTAG + errMsg);
-				throw new StepException(errMsg, ecoe);
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a producer " +
+					"from the pool. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, jmse);
 			}
 		    
 			List results = null;
 			try { 
+				long queryStartTime = System.currentTimeMillis();
 				results = apa.query(apaqs, rs);
+				long queryTime = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for AccountProvisioning" +
+					"Authorization for UserId " + requestorUserId + " in "
+					+ queryTime + " ms. Returned " + results.size() + 
+					" result.");
 			}
 			catch (EnterpriseObjectQueryException eoqe) {
 				String errMsg = "An error occurred querying for the  " +
@@ -157,6 +191,11 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		    	  "The exception is: " + eoqe.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, eoqe);
+			}
+			finally {
+				// Release the producer back to the pool
+				getAwsAccountServiceProducerPool()
+					.releaseProducer((MessageProducer)rs);
 			}
 			
 			if (results.size() == 1) {
@@ -259,6 +298,14 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+	}
+	
+	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+		m_awsAccountServiceProducerPool = pool;
+	}
+	
+	private ProducerPool getAwsAccountServiceProducerPool() {
+		return m_awsAccountServiceProducerPool;
 	}
 	
 }
