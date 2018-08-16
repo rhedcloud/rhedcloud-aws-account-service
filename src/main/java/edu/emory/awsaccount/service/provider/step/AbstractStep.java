@@ -729,6 +729,9 @@ public abstract class AbstractStep {
 	public void update(String status, String result,
 		List props) throws StepException {
 		
+		// Update the baseline state of the VPCP
+		queryForVpcpBaseline();
+		
 		// Update the fields of this step.
 		setStatus(status);
 		setResult(result);
