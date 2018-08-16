@@ -138,6 +138,9 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 	}
 	
 	public void rollback() throws StepException {
+		
+		super.rollback();
+		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
 			"[DetermineNewOrExistingAccount.rollback] ";

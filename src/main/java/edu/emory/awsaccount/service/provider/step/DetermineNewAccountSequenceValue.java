@@ -52,12 +52,20 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
-		String depStepType = "DETERMINE_NEW_OR_EXISTING_ACCOUNT";
-		logger.info(LOGTAG + "Getting dependent step by type: " + depStepType);
+		String predecessorStepType = "DETERMINE_NEW_OR_EXISTING_ACCOUNT";
+		
+		logger.info(LOGTAG + "Getting predecessor step by type: " + depStepType);
+		
 		ProvisioningStep step = getProvisioningStepByType(depStepType);
-		if (step != null) logger.info(LOGTAG + "Dependent step found: " + step.getType());
-		else logger.error(LOGTAG + "Dependent step " + depStepType + " not found.");
-		logger.info(LOGTAG + "Getting dependent steps properties...");
+		
+		if (step != null) {
+			logger.info(LOGTAG + "Predecessor step found: " + step.getType());
+		}
+		else {
+			logger.error(LOGTAG + " step " + predecessorStepType + " not found.");
+		}
+		
+		logger.info(LOGTAG + "Getting predecessor step properties...");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
 		logger.info(LOGTAG + "allocateNewAccount property is: " + allocateNewAccount);
@@ -162,6 +170,9 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 	}
 	
 	public void rollback() throws StepException {
+		
+		super.rollback();
+		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
 			"[DetermineNewAccountSequence.rollback] ";
