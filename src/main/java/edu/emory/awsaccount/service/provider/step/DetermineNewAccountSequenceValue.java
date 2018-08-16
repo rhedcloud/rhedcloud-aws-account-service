@@ -54,9 +54,9 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		String predecessorStepType = "DETERMINE_NEW_OR_EXISTING_ACCOUNT";
 		
-		logger.info(LOGTAG + "Getting predecessor step by type: " + depStepType);
+		logger.info(LOGTAG + "Getting predecessor step by type: " + predecessorStepType);
 		
-		ProvisioningStep step = getProvisioningStepByType(depStepType);
+		ProvisioningStep step = getProvisioningStepByType(predecessorStepType);
 		
 		if (step != null) {
 			logger.info(LOGTAG + "Predecessor step found: " + step.getType());
