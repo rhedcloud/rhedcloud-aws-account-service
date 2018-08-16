@@ -874,6 +874,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 	private class VirtualPrivateCloudProvisioningTransaction implements java.lang.Runnable {
 
 		VirtualPrivateCloudProvisioning m_vpcp = null;
+		long m_executionStartTime = 0;
 
 		public VirtualPrivateCloudProvisioningTransaction(VirtualPrivateCloudProvisioning vpcp) {
 			logger.info(LOGTAG + "Initializing provisioning process for " +
@@ -882,7 +883,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 		}
 		
 		public void run() {
-			long executionStartTime = System.currentTimeMillis();
+			setExecutionStartTime(System.currentTimeMillis());
 			String LOGTAG = "[VirtualPrivateCloudProvisioningTransaction{" + 
 				getProvisioningId() + "}] ";
 			logger.info(LOGTAG +  "Processing ProvisioningId number: " 
@@ -1018,9 +1019,146 @@ implements VirtualPrivateCloudProvisioningProvider {
 			
 			// All steps completed successfully. 
 			// Set the end of execution.
-			long executionTime = System.currentTimeMillis() - executionStartTime;
+			long executionTime = System.currentTimeMillis() - getExecutionStartTime();
 			
-			// of the provisioning process.
+			// Update the state of the VPCP object in this transaction.
+			queryForVpcpBaseline();
+			
+			// Set the status to complete, the result to success, and the
+			// execution time.
+			try {
+				getVirtualPrivateCloudProvisioning().setStatus(COMPLETED_STATUS);
+				getVirtualPrivateCloudProvisioning().setProvisioningResult(SUCCESS_RESULT);
+				getVirtualPrivateCloudProvisioning().setActualTime(Long.toString(executionTime));
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error setting field values on the " +
+			    	  "VPCP object. The exception is: " + efe.getMessage();
+			    logger.error(LOGTAG + errMsg);
+			}
+			
+			// Update the VPCP object.
+			try { 
+				getVirtualPrivateCloudProvisioningProvider()
+					.update(getVirtualPrivateCloudProvisioning());
+			}
+			catch (ProviderException pe) {
+				String errMsg = "An error occurred querying for the  " +
+		    	  "current state of a VirtualPrivateCloudProvisioning object. " +
+		    	  "The exception is: " + pe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+			}
+			
+			// And we're done.
+			return;
+			
+		}
+		
+		private void rollbackCompletedSteps(List<Step> completedSteps) {
+			logger.info(LOGTAG + "Starting rollback of completed steps...");
+			
+			// Reverse the order of the completedSteps list.
+			completedSteps.sort(new StepIdComparator(-1));
+			
+			ListIterator completedStepsIterator = completedSteps.listIterator();
+			long startTime = System.currentTimeMillis();
+			while (completedStepsIterator.hasNext()) {
+				Step completedStep = (Step)completedStepsIterator.next();
+				try {
+					completedStep.rollback();
+				}
+				catch (StepException se) {
+					String errMsg = "An error occurred rolling back step " +
+						completedStep.getStepId() + ": " + 
+						completedStep.getType() + ". The exception is: " +
+						se.getMessage();
+					logger.error(LOGTAG + errMsg);
+				}
+			}
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Provisioning rollback complete in " + time + " ms.");
+			
+			// All steps completed successfully. 
+			// Set the end of execution.
+			long executionTime = System.currentTimeMillis() - getExecutionStartTime();
+			
+			// Update the state of the VPCP object in this transaction.
+			queryForVpcpBaseline();
+			
+			// Set the status to complete, the result to success, and the
+			// execution time.
+			try {
+				getVirtualPrivateCloudProvisioning().setStatus(COMPLETED_STATUS);
+				getVirtualPrivateCloudProvisioning().setProvisioningResult(SUCCESS_RESULT);
+				getVirtualPrivateCloudProvisioning().setActualTime(Long.toString(executionTime));
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error setting field values on the " +
+			    	  "VPCP object. The exception is: " + efe.getMessage();
+			    logger.error(LOGTAG + errMsg);
+			}
+			
+			// Update the VPCP object.
+			try { 
+				getVirtualPrivateCloudProvisioningProvider()
+					.update(getVirtualPrivateCloudProvisioning());
+			}
+			catch (ProviderException pe) {
+				String errMsg = "An error occurred querying for the  " +
+		    	  "current state of a VirtualPrivateCloudProvisioning object. " +
+		    	  "The exception is: " + pe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+			}
+			
+			// The the provider is configured to create an incident
+			// in ServiceNow upon failure, create an incident.
+			if (false) {
+				logger.info(LOGTAG + "Creating an Incident " +
+					"in ServiceNow...");
+				//TODO: create an incident.
+			}
+			else {
+				logger.info(LOGTAG + "createIncidentOnFailure is " 
+					+ "false. Will not create an incident in " 
+					+ "ServiceNow.");
+			}
+		}
+		
+		private String resultPropsToXmlString(List<Property> resultProps) {
+			String stringProps = "";
+			
+			ListIterator li = resultProps.listIterator();
+			while (li.hasNext()) {
+				Property prop = (Property)li.next();
+				String stringProp = "";
+				try {
+					stringProp = prop.toXmlString();
+					stringProps = stringProps + stringProp;
+				}
+				catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing a Property "
+						+ "object to an XML string.";
+					logger.error(LOGTAG + errMsg);
+				}
+			}
+			
+			return stringProps;
+		}
+		
+		private String getProvisioningId() {
+			return m_vpcp.getProvisioningId();
+		}
+		
+		private void setVirtualPrivateCloudProvisioning(VirtualPrivateCloudProvisioning vpcp) {
+			m_vpcp = vpcp;
+		}
+		
+		private VirtualPrivateCloudProvisioning getVirtualPrivateCloudProvisioning() {
+			return m_vpcp;
+		}
+		
+		private void queryForVpcpBaseline() {
+			// Query for the VPCP object in the AWS Account Service.
 			// Get a configured query spec from AppConfig
 			VirtualPrivateCloudProvisioningQuerySpecification vpcpqs = new
 				VirtualPrivateCloudProvisioningQuerySpecification();
@@ -1068,100 +1206,16 @@ implements VirtualPrivateCloudProvisioningProvider {
 			VirtualPrivateCloudProvisioning vpcp = 
 				(VirtualPrivateCloudProvisioning)results.get(0);
 			
-			// Set the status to complete, the result to success, and the
-			// execution time.
-			try {
-				vpcp.setStatus(COMPLETED_STATUS);
-				vpcp.setProvisioningResult(SUCCESS_RESULT);
-				vpcp.setActualTime(Long.toString(executionTime));
-			}
-			catch (EnterpriseFieldException efe) {
-				String errMsg = "An error setting field values on the " +
-			    	  "VPCP object. The exception is: " + efe.getMessage();
-			    logger.error(LOGTAG + errMsg);
-			}
-			
-			// Update the VPCP object.
-			try { 
-				getVirtualPrivateCloudProvisioningProvider().update(vpcp);
-			}
-			catch (ProviderException pe) {
-				String errMsg = "An error occurred querying for the  " +
-		    	  "current state of a VirtualPrivateCloudProvisioning object. " +
-		    	  "The exception is: " + pe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-			}
-			
-			// And we're done.
-			return;
-			
+			setVirtualPrivateCloudProvisioning(vpcp);
 		}
 		
-		private void rollbackCompletedSteps(List<Step> completedSteps) {
-			logger.info(LOGTAG + "Starting rollback of completed steps...");
-			
-			// Reverse the order of the completedSteps list.
-			completedSteps.sort(new StepIdComparator(-1));
-			
-			ListIterator completedStepsIterator = completedSteps.listIterator();
-			long startTime = System.currentTimeMillis();
-			while (completedStepsIterator.hasNext()) {
-				Step completedStep = (Step)completedStepsIterator.next();
-				try {
-					completedStep.rollback();
-				}
-				catch (StepException se) {
-					String errMsg = "An error occurred rolling back step " +
-						completedStep.getStepId() + ": " + 
-						completedStep.getType() + ". The exception is: " +
-						se.getMessage();
-					logger.error(LOGTAG + errMsg);
-				}
-			}
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Provisioning rollback complete in " + time + " ms.");
-			
-			// The the provider is configured to create an incident
-			// in ServiceNow upon failure, create an incident.
-			if (false) {
-				logger.info(LOGTAG + "Creating an Incident " +
-					"in ServiceNow...");
-				//TODO: create an incident.
-			}
-			else {
-				logger.info(LOGTAG + "createIncidentOnFailure is " 
-					+ "false. Will not create an incident in " 
-					+ "ServiceNow.");
-			}
+		private void setExecutionStartTime(long time) {
+			m_executionStartTime = time;
 		}
 		
-		private String resultPropsToXmlString(List<Property> resultProps) {
-			String stringProps = "";
-			
-			ListIterator li = resultProps.listIterator();
-			while (li.hasNext()) {
-				Property prop = (Property)li.next();
-				String stringProp = "";
-				try {
-					stringProp = prop.toXmlString();
-					stringProps = stringProps + stringProp;
-				}
-				catch (XmlEnterpriseObjectException xeoe) {
-					String errMsg = "An error occurred serializing a Property "
-						+ "object to an XML string.";
-					logger.error(LOGTAG + errMsg);
-				}
-			}
-			
-			return stringProps;
+		private long getExecutionStartTime() {
+			return m_executionStartTime;
 		}
-		
-		private String getProvisioningId() {
-			return m_vpcp.getProvisioningId();
-		}
-		
-		
 	}
-		
 }		
 	
