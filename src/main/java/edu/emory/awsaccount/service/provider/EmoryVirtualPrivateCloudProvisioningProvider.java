@@ -996,7 +996,9 @@ implements VirtualPrivateCloudProvisioningProvider {
 							step.getStepId() + "The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
 						try {
+							logger.info(LOGTAG + "Setting completed status and failure result...");
 							step.update(COMPLETED_STATUS, FAILURE_RESULT, resultProps);
+							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}
 						catch (StepException se2) {
 							String errMsg2 = "An error occurred updating the " +
@@ -1089,7 +1091,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 			// execution time.
 			try {
 				getVirtualPrivateCloudProvisioning().setStatus(COMPLETED_STATUS);
-				getVirtualPrivateCloudProvisioning().setProvisioningResult(SUCCESS_RESULT);
+				getVirtualPrivateCloudProvisioning().setProvisioningResult(FAILURE_RESULT);
 				getVirtualPrivateCloudProvisioning().setActualTime(Long.toString(executionTime));
 			}
 			catch (EnterpriseFieldException efe) {

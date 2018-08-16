@@ -178,7 +178,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 			"[DetermineNewAccountSequence.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, null);
+		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
