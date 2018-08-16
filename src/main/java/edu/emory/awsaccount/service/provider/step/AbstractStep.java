@@ -122,59 +122,8 @@ public abstract class AbstractStep {
 		setVirtualPrivateCloudProvisioningProvider(vpcpp);
 		setProperties(props);
 		
-		// Query for the VPCP object in the AWS Account Service.
-		// Get a configured query spec from AppConfig
-		VirtualPrivateCloudProvisioningQuerySpecification vpcpqs = new
-			VirtualPrivateCloudProvisioningQuerySpecification();
-	    try {
-	    	vpcpqs = (VirtualPrivateCloudProvisioningQuerySpecification)getAppConfig()
-		    		.getObjectByType(vpcpqs.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-		
-	    // Set the values of the query spec.
-	    try {
-	    	vpcpqs.setProvisioningId(getProvisioningId());
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting the values of the " +
-	  	    	  "VPCP query spec. The exception is: " + efe.getMessage();
-	  	    logger.error(LOGTAG + errMsg);
-	  	    throw new StepException(errMsg, efe);
-	    }
-	    
-	    // Log the state of the query spec.
-	    try {
-	    	logger.info(LOGTAG + "Query spec is: " + vpcpqs.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the query spec " +
-	  	    	  "to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }
-	    
-		List results = null;
-		try { 
-			results = getVirtualPrivateCloudProvisioningProvider()
-				.query(vpcpqs);
-		}
-		catch (ProviderException pe) {
-			String errMsg = "An error occurred querying for the  " +
-	    	  "current state of a VirtualPrivateCloudProvisioning object. " +
-	    	  "The exception is: " + pe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, pe);
-		}
-		VirtualPrivateCloudProvisioning vpcp = 
-			(VirtualPrivateCloudProvisioning)results.get(0);
-		
-		setVirtualPrivateCloudProvisioning(vpcp);
+		// Query for the provisioning object.
+		queryForVpcpBaseline();
 		
 		// If the VPCP object is not null, look for the step.
 		ProvisioningStep step = null;
@@ -818,6 +767,68 @@ public abstract class AbstractStep {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, pe);
 		}	
+	}
+	
+	protected void rollback() throws StepException {
+		String LOGTAG = "[AbstractStep.rollback] ";
+		logger.info(LOGTAG + "Initing common rollback logic...");
+		logger.info(LOGTAG + "Querying for VPVP baseline...");
+		queryForVpcpBaseline();
+	}
+	
+	private void queryForVpcpBaseline() throws StepException {
+		// Query for the VPCP object in the AWS Account Service.
+		// Get a configured query spec from AppConfig
+		VirtualPrivateCloudProvisioningQuerySpecification vpcpqs = new
+			VirtualPrivateCloudProvisioningQuerySpecification();
+	    try {
+	    	vpcpqs = (VirtualPrivateCloudProvisioningQuerySpecification)getAppConfig()
+		    		.getObjectByType(vpcpqs.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
 		
+	    // Set the values of the query spec.
+	    try {
+	    	vpcpqs.setProvisioningId(getProvisioningId());
+	    }
+	    catch (EnterpriseFieldException efe) {
+	    	String errMsg = "An error occurred setting the values of the " +
+	  	    	  "VPCP query spec. The exception is: " + efe.getMessage();
+	  	    logger.error(LOGTAG + errMsg);
+	  	    throw new StepException(errMsg, efe);
+	    }
+	    
+	    // Log the state of the query spec.
+	    try {
+	    	logger.info(LOGTAG + "Query spec is: " + vpcpqs.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the query spec " +
+	  	    	  "to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new StepException(errMsg, xeoe);
+	    }
+	    
+		List results = null;
+		try { 
+			results = getVirtualPrivateCloudProvisioningProvider()
+				.query(vpcpqs);
+		}
+		catch (ProviderException pe) {
+			String errMsg = "An error occurred querying for the  " +
+	    	  "current state of a VirtualPrivateCloudProvisioning object. " +
+	    	  "The exception is: " + pe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, pe);
+		}
+		VirtualPrivateCloudProvisioning vpcp = 
+			(VirtualPrivateCloudProvisioning)results.get(0);
+		
+		setVirtualPrivateCloudProvisioning(vpcp);
 	}
 }

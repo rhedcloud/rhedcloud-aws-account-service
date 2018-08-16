@@ -288,6 +288,9 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 	}
 	
 	public void rollback() throws StepException {
+		
+		super.rollback();
+		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
 			"[AuthorizeNewAccountRequestor.rollback] ";
