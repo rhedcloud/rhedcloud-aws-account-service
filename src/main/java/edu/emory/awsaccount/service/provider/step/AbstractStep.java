@@ -164,11 +164,11 @@ public abstract class AbstractStep {
 		}
 		
 		// Set the step tag value.
-		String stepTag = "[ProvisioningId " + getProvisioningId() + "][Step"
-				+ getStepId() + "]";
+		String stepTag = "[ProvisioningId " + getProvisioningId() + "][Step-"
+				+ getStepId() + "] ";
 		setStepTag(stepTag);
 		
-		logger.info(LOGTAG + "Initialization complete.");
+		logger.info(LOGTAG + "Initialization complete #######################");
 	}
 	
 	public List<Property> execute() throws StepException {
