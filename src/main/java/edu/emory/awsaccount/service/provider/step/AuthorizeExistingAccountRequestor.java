@@ -23,15 +23,9 @@ import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.transport.RequestService;
-import org.openeai.utils.sequence.Sequence;
-import org.openeai.utils.sequence.SequenceException;
-
 import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-
-import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
@@ -59,7 +53,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.init] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.init] ";
 		
 		// This step needs to send messages to the IDM service
 		// to authorize requestors.
@@ -105,7 +99,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.run] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean isAuthorized = false;
@@ -177,8 +171,12 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		// If allocateNewAccount is true, there is nothing to do.
 		// update the properties and complete the step.
 		else {
-			logger.info(LOGTAG + "allocateNewAccount is false. " +
-				"The account sequence was not incremented.");
+			logger.info(LOGTAG + "allocateNewAccount is true. " +
+				"A new account will be created, so there is no " +
+				"need to authorize the requestor for an existing " +
+				"account");
+			props.add(buildProperty("allocateNewAccount", "true"));
+			props.add(buildProperty("isAuthorized", "not applicable"));
 		}
 		
 		// Determine the step result
@@ -212,7 +210,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.simulate] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -233,7 +231,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.fail] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -256,7 +254,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		super.rollback();
 		
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountrequestor.rollback] ";
+		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());

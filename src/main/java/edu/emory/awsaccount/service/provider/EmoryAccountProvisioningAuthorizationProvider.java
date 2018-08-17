@@ -260,13 +260,14 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 			authDescription = authDescription + " You are not in any of these authorized groups.";
 		}
 		else {
-			authDescription = authDescription + " You are in the following authorized group(s): ";
+			String groupWord = "group";
+			if (categories.size() == 1) groupWord = "groups";
+			authDescription = authDescription + " You are in the following authorized " + groupWord +": ";
 			ListIterator<String> li = categories.listIterator();
 			while (li.hasNext()) {	
 				String category = (String)li.next();
 				if (li.hasNext()) category = category + ", ";
 				authDescription = authDescription + category;
-				
 			}
 		}
 		
