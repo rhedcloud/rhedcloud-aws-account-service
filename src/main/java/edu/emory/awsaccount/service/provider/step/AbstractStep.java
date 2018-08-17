@@ -732,11 +732,18 @@ public abstract class AbstractStep {
 		// Update the baseline state of the VPCP
 		queryForVpcpBaseline();
 		
+		// If the current status is pending, update the 
+		// execution time. Note that we don't want to
+		// update the execution on update for steps that
+		// have already completed or are in any other status
+		// that pending.
+		if (getStatus().equalsIgnoreCase(PENDING_STATUS)) {
+			setExecutionTime();
+		}
 		// Update the fields of this step.
 		setStatus(status);
 		setResult(result);
 		setResultProperties(props);
-		setExecutionTime();
 		
 		// Get the corresponding provisioning step.
 		ProvisioningStep pStep = getProvisioningStepById(getStepId());

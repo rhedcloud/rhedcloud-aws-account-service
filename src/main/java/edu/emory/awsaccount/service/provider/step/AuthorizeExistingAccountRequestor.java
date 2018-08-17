@@ -82,15 +82,15 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		
 		logger.info(LOGTAG + "Getting custom step properties...");
 		String adminRoleTemplate = getProperties()
-				.getProperty("adminRoleTemplate", null);
+				.getProperty("adminRoleDnTemplate", null);
 		setAdminRoleDnTemplate(adminRoleTemplate);
-		logger.info(LOGTAG + "adminRoleTemplate is: " + 
+		logger.info(LOGTAG + "adminRoleDnTemplate is: " + 
 				getAdminRoleDnTemplate());
 		
 		String centralAdminRoleTemplate = getProperties()
-				.getProperty("centralAdminRoleTemplate", null);
+				.getProperty("centralAdminRoleDnTemplate", null);
 		setCentralAdminRoleDnTemplate(centralAdminRoleTemplate);
-		logger.info(LOGTAG + "centralAdminRoleTemplate is: " + 
+		logger.info(LOGTAG + "centralAdminRoleDnTemplate is: " + 
 				getCentralAdminRoleDnTemplate());
 		
 		String userDnTemplate = getProperties()
@@ -269,7 +269,8 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	private void setUserDnTemplate(String template) 
 			throws StepException {
 			
-			String LOGTAG = "[AuthorizeExistingAccountRequestor.setUserDnTemplate] ";
+			String LOGTAG = getStepTag() + 
+				"[AuthorizeExistingAccountRequestor.setUserDnTemplate] ";
 			
 			if (template == null) {
 				String errMsg = "userDnTemplate property is null. " +
@@ -293,7 +294,8 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	private void setAdminRoleDnTemplate(String template) 
 		throws StepException {
 		
-		String LOGTAG = "[AuthorizeExistingAccountRequestor.setAdminRoleDnTemplate] ";
+		String LOGTAG = getStepTag() + 
+			"[AuthorizeExistingAccountRequestor.setAdminRoleDnTemplate] ";
 		
 		if (template == null) {
 			String errMsg = "adminRoleDnTemplate property " +
@@ -317,7 +319,8 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	private void setCentralAdminRoleDnTemplate(String template) 
 		throws StepException {
 		
-		String LOGTAG = "[AuthorizeExistingAccountRequestor.setCentralAdminRoleDnTemplate] ";
+		String LOGTAG = getStepTag() +
+			"[AuthorizeExistingAccountRequestor.setCentralAdminRoleDnTemplate] ";
 		
 		if (template == null) {
 			String errMsg = "centralAdminRoleDnTemplate property " +
