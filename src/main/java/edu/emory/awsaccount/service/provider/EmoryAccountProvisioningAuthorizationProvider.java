@@ -84,7 +84,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		ProducerPool p2p1 = null;
 		try {
 			p2p1 = (ProducerPool)getAppConfig()
-				.getObject("IdentityServiceServiceProducerPool");
+				.getObject("IdentityServiceProducerPool");
 			setIdentityServiceProducerPool(p2p1);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
@@ -141,7 +141,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 			fullPerson = (FullPerson)getAppConfig()
 				.getObjectByType(fullPerson.getClass().getName());
 			fullPersonQuerySpec = (FullPersonQuerySpecification)getAppConfig()
-				.getObjectByType(querySpec.getClass().getName());
+				.getObjectByType(fullPersonQuerySpec.getClass().getName());
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			String errMsg = "An error occurred retrieving an object from " +
