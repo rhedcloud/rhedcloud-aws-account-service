@@ -23,7 +23,6 @@ import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.transport.RequestService;
-import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
@@ -121,20 +120,24 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 				"the existing account.");
 			
 			// Get the UserId
-			String userId = getVirtualPrivateCloudProvisioning()
+			String requestorUserId = getVirtualPrivateCloudProvisioning()
 					.getVirtualPrivateCloudRequisition()
 					.getAuthenticatedRequestorUserId();
-			props.add(buildProperty("userId", userId));
-			List roleAssignments = roleAssignmentQuery(userId);
+			logger.info(LOGTAG + "requestorUserId is: " + requestorUserId);
+			props.add(buildProperty("requestorUserId", requestorUserId));
+			List roleAssignments = roleAssignmentQuery(requestorUserId);
 			
 			// Get the the AccountId
 			String accountId = getVirtualPrivateCloudProvisioning()
 					.getVirtualPrivateCloudRequisition()
 					.getAccountId();
+			logger.info(LOGTAG + "accountId is: " + accountId);
 			props.add(buildProperty("accountId", accountId));
 			
 			// Build the administrator role dn
 			String adminRoleDn = getAdminRoleDn(accountId);
+			logger.info(LOGTAG + "adminRoleDn is: " + adminRoleDn);
+			props.add(buildProperty("adminRoleDn", adminRoleDn));
 			
 			// Determine if the user is in the admin role
 			boolean isInAdminRole = isUserInRole(adminRoleDn, roleAssignments);
@@ -149,6 +152,8 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			
 			// Build the administrator role dn
 			String centralAdminRoleDn = getCentralAdminRoleDn(accountId);
+			logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
+			props.add(buildProperty("centralAdminRoleDn", centralAdminRoleDn));
 			
 			// Determine if the user is in the central admin role
 			boolean isInCentralAdminRole = isUserInRole(centralAdminRoleDn, 
@@ -346,14 +351,11 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			"[AuthorizeExistingAccountrequestor.roleAssignmentQuery] ";
 		
     	// Query the IDM service for all users in the named role
-    	// Get a configured AccountUser, RoleAssignment, and 
+    	// Get a configured RoleAssignment and 
     	// RoleAssignmentQuerySpecification from AppConfig
-    	AccountUser accountUser = new AccountUser();
 		RoleAssignment roleAssignment = new RoleAssignment();
     	RoleAssignmentQuerySpecification querySpec = new RoleAssignmentQuerySpecification();
 		try {
-			accountUser = (AccountUser)getAppConfig()
-					.getObjectByType(accountUser.getClass().getName());
 			roleAssignment = (RoleAssignment)getAppConfig()
 				.getObjectByType(roleAssignment.getClass().getName());
 			querySpec = (RoleAssignmentQuerySpecification)getAppConfig()
