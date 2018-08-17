@@ -216,41 +216,42 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		
 		FullPerson person = (FullPerson)fullPersonList.get(0);
 		Employee employee = person.getEmployee();
-		
-		if (employee.getFaculty() != null) {
-			if (employee.getFaculty().equalsIgnoreCase("true")) {
-				categories.add("faculty");
-				isAuthorized = true;
+		if (employee != null) {
+			if (employee.getFaculty() != null) {
+				if (employee.getFaculty().equalsIgnoreCase("true")) {
+					categories.add("faculty");
+					isAuthorized = true;
+				}
 			}
-		}
-		if (employee.getPhysician() != null) { 
-			if (employee.getPhysician().equalsIgnoreCase("true")) {
-				categories.add("physician");
-				isAuthorized = true;
+			if (employee.getPhysician() != null) { 
+				if (employee.getPhysician().equalsIgnoreCase("true")) {
+					categories.add("physician");
+					isAuthorized = true;
+				}
+	    	}
+			if (employee.getHealthCareManager() != null) {
+				if (employee.getHealthCareManager().equalsIgnoreCase("true")) {
+					categories.add("health care manager");
+					isAuthorized = true;
+				}
 			}
-    	}
-		if (employee.getHealthCareManager() != null) {
-			if (employee.getHealthCareManager().equalsIgnoreCase("true")) {
-				categories.add("health care manager");
-				isAuthorized = true;
+			if (employee.getAdministrative() != null) { 
+				if (employee.getAdministrative().equalsIgnoreCase("true")) {
+					categories.add("administrative staff");
+					isAuthorized = true;
+				}
 			}
-		}
-		if (employee.getAdministrative() != null) { 
-			if (employee.getAdministrative().equalsIgnoreCase("true")) {
-				categories.add("administrative staff");
-				isAuthorized = true;
+			if (employee.getStaffStudent() != null) {
+				if (employee.getStaffStudent().equalsIgnoreCase("true")) {
+					categories.add("staff student");
+					isAuthorized = true;
+				}
 			}
-		}
-		if (employee.getStaffStudent() != null) {
-			if (employee.getStaffStudent().equalsIgnoreCase("true")) {
-				categories.add("staff student");
-				isAuthorized = true;
-			}
-		}
-		if (employee.getStaff() != null) {
-			if (employee.getStaff().equalsIgnoreCase("true")) {
-				categories.add("staff");
-				isAuthorized = true;
+			if (employee.getStaff() != null) {
+				if (employee.getStaff().equalsIgnoreCase("true")) {
+					categories.add("staff");
+					isAuthorized = true;
+				}
 			}
 		}
 		
@@ -261,7 +262,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		}
 		else {
 			String groupWord = "group";
-			if (categories.size() == 1) groupWord = "groups";
+			if (categories.size() > 1) groupWord = "groups";
 			authDescription = authDescription + " You are in the following authorized " + groupWord +": ";
 			ListIterator<String> li = categories.listIterator();
 			while (li.hasNext()) {	
