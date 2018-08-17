@@ -92,7 +92,7 @@ public class ExampleAccountProvisioningAuthorizationProvider extends OpenEaiObje
         try {
             auth.setUserId(querySpec.getUserId());
             auth.setIsAuthorized("true");
-            auth.setAuthorizedUserDescription("This dummy implementation authorized all users.");
+            auth.setAuthorizedUserDescription("This dummy implementation authorizes all users. A real implementation will provide a description here of who is authorized.");
             
         } catch (EnterpriseFieldException efe) {
             String errMsg = "An error occurred seting field values. " + "The exception is: " + efe.getMessage();
