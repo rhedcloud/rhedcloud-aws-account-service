@@ -255,12 +255,12 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		}
 		
 		// Build the authorization description.
-		String authDescription = "Presently faculty, physicians, health care managers, administrative staff, staff students, and staff are authorized to provisiong Emory AWS accounts.";
+		String authDescription = "Presently faculty, physicians, health care managers, administrative staff, staff students, and staff are authorized to provision Emory AWS accounts.";
 		if (isAuthorized == false) {
-			authDescription = authDescription + " You are not in one of these authorized groups.";
+			authDescription = authDescription + " You are not in any of these authorized groups.";
 		}
 		else {
-			authDescription = authDescription + " You are in the following authoirzed group(s): ";
+			authDescription = authDescription + " You are in the following authorized group(s): ";
 			ListIterator<String> li = categories.listIterator();
 			while (li.hasNext()) {	
 				String category = (String)li.next();
