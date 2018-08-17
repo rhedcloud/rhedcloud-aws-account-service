@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2018 Emory University. All rights reserved. 
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -14,9 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jms.JMSException;
+
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
+import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -24,11 +28,13 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthor
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+
+import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
  * If this is a new account request, send an 
- * AccountProvisioningAuthorization to determine if the user 
+ * AccountProvisioningAuthorization to determine if the owner 
  * is authorized to create a new account.
  * <P>
  * 
@@ -36,17 +42,41 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  * @version 1.0 - 5 August 2018
  **/
 public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
+	
+	private ProducerPool m_awsAccountServiceProducerPool = null;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
 			throws StepException {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
+		
+		String LOGTAG = getStepTag() + "[AuthorizeNewAccountOwner.init] ";
+		
+		// This step needs to send messages to the AWS account service
+		// to authorize requestors.
+		ProducerPool p2p1 = null;
+		try {
+			p2p1 = (ProducerPool)getAppConfig()
+				.getObject("AwsAccountServiceProducerPool");
+			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
+		logger.info(LOGTAG + "Initialization complete.");
+		
 	}
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeNewAccountRequestor.run] ";
+		String LOGTAG = getStepTag() + "[AuthorizeNewAccountOwner.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean isAuthorized = false;
@@ -59,9 +89,23 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
-		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
-		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-		props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+		boolean allocateNewAccount = false;
+		if (step != null) {
+			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
+			String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
+			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
+			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
+				"step is: " + allocateNewAccount);
+		}
+		else {
+			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found. " +
+				"Cannot determine whether or not to authorize the new account " +
+				"requestor.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
 		
 		// If allocateNewAccount is true, send an AccountProvisioningAuthorization.Query-Request
 		// to the AWS Account Service
@@ -92,13 +136,13 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		    }
 			
 		    // Get the UserId of the account owner.
-		    String ownerUserId = getVirtualPrivateCloudProvisioning()
+		    String requestorUserId = getVirtualPrivateCloudProvisioning()
 		    	.getVirtualPrivateCloudRequisition().getAccountOwnerUserId();
-		    props.add(buildProperty("ownerUserId", ownerUserId));
+		    props.add(buildProperty("ownerUserId", requestorUserId));
 		    
 		    // Set the values of the query spec.
 		    try {
-		    	apaqs.setUserId(ownerUserId);
+		    	apaqs.setUserId(requestorUserId);
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
@@ -116,26 +160,30 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }
-		    
-		    // Get a request service to use.
+		    }    
+			
+			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				rs = (RequestService)getAppConfig()
-					.getObject("AwsAccountServiceProducerPool");
+				rs = (RequestService)getAwsAccountServiceProducerPool()
+					.getExclusiveProducer();
 			}
-			catch (EnterpriseConfigurationObjectException ecoe) {
-				// An error occurred retrieving an object from AppConfig. Log it and
-				// throw an exception.
-				String errMsg = "An error occurred retrieving an object from " +
-						"AppConfig. The exception is: " + ecoe.getMessage();
-				logger.fatal(LOGTAG + errMsg);
-				throw new StepException(errMsg, ecoe);
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a producer " +
+					"from the pool. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, jmse);
 			}
 		    
 			List results = null;
 			try { 
+				long queryStartTime = System.currentTimeMillis();
 				results = apa.query(apaqs, rs);
+				long queryTime = System.currentTimeMillis() - startTime;
+				logger.info(LOGTAG + "Queried for AccountProvisioning" +
+					"Authorization for UserId " + requestorUserId + " in "
+					+ queryTime + " ms. Returned " + results.size() + 
+					" result.");
 			}
 			catch (EnterpriseObjectQueryException eoqe) {
 				String errMsg = "An error occurred querying for the  " +
@@ -143,6 +191,11 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		    	  "The exception is: " + eoqe.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, eoqe);
+			}
+			finally {
+				// Release the producer back to the pool
+				getAwsAccountServiceProducerPool()
+					.releaseProducer((MessageProducer)rs);
 			}
 			
 			if (results.size() == 1) {
@@ -194,7 +247,7 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[AuthorizeNewAccountRequestor.simulate] ";
+			"[AuthorizeNewAccountOwner.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -216,7 +269,7 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[AuthorizeNewAccountRequestor.fail] ";
+			"[AuthorizeNewAccountOwner.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -240,7 +293,7 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[AuthorizeNewAccountRequestor.rollback] ";
+			"[AuthorizeNewAccountOwner.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
@@ -250,4 +303,11 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
 	
+	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+		m_awsAccountServiceProducerPool = pool;
+	}
+	
+	private ProducerPool getAwsAccountServiceProducerPool() {
+		return m_awsAccountServiceProducerPool;
+	}
 }
