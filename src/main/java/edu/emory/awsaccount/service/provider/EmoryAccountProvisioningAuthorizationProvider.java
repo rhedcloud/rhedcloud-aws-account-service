@@ -217,29 +217,41 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		FullPerson person = (FullPerson)fullPersonList.get(0);
 		Employee employee = person.getEmployee();
 		
-		if (employee.getFaculty().equalsIgnoreCase("true")) {
-			categories.add("faculty");
-			isAuthorized = true;
+		if (employee.getFaculty() != null) {
+			if (employee.getFaculty().equalsIgnoreCase("true")) {
+				categories.add("faculty");
+				isAuthorized = true;
+			}
 		}
-		if (employee.getPhysician().equalsIgnoreCase("true")) {
-			categories.add("physician");
-			isAuthorized = true;
+		if (employee.getPhysician() != null) { 
+			if (employee.getPhysician().equalsIgnoreCase("true")) {
+				categories.add("physician");
+				isAuthorized = true;
+			}
+    	}
+		if (employee.getHealthCareManager() != null) {
+			if (employee.getHealthCareManager().equalsIgnoreCase("true")) {
+				categories.add("health care manager");
+				isAuthorized = true;
+			}
 		}
-		if (employee.getHealthCareManager().equalsIgnoreCase("true")) {
-			categories.add("health care manager");
-			isAuthorized = true;
+		if (employee.getAdministrative() != null) { 
+			if (employee.getAdministrative().equalsIgnoreCase("true")) {
+				categories.add("administrative staff");
+				isAuthorized = true;
+			}
 		}
-		if (employee.getAdministrative().equalsIgnoreCase("true")) {
-			categories.add("administrative staff");
-			isAuthorized = true;
+		if (employee.getStaffStudent() != null) {
+			if (employee.getStaffStudent().equalsIgnoreCase("true")) {
+				categories.add("staff student");
+				isAuthorized = true;
+			}
 		}
-		if (employee.getStaffStudent().equalsIgnoreCase("true")) {
-			categories.add("staff student");
-			isAuthorized = true;
-		}
-		if (employee.getStaff().equalsIgnoreCase("true")) {
-			categories.add("staff");
-			isAuthorized = true;
+		if (employee.getStaff() != null) {
+			if (employee.getStaff().equalsIgnoreCase("true")) {
+				categories.add("staff");
+				isAuthorized = true;
+			}
 		}
 		
 		// Build the authorization description.
