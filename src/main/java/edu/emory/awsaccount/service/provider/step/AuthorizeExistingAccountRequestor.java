@@ -70,9 +70,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
-		logger.info(LOGTAG + "Initialization complete.");
-		
+			
 		logger.info(LOGTAG + "Getting custom step properties...");
 		String adminRoleTemplate = getProperties()
 				.getProperty("adminRoleDnTemplate", null);
