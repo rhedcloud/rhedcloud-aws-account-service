@@ -48,6 +48,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		String LOGTAG = getStepTag() + "[DetermineNewAccountSequence.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
+		ArrayList<Property> props = new ArrayList<Property>();
 		String accountSequenceNumber = null;
 		
 		// Get the allocateNewAccount property from the
@@ -108,12 +109,15 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		}
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
 		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
 		if (accountSequenceNumber != null) {
 			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
 		}
-		
+		else {
+			props.add(buildProperty("accountSequenceNumber", "not incremented"));
+		}
+		props.add(buildProperty("allocateNewAccount", 
+				Boolean.toString(allocateNewAccount)));
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
     	

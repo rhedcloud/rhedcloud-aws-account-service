@@ -99,7 +99,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 				"step is: " + allocateNewAccount);
 		}
 		else {
-			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found. " +
+			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
 				"Cannot determine whether or not to authorize the new account " +
 				"requestor.";
 			logger.error(LOGTAG + errMsg);
@@ -146,7 +146,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "VPCP query spec. The exception is: " + efe.getMessage();
+		  	    	  "query spec. The exception is: " + efe.getMessage();
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
