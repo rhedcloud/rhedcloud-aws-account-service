@@ -256,7 +256,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		}
 		
 		// Update the step.
-		if (allocateNewAccount == false || isValid == true) {
+		if (allocateNewAccount == false && isValid == true) {
 			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
 		}
 		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
@@ -346,7 +346,9 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	}
 	
 	private String getAccountEmailAddress() {
-		String emailAddress = getAccountSeriesPrefix() + "-" + getAccountSequenceNumber();
+		String emailAddress = getAccountSeriesPrefix() + "-" 
+			+ getAccountSequenceNumber() + "@emory.edu";
+				
 		return emailAddress;
 	}
 	
