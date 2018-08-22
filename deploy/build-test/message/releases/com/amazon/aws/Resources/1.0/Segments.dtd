@@ -80,7 +80,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT ServiceQuerySpecification (Comparison*, QueryLanguage?, ServiceId?, ServiceCode?, ServiceName?, Status?, Category*, ConsoleCategory*, AwsHipaaEligible?, EmoryHipaaEligible?, Tag*)>
 
 <!ELEMENT ServiceSecurityAssessment (ServiceSecurityAssessmentId?, ServiceId+, Status, SecurityRisk*, ServiceControl*, ServiceGuideline*, ServiceTestPlan?)>
-<!ELEMENT ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskId?, ServiceId?, RiskLevel?)>
+<!ELEMENT ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, ServiceSecurityAssessmentId?, ServiceId?)>
 <!ELEMENT ServiceTest (ServiceTestId?, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpectedResult)>
 <!ELEMENT ServiceTestPlan (ServiceId, ServiceTestRequirement*)>
 <!ELEMENT ServiceTestRequirement (ServiceTestRequirementId?, SequenceNumber, Description, ServiceTest*)>
