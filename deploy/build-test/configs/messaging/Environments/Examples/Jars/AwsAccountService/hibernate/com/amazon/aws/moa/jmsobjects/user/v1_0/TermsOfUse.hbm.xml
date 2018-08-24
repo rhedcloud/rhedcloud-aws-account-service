@@ -8,7 +8,7 @@
 <property name="Revision" column="REVISION"/>
 <property name="EffectiveDate" type="OpenEaiDate" column="EFFECTIVE_DATE"/>
 <property name="ExpirationDate" type="OpenEaiDate" column="EXPIRATION_DATE"/>
-<property name="Text" column="TEXT" length="500000"/>
+<property name="Text" column="TEXT" type="materialized_clob" />
 <property name="CreateUser" column="CREATE_USER"/>
 <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>

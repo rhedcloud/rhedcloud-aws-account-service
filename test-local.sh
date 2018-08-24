@@ -29,8 +29,8 @@ mkdir -p WEB-INF/lib
 mkdir -p WEB-INF/classes
 mkdir -p WEB-INF/modules
 mkdir -p WEB-INF/conf
-cp ../../../../lib/aws-moa.jar WEB-INF/lib
-cp ../../../../lib/emory-moa-1.2.jar WEB-INF/lib
+cp ../../../../lib/aws-moa-master-*.jar WEB-INF/lib
+cp ../../../../lib/emory-moa-1.0.0-*.jar WEB-INF/lib
 cp ../../../../lib/openeai.jar WEB-INF/lib
 cp ../../../../target/*.jar WEB-INF/lib
 cp ../../../build-test/libs/AwsAccountService/* WEB-INF/lib
