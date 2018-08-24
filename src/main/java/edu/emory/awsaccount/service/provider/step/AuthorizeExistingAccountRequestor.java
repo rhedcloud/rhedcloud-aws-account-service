@@ -12,6 +12,7 @@ package edu.emory.awsaccount.service.provider.step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -280,17 +281,17 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 				throw new StepException(errMsg);
 			}
 			m_userDnTemplate = template;
-		}
+	}
 		
-		private String getUserDnTemplate() {
-			return m_userDnTemplate;
-		}
-		
-		private String getUserDn(String userId) {
-			String userDn = getUserDnTemplate()
-				.replace("USER_ID", userId);
-			return userDn;
-		}
+	private String getUserDnTemplate() {
+		return m_userDnTemplate;
+	}
+	
+	private String getUserDn(String userId) {
+		String userDn = getUserDnTemplate()
+			.replace("USER_ID", userId);
+		return userDn;
+	}
 	
 	private void setAdminRoleDnTemplate(String template) 
 		throws StepException {
@@ -420,7 +421,18 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	}
 	
 	private boolean isUserInRole(String roleDn, List<RoleAssignment> roleAssignments) {
-		return true;
+		
+		boolean isUserInRole = false;
+		
+		ListIterator li = roleAssignments.listIterator();
+		while (li.hasNext()) {
+			RoleAssignment ra = (RoleAssignment)li.next();
+			if (ra.getRoleDN().equalsIgnoreCase(roleDn)) {
+				isUserInRole = true;
+			}
+		}
+		
+		return isUserInRole;
 	}
 	
 	private void setIdmServiceProducerPool(ProducerPool pool) {
