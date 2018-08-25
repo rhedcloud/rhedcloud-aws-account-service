@@ -291,7 +291,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 	            auth.setUserId(querySpec.getUserId());
 	            auth.setIsAuthorized("true");
 	            String authDescription = "User is a member of the " + getRoleDn()
-	            	+ "role.";
+	            	+ " role.";
 	            auth.setAuthorizedUserDescription(authDescription);
 	            
 	        } catch (EnterpriseFieldException efe) {
@@ -438,7 +438,8 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
             auth.setAuthorizedUserDescription(authDescription);
             
         } catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred seting field values. " + "The exception is: " + efe.getMessage();
+            String errMsg = "An error occurred seting field values. " +
+            	"The exception is: " + efe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, efe);
         }
