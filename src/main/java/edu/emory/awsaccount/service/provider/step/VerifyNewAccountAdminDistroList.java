@@ -31,9 +31,9 @@ import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
 import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
 
 /**
- * If this is a new account request, send an 
- * AccountProvisioningAuthorization to determine if the user 
- * is authorized to create a new account.
+ * If this is a new account request, send a e-mail validation
+ * query request to verify the e-mail distribution list for
+ * this account is valid.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
@@ -51,7 +51,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[AuthorizeNewAccountRequestor.init] ";
+		String LOGTAG = getStepTag() + "[VerifyNewAccountAdminDistroList.init] ";
 		
 		// This step needs to send messages to the 
 		// EmailAddressValidationService to validate e-mail
@@ -162,7 +162,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		    // Build the account e-mail address to validate.
  			String accountEmailAddress = getAccountEmailAddress();
  			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
- 			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
+ 			props.add(buildProperty("accountEmailAddress", accountEmailAddress));
 		    
 		    // Set the values of the query spec.
 		    try {
@@ -256,11 +256,17 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		}
 		
 		// Update the step.
-		if (allocateNewAccount == false && isValid == true) {
-			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+		String stepResult = FAILURE_RESULT;
+		if (allocateNewAccount == true && isValid == true) {
+			stepResult = SUCCESS_RESULT;
 		}
-		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
-    	
+		if (allocateNewAccount == false) {
+			stepResult = SUCCESS_RESULT;
+		}
+		
+		// Update the step.
+		update(COMPLETED_STATUS, stepResult, props);
+		
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
