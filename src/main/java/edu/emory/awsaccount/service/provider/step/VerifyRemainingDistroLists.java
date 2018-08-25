@@ -159,7 +159,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			boolean lastEmailAddressIsValid = true;
 			
 			while(lastEmailAddressIsValid == true) {
-				String nextEmailAddress = getAccountSeriesPrefix() + 
+				String nextEmailAddress = getAccountSeriesPrefix() + "-" + 
 					++sequenceNumber + "@emory.edu";
 				lastEmailAddressIsValid = isValid(nextEmailAddress);
 				logger.info(LOGTAG + "Distro list " + nextEmailAddress +
@@ -183,110 +183,14 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			logger.info(LOGTAG + "lessThanAlertThreshold: " +
 					lessThanAlertThreshold);
 			
-/**			
-			
-			// Get a configured EmailAddressValidation object and query spec from AppConfig.
-			EmailAddressValidation eav = new EmailAddressValidation();
-			EmailAddressValidationQuerySpecification eavqs = new
-					EmailAddressValidationQuerySpecification();
-		    try {
-		    	eav = (EmailAddressValidation)getAppConfig()
-			    		.getObjectByType(eav.getClass().getName());
-		    	eavqs = (EmailAddressValidationQuerySpecification)getAppConfig()
-			    		.getObjectByType(eavqs.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-			
-		    // Build the account e-mail address to validate.
- 			String accountEmailAddress = getAccountEmailAddress();
- 			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
- 			props.add(buildProperty("accountEmailAddress", accountEmailAddress));
-		    
-		    // Set the values of the query spec.
-		    try {
-		    	eavqs.setEmailAddress(accountEmailAddress);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "query spec. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-		    
-		    // Log the state of the query spec.
-		    try {
-		    	logger.info(LOGTAG + "Query spec is: " + eavqs.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the query spec " +
-		  	    	  "to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
-			// Get a producer from the pool
-			RequestService rs = null;
-			try {
-				rs = (RequestService)getEmailAddressValidationServiceProducerPool()
-					.getExclusiveProducer();
+			// If the remaining valid distro lists is less than the alert
+			// threshold, create an incident in ServiceNow to request that
+			// the messaging team add more and notify all central
+			// administrators.
+			if (lessThanAlertThreshold) {
+				createIncident();
+				notifyCentralAdministrators();
 			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
-		    
-			List results = null;
-			try { 
-				long queryStartTime = System.currentTimeMillis();
-				results = eav.query(eavqs, rs);
-				long queryTime = System.currentTimeMillis() - startTime;
-				logger.info(LOGTAG + "Queried for EmailAddressValidation" +
-					"for e-mail address " + accountEmailAddress + " in "
-					+ queryTime + " ms. Returned " + results.size() + 
-					" result.");
-			}
-			catch (EnterpriseObjectQueryException eoqe) {
-				String errMsg = "An error occurred querying for the  " +
-		    	  "AccountProvisioningAuthorization object. " +
-		    	  "The exception is: " + eoqe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoqe);
-			}
-			finally {
-				// Release the producer back to the pool
-				getEmailAddressValidationServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
-			}
-			
-			if (results.size() == 1) {
-				EmailAddressValidation eavResult = 
-						(EmailAddressValidation)results.get(0);
-				String statusCode = eavResult.getStatusCode();
-				if (statusCode.equalsIgnoreCase("0")) {
-					isValid = true;
-					logger.info(LOGTAG + "isValid is true");
-					props.add(buildProperty("isValid", Boolean.toString(isValid)));
-				}
-				else {
-					logger.info(LOGTAG + "isValid is false");
-					props.add(buildProperty("isValid", Boolean.toString(isValid)));
-				}
-			}
-			else {
-				String errMsg = "Invalid number of results returned from " +
-					"AccountProvisioningAuthorization.Query-Request. " +
-					results.size() + " results returned. Expected exactly 1.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
-			}
-**/
 			
 		}
 		
@@ -428,7 +332,14 @@ private String getAccountSeriesPrefix() {
 	}
 	
 	private boolean isValid(String emailAddress) throws StepException {
-		String LOGTAG = "[VerifyRemainingDistroLists.isValid] ";
+		String LOGTAG = getStepTag() + "[VerifyRemainingDistroLists.isValid] ";
+		
+		if (emailAddress == null) {
+			String errMsg = "E-mail address is null. " + 
+				"Can't validate a null e-mail address";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
 		
 		boolean isValid = false;
 		
@@ -450,12 +361,11 @@ private String getAccountSeriesPrefix() {
 	    }
 		
 	    // Build the account e-mail address to validate.
-		String accountEmailAddress = getAccountEmailAddress();
-		logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
+		logger.info(LOGTAG + "nextAddress is: " + emailAddress);
 	    
 	    // Set the values of the query spec.
 	    try {
-	    	eavqs.setEmailAddress(accountEmailAddress);
+	    	eavqs.setEmailAddress(emailAddress);
 	    }
 	    catch (EnterpriseFieldException efe) {
 	    	String errMsg = "An error occurred setting the values of the " +
@@ -494,7 +404,7 @@ private String getAccountSeriesPrefix() {
 			results = eav.query(eavqs, rs);
 			long queryTime = System.currentTimeMillis() - queryStartTime;
 			logger.info(LOGTAG + "Queried for EmailAddressValidation" +
-				"for e-mail address " + accountEmailAddress + " in "
+				"for e-mail address " + emailAddress + " in "
 				+ queryTime + " ms. Returned " + results.size() + 
 				" result.");
 		}
@@ -532,5 +442,13 @@ private String getAccountSeriesPrefix() {
 		}
 		
 		return isValid;
+	}
+	
+	private void createIncident() throws StepException {
+		
+	}
+	
+	private void notifyCentralAdministrators() throws StepException {
+		
 	}
 }
