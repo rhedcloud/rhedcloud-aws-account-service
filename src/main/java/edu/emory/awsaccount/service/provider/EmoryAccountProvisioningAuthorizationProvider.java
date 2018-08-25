@@ -290,8 +290,8 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 	        try {
 	            auth.setUserId(querySpec.getUserId());
 	            auth.setIsAuthorized("true");
-	            String authDescription = "User is a member of the " + getRoleDn()
-	            	+ " role.";
+	            String authDescription = "User is a member of the Emory AWS " +
+	            	"Service provisioning role.";
 	            auth.setAuthorizedUserDescription(authDescription);
 	            
 	        } catch (EnterpriseFieldException efe) {
@@ -402,7 +402,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 			}
 			if (employee.getStaffStudent() != null) {
 				if (employee.getStaffStudent().equalsIgnoreCase("true")) {
-					categories.add("staff student");
+					categories.add("staff/student");
 					isAuthorized = true;
 				}
 			}
@@ -415,14 +415,14 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		}
 		
 		// Build the authorization description.
-		String authDescription = "Presently faculty, physicians, health care managers, administrative staff, staff students, and staff are authorized to provision Emory AWS accounts.";
+		String authDescription = "Presently faculty, physicians, health care managers, administrative staff, staff/students, and staff are authorized to provision Emory AWS accounts.";
 		if (isAuthorized == false) {
-			authDescription = authDescription + " You are not in any of these authorized groups.";
+			authDescription = authDescription + " User is not in any of these authorized groups.";
 		}
 		else {
 			String groupWord = "group";
 			if (categories.size() > 1) groupWord = "groups";
-			authDescription = authDescription + " You are in the following authorized " + groupWord +": ";
+			authDescription = authDescription + " User is in the following authorized " + groupWord +": ";
 			ListIterator<String> li = categories.listIterator();
 			while (li.hasNext()) {	
 				String category = (String)li.next();
