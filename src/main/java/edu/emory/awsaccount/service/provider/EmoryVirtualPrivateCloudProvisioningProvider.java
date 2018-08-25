@@ -984,7 +984,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						// all completed steps and return.
 						if (step.getResult().equals(FAILURE_RESULT)) {
 							logger.info(LOGTAG + "Step " + step.getStepId() +
-								"failed. Rolling back all completed steps.");
+								" failed. Rolling back all completed steps.");
 							rollbackCompletedSteps(completedSteps);
 							return;
 						}
