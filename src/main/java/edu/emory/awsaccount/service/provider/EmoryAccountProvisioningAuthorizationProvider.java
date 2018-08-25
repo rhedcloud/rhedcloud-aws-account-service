@@ -121,7 +121,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		try {
 			p2p2 = (ProducerPool)getAppConfig()
 				.getObject("IdmServiceProducerPool");
-			setIdmServiceProducerPool(p2p1);
+			setIdmServiceProducerPool(p2p2);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			// An error occurred retrieving an object from AppConfig. Log it and
