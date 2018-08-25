@@ -781,7 +781,7 @@ public abstract class AbstractStep {
 	
 	protected void rollback() throws StepException {
 		String LOGTAG = "[AbstractStep.rollback] ";
-		logger.info(LOGTAG + "Initing common rollback logic...");
+		logger.info(LOGTAG + "Initializing common rollback logic...");
 		logger.info(LOGTAG + "Querying for VPVP baseline...");
 		queryForVpcpBaseline();
 	}
