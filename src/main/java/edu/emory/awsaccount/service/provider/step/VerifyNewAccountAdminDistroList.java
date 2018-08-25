@@ -203,7 +203,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			try { 
 				long queryStartTime = System.currentTimeMillis();
 				results = eav.query(eavqs, rs);
-				long queryTime = System.currentTimeMillis() - startTime;
+				long queryTime = System.currentTimeMillis() - queryStartTime;
 				logger.info(LOGTAG + "Queried for EmailAddressValidation" +
 					"for e-mail address " + accountEmailAddress + " in "
 					+ queryTime + " ms. Returned " + results.size() + 
