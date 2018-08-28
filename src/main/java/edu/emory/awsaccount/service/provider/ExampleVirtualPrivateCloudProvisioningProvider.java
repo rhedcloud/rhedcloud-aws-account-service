@@ -44,10 +44,13 @@ import org.openeai.xml.XmlDocumentReaderException;
 //AWS Message Object API (MOA)
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
+import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 
 /**
  *  An example object provider that maintains an in-memory
@@ -542,5 +545,13 @@ implements VirtualPrivateCloudProvisioningProvider {
 			logger.info(LOGTAG + "Returing random sleep interval: " + n + " ms.");
 			return n;
 		}	
+	}
+	
+	public int notifyCentralAdministrators(UserNotification notification) {
+		return 1;
+	}
+	
+	public Incident generateIncident(IncidentRequisition req) {
+		return new Incident();
 	}
 }
