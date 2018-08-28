@@ -24,8 +24,16 @@ import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
+
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
+import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
+
+import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
 import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
@@ -47,6 +55,25 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	private String m_accountSeriesPrefix = null;
 	private String m_accountSequenceNumber = null;
 	private int m_distroListAlertThreshold = 0;
+	private boolean m_createIncidentOnAlert = false;
+	private boolean m_notifyCentralAdminsOnAlert = false;
+	private String m_incidentShortDescription = null;
+	private String m_incidentDescription = null;
+	private String m_incidentUrgency = null;
+	private String m_incidentImpact = null;
+	private String m_incidentBusinessService = null;
+	private String m_incidentCategory = null;
+	private String m_incidentSubCategory = null;
+	private String m_incidentRecordType = null;
+	private String m_incidentContactType = null;
+	private String m_incidentCallerId = null;
+	private String m_incidentCmdbCi = null;
+	private String m_incidentAssignmentGroup = null;
+	private String m_notificationType = null;
+	private String m_notificationPriority = null;
+	private String m_notificationSubject = null;
+	private String m_notificationText = null;
+	
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -86,6 +113,114 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		setDistroListAlertThreshold(distroListAlertThreshold);
 		logger.info(LOGTAG + "distroListAlertThreshold is: " + 
 				getDistroListAlertThreshold());
+		
+		String createIncidentOnAlert = getProperties()
+				.getProperty("createIncidentOnAlert", null);
+		setCreateIncidentOnAlert(createIncidentOnAlert);
+		logger.info(LOGTAG + "createIncidentOnAlert is: " + 
+				getCreateIncidentOnAlert());
+		
+		String notifyCentralAdminsOnAlert = getProperties()
+				.getProperty("notifyCentralAdminsOnAlert", null);
+		setNotifyCentralAdminsOnAlert(notifyCentralAdminsOnAlert);
+		logger.info(LOGTAG + "createIncidentOnAlert is: " + 
+				getNotifyCentralAdminsOnAlert());	
+		
+		String incidentShortDescription = getProperties()
+				.getProperty("incidentShortDescription", null);
+		setIncidentShortDescription(incidentShortDescription);
+		logger.info(LOGTAG + "incidentShortDescription is: " + 
+				getIncidentShortDescription());
+		
+		String incidentDescription = getProperties()
+				.getProperty("incidentDescription", null);
+		setIncidentDescription(incidentDescription);
+		logger.info(LOGTAG + "incidentDescription is: " + 
+				getIncidentDescription());
+		
+		String incidentUrgency = getProperties()
+				.getProperty("incidentUrgency", null);
+		setIncidentUrgency(incidentUrgency);
+		logger.info(LOGTAG + "incidentUrgency is: " + 
+				getIncidentUrgency());
+		
+		String incidentImpact = getProperties()
+				.getProperty("incidentImpact", null);
+		setIncidentImpact(incidentImpact);
+		logger.info(LOGTAG + "incidentImpact is: " + 
+				getIncidentImpact());
+		
+		String incidentBusinessService = getProperties()
+				.getProperty("incidentBusinessService", null);
+		setIncidentBusinessService(incidentBusinessService);
+		logger.info(LOGTAG + "incidentBusinessService is: " + 
+				getIncidentBusinessService());
+		
+		String incidentCategory = getProperties()
+				.getProperty("incidentCategory", null);
+		setIncidentCategory(incidentCategory);
+		logger.info(LOGTAG + "incidentCategory is: " + 
+				getIncidentCategory());
+		
+		String incidentSubCategory = getProperties()
+				.getProperty("incidentSubCategory", null);
+		setIncidentSubCategory(incidentSubCategory);
+		logger.info(LOGTAG + "incidentSubCatetory is: " + 
+				getIncidentSubCategory());
+		
+		String incidentRecordType = getProperties()
+				.getProperty("incidentRecordType", null);
+		setIncidentRecordType(incidentRecordType);
+		logger.info(LOGTAG + "incidentRecordType is: " + 
+				getIncidentRecordType());
+		
+		String incidentContactType = getProperties()
+				.getProperty("incidentContactType", null);
+		setIncidentContactType(incidentContactType);
+		logger.info(LOGTAG + "incidentContactType is: " + 
+				getIncidentContactType());
+		
+		String incidentCallerId = getProperties()
+				.getProperty("incidentCallerId", null);
+		setIncidentCallerId(incidentCallerId);
+		logger.info(LOGTAG + "incidentCallerId is: " + 
+				getIncidentCallerId());
+		
+		String incidentCmdbCi = getProperties()
+				.getProperty("incidentCmdbCi", null);
+		setIncidentCmdbCi(incidentCmdbCi);
+		logger.info(LOGTAG + "incidentCmdbCi is: " + 
+				getIncidentCmdbCi());
+		
+		String incidentAssignmentGroup = getProperties()
+				.getProperty("incidentAssignmentGroup", null);
+		setIncidentAssignmentGroup(incidentAssignmentGroup);
+		logger.info(LOGTAG + "incidentAssignmentGroup is: " + 
+				getIncidentAssignmentGroup());
+		
+		String notificationType = getProperties()
+				.getProperty("notificationType", null);
+		setNotificationType(notificationType);
+		logger.info(LOGTAG + "notificationType is: " + 
+				getNotificationType());
+		
+		String notificationPriority = getProperties()
+				.getProperty("notificationPriority", null);
+		setNotificationPriority(notificationPriority);
+		logger.info(LOGTAG + "notificationPriority is: " + 
+				getNotificationPriority());
+		
+		String notificationSubject = getProperties()
+				.getProperty("notificationSubject", null);
+		setNotificationSubject(notificationSubject);
+		logger.info(LOGTAG + "notificationSubject is: " + 
+				getNotificationSubject());
+		
+		String notificationText = getProperties()
+				.getProperty("notificationText", null);
+		setNotificationText(notificationText);
+		logger.info(LOGTAG + "notificationText is: " + 
+				getNotificationText());
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
@@ -187,11 +322,39 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			// threshold, create an incident in ServiceNow to request that
 			// the messaging team add more and notify all central
 			// administrators.
-			if (lessThanAlertThreshold) {
-				createIncident();
-				notifyCentralAdministrators();
+			Incident incident = null;
+			if (lessThanAlertThreshold && getCreateIncidentOnAlert()) {
+				logger.info(LOGTAG + "createIncidentOnAlert is true, " +
+					"creating Incident in ServiceNow...");
+				IncidentRequisition req = buildIncidentRequisition();
+				try {
+					incident = getVirtualPrivateCloudProvisioningProvider()
+						.generateIncident(req);
+				}
+				catch (ProviderException pe) {
+					String errMsg = "An error occurred generating an incident." +
+						"The exception is: " + pe.getMessage();
+					throw new StepException(errMsg, pe);
+				}
+				logger.info(LOGTAG + "Created incident " + incident.getNumber() +
+						" in ServiceNow.");
 			}
-			
+			if (lessThanAlertThreshold && getNotifyCentralAdminsOnAlert()) {
+				logger.info(LOGTAG + "notifyCentralAdminsOnAlert is true, " +
+						"notifying central administrators...");
+				UserNotification notification = buildUserNotification(incident);
+				try {
+					int adminCount = getVirtualPrivateCloudProvisioningProvider()
+							.notifyCentralAdministrators(notification);
+					logger.info(LOGTAG + "Notified " + adminCount + 
+							" central administrators.");
+				}
+				catch (ProviderException pe) {
+					String errMsg = "An error occurred notifying central " +
+						"administrators. The exception is: " + pe.getMessage();
+					throw new StepException(errMsg, pe);
+				}
+			}
 		}
 		
 		// If allocateNewAccount and accountSequenceNumber is false, log it and
@@ -301,20 +464,308 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	}
 	
 	private void setAccountSeriesPrefix(String prefix) throws 
-	StepException {
-	
-	if (prefix == null) {
-		String errMsg = "accountSeriesPrefix property is null. " +
-			"Can't continue.";
-		throw new StepException(errMsg);
+		StepException {
+		
+		if (prefix == null) {
+			String errMsg = "accountSeriesPrefix property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+		
+		m_accountSeriesPrefix = prefix;
+	}
+
+	private String getAccountSeriesPrefix() {
+		return m_accountSeriesPrefix;
 	}
 	
-	m_accountSeriesPrefix = prefix;
-}
+	private void setCreateIncidentOnAlert(String createIncidentOnAlert)  
+		throws StepException {
+		
+		if (createIncidentOnAlert == null) {
+			String errMsg = "createIncidentOnAlert property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_createIncidentOnAlert = Boolean.parseBoolean(createIncidentOnAlert);
+	}
 
-private String getAccountSeriesPrefix() {
-	return m_accountSeriesPrefix;
-}
+	private boolean getCreateIncidentOnAlert() {
+		return m_createIncidentOnAlert;
+	}
+	
+	private void setNotifyCentralAdminsOnAlert(String notifyCentralAdminsOnAlert)  
+		throws StepException {
+		
+		if (notifyCentralAdminsOnAlert == null) {
+			String errMsg = "notifyCentralAdminsOnAlert property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_notifyCentralAdminsOnAlert = Boolean.parseBoolean(notifyCentralAdminsOnAlert);
+	}
+
+	private boolean getNotifyCentralAdminsOnAlert() {
+		return m_notifyCentralAdminsOnAlert;
+	}
+	
+	private void setIncidentShortDescription(String incidentShortDescription)  
+		throws StepException {
+		
+		if (incidentShortDescription == null) {
+			String errMsg = "incidentShortDescription property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentShortDescription = incidentShortDescription;
+	}
+
+	private String getIncidentShortDescription() {
+		return m_incidentShortDescription;
+	}
+	
+	private void setIncidentDescription(String incidentDescription)  
+		throws StepException {
+		
+		if (incidentDescription == null) {
+			String errMsg = "incidentDescription property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentDescription = incidentDescription;
+	}
+	
+	private String getIncidentDescription() {
+		return m_incidentDescription;
+	}
+	
+	private void setIncidentUrgency(String incidentUrgency)  
+		throws StepException {
+		
+		if (incidentUrgency == null) {
+			String errMsg = "incidentUrgency property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentUrgency = incidentUrgency;
+	}
+	
+	private String getIncidentUrgency() {
+		return m_incidentUrgency;
+	}
+	
+	private void setIncidentImpact(String incidentImpact)  
+		throws StepException {
+		
+		if (incidentImpact == null) {
+			String errMsg = "incidentImpact property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentImpact = incidentImpact;
+	}
+	
+	private String getIncidentImpact() {
+		return m_incidentImpact;
+	}
+	
+	private void setIncidentBusinessService(String incidentBusinessService)  
+		throws StepException {
+		
+		if (incidentBusinessService == null) {
+			String errMsg = "incidentBusinessService property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentBusinessService = incidentBusinessService;
+	}
+	
+	private String getIncidentBusinessService() {
+		return m_incidentBusinessService;
+	}
+
+	private void setIncidentCategory(String incidentCategory)  
+		throws StepException {
+		
+		if (incidentCategory == null) {
+			String errMsg = "incidentCategory property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentCategory = incidentCategory;
+	}
+	
+	private String getIncidentCategory() {
+		return m_incidentCategory;
+	}
+	
+	private void setIncidentSubCategory(String incidentSubCategory)  
+		throws StepException {
+		
+		if (incidentSubCategory == null) {
+			String errMsg = "incidentSubCategory property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentSubCategory = incidentSubCategory;
+	}	
+	
+	private String getIncidentSubCategory() {
+		return m_incidentSubCategory;
+	}
+	
+	private void setIncidentRecordType(String incidentRecordType)  
+		throws StepException {
+		
+		if (incidentRecordType == null) {
+			String errMsg = "incidentRecordType property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentRecordType = incidentRecordType;
+	}
+	
+	private String getIncidentRecordType() {
+		return m_incidentRecordType;
+	}
+	
+	private void setIncidentContactType(String incidentContactType)  
+		throws StepException {
+		
+		if (incidentContactType == null) {
+			String errMsg = "incidentContactType property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentContactType = incidentContactType;
+	}
+	
+	private String getIncidentContactType() {
+		return m_incidentContactType;
+	}
+	
+	private void setIncidentCallerId(String incidentCallerId)  
+		throws StepException {
+		
+		if (incidentCallerId == null) {
+			String errMsg = "incidentCallerId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentCallerId = incidentCallerId;
+	}
+	
+	private String getIncidentCallerId() {
+		return m_incidentCallerId;
+	}
+	
+	private void setIncidentCmdbCi(String incidentCmdbCi)  
+		throws StepException {
+		
+		if (incidentCmdbCi == null) {
+			String errMsg = "incidentCmdbCi property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentCmdbCi = incidentCmdbCi;
+	}
+	
+	private String getIncidentCmdbCi() {
+		return m_incidentCmdbCi;
+	}
+	
+	private void setIncidentAssignmentGroup(String incidentAssignmentGroup)  
+		throws StepException {
+		
+		if (incidentAssignmentGroup == null) {
+			String errMsg = "incidentAssignmentGroup property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_incidentAssignmentGroup = incidentAssignmentGroup;
+	}
+	
+	private String getIncidentAssignmentGroup() {
+		return m_incidentAssignmentGroup;
+	}
+	
+	private void setNotificationType(String notificationType)  
+		throws StepException {
+		
+		if (notificationType == null) {
+			String errMsg = "notificationType property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_notificationType = notificationType;
+	}
+	
+	private String getNotificationType() {
+		return m_notificationType;
+	}
+	
+	private void setNotificationPriority(String notificationPriority)  
+		throws StepException {
+		
+		if (notificationPriority == null) {
+			String errMsg = "notificationPriority property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_notificationPriority = notificationPriority;
+	}
+	
+	private String getNotificationPriority() {
+		return m_notificationPriority;
+	}
+	
+	private void setNotificationSubject(String notificationSubject)  
+		throws StepException {
+		
+		if (notificationSubject == null) {
+			String errMsg = "notificationSubject property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_notificationSubject = notificationSubject;
+	}
+	
+	private String getNotificationSubject() {
+		return m_notificationSubject;
+	}
+	
+	private void setNotificationText(String notificationText)  
+		throws StepException {
+		
+		if (notificationText == null) {
+			String errMsg = "notificationText property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_notificationText = notificationText;
+	}
+	
+	private String getNotificationText() {
+		return m_notificationText;
+	}
 	
 	private String getAccountEmailAddress() {
 		String emailAddress = getAccountSeriesPrefix() + "-" 
@@ -444,11 +895,85 @@ private String getAccountSeriesPrefix() {
 		return isValid;
 	}
 	
-	private void createIncident() throws StepException {
+	private IncidentRequisition buildIncidentRequisition() throws StepException {
+		String LOGTAG = getStepTag() + 
+			"[VerifyRemainingDistroLists.buildIncidentRequisition] ";
 		
+		// Get a configured IncidentRequisition from AppConfig
+        IncidentRequisition req = new IncidentRequisition();
+        try {
+            req = (IncidentRequisition) getAppConfig().getObjectByType(req.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from AppConfig. " 
+            	+ "The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, ecoe);
+        }
+		
+		// Set the values of IncidentRequisition
+        try {
+	        req.setShortDescription(getIncidentShortDescription());
+	        req.setDescription(getIncidentDescription());
+	        req.setUrgency(getIncidentUrgency());
+	        req.setImpact(getIncidentImpact());
+	        req.setBusinessService(getIncidentBusinessService());
+	        req.setCategory(getIncidentCategory());
+	        req.setSubCategory(getIncidentSubCategory());
+	        req.setRecordType(getIncidentRecordType());
+	        req.setContactType(getIncidentContactType());
+	        req.setCallerId(getIncidentCallerId());
+	        req.setCmdbCi(getIncidentCmdbCi());
+	        req.setAssignmentGroup(getIncidentAssignmentGroup());
+        }
+        catch (EnterpriseFieldException efe) {
+        	String errMsg = "An error occurred setting field values of an " +
+        		"object. The exception is: " + efe.getMessage();
+        	logger.error(LOGTAG + errMsg);
+        	throw new StepException(errMsg, efe);
+        }
+		
+		return req;
 	}
 	
-	private void notifyCentralAdministrators() throws StepException {
+	private UserNotification buildUserNotification(Incident incident) throws
+		StepException {
 		
+		String LOGTAG = getStepTag() + 
+				"[VerifyRemainingDistroLists.buildUserNotification] ";
+			
+		// Get a configured UserNotification from AppConfig
+        UserNotification notification = new UserNotification();
+        try {
+            notification = (UserNotification) getAppConfig()
+            	.getObjectByType(notification.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from AppConfig. " 
+            	+ "The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, ecoe);
+        }
+		
+		// Set the values of UserNotification
+        try {
+	        notification.setType(getNotificationType());
+	        notification.setPriority(getNotificationPriority());
+	        notification.setSubject(getNotificationSubject());
+	        notification.setText(getNotificationText());
+	        notification.setRead("false");
+	        notification.setCreateUser("AwsAccountService");
+	        Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
+	        notification.setCreateDatetime(createDatetime);
+        }
+        catch (EnterpriseFieldException efe) {
+        	String errMsg = "An error occurred setting field values of an " +
+        		"object. The exception is: " + efe.getMessage();
+        	logger.error(LOGTAG + errMsg);
+        	throw new StepException(errMsg, efe);
+        }
+			
+		return notification;
 	}
+	
+	
+	
 }

@@ -51,6 +51,14 @@
    <scope>system</scope>
    <systemPath>${project.basedir}/lib/emory-moa-1.0.0-88.jar</systemPath>
   </dependency>
+  
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>servicenow-moa</artifactId>
+   <version>1</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/servicenow-moa.jar</systemPath>
+  </dependency>
 
   <dependency>
    <groupId>edu.emory.awsaccount.servicet</groupId>

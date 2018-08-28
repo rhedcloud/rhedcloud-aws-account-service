@@ -19,8 +19,11 @@ import org.openeai.config.AppConfig;
 
 // AWS Message Object API (MOA)
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
+import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 
 
 /**
@@ -98,5 +101,25 @@ public interface VirtualPrivateCloudProvisioningProvider {
      * @throws ProviderException with details of the error deleting the VPCP.
      */
     public void delete(VirtualPrivateCloudProvisioning vpcp) throws ProviderException;
+    
+    /**
+     * 
+     * <P>
+     * 
+     * @param IncidentRequisition, the IncidentRequisition to generate an Incident.
+     *            <P>
+     * @throws ProviderException with details of the error generating the Incident.
+     */
+    public Incident generateIncident(IncidentRequisition req) throws ProviderException;
+    
+    /**
+     * 
+     * <P>
+     * 
+     * @param UserNotification, the UserNotification to send to all central admins.
+     *            <P>
+     * @throws ProviderException with details of the error sending the notification.
+     */
+    public int notifyCentralAdministrators(UserNotification notification) throws ProviderException;
 
 }

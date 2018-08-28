@@ -386,7 +386,7 @@ public abstract class AbstractStep {
 	 * <P>
 	 * This method returns the VirtualPrivateCloudProvisioningProvider
 	 */
-	private VirtualPrivateCloudProvisioningProvider
+	protected VirtualPrivateCloudProvisioningProvider
 		getVirtualPrivateCloudProvisioningProvider() {
 		
 		return m_vpcpp;
