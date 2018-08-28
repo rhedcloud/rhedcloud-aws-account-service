@@ -40,6 +40,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.PropertyConfig;
+import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
@@ -69,6 +70,8 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 //AWS Message Object API (MOA)
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
@@ -77,6 +80,8 @@ import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
+import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 
 import edu.emory.awsaccount.service.provider.step.Step;
 import edu.emory.awsaccount.service.provider.step.StepException;
@@ -84,7 +89,10 @@ import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.jmsobjects.identity.v2_0.Person;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
+import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
 import edu.emory.moa.objects.resources.v1_0.CidrRequisition;
+import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v2_0.PersonQuerySpecification;
 
 /**
@@ -103,7 +111,10 @@ implements VirtualPrivateCloudProvisioningProvider {
 	private boolean m_verbose = false;
 	private Sequence m_provisioningIdSequence = null;
 	private Sequence m_accountSequence = null;
+	private String m_centralAdminRoleDn = null;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
+	private ProducerPool m_idmServiceProducerPool = null;
+	private ProducerPool m_serviceNowServiceProducerPool = null;
 	private ThreadPool m_threadPool = null;
 	private int m_threadPoolSleepInterval = 1000;
 	private String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider] ";
@@ -141,6 +152,10 @@ implements VirtualPrivateCloudProvisioningProvider {
 		// Set the verbose property.
 		setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
 		logger.info(LOGTAG + "Verbose property is: " + getVerbose());
+		
+		// Set the verbose property.
+		setCentralAdminRoleDn(getProperties().getProperty("centralAdminRoleDn", null));
+		logger.info(LOGTAG + "centralAdminRoleDn is: " + getCentralAdminRoleDn());
 		
 		// Set the primed doc URL for a template provisioning object.
 		String primedDocUrl = getProperties().getProperty("primedDocumentUri");
@@ -186,6 +201,23 @@ implements VirtualPrivateCloudProvisioningProvider {
 			p2p1 = (ProducerPool)getAppConfig()
 				.getObject("AwsAccountServiceProducerPool");
 			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		// This provider needs to send messages to the ServiceNow service
+		// to initialize provisioning transactions.
+		ProducerPool p2p2 = null;
+		try {
+			p2p2 = (ProducerPool)getAppConfig()
+				.getObject("ServiceNowServiceProducerPool");
+			setServiceNowServiceProducerPool(p2p2);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			// An error occurred retrieving an object from AppConfig. Log it and
@@ -654,6 +686,31 @@ implements VirtualPrivateCloudProvisioningProvider {
 	}
 		
 	/**
+	 * @param String, the centralAdminRoleDn
+	 * <P>
+	 * This method sets the centralAdminRoleDn
+	 */
+	private void setCentralAdminRoleDn(String dn) throws ProviderException {
+		if (dn == null) {
+			String errMsg = "centralAdminRoleDn property is null. " +
+				"Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		m_centralAdminRoleDn = dn;
+	}
+
+	/**
+	 * @return String, the centralAdminRoleDn property
+	 * <P>
+	 * This method returns the centralAdminRoleDn
+	 */
+	private String getCentralAdminRoleDn() {
+		return m_centralAdminRoleDn;
+	}
+	
+	/**
 	 * @param boolean, the verbose logging property
 	 * <P>
 	 * This method sets the verbose logging property
@@ -725,6 +782,46 @@ implements VirtualPrivateCloudProvisioningProvider {
      */
     private ProducerPool getAwsAccountServiceProducerPool() {
         return m_awsAccountServiceProducerPool;
+    }
+    
+    /**
+     * @param ProducerPool, the ServiceNow service producer pool.
+     *            <P>
+     *            This method sets the producer pool to use to send 
+     *            messages to the ServiceNow Service.
+     */
+    private void setServiceNowServiceProducerPool(ProducerPool pool) {
+        m_serviceNowServiceProducerPool = pool;
+    }
+
+    /**
+     * @return ProducerPool, the ServiceNow service producer pool.
+     *         <P>
+     *         This method returns a reference to the producer pool to use to
+     *         send messages to the ServiceNow service.
+     */
+    private ProducerPool getServiceNowServiceProducerPool() {
+        return m_serviceNowServiceProducerPool;
+    }
+    
+    /**
+     * @param ProducerPool, the IDM service producer pool.
+     *            <P>
+     *            This method sets the producer pool to use to send 
+     *            messages to the IDM Service.
+     */
+    private void setIdmServiceProducerPool(ProducerPool pool) {
+        m_idmServiceProducerPool = pool;
+    }
+
+    /**
+     * @return ProducerPool, the IDM service producer pool.
+     *         <P>
+     *         This method returns a reference to the producer pool to use to
+     *         send messages to the IDM service.
+     */
+    private ProducerPool getIdmServiceProducerPool() {
+        return m_idmServiceProducerPool;
     }
     
 	/**
@@ -866,6 +963,228 @@ implements VirtualPrivateCloudProvisioningProvider {
 	        }
 	        return (returnVal * m_order);
 	    }
+	}
+	
+	public Incident generateIncident(IncidentRequisition req) 
+		throws ProviderException {
+		
+		String LOGTAG = "[EmoryVirtualPrivateCloudProvisinoingProvider.generateIncident] ";
+		
+		if (req == null) {
+			String errMsg = "IncidentRequisision is null. " + 
+				"Can't generate an Incident.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+
+		// Get a configured Incident object from AppConfig.
+		Incident incident = new Incident();
+	    try {
+	    	incident = (Incident)getAppConfig()
+		    		.getObjectByType(incident.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new ProviderException(errMsg, ecoe);
+	    }
+	    
+	    // Log the state of the requisition.
+	    try {
+	    	logger.info(LOGTAG + "Incident requisition is: " + req.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the requisition " +
+	  	    	  "to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new ProviderException(errMsg, xeoe);
+	    }    
+		
+		// Get a producer from the pool
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getServiceNowServiceProducerPool()
+				.getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+	    
+		List results = null;
+		try { 
+			long generateStartTime = System.currentTimeMillis();
+			results = incident.generate(req, rs);
+			long generateTime = System.currentTimeMillis() - generateStartTime;
+			logger.info(LOGTAG + "Generated Incident in " +
+				+ generateTime + " ms. Returned " + results.size() + 
+				" result.");
+		}
+		catch (EnterpriseObjectGenerateException eoge) {
+			String errMsg = "An error occurred generating the  " +
+	    	  "Incident object. The exception is: " + eoge.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new ProviderException(errMsg, eoge);
+		}
+		finally {
+			// Release the producer back to the pool
+			getServiceNowServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
+		}
+		
+		return (Incident)results.get(0);
+	}
+	
+	public int notifyCentralAdministrators(UserNotification notification)
+		throws ProviderException {
+		
+		// Query for the list of central administrators.
+		List<RoleAssignment> roleAssignments = 
+			roleAssignmentQuery(getCentralAdminRoleDn());
+		
+		ListIterator li = roleAssignments.listIterator();
+		int i = 0;
+		while (li.hasNext()) {
+			RoleAssignment ra = (RoleAssignment)li.next();
+			String userDn = (String)ra.getExplicitIdentityDNs().getDistinguishedName().get(0);
+			String userId = parseUserId(userDn);
+			try {
+				notification.setUserId(userId);
+			}
+			catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting the " +
+					"field values on an object. The exception is: " +
+					efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, efe);
+			}
+			createUserNotification(notification);
+			i++;
+		}
+		
+		return i;
+	}
+	
+	private String parseUserId(String dn) {
+		StringTokenizer st1 = new StringTokenizer(dn, ",");
+		String firstToken = st1.nextToken();
+		StringTokenizer st2 = new StringTokenizer(firstToken, "=");
+		st2.nextToken();
+		String userId = st2.nextToken();
+		return userId;
+	}
+	
+	private void createUserNotification (UserNotification notification)
+		throws ProviderException {
+		
+		// Create the UserNotification in the AWS Account Service.
+		// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Create the UserNotification object.
+		try {
+			long startTime = System.currentTimeMillis();
+			notification.create(rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Created UserNotification " +
+				"object in " + time + " ms.");
+		}
+		catch (EnterpriseObjectCreateException eoce) {
+			String errMsg = "An error occurred creating the " +
+					"UserNotification object The exception is: " + 
+					eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+		}
+	}
+	
+	private List<RoleAssignment> roleAssignmentQuery(String roleDn) 
+		throws ProviderException {
+		
+    	// Query the IDM service for all users in the named role
+    	// Get a configured AccountUser, RoleAssignment, and 
+    	// RoleAssignmentQuerySpecification from AppConfig
+    	AccountUser accountUser = new AccountUser();
+		RoleAssignment roleAssignment = new RoleAssignment();
+    	RoleAssignmentQuerySpecification querySpec = new RoleAssignmentQuerySpecification();
+		try {
+			accountUser = (AccountUser)m_appConfig
+					.getObjectByType(accountUser.getClass().getName());
+			roleAssignment = (RoleAssignment)m_appConfig
+				.getObjectByType(roleAssignment.getClass().getName());
+			querySpec = (RoleAssignmentQuerySpecification)m_appConfig
+				.getObjectByType(querySpec.getClass().getName());
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, ecoe);
+		}
+		
+		// Set the values of the querySpec.
+		try {
+			querySpec.setRoleDN(roleDn);
+			querySpec.setIdentityType("USER");
+			querySpec.setDirectAssignOnly("true");
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"query specification object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+    	
+    	// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getIdmServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Query for the RoleAssignments for the Administrator Role.
+		List roleAssignments = null;
+		try {
+			long startTime = System.currentTimeMillis();
+			roleAssignments = roleAssignment.query(querySpec, rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Queried for RoleAssignments for " +
+				"roleDn " + roleDn + " in " + time + " ms. Returned " + 
+				roleAssignments.size() + " users in the role.");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the " +
+					"RoleAssignment objects The exception is: " + 
+					eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoqe);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getIdmServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+    	}
+		
+		return roleAssignments;
 	}
 	
 	/**
