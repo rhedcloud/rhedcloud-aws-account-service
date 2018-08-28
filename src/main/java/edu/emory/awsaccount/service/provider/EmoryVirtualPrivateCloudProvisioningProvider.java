@@ -1119,12 +1119,9 @@ implements VirtualPrivateCloudProvisioningProvider {
     	// Query the IDM service for all users in the named role
     	// Get a configured AccountUser, RoleAssignment, and 
     	// RoleAssignmentQuerySpecification from AppConfig
-    	AccountUser accountUser = new AccountUser();
 		RoleAssignment roleAssignment = new RoleAssignment();
     	RoleAssignmentQuerySpecification querySpec = new RoleAssignmentQuerySpecification();
 		try {
-			accountUser = (AccountUser)m_appConfig
-					.getObjectByType(accountUser.getClass().getName());
 			roleAssignment = (RoleAssignment)m_appConfig
 				.getObjectByType(roleAssignment.getClass().getName());
 			querySpec = (RoleAssignmentQuerySpecification)m_appConfig
