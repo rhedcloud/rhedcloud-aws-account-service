@@ -227,6 +227,23 @@ implements VirtualPrivateCloudProvisioningProvider {
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
+		
+		// This provider needs to send messages to the IdmService service
+		// to query for RoleAssignments.
+		ProducerPool p2p3 = null;
+		try {
+			p2p3 = (ProducerPool)getAppConfig()
+				.getObject("IdmServiceProducerPool");
+			setIdmServiceProducerPool(p2p3);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
 				
 		// Get the ThreadPool pool to use. 
 		// This provider needs a thread pool in which to process concurrent
