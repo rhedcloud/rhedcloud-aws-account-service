@@ -326,7 +326,9 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			if (lessThanAlertThreshold && getCreateIncidentOnAlert()) {
 				logger.info(LOGTAG + "createIncidentOnAlert is true, " +
 					"creating Incident in ServiceNow...");
-				IncidentRequisition req = buildIncidentRequisition();
+				IncidentRequisition req = 
+					buildIncidentRequisition(remainingValidDistroLists, 
+						getAccountSeriesPrefix());
 				try {
 					incident = getVirtualPrivateCloudProvisioningProvider()
 						.generateIncident(req);
@@ -342,7 +344,8 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			if (lessThanAlertThreshold && getNotifyCentralAdminsOnAlert()) {
 				logger.info(LOGTAG + "notifyCentralAdminsOnAlert is true, " +
 						"notifying central administrators...");
-				UserNotification notification = buildUserNotification(incident);
+				UserNotification notification = buildUserNotification(incident, 
+					getAccountSeriesPrefix(), remainingValidDistroLists);
 				try {
 					int adminCount = getVirtualPrivateCloudProvisioningProvider()
 							.notifyCentralAdministrators(notification);
@@ -895,7 +898,10 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		return isValid;
 	}
 	
-	private IncidentRequisition buildIncidentRequisition() throws StepException {
+	private IncidentRequisition buildIncidentRequisition(int remainingValidDistroLists,
+		String accountPrefix)
+		throws StepException {
+		
 		String LOGTAG = getStepTag() + 
 			"[VerifyRemainingDistroLists.buildIncidentRequisition] ";
 		
@@ -914,6 +920,10 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
         try {
 	        req.setShortDescription(getIncidentShortDescription());
 	        req.setDescription(getIncidentDescription());
+	        req.getDescription().replaceAll("REMAINING_VALID_DISTRO_LIST_COUNT", 
+	        	Integer.toString(remainingValidDistroLists));
+	        req.getDescription().replaceAll("ACCOUNT_SERIES_PREFIX", 
+		        	accountPrefix);
 	        req.setUrgency(getIncidentUrgency());
 	        req.setImpact(getIncidentImpact());
 	        req.setBusinessService(getIncidentBusinessService());
@@ -935,7 +945,8 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		return req;
 	}
 	
-	private UserNotification buildUserNotification(Incident incident) throws
+	private UserNotification buildUserNotification(Incident incident, 
+		String accountSeriesPrefix, int remainingValidDistroLists) throws
 		StepException {
 		
 		String LOGTAG = getStepTag() + 
@@ -959,6 +970,10 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	        notification.setPriority(getNotificationPriority());
 	        notification.setSubject(getNotificationSubject());
 	        notification.setText(getNotificationText());
+	        notification.getText().replaceAll("ACCOUNT_SERIES_PREFIX", accountSeriesPrefix);
+	        notification.getText().replaceAll("REMAINING_VALID_DISTRO_LIST_COUNT", 
+	        	Integer.toString(remainingValidDistroLists));
+	        notification.getText().replaceAll("INCIDENT_NUMBER", incident.getNumber());
 	        notification.setRead("false");
 	        notification.setCreateUser("AwsAccountService");
 	        Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
