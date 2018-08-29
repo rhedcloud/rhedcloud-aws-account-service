@@ -340,6 +340,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 				}
 				logger.info(LOGTAG + "Created incident " + incident.getNumber() +
 						" in ServiceNow.");
+				props.add(buildProperty("incidentNumber", incident.getNumber()));
 			}
 			if (lessThanAlertThreshold && getNotifyCentralAdminsOnAlert()) {
 				logger.info(LOGTAG + "notifyCentralAdminsOnAlert is true, " +
@@ -351,6 +352,8 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 							.notifyCentralAdministrators(notification);
 					logger.info(LOGTAG + "Notified " + adminCount + 
 							" central administrators.");
+					props.add(buildProperty("centralAdminsNotified", 
+						Integer.toString(adminCount)));
 				}
 				catch (ProviderException pe) {
 					String errMsg = "An error occurred notifying central " +
