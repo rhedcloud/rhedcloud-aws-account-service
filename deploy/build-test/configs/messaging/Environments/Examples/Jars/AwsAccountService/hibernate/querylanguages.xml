@@ -121,6 +121,12 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</TermsOfUseQuerySpecification>
 	</querylanguage>
 	<querylanguage>
+		<VirtualPrivateCloudProvisioningQuerySpecification>
+			<QueryLanguage max="20" type="hql" name="maxVpcps" value="from VirtualPrivateCloudProvisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</VirtualPrivateCloudProvisioningQuerySpecification>
+	</querylanguage>
+	<querylanguage>
 		<AccountNotificationQuerySpecification>
 			<QueryLanguage max="200" type="hql" name="byAccountId" value="from AccountNotification where AccountId=:AccountId order by CreateDatetime desc">
 				<Parameter name="AccountId"/>
