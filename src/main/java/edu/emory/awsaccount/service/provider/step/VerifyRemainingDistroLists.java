@@ -923,10 +923,13 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
         try {
 	        req.setShortDescription(getIncidentShortDescription());
 	        req.setDescription(getIncidentDescription());
-	        req.getDescription().replaceAll("REMAINING_VALID_DISTRO_LIST_COUNT", 
+	        String desc = req.getDescription()
+	        	.replaceAll("REMAINING_VALID_DISTRO_LIST_COUNT", 
 	        	Integer.toString(remainingValidDistroLists));
-	        req.getDescription().replaceAll("ACCOUNT_SERIES_PREFIX", 
-		        	accountPrefix);
+	        req.setDescription(desc);
+	        desc = req.getDescription().replaceAll("ACCOUNT_SERIES_PREFIX", 
+		        accountPrefix);
+	        req.setDescription(desc);
 	        req.setUrgency(getIncidentUrgency());
 	        req.setImpact(getIncidentImpact());
 	        req.setBusinessService(getIncidentBusinessService());
@@ -973,10 +976,16 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	        notification.setPriority(getNotificationPriority());
 	        notification.setSubject(getNotificationSubject());
 	        notification.setText(getNotificationText());
-	        notification.getText().replaceAll("ACCOUNT_SERIES_PREFIX", accountSeriesPrefix);
-	        notification.getText().replaceAll("REMAINING_VALID_DISTRO_LIST_COUNT", 
+	        String text = notification.getText()
+	        	.replaceAll("ACCOUNT_SERIES_PREFIX", accountSeriesPrefix);
+	        notification.setText(text);
+	        text = notification.getText()
+	        	.replaceAll("REMAINING_VALID_DISTRO_LIST_COUNT", 
 	        	Integer.toString(remainingValidDistroLists));
-	        notification.getText().replaceAll("INCIDENT_NUMBER", incident.getNumber());
+	        notification.setText(text);
+	        text = notification.getText()
+	        	.replaceAll("INCIDENT_NUMBER", incident.getNumber());
+	        notification.setText(text);
 	        notification.setRead("false");
 	        notification.setCreateUser("AwsAccountService");
 	        Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
