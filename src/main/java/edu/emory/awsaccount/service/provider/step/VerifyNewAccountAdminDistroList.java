@@ -106,7 +106,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 				"step is: " + allocateNewAccount);
 		}
 		else {
-			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found. " +
+			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
 				"Cannot determine whether or not to authorize the new account " +
 				"requestor.";
 			logger.error(LOGTAG + errMsg);
