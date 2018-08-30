@@ -29,7 +29,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizatio
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 
-import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
