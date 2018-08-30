@@ -28,7 +28,7 @@ import com.amazonaws.services.organizations.model.MoveAccountResult;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If a new account was just created, place it in the admin organizaiton.
+ * If a new account was just created, place it in the admin organization.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
