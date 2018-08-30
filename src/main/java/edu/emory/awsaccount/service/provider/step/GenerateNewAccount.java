@@ -197,14 +197,24 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			request.setIamUserAccessToBilling("ALLOW");
 			
 			// Send the request.
-			logger.info(LOGTAG + "Sending the account create request...");
-			long createStartTime = System.currentTimeMillis();
-			CreateAccountResult result = getAwsOrganizationsClient().createAccount(request);
-			long createTime = System.currentTimeMillis() - createStartTime;
-			String id = result.getCreateAccountStatus().getId();
-			String state = result.getCreateAccountStatus().getState();
-			logger.info(LOGTAG + "received response to account create request in " +
-				createTime + " ms. Result status for request ID " + id + " is: " + state);
+			String id = null;
+			String state = null;
+			try {
+				logger.info(LOGTAG + "Sending the account create request...");
+				long createStartTime = System.currentTimeMillis();
+				CreateAccountResult result = getAwsOrganizationsClient().createAccount(request);
+				long createTime = System.currentTimeMillis() - createStartTime;
+				id = result.getCreateAccountStatus().getId();
+				state = result.getCreateAccountStatus().getState();
+				logger.info(LOGTAG + "received response to account create request in " +
+					createTime + " ms. Result status for request ID " + id + " is: " + state);
+			}
+			catch (Exception e) {
+				String errMsg = "An error occurred creating the account. " +
+					"The exception is: " + e.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, e);
+			}
 			
 			// Wait for the request to complete.
 			boolean createComplete = false;
@@ -244,7 +254,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			}
 			else {
 				allocatedNewAccount = false;
-				String failureReason = result.getCreateAccountStatus().getFailureReason();
+				String failureReason = casResult.getCreateAccountStatus().getFailureReason();
 				if (failureReason == null) failureReason = "none returned";
 				logger.info(LOGTAG + "Failed to create new account. Failure reason: " + failureReason);
 				props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
