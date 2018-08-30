@@ -189,10 +189,14 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			logger.info(LOGTAG + "allocateNewAccount is true and accountEmailAddress " + 
 				"is " + accountEmailAddress + ". Creating a new AWS Account.");
 			
+			// Build account name
+			String newAccountName = getAccountSeriesName() + " " + 
+				accountSequenceNumber;
+			props.add(buildProperty("newAccountName", newAccountName));
+			
 			// Build the request.
 			CreateAccountRequest request = new CreateAccountRequest();
-			request.setAccountName(getAccountSeriesName() + " " + 
-				accountSequenceNumber);
+			request.setAccountName(newAccountName);
 			request.setEmail(accountEmailAddress);
 			request.setIamUserAccessToBilling("ALLOW");
 			

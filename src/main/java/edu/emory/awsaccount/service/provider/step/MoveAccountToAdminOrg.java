@@ -184,7 +184,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 			props.add(buildProperty("newAccountId", "not applicable"));
 		}
 		
-		// Update the step.
+		// Update the step result.
 		String stepResult = FAILURE_RESULT;
 		if (accountMoved == true && allocatedNewAccount == true) {
 			stepResult = SUCCESS_RESULT;
