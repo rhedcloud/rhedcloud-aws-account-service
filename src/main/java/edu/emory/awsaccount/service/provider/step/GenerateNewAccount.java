@@ -45,9 +45,7 @@ import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
 import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
 
 /**
- * If this is a new account request, send a e-mail validation
- * query request to verify the e-mail distribution list for
- * this account is valid.
+ * If this is a new account request, create the account.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
@@ -142,8 +140,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		}
 		else {
 			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
-				"Cannot determine whether or not to authorize the new account " +
-				"requestor.";
+				"Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
@@ -162,7 +159,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		}
 		else {
 			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not found. " +
-				"Cannot determine account sequence number.";
+				"Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
@@ -203,11 +200,11 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Sending the account create request...");
 			long createStartTime = System.currentTimeMillis();
 			CreateAccountResult result = getAwsOrganizationsClient().createAccount(request);
-			long time = System.currentTimeMillis() - createStartTime;
+			long createTime = System.currentTimeMillis() - createStartTime;
 			String id = result.getCreateAccountStatus().getId();
 			String state = result.getCreateAccountStatus().getState();
 			logger.info(LOGTAG + "received response to account create request in " +
-				" time ms. Result status for request ID " + id + " is: " + state);
+				createTime + " ms. Result status for request ID " + id + " is: " + state);
 			
 			// Wait for the request to complete.
 			boolean createComplete = false;
