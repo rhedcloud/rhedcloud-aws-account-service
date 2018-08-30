@@ -213,10 +213,10 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			boolean createComplete = false;
 			DescribeCreateAccountStatusRequest casRequest = new DescribeCreateAccountStatusRequest();
 			casRequest.setCreateAccountRequestId(id);
+			DescribeCreateAccountStatusResult casResult = null;
 			while (createComplete == false) {
 				logger.info(LOGTAG + "Checking for the staus of the create account transaction...");
-				DescribeCreateAccountStatusResult casResult =
-					getAwsOrganizationsClient()
+				casResult = getAwsOrganizationsClient()
 					.describeCreateAccountStatus(casRequest);
 				state = casResult.getCreateAccountStatus().getState();
 				logger.info(LOGTAG + "Account creation status is: " + state);
@@ -240,7 +240,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			
 			if (state.equalsIgnoreCase(SUCCEEDED)) {
 				allocatedNewAccount = true;
-				newAccountId = result.getCreateAccountStatus().getAccountId();
+				newAccountId = casResult.getCreateAccountStatus().getAccountId();
 				logger.info(LOGTAG + "Successfully created new account: " + newAccountId);
 				props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
 				props.add(buildProperty("newAccountId", newAccountId));	
@@ -248,6 +248,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			else {
 				allocatedNewAccount = false;
 				String failureReason = result.getCreateAccountStatus().getFailureReason();
+				if (failureReason == null) failureReason = "none returned";
 				logger.info(LOGTAG + "Failed to create new account. Failure reason: " + failureReason);
 				props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
 				props.add(buildProperty("failureReason", failureReason));	
