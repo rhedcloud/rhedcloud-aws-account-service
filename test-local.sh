@@ -4,13 +4,13 @@ git pull
 mvn package
 
 echo  ************Preparing tomcat and axis2...***************
-if [! test -d 'apache-tomcat-8.0.50']; then
+if [! -d 'apache-tomcat-8.0.50']; then
     wget  https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.50/bin/apache-tomcat-8.0.50.tar.gz
     tar xvzf apache-tomcat-8.0.50.tar.gz
 fi
 
 
-if [! test -d 'openeai-servicegen']; then
+if [! -d 'openeai-servicegen']; then
     git clone git@bitbucket.org:itarch/openeai-servicegen.git
 fi
 cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties
@@ -46,7 +46,6 @@ jar uf axis2.war WEB-INF/lib/*
 jar uf axis2.war WEB-INF/classes
 jar uf axis2.war WEB-INF/modules
 jar uf axis2.war WEB-INF/conf
-zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
 rm -Rf WEB-INF
 
 cp axis2.war ../../../../apache-tomcat-8.0.50/webapps
