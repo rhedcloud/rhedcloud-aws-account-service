@@ -30,6 +30,7 @@ import org.openeai.transport.RequestService;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
@@ -172,6 +173,10 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		    	operationsEmailAddress.setEmail(accountEmailAddress);
 		    	account.addEmailAddress(operationsEmailAddress);
 		    	
+		    	account.setCreateUser(req.getAuthenticatedRequestorUserId());
+		    	Datetime createDatetime = new Datetime("Create", 
+		    		System.currentTimeMillis());
+		    	account.setCreateDatetime(createDatetime);
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
