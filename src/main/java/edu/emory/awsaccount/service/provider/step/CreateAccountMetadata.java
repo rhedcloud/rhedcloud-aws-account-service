@@ -22,6 +22,7 @@ import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectCreateException;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Result;
@@ -30,6 +31,7 @@ import org.openeai.transport.RequestService;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
@@ -212,7 +214,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 			try { 
 				long createStartTime = System.currentTimeMillis();
 				account.create(rs);
-				long createTime = System.currentTimeMillis() - startTime;
+				long createTime = System.currentTimeMillis() - createStartTime;
 				logger.info(LOGTAG + "Create Account in " + createTime +
 					" ms.");
 				accountMetadataCreated = true;
@@ -313,10 +315,129 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		super.rollback();
 		
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[CreateAccountMetadata.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[CreateAccountMetadata.rollback] ";
+		logger.info(LOGTAG + "Rollback called, deleting account metadata.");
+		
+		// Get the result props
+		List<Property> props = getResultProperties();
+		
+		// Get the account number
+		String newAccountId = getResultProperty("newAccountId");
+		
+		// If the newAccountId is not null, query for the account object
+		// and then delete it.
+		if (newAccountId != null) {
+		
+			// Query for the account
+			// Get a configured account object and account query spec
+			// from AppConfig.
+			Account account = new Account();
+			AccountQuerySpecification querySpec = new AccountQuerySpecification();
+		    try {
+		    	account = (Account)getAppConfig()
+			    	.getObjectByType(account.getClass().getName());
+		    	querySpec = (AccountQuerySpecification)getAppConfig()
+				    	.getObjectByType(account.getClass().getName());
+		    }
+		    catch (EnterpriseConfigurationObjectException ecoe) {
+		    	String errMsg = "An error occurred retrieving an object from " +
+		    	  "AppConfig. The exception is: " + ecoe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+		    	throw new StepException(errMsg, ecoe);
+		    }
+		    
+		    // Set the values of the query spec
+		    try {
+		    	querySpec.setAccountId(newAccountId);
+		    }
+		    catch (EnterpriseFieldException efe) {
+		    	String errMsg = "An error occurred setting a field value. " +
+		    		"The exception is: " + efe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+		    	throw new StepException();
+		    }
+		    
+		    // Get a producer from the pool
+ 			RequestService rs = null;
+ 			try {
+ 				rs = (RequestService)getAwsAccountServiceProducerPool()
+ 					.getExclusiveProducer();
+ 			}
+ 			catch (JMSException jmse) {
+ 				String errMsg = "An error occurred getting a producer " +
+ 					"from the pool. The exception is: " + jmse.getMessage();
+ 				logger.error(LOGTAG + errMsg);
+ 				throw new StepException(errMsg, jmse);
+ 			}
+ 		    
+ 			// Query for the account metadata
+ 			List results = null;
+ 			try { 
+ 				long queryStartTime = System.currentTimeMillis();
+ 				results = account.query(querySpec, rs);
+ 				long createTime = System.currentTimeMillis() - queryStartTime;
+ 				logger.info(LOGTAG + "Queried for Account in " + createTime +
+ 					" ms. Got " + results.size() + " result(s).");
+ 			}
+ 			catch (EnterpriseObjectQueryException eoqe) {
+ 				String errMsg = "An error occurred querying for the object. " +
+ 		    	  "The exception is: " + eoqe.getMessage();
+ 		    	logger.error(LOGTAG + errMsg);
+ 		    	throw new StepException(errMsg, eoqe);
+ 			}
+ 			finally {
+ 				// Release the producer back to the pool
+ 				getAwsAccountServiceProducerPool()
+ 					.releaseProducer((MessageProducer)rs);
+ 			}
+ 			
+ 			// If there is a result, delete the account metadata
+ 			if (results.size() > 0) {
+ 				account = (Account)results.get(0);
+ 				
+ 				// Get a producer from the pool
+ 	 			rs = null;
+ 	 			try {
+ 	 				rs = (RequestService)getAwsAccountServiceProducerPool()
+ 	 					.getExclusiveProducer();
+ 	 			}
+ 	 			catch (JMSException jmse) {
+ 	 				String errMsg = "An error occurred getting a producer " +
+ 	 					"from the pool. The exception is: " + jmse.getMessage();
+ 	 				logger.error(LOGTAG + errMsg);
+ 	 				throw new StepException(errMsg, jmse);
+ 	 			}
+ 	 		    
+ 	 			// Delete the account metadata
+ 	 			try { 
+ 	 				long deleteStartTime = System.currentTimeMillis();
+ 	 				account.delete("Delete", rs);
+ 	 				long deleteTime = System.currentTimeMillis() - deleteStartTime;
+ 	 				logger.info(LOGTAG + "Deleted Account in " + deleteTime +
+ 	 					" ms. Got " + results.size() + " result(s).");
+ 	 				props.add(buildProperty("deletedAccountMetadataOnRollback", "true"));
+ 	 			}
+ 	 			catch (EnterpriseObjectDeleteException eode) {
+ 	 				String errMsg = "An error occurred deleting the object. " +
+ 	 		    	  "The exception is: " + eode.getMessage();
+ 	 		    	logger.error(LOGTAG + errMsg);
+ 	 		    	throw new StepException(errMsg, eode);
+ 	 			}
+ 	 			finally {
+ 	 				// Release the producer back to the pool
+ 	 				getAwsAccountServiceProducerPool()
+ 	 					.releaseProducer((MessageProducer)rs);
+ 	 			}
+ 			}
+		}
+		// If newAccountId is null, there is nothing to roll back.
+		// Log it.
+		else {
+			logger.info(LOGTAG + "No account metadata was created by this " +
+				"step, so there is nothing to roll back.");
+			props.add(buildProperty("deletedAccountMetadataOnRollback", "not applicable"));
+		}
+		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
 		
 		// Log completion time.

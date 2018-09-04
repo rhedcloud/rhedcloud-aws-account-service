@@ -12,6 +12,7 @@ package edu.emory.awsaccount.service.provider.step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -21,9 +22,13 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
+
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -37,8 +42,12 @@ import com.amazonaws.services.organizations.model.CreateAccountResult;
 import com.amazonaws.services.organizations.model.CreateAccountStatus;
 import com.amazonaws.services.organizations.model.DescribeCreateAccountStatusRequest;
 import com.amazonaws.services.organizations.model.DescribeCreateAccountStatusResult;
+import com.amazonaws.services.organizations.model.ListAccountsForParentRequest;
+import com.amazonaws.services.organizations.model.ListAccountsForParentResult;
 import com.amazonaws.services.organizations.model.ListAccountsRequest;
 import com.amazonaws.services.organizations.model.ListAccountsResult;
+import com.amazonaws.services.organizations.model.MoveAccountRequest;
+import com.amazonaws.services.organizations.model.MoveAccountResult;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
@@ -56,6 +65,8 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 	private final static String IN_PROGRESS = "IN_PROGRESS";
 	private final static String SUCCEEDED = "SUCCEEDED";
 	private final static String FAILED = "FAILED";
+	private String m_orgRootId = null;
+	private String m_pendingDeleteOuId = null;
 	private String m_accountSeriesName = null;
 	private String m_accessKey = null;
 	private String m_secretKey = null;
@@ -71,6 +82,16 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
+		
+		String orgRootId = getProperties().getProperty("orgRootId", null);
+		setOrgRootId(orgRootId);
+		logger.info(LOGTAG + "orgRootId is: " + getOrgRootId());
+		
+		String pendingDeleteOuId = getProperties()
+			.getProperty("pendingDeleteOuId", null);
+		setPendingDeleteOuId(pendingDeleteOuId);
+		logger.info(LOGTAG + "pendingDeleteOuId is: " + 
+			getPendingDeleteOuId());
 		
 		String accountSeriesName = getProperties()
 			.getProperty("accountSeriesName", null);
@@ -346,8 +367,90 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
 			"[GenerateNewAccount.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		
+		logger.info(LOGTAG + "Rollback called, if a new account was " +
+			"created successfully and if it is still in the destination ou, "
+			+ "will attempt to move it to the pending delete ou.");
+		
+		// Get the result props
+		List<Property> props = getResultProperties();
+		
+		// Get the createdNewAccount and account number properties
+		boolean createdNewAccount = Boolean
+			.getBoolean(getResultProperty("createdNewAccount"));		
+		String newAccountId = getResultProperty("newAccountId");
+		boolean isAccountInOrgRoot = false;
+		boolean movedAccountToPendingDeleteOu = false;
+		
+		// If newAccountId is not null, determine if the account is still in
+		// the destination ou.
+		if (newAccountId != null) {
+			try {
+				ListAccountsForParentRequest request = new ListAccountsForParentRequest();
+				request.setParentId(getOrgRootId());
+				ListAccountsForParentResult result = 
+					getAwsOrganizationsClient().listAccountsForParent(request);
+				List<com.amazonaws.services.organizations.model.Account> accounts =
+					result.getAccounts();
+				ListIterator<com.amazonaws.services.organizations.model.Account> li = 
+					accounts.listIterator();
+				while (li.hasNext()) {
+					com.amazonaws.services.organizations.model.Account account = 
+						(com.amazonaws.services.organizations.model.Account)li.next();
+					if (account.getId().equalsIgnoreCase(newAccountId));
+					isAccountInOrgRoot = true;
+				}
+			}
+			catch (Exception e) {
+				String errMsg = "An error occurred querying for a list of " +
+					"accounts in the org root. The exception is: " +
+					e.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, e);
+			}
+		}
+		
+		// If the createdNewAccount is true and isAccountInOrgRoot is true,
+		// move the account to the pending delete org unit.
+		if (createdNewAccount && isAccountInOrgRoot) {
+			// Build the request.
+			MoveAccountRequest request = new MoveAccountRequest();
+			request.setAccountId(newAccountId);
+			request.setDestinationParentId(getPendingDeleteOuId());
+			request.setSourceParentId(getOrgRootId());
+			
+			// Send the request.
+			try {
+				logger.info(LOGTAG + "Sending the move account request...");
+				long moveStartTime = System.currentTimeMillis();
+				MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
+				long moveTime = System.currentTimeMillis() - moveStartTime;
+				logger.info(LOGTAG + "received response to move account request in " +
+					moveTime + " ms.");
+				movedAccountToPendingDeleteOu = true;
+			}
+			catch (Exception e) {
+				String errMsg = "An error occurred moving the account. " +
+					"The exception is: " + e.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, e);
+			}
+			
+			props.add(buildProperty("orgRootId", getOrgRootId()));	
+			props.add(buildProperty("getPendingDeleteOuId", getPendingDeleteOuId()));
+			props.add(buildProperty("movedAccountToPendingDeleteOu", 
+				Boolean.toString(movedAccountToPendingDeleteOu)));
+			
+		}
+		// If createdNewAccount or isAccountInOrgRoot is false, there is 
+		// nothing to roll back. Log it.
+		else {
+			logger.info(LOGTAG + "No account was created or it is no longer " +
+				"in the organization root, so there is nothing to roll back.");
+			props.add(buildProperty("movedAccountToPendingDeleteOu", 
+				"not applicable"));
+		}
+		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
 		
 		// Log completion time.
@@ -409,6 +512,38 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 
 	private String getSecretKey() {
 		return m_secretKey;
+	}
+	
+	private void setOrgRootId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "orgRootId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_orgRootId = id;
+	}
+
+	private String getOrgRootId() {
+		return m_orgRootId;
+	}
+	
+	private void setPendingDeleteOuId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "pendingDeleteOuId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_pendingDeleteOuId = id;
+	}
+
+	private String getPendingDeleteOuId() {
+		return m_orgRootId;
 	}
 	
 }

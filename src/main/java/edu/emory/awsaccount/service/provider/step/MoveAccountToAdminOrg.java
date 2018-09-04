@@ -12,6 +12,7 @@ package edu.emory.awsaccount.service.provider.step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import org.openeai.config.AppConfig;
@@ -21,6 +22,8 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.organizations.AWSOrganizationsClient;
 import com.amazonaws.services.organizations.AWSOrganizationsClientBuilder;
+import com.amazonaws.services.organizations.model.ListAccountsForParentRequest;
+import com.amazonaws.services.organizations.model.ListAccountsForParentResult;
 import com.amazonaws.services.organizations.model.ListAccountsRequest;
 import com.amazonaws.services.organizations.model.ListAccountsResult;
 import com.amazonaws.services.organizations.model.MoveAccountRequest;
@@ -255,8 +258,88 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
 			"[MoveAccountToAdminOrg.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		logger.info(LOGTAG + "Rollback called, if movedAccount is true, " +
+			"move it back.");
+		
+		// Get the result props
+		List<Property> props = getResultProperties();
+				
+		// Get the createdNewAccount and account number properties
+		String newAccountId = getResultProperty("newAccountId");
+		boolean movedAccount = Boolean.getBoolean(getResultProperty("movedAccount"));	
+		boolean isAccountInAdminOu = false;
+		boolean movedAccountBackToOrgRoot = false;
+		
+		// If newAccountId is not null, determine if the account is still in
+		// the destination ou.
+		if (newAccountId != null) {
+			try {
+				ListAccountsForParentRequest request = new ListAccountsForParentRequest();
+				request.setParentId(getDestinationParentId());
+				ListAccountsForParentResult result = 
+					getAwsOrganizationsClient().listAccountsForParent(request);
+				List<com.amazonaws.services.organizations.model.Account> accounts =
+					result.getAccounts();
+				ListIterator<com.amazonaws.services.organizations.model.Account> li = 
+					accounts.listIterator();
+				while (li.hasNext()) {
+					com.amazonaws.services.organizations.model.Account account = 
+						(com.amazonaws.services.organizations.model.Account)li.next();
+					if (account.getId().equalsIgnoreCase(newAccountId));
+					isAccountInAdminOu = true;
+				}
+			}
+			catch (Exception e) {
+				String errMsg = "An error occurred querying for a list of " +
+					"accounts in the admin org. The exception is: " +
+					e.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, e);
+			}
+		}
+		
+		// If the movedAccount is true and isAccountInAdminOrg is true,
+		// move the account to the org root.
+		if (movedAccount && isAccountInAdminOu) {
+			// Build the request.
+			MoveAccountRequest request = new MoveAccountRequest();
+			request.setAccountId(newAccountId);
+			request.setDestinationParentId(getSourceParentId());
+			request.setSourceParentId(getDestinationParentId());
+			
+			// Send the request.
+			try {
+				logger.info(LOGTAG + "Sending the move account request...");
+				long moveStartTime = System.currentTimeMillis();
+				MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
+				long moveTime = System.currentTimeMillis() - moveStartTime;
+				logger.info(LOGTAG + "received response to move account request in " +
+					moveTime + " ms.");
+				movedAccountBackToOrgRoot = true;
+			}
+			catch (Exception e) {
+				String errMsg = "An error occurred moving the account. " +
+					"The exception is: " + e.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, e);
+			}
+			props.add(buildProperty("isAccountInAdminOu", 
+					Boolean.toString(isAccountInAdminOu)));
+			props.add(buildProperty("movedAccountBackToOrgRoot", 
+				Boolean.toString(movedAccountBackToOrgRoot)));
+			
+		}
+		// If movedAccount or isAccountInAdminOrg is false, there is 
+		// nothing to roll back. Log it.
+		else {
+			logger.info(LOGTAG + "No account was created or it is no longer " +
+				"in the organization root, so there is nothing to roll back.");
+			props.add(buildProperty("isAccountInAdminOu", 
+					Boolean.toString(isAccountInAdminOu)));
+			props.add(buildProperty("movedAccountBackToOrgRoot", 
+				"not applicable"));
+		}
+		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
 		
 		// Log completion time.
