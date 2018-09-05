@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2016 Emory University. All rights reserved. 
+ Copyright (C) 2016-2018 Emory University. All rights reserved. 
  ******************************************************************************/
 
 package edu.emory.awsaccount.service;
