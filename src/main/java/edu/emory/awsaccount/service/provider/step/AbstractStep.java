@@ -75,7 +75,7 @@ public abstract class AbstractStep {
 	private String m_status = null;
 	private String m_result = null;
 	private String m_executionType = null;
-	private List<Property> m_resultProperties = null;
+	private List<Property> m_resultProperties = new ArrayList<Property>();
 	private String m_createUser = null;
 	private Datetime m_createDatetime = null;
 	private String m_lastUpdateUser = null;
@@ -678,11 +678,17 @@ public abstract class AbstractStep {
     	return prop;
 	}
 	
+	
+	
 	protected void setResultProperties(List<Property> resultProps) {
 		m_resultProperties = resultProps;
 	}
 	
-	protected List<Property> getResultProperties() {
+	protected void addResultProperty(Property prop) {
+		m_resultProperties.add(prop);
+	}
+	
+	public List<Property> getResultProperties() {
 		return m_resultProperties;
 	}
 	
