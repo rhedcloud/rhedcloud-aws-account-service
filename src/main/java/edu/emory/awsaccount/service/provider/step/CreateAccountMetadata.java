@@ -337,7 +337,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		    	account = (Account)getAppConfig()
 			    	.getObjectByType(account.getClass().getName());
 		    	querySpec = (AccountQuerySpecification)getAppConfig()
-				    	.getObjectByType(account.getClass().getName());
+				    	.getObjectByType(querySpec.getClass().getName());
 		    }
 		    catch (EnterpriseConfigurationObjectException ecoe) {
 		    	String errMsg = "An error occurred retrieving an object from " +
