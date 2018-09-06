@@ -131,14 +131,14 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</VirtualPrivateCloudProvisioningQuerySpecification>
 	</querylanguage>
 	<querylanguage>
-		<VirtualPrivateCloudProvisioningQuerySpecification>
+		<VpnConnectionProvisioningQuerySpecification>
 			<QueryLanguage max="20" type="hql" name="maxVpncps" value="from VpnConnectionProvisioning order by CreateDatetime desc">
 			</QueryLanguage>
-		</VirtualPrivateCloudProvisioningQuerySpecification>
-		<VirtualPrivateCloudProvisioningQuerySpecification>
+		</VpnConnectionProvisioningQuerySpecification>
+		<VpnConnectionProvisioningQuerySpecification>
 			<QueryLanguage type="hql" name="allVpncps" value="from VpnConnectionProvisioning order by CreateDatetime desc">
 			</QueryLanguage>
-		</VirtualPrivateCloudProvisioningQuerySpecification>
+		</VpnConnectionProvisioningQuerySpecification>
 	</querylanguage>
 	<querylanguage>
 		<AccountNotificationQuerySpecification>
