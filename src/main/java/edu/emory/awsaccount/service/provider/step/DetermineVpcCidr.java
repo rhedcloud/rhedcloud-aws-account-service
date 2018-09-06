@@ -69,6 +69,9 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 			String errMsg = "An error occurred retrieving an object from " +
 					"AppConfig. The exception is: " + ecoe.getMessage();
 			logger.fatal(LOGTAG + errMsg);
+			Property prop = buildProperty("errorMessage", errMsg);
+			addResultProperty(prop);
+			
 			throw new StepException(errMsg);
 		}
 		

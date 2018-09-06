@@ -1269,30 +1269,82 @@ implements VirtualPrivateCloudProvisioningProvider {
 							getVirtualPrivateCloudProvisioningProvider());
 					}
 					catch (ClassNotFoundException cnfe) {
-						String errMsg = "An error occurred instantiating " +
-							"a step. The exception is: " + cnfe.getMessage();
+						// An error occurred instantiating the step.
+						// Log it and roll back all preceding steps.
+						String errMsg = "An error occurred instantiating the Step " + 
+							step.getStepId() + "The exception is: " + cnfe.getMessage();
 						logger.error(LOGTAG + errMsg);
+						try {
+							logger.info(LOGTAG + "Setting completed status and failure result...");
+							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							logger.info(LOGTAG + "Updated to completed status and failure result.");
+						}
+						catch (StepException se2) {
+							String errMsg2 = "An error occurred updating the " +
+								"status to indicate failure. The exception " +
+								"is: " + se2.getMessage();
+							logger.error(LOGTAG + errMsg2);
+						}
 						rollbackCompletedSteps(completedSteps);
 						return;
 					}
 					catch (IllegalAccessException iae) {
-						String errMsg = "An error occurred instantiating " +
-							"a step. The exception is: " + iae.getMessage();
+						// An error occurred instantiating the step.
+						// Log it and roll back all preceding steps.
+						String errMsg = "An error occurred instantiating the Step " + 
+							step.getStepId() + "The exception is: " + iae.getMessage();
 						logger.error(LOGTAG + errMsg);
+						try {
+							logger.info(LOGTAG + "Setting completed status and failure result...");
+							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							logger.info(LOGTAG + "Updated to completed status and failure result.");
+						}
+						catch (StepException se2) {
+							String errMsg2 = "An error occurred updating the " +
+								"status to indicate failure. The exception " +
+								"is: " + se2.getMessage();
+							logger.error(LOGTAG + errMsg2);
+						}
 						rollbackCompletedSteps(completedSteps);
 						return;
 					}
 					catch (InstantiationException ie) {
-						String errMsg = "An error occurred instantiating " +
-							"a step. The exception is: " + ie.getMessage();
+						// An error occurred instantiating the step.
+						// Log it and roll back all preceding steps.
+						String errMsg = "An error occurred instantiating the Step " + 
+							step.getStepId() + "The exception is: " + ie.getMessage();
 						logger.error(LOGTAG + errMsg);
+						try {
+							logger.info(LOGTAG + "Setting completed status and failure result...");
+							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							logger.info(LOGTAG + "Updated to completed status and failure result.");
+						}
+						catch (StepException se2) {
+							String errMsg2 = "An error occurred updating the " +
+								"status to indicate failure. The exception " +
+								"is: " + se2.getMessage();
+							logger.error(LOGTAG + errMsg2);
+						}
 						rollbackCompletedSteps(completedSteps);
 						return;
 					}
 					catch (StepException se) {
-						String errMsg = "An error occurred instantiating " +
-							"a step. The exception is: " + se.getMessage();
+						// An error occurred initializing the step.
+						// Log it and roll back all preceding steps.
+						String errMsg = "An error occurred initializing the Step " + 
+							step.getStepId() + "The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
+						try {
+							logger.info(LOGTAG + "Setting completed status and failure result...");
+							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							logger.info(LOGTAG + "Updated to completed status and failure result.");
+						}
+						catch (StepException se2) {
+							String errMsg2 = "An error occurred updating the " +
+								"status to indicate failure. The exception " +
+								"is: " + se2.getMessage();
+							logger.error(LOGTAG + errMsg2);
+						}
 						rollbackCompletedSteps(completedSteps);
 						return;
 					}

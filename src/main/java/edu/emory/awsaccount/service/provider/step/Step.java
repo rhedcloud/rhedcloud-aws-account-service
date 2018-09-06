@@ -76,6 +76,10 @@ public interface Step {
      */
     public String getResult();
     /**
+     * @return List<Property>, the step result properties
+     */
+    public List<Property> getResultProperties();
+    /**
      * @param String, step status
      * @param String, step result
      * @param List, step properties
