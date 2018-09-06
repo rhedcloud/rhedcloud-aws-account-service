@@ -186,7 +186,7 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		    	vcp = (VpnConnectionProfile)getAppConfig()
 			    		.getObjectByType(vcp.getClass().getName());
 		    	vcpqs = (VpnConnectionProfileQuerySpecification)getAppConfig()
-			    		.getObjectByType(vcpar.getClass().getName());
+			    		.getObjectByType(vcpqs.getClass().getName());
 		    }
 		    catch (EnterpriseConfigurationObjectException ecoe) {
 		    	String errMsg = "An error occurred retrieving an object from " +
