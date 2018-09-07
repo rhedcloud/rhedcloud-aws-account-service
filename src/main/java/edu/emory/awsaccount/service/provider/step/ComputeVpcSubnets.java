@@ -103,19 +103,19 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 			logger.info(LOGTAG + "mgmt1Subnet is: " + mgmt1Subnet);
 			props.add(buildProperty("mgmt1Subnet", mgmt1Subnet));
 			
-			String mgmt2Subnet = getNextSubnet(mgmt1Subnet);
+			String mgmt2Subnet = getNextSubnet(mgmt1Subnet, mgmtPubMask);
 			logger.info(LOGTAG + "mgmt2Subnet is: " + mgmt2Subnet);
 			props.add(buildProperty("mgmt2Subnet", mgmt2Subnet));
 			
-			String public1Subnet = getNextSubnet(mgmt2Subnet);
+			String public1Subnet = getNextSubnet(mgmt2Subnet, mgmtPubMask);
 			logger.info(LOGTAG + "public1Subnet is: " + public1Subnet);
 			props.add(buildProperty("public1Subnet", public1Subnet));
 			
-			String public2Subnet = getNextSubnet(public1Subnet);
+			String public2Subnet = getNextSubnet(public1Subnet, mgmtPubMask);
 			logger.info(LOGTAG + "public2Subnet is: " + public2Subnet);
 			props.add(buildProperty("public2Subnet", public2Subnet));
 
-			String[] private1NetworkArray = getNextSubnet(public2Subnet).split("/");
+			String[] private1NetworkArray = getNextSubnet(public2Subnet, mgmtPubMask).split("/");
 			logger.info(LOGTAG + "private1NetworkArray is: " + private1NetworkArray);
 			String private1Network = private1NetworkArray[0];
 			logger.info(LOGTAG + "private1Network is: " + private1Network);
@@ -124,7 +124,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 			logger.info(LOGTAG + "private1Subnet is: " + private1Subnet);
 			props.add(buildProperty("private1Subnet", private1Subnet));
 
-			String private2Subnet = getNextSubnet(private1Subnet);
+			String private2Subnet = getNextSubnet(private1Subnet, privMask);
 			logger.info(LOGTAG + "private2Subnet is: " + private2Subnet);
 			props.add(buildProperty("private2Subnet", private2Subnet));
 			
@@ -234,12 +234,12 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 	}
 	
 	// method pseudocode provided by Paul Petersen
-	private static final String getNextSubnet(String inputSubnet) {
+	private static final String getNextSubnet(String inputSubnet, String bits) {
 	   SubnetUtils utils = new SubnetUtils(inputSubnet);
 	   SubnetInfo info = utils.getInfo();
 	   String bcastIpAddress = info.getBroadcastAddress();
 	   String nextNetwork = nextIpAddress(bcastIpAddress);
-	   String nextSubnet = nextNetwork + "/" + info.getNetmask();
+	   String nextSubnet = nextNetwork + "/" + bits;
 	   return(nextSubnet);
 	}
 	
