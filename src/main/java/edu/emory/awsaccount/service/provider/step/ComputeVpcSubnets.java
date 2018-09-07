@@ -243,11 +243,12 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[ComputeVpcSubnets.addToNetMask] ";
 		logger.info(LOGTAG + "netmask: " + netmask);
 		String[] octets = netmask.split("\\.");
-		logger.info(LOGTAG + "octets: " + octets.toString());
+		logger.info(LOGTAG + "octets: " + octets[0] + " " + octets[1] +
+				" " + octets[2] + " " + octets[3]);
 		String lastOctet = octets[3];
 		logger.info(LOGTAG + "lastOctet: " + lastOctet);
 		int o = Integer.parseInt(lastOctet);
-		o = o + 1;
+		o = o + i;
 		lastOctet = Integer.toString(o);
 		String newNetmask = octets[0] + "." + octets[1] +
 			"." + octets[2] + "." + lastOctet;
