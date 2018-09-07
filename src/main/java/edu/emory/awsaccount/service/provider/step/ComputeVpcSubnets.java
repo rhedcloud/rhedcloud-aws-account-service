@@ -84,12 +84,14 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 			String originalCidr = vpcNetwork;
 			SubnetUtils utils = new SubnetUtils(originalCidr);
 			SubnetInfo info = utils.getInfo();
+			logger.info(LOGTAG + "originalCidr (vpcNetwork) is: " + originalCidr);
+			logger.info(LOGTAG + "info.getNetmask() is: " + info.getNetmask());
 
-			String mgmtPubMask = Integer.toString(Integer.parseInt(info.getNetmask()) + 3);
+			String mgmtPubMask = addToNetmask(info.getNetmask(), 3);
 			logger.info(LOGTAG + "mgmtPubMask is: " + mgmtPubMask);
 			props.add(buildProperty("mgmtPubMask", mgmtPubMask));
 			
-			String privMask = Integer.toString(Integer.parseInt(info.getNetmask()) + 2);
+			String privMask = addToNetmask(info.getNetmask(), 2);
 			logger.info(LOGTAG + "privMask is: " + privMask);
 			props.add(buildProperty("privMask", privMask));
 
@@ -235,5 +237,21 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 	   String nextNetwork = nextIpAddress(bcastIpAddress);
 	   String nextSubnet = nextNetwork + "/" + info.getNetmask();
 	   return(nextSubnet);
+	}
+	
+	private String addToNetmask(String netmask, int i) {
+		String LOGTAG = getStepTag() + "[ComputeVpcSubnets.addToNetMask] ";
+		logger.info(LOGTAG + "netmask: " + netmask);
+		String[] octets = netmask.split(".");
+		logger.info(LOGTAG + "octets: " + octets);
+		String lastOctet = octets[3];
+		logger.info(LOGTAG + "lastOctet: " + lastOctet);
+		int o = Integer.parseInt(lastOctet);
+		o = o + 1;
+		lastOctet = Integer.toString(o);
+		String newNetmask = octets[0] + "." + octets[1] +
+			"." + octets[2] + "." + lastOctet;
+		logger.info(LOGTAG + "newNetmask: " + newNetmask);
+		return newNetmask;
 	}
 }
