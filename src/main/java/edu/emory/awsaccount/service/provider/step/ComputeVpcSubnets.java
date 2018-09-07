@@ -82,20 +82,24 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 			
 			// Begin pseudocode provided by Paul Petersen. Modified for proper syntax.
 			String originalCidr = vpcNetwork;
-			SubnetUtils utils = new SubnetUtils(originalCidr);
-			SubnetInfo info = utils.getInfo();
+			
 			logger.info(LOGTAG + "originalCidr (vpcNetwork) is: " + originalCidr);
-			logger.info(LOGTAG + "info.getNetmask() is: " + info.getNetmask());
+			
+			String[] originalCidrArray = originalCidr.split("/");
+			String originalCidrNetwork = originalCidrArray[0];
+			String originalCidrBits = originalCidrArray[1];
+			logger.info(LOGTAG + "originalCidrBits is: " + originalCidrBits);
+			int bits = Integer.parseInt(originalCidrBits);
 
-			String mgmtPubMask = addToNetmask(info.getNetmask(), 3);
+			String mgmtPubMask =  Integer.toString(bits + 3);
 			logger.info(LOGTAG + "mgmtPubMask is: " + mgmtPubMask);
 			props.add(buildProperty("mgmtPubMask", mgmtPubMask));
 			
-			String privMask = addToNetmask(info.getNetmask(), 2);
+			String privMask = Integer.toString(bits + 2);
 			logger.info(LOGTAG + "privMask is: " + privMask);
 			props.add(buildProperty("privMask", privMask));
 
-			String mgmt1Subnet = info.getNetworkAddress() + "/" + mgmtPubMask;
+			String mgmt1Subnet = originalCidrNetwork + "/" + mgmtPubMask;
 			logger.info(LOGTAG + "mgmt1Subnet is: " + mgmt1Subnet);
 			props.add(buildProperty("mgmt1Subnet", mgmt1Subnet));
 			
@@ -113,7 +117,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 
 			String[] private1NetworkArray = getNextSubnet(public2Subnet).split("/");
 			logger.info(LOGTAG + "private1NetworkArray is: " + private1NetworkArray);
-			String private1Network = private1NetworkArray[1];
+			String private1Network = private1NetworkArray[0];
 			logger.info(LOGTAG + "private1Network is: " + private1Network);
 			
 			String private1Subnet = private1Network + "/" + privMask;
