@@ -67,6 +67,14 @@
    <scope>system</scope>
    <systemPath>${project.basedir}/lib/commons-io-2.5.jar</systemPath>
   </dependency>
+  
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>commons-net-3.6</artifactId>
+   <version>3.6</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/commons-net-3.6.jar</systemPath>
+  </dependency>
 
   <dependency>
    <groupId>edu.emory.awsaccount.servicet</groupId>
