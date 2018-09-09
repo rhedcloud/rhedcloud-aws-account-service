@@ -139,8 +139,10 @@ implements StackProvider {
 		}
 		
 		// Set the roleAssumptionDurationSeconds property
-		setAccessKeyId(getProperties().getProperty("roleAssumptionDurationSeconds", null));
-		logger.info(LOGTAG + "roleAssumptionDurationSeconds is: " + getRoleAssumptionDurationSeconds());
+		setRoleAssumptionDurationSeconds(getProperties()
+			.getProperty("roleAssumptionDurationSeconds", null));
+		logger.info(LOGTAG + "roleAssumptionDurationSeconds is: " +
+			getRoleAssumptionDurationSeconds());
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
