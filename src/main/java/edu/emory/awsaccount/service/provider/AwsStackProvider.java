@@ -43,6 +43,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.cloudformation.AmazonCloudFormation;
 import com.amazonaws.services.cloudformation.AmazonCloudFormationClient;
@@ -53,6 +54,13 @@ import com.amazonaws.services.cloudformation.model.DescribeStacksResult;
 import com.amazonaws.services.cloudformation.model.Parameter;
 import com.amazonaws.services.cloudformation.model.StackStatus;
 import com.amazonaws.services.cloudformation.model.Tag;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
+import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
+import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.cloudformation.model.CreateStackRequest;
 import com.amazonaws.services.cloudformation.model.CreateStackResult;
 import com.amazonaws.services.cloudformation.model.DeleteStackRequest;
@@ -70,13 +78,13 @@ implements StackProvider {
 
 	private Category logger = OpenEaiObject.logger;
 	private AppConfig m_appConfig;
-	private HashMap<String, AmazonCloudFormationClient> m_clientMap = 
-		new HashMap<String, AmazonCloudFormationClient>();
 	private boolean m_verbose = false;
 	private long m_waitInterval = 5 * 1000; // wait interval
 	private long m_maxWaitTime = 10 * 60 * 1000; // max wait time
-	
-	private AmazonCloudFormationClient m_client = null;
+	private String m_roleArnPattern = null; // role pattern of the role to assume
+	private String m_accessKeyId = null; // the AWS API access key
+	private String m_secretKey = null; // the AWS API secret key
+    private int m_roleAssumptionDurationSeconds = 0; // session duration for role assumption
 	private String LOGTAG = "[AwsStackProvider] ";
 	
 	/**
@@ -116,55 +124,24 @@ implements StackProvider {
 		setMaxWaitTime(Long.valueOf(getProperties().getProperty("maxWaitTime", "600000")));
 		logger.info(LOGTAG + "maxWaitTime property is: " + getMaxWaitTime() + " ms.");
 		
-		// Get AWS credentials for all accounts in the inventory.
-		List awsAccountCredentials = null;
-		try {
-			awsAccountCredentials = getAppConfig()
-				.getObjectsLike("AwsAccountCredentials");
-			logger.info(LOGTAG + "Found: " + awsAccountCredentials.size() + 
-				" account credentials.");
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			String errMsg = "An error occurred retrieving AWS account " +
-				"credentials from AppConfig. The exception is: " + 
-				ecoe.getMessage();
-			throw new ProviderException(ecoe.getMessage(), ecoe);
+		// Set the roleArnPattern property
+		setRoleArnPattern(getProperties().getProperty("roleArnPattern", null));
+		logger.info(LOGTAG + "roleArnPattern property is: " + getRoleArnPattern());
+		
+		// Set the accessKeyId property
+		setAccessKeyId(getProperties().getProperty("accessKeyId", null));
+		logger.info(LOGTAG + "accessKeyId is: " + getAccessKeyId());
+		
+		// Set the secretKey property
+		setSecretKey(getProperties().getProperty("secretKey", null));
+		if (getSecretKey() != null) {
+			logger.info(LOGTAG + "secretKey property is present.");
 		}
 		
-		// Instantiate an AWS client for each account.
-		ListIterator it = awsAccountCredentials.listIterator();
-		while (it.hasNext()) {
-			PropertyConfig awsConfig = (PropertyConfig)it.next();
-			Properties awsProps = awsConfig.getProperties();
-			String accountEmail = awsProps.getProperty("accountEmail");
-			String accountId = awsProps.getProperty("accountId");
-			String accessKey = awsProps.getProperty("accessKey");
-			String secretKey = awsProps.getProperty("secretKey");
-			
-			logger.info(LOGTAG + "Creating AWS client for account " +
-				accountEmail + " (" + accountId + ")...");
-			
-			// Set the AWS account credentials
-			BasicAWSCredentials creds = new BasicAWSCredentials(accessKey, 
-				secretKey);
-			
-			// Instantiate an AWS client builder
-			AmazonCloudFormationClientBuilder builder = AmazonCloudFormationClientBuilder
-					.standard().withCredentials(new AWSStaticCredentialsProvider(creds));
-			builder.setRegion("us-east-1");
-			
-			// Initialize the AWS client
-			logger.info("Initializing AmazonCloudFormationClient...");
-			AmazonCloudFormationClient client = (AmazonCloudFormationClient)builder.build();
-			logger.info("AmazonCloudFormationClient initialized for account " +
-				accountEmail + " (" + accountId + ")...");
-			addCloudFormationClient(accountId, client);
-			
-			// List stacks in the account to confirm connectivity
-			String stackList = client.listStacks().toString();
-			logger.info(LOGTAG + "Account has the following stacks: " + stackList);	
-		}
-
+		// Set the roleAssumptionDurationSeconds property
+		setAccessKeyId(getProperties().getProperty("roleAssumptionDurationSeconds", null));
+		logger.info(LOGTAG + "roleAssumptionDurationSeconds is: " + getRoleAssumptionDurationSeconds());
+		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 
@@ -194,8 +171,8 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		DescribeStacksResult result = null;
 		try {
-			result = getCloudFormationClient(querySpec.getAccountId())
-				.describeStacks(request);
+			AmazonCloudFormationClient client = buildCloudFormationClient(querySpec.getAccountId());
+			result = client.describeStacks(request);
 		}
 		catch (Exception e) {
 			String errMsg = "An error occurred querying AWS for the " +
@@ -305,8 +282,8 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		CreateStackResult result = null;
 		try{
-			result = getCloudFormationClient(req.getAccountId())
-				.createStack(csr);
+			AmazonCloudFormationClient client = buildCloudFormationClient(req.getAccountId());
+			result = client.createStack(csr);
 			// If the request does not want an immediate response,
 			// wait for completion
 			if (true) {
@@ -382,7 +359,8 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		DeleteStackResult result = null;
 		try {
-			result = getCloudFormationClient(accountId).deleteStack(dsr);
+			AmazonCloudFormationClient client = buildCloudFormationClient(accountId);
+			result = client.deleteStack(dsr);
 			// If the request does not want an immediate response,
 			// wait for completion
 			if (true) {
@@ -414,27 +392,48 @@ implements StackProvider {
 		return;
 	}
 	
-	/**
-	 * @param AmazonCloudFormationClient, the interface to Amazon 
-	 * CloudFormation
-	 * <P>
-	 * This method adds an interface object to Amazon CloudFormation
-	 */
-	private void addCloudFormationClient(String accountId, 
-		AmazonCloudFormationClient client) {
-		
-		m_clientMap.put(accountId, client);
-	}
+    /**
+     * 
+     * @param String, accountId
+     * <P>
+     * @return, AmazonIdentityManagement client connected to the correct
+     * account with the correct role
+     * 
+     */
+    private AmazonCloudFormationClient buildCloudFormationClient(String accountId) {
+    	// Build the roleArn of the role to assume from the base ARN and 
+        // the account number in the query spec.
+        logger.info(LOGTAG + "The account targeted by this request is: " + accountId);
+        logger.info(LOGTAG + "The roleArnPattern is: " + getRoleArnPattern());
+        String roleArn = getRoleArnPattern().replace("ACCOUNT_NUMBER", accountId);
+        logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn); 
+        		
+		// Instantiate a basic credential provider
+        BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKeyId(), getSecretKey());
+        AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);      
+        
+        // Create the STS client
+        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withCredentials(cp).build();       
+        
+        // Assume the appropriate role in the appropriate account.
+        AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn)
+        	.withDurationSeconds(getRoleAssumptionDurationSeconds())
+        	.withRoleSessionName("AwsAccountService");
 
-	/**
-	 * @return AmazonCloudFormationClient, the interface to Amazon 
-	 * CloudFormation
-	 * <P>
-	 * This method returns the interface to Amazon CloudFormation
-	 */
-	private AmazonCloudFormationClient getCloudFormationClient(String accountId) {
-		return m_clientMap.get(accountId);
-	}
+        AssumeRoleResult assumeResult = sts.assumeRole(assumeRequest);
+        Credentials credentials = assumeResult.getCredentials();
+
+        // Instantiate a credential provider
+        BasicSessionCredentials temporaryCredentials = new BasicSessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(), credentials.getSessionToken());
+        AWSStaticCredentialsProvider credProvider = new AWSStaticCredentialsProvider(temporaryCredentials);
+        
+        // Create the IAM client
+        AmazonCloudFormationClient cfc = 
+        	(AmazonCloudFormationClient)AmazonCloudFormationClientBuilder
+        	.standard().withCredentials(credProvider).build();
+    
+        return cfc;
+    }
 	
 	/**
 	 * @param boolean, the verbose logging property
@@ -491,6 +490,110 @@ implements StackProvider {
 	private long getMaxWaitTime() {
 		return m_maxWaitTime;
 	}
+	
+	/**
+	 * @param String, the pattern of the role to assume
+	 * <P>
+	 * This method sets the pattern of the role to assume
+	 */
+	private void setRoleArnPattern(String pattern) throws ProviderException {
+		
+		if (pattern == null) {
+			String errMsg = "roleArnPattern property is null. " +
+				"Can't assume role in target accounts. Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		m_roleArnPattern = pattern;
+	}
+
+	/**
+	 * @return String, the pattern of the role to assume
+	 * <P>
+	 * This method returns the pattern of the role to assume
+	 */
+	private String getRoleArnPattern() {
+		return m_roleArnPattern;
+	}
+	
+	/**
+	 * @param String, the API access key ID
+	 * <P>
+	 * This method sets the API access key ID
+	 */
+	private void setAccessKeyId(String id) throws ProviderException {
+		
+		if (id == null) {
+			String errMsg = "accessKeyId property is null. " +
+				"Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		m_accessKeyId = id;
+	}
+
+	/**
+	 * @return String, the API access key ID
+	 * <P>
+	 * This method returns the API access key ID
+	 */
+	private String getAccessKeyId() {
+		return m_accessKeyId;
+	}
+	
+	/**
+	 * @param String, the API secret key
+	 * <P>
+	 * This method sets the API secret key
+	 */
+	private void setSecretKey(String key) throws ProviderException {
+		
+		if (key == null) {
+			String errMsg = "secretKey property is null. " +
+				"Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		m_secretKey = key;
+	}
+
+	/**
+	 * @return String, the API secret key
+	 * <P>
+	 * This method returns the API secret key
+	 */
+	private String getSecretKey() {
+		return m_secretKey;
+	}	
+	
+	/**
+	 * @param String, the role assumption duration
+	 * <P>
+	 * This method sets the role assumption duration
+	 */
+	private void setRoleAssumptionDurationSeconds(String seconds) throws ProviderException {
+		
+		if (seconds == null) {
+			String errMsg = "roleAssumptionDurationSeconds property is null. " +
+				"Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		m_roleAssumptionDurationSeconds = Integer.parseInt(seconds);
+	}
+
+	/**
+	 * @return int, the role assumption duration
+	 * <P>
+	 * This method returns the role assumption duration in seconds
+	 */
+	private int getRoleAssumptionDurationSeconds() {
+		return m_roleAssumptionDurationSeconds;
+	}			
 	
 	private String parseAccountIdFromStackId(String stackId)
 		throws ProviderException {
