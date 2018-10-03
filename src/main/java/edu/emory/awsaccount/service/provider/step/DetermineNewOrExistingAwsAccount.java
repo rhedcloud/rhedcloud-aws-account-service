@@ -70,6 +70,12 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 			allocateNewAccount = true;
 		}
 		
+		// If the value of AccountId is Select from the VPCP app,
+		// a new account is needed.
+		if (vpcr.getAccountId().equalsIgnoreCase("-- Select --")) {
+			allocateNewAccount = true;
+		}
+		
 		logger.info(LOGTAG + "allocateNetAccount is: " + allocateNewAccount);
 		
 		// Set return properties.
