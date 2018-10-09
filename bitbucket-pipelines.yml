@@ -130,6 +130,7 @@ pipelines:
         - rm -Rf WEB-INF
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
+        - openeai-servicegen/target/**   # un-comment to make the servicegen facade code available for download
 
      - step:
         name: Deploy and test the facade locally
