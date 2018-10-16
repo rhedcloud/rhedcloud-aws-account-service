@@ -106,7 +106,7 @@ pipelines:
         - ../../../../processEnv.sh
         # For PROD, we are deploying to Emory On-Premise.  No axis2 here
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
-        - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
+        - cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
         - cp $BUILD_HOME/lib/aws-moa*.jar .
 
         artifacts:
