@@ -58,7 +58,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
 <!ELEMENT EmailAddress (Type, Email)>
-<!ELEMENT LineItem (InvoiceId, PayerAccountId, LinkedAccountId?, RecordType, RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime, InvoiceDatetime, PayerAccountName, LinkedAccountName?, TaxationAddress, PayerPONumber?, ProductCode, ProductName, SellerOfRecord, UsageType, Operation, RateId, ItemDescription, UsageStartDatetime, UsageEndDatetime, UsageQuantity, BlendedRate?, CurrencyCode, CostBeforeTax, Credits, TaxAmount, TaxType, TotalCost)>
+<!ELEMENT LineItem (InvoiceId?, PayerAccountId, LinkedAccountId?, RecordType, RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime, InvoiceDatetime?, PayerAccountName, LinkedAccountName?, TaxationAddress?, PayerPONumber?, ProductCode?, ProductName?, SellerOfRecord?, UsageType?, Operation?, RateId?, ItemDescription, UsageStartDatetime?, UsageEndDatetime?, UsageQuantity?, BlendedRate?, CurrencyCode, CostBeforeTax, Credits?, TaxAmount?, TaxType?, TotalCost)>
 <!ELEMENT Output (Description, OutputKey, OutputValue)>
 <!ELEMENT Parameters (Key, Value)>
 <!ELEMENT Property (Key, Value)>
@@ -91,7 +91,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT StackRequisition (AccountId, Credentials?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
 <!ELEMENT Tag (Key, Value)>
 <!ELEMENT TermsOfUse (TermsOfUseId?, Revision, EffectiveDate, ExpirationDate?, Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT TermsOfUseAgreement (TermsOfUseAgreementId, TermsOfUseId, UserId, Status, PresentedDatetime, AgreedDatetime?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT TermsOfUseAgreement (TermsOfUseAgreementId?, TermsOfUseId, UserId, Status, PresentedDatetime, AgreedDatetime?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT TermsOfUseAgreementQuerySpecification (TermsOfUseAgreementId?, TermsOfUseId?, UserId?)>
 <!ELEMENT TermsOfUseQuerySpecification (Comparison*, QueryLanguage?, TermsOfUseId?, Revision?, EffectiveDate?, ExpirationDate?)>
 <!ELEMENT UserAction (UserActionId?, UserId, Action, Description, Detail?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
