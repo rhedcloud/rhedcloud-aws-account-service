@@ -386,7 +386,7 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);
 
         // Create the STS client
-        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withCredentials(cp).build();
+        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withRegion("us-east-1").withCredentials(cp).build();
 
         // Assume the appropriate role in the appropriate account.
         AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn).withDurationSeconds(getRoleAssumptionDuration())
