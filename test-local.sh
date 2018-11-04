@@ -4,13 +4,13 @@ git pull
 mvn package
 
 echo  ************Preparing tomcat and axis2...***************
-if [! -d 'apache-tomcat-8.0.50']; then
+if [ ! -d 'apache-tomcat-8.0.50' ]; then
     wget  https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.50/bin/apache-tomcat-8.0.50.tar.gz
     tar xvzf apache-tomcat-8.0.50.tar.gz
 fi
 
 
-if [! -d 'openeai-servicegen']; then
+if [ ! -d 'openeai-servicegen' ]; then
     git clone git@bitbucket.org:itarch/openeai-servicegen.git
 fi
 cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties
@@ -32,6 +32,7 @@ mkdir -p WEB-INF/conf
 cp ../../../../lib/aws-moa-master-*.jar WEB-INF/lib
 cp ../../../../lib/emory-moa-1.0.0-*.jar WEB-INF/lib
 cp ../../../../lib/openeai.jar WEB-INF/lib
+cp ../../../../lib/servicenow-moa.jar WEB-INF/lib
 cp ../../../../target/*.jar WEB-INF/lib
 cp ../../../build-test/libs/AwsAccountService/* WEB-INF/lib
 cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib

@@ -30,7 +30,7 @@
 	</ControlAreaRequest>
 	<DataArea>
 		<VirtualPrivateCloudProvisioningQuerySpecification>
-			<ProvisioningId>23</ProvisioningId>
+			<ProvisioningId>emory-vpcp-23</ProvisioningId>
 		</VirtualPrivateCloudProvisioningQuerySpecification>
 	</DataArea>
 </com.amazon.aws.Provisioning.VirtualPrivateCloudProvisioning.Query>

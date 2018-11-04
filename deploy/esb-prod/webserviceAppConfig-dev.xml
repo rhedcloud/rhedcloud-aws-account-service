@@ -1,0 +1,1106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Deployment SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/Deployment.dtd">
+        <Deployment baseURI="none" status="deployed" type="development" name="edu.emory.AwsAccountService">
+<Servlet id="edu.emory.AwsAccountService">
+<FullName>edu.emory.AwsAccountService</FullName>
+<Description>edu.emory.AwsAccountService</Description>
+<Configuration initializeUsingThreads="false">
+<LoggerConfigs>
+<LoggerConfig name="ServiceLoggerConfig">
+<ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
+<Property>
+<PropertyName>log4j.category.edu.emory.awsaccount</PropertyName>
+<PropertyValue>INFO, A1</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1</PropertyName>
+<PropertyValue>org.apache.log4j.FileAppender</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.File</PropertyName>
+<PropertyValue>logs/AwsAccountService.log</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.layout</PropertyName>
+<PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.layout.ConversionPattern</PropertyName>
+<PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m-%C{1}.%M%L%n</PropertyValue>
+</Property>
+</LoggerConfig>
+</LoggerConfigs>
+<ProducerConfigs startOnInitialization="true">
+<ConnectionFactoryName>cn=AwsAccountServiceProducerQCF</ConnectionFactoryName>
+<InitialContextFactory>com.sonicsw.jndi.mfcontext.MFContextFactory</InitialContextFactory>
+<ProviderURL>tcp://intsonicdev1.cc.emory.edu:2506</ProviderURL>
+<SecurityPrincipal>AwsAccountService</SecurityPrincipal>
+<SecurityCredentials>AwsAccountService22</SecurityCredentials>
+<ProducerIdURL>localhost</ProducerIdURL>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<ProducerConfig name="AwsAccountServiceRequestProducer" tempQueuePoolSize="5" numberOfProducers="5">
+<ConnectionFactoryName>cn=AwsAccountServiceProducerQCF</ConnectionFactoryName>
+<DestinationName>cn=AwsAccountServiceQueue</DestinationName>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<ObjectClass>org.openeai.jms.producer.PointToPointProducer</ObjectClass>
+</ProducerConfig>
+<ProducerConfig name="AwsAccountServiceSyncProducer" tempQueuePoolSize="5" numberOfProducers="5">
+<ConnectionFactoryName>cn=AwsAccountServiceProducerTCF</ConnectionFactoryName>
+<DestinationName>cn=AwsAccountServiceTopic</DestinationName>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<ObjectClass>org.openeai.jms.producer.PubSubProducer</ObjectClass>
+</ProducerConfig>
+</ProducerConfigs>
+<MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>edu.emory.AwsAccountService</UserId>
+</Authentication>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="Account.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName>RdbmsRequestCommand</CommandName>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/AccountEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountAlias.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName>AccountAliasRequest</CommandName>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/AccountAliasEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountNotification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName>RdbmsRequestCommand</CommandName>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/AccountNotificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountOrganizationMembership.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountOrganizationMembership</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/AccountOrganizationMembershipEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountProvisioningAuthorization.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/AccountProvisioningAuthorizationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SamlProvider.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SamlProvider</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/SamlProviderEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SensitiveDataTypeAuthorization.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SensitiveDataTypeAuthorization</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/SensitiveDataTypeAuthorizationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="VirtualPrivateCloud.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName>RdbmsRequestCommand</CommandName>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/VirtualPrivateCloudEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="VirtualPrivateCloudProvisioning.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName>RdbmsRequestCommand</CommandName>
+          <PrimedXmlDocuments>
+            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/VirtualPrivateCloudProvisioningEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountAliasQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountAliasQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountAliasQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountNotificationQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountNotificationQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountOrganizationMembershipQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountOrganizationMembershipQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountOrganizationMembershipQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountProvisioningAuthorizationQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountProvisioningAuthorizationQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SamlProviderQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SamlProviderQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SamlProviderQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SensitiveDataTypeAuthorizationQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SensitiveDataTypeAuthorizationQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SensitiveDataTypeAuthorizationQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="VirtualPrivateCloudQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/VirtualPrivateCloudQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="VirtualPrivateCloudProvisioningQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/VirtualPrivateCloudProvisioningQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="VirtualPrivateCloudRequisition.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/VirtualPrivateCloudRequisitionEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountProvisioningAuthorization.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName>AccountProvisioningAuthorizationRequest</CommandName>
+          <PrimedXmlDocuments>
+
+
+            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+
+
+
+          </PrimedXmlDocuments>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Provisioning/1.0/AccountProvisioningAuthorizationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountProvisioningAuthorizationQuerySpecification.v1_0">
+          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <Authentication>
+            <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+            <Signature>unknown</Signature>
+          </Authentication>
+          <CommandName/>
+          <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+          <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification</ObjectClass>
+          <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountProvisioningAuthorizationQuerySpecificationEO.xml"/>
+          <LayoutManager>
+            <InputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </InputLayout>
+            <OutputLayout type="xml">
+              <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+            </OutputLayout>
+          </LayoutManager>
+        </MessageObjectConfig><!--newly added 10-13--><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="Bill.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Billing/1.0/BillEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="Stack.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="response">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/CloudFormation/1.0/StackEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetection.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Security/1.0/SecurityRiskDetectionEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="Service.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.Service</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Services/1.0/ServiceEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ServiceSecurityAssessment.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Services/1.0/ServiceSecurityAssessmentEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountUser.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/AccountUser/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/AccountUser/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/User/1.0/AccountUserEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="TermsOfUse.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUse</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/User/1.0/TermsOfUseEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="TermsOfUseAgreement.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUseAgreement</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/User/1.0/TermsOfUseAgreementEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="UserNotification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/User/1.0/UserNotificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="UserProfile.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>RdbmsRequestCommand</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/User/1.0/UserProfileEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="BillQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/BillQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="StackQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/StackQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="StackRequisition.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.StackRequisition</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/StackRequisitionEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionRequisition.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionRequisition</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionRequisitionEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ServiceQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/ServiceQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="ServiceSecurityAssessmentQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/ServiceSecurityAssessmentQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountUserQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/AccountUserQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="TermsOfUseQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.TermsOfUseQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/TermsOfUseQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="TermsOfUseAgreementQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.TermsOfUseAgreementQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/TermsOfUseAgreementQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="UserNotificationQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.UserNotificationQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/UserNotificationQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="UserProfileQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/UserProfileQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</MessageObjectConfigs>
+<PropertyConfigs>
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<PropertyConfig refresh="false" name="GeneralProperties">
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<Property>
+<PropertyName>verbose</PropertyName>
+<PropertyValue>true</PropertyValue>
+</Property>
+<Property>
+<PropertyName>defaultTimeZoneId</PropertyName>
+<PropertyValue>America/New_York</PropertyValue>
+</Property>
+<Property>
+<PropertyName>requestTimeoutIntervalMilli</PropertyName>
+<PropertyValue>100000</PropertyValue>
+</Property>
+<Property>
+<PropertyName>responseDocumentUri</PropertyName>
+<PropertyValue>message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.succes1.xml</PropertyValue>
+</Property>
+</PropertyConfig>
+<!--For query and or generate request, this objectClassName to CommandName mapping is used to override the CommandName specified for the Actionable MOA object when they use a different CommandName than other kind of request-->
+<PropertyConfig name="CommandMappingProperties" refresh="false">
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<Property>
+<PropertyName>com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition</PropertyName>
+<PropertyValue>VirtualPrivateCloudProvisioningRequest</PropertyValue>
+</Property>
+</PropertyConfig>
+</PropertyConfigs>
+</Configuration>
+</Servlet>
+</Deployment>

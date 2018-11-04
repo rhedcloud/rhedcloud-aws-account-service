@@ -95,7 +95,7 @@ public class AbstractAwsCrudProvider<M, Q> extends AbstractCrudProvider<M, Q> {
 
         // Create the IAM client
         logger.info(LOGTAG + "Creating the IAM client...");
-        AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withCredentials(cp).build();
+        AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withRegion("us-east-1").withCredentials(cp).build();
 
         // Query for the account alias of the master account to confirm all is
         // working.
@@ -237,7 +237,8 @@ public class AbstractAwsCrudProvider<M, Q> extends AbstractCrudProvider<M, Q> {
         AWSStaticCredentialsProvider credProvider = new AWSStaticCredentialsProvider(temporaryCredentials);
 
         // Create the IAM client
-        AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withCredentials(credProvider).build();
+        AmazonIdentityManagement iam = AmazonIdentityManagementClientBuilder.standard().withRegion("us-east-1")
+                .withCredentials(credProvider).build();
 
         return iam;
     }
