@@ -104,32 +104,14 @@ pipelines:
         # Create the axis2.war file for STAGE, almost the same as TEST except .aar
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - ../../../../processEnv.sh
-        # Create the axis2.war file for PROD
+        # For PROD, we are deploying to Emory On-Premise.  No axis2 here
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
-        - jar uf axis2.war -C $BUILD_HOME .ebextensions
-        - mkdir -p WEB-INF/services
-        - mkdir -p WEB-INF/lib
-        - mkdir -p WEB-INF/classes
-        - mkdir -p WEB-INF/modules
-        - mkdir -p WEB-INF/conf
-        - cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
-        - cp ../../../build-test/libs/AwsAccountService/* WEB-INF/lib
-        - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes      
-        - cp ../../hibernate.cfg.xml WEB-INF/classes
-        - cp ../../../build-test/libs/Axis2/openeai-authorization-module.mar WEB-INF/modules
-        - cp ../../../build-test/libs/Axis2/axis2.xml WEB-INF/conf
-        - cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib
-        - jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
-        - jar uf axis2.war WEB-INF/lib/*
-        - jar uf axis2.war WEB-INF/classes
-        - jar uf axis2.war WEB-INF/modules
-        - jar uf axis2.war WEB-INF/conf
-        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
-        - jar tf axis2.war
-        - rm -Rf WEB-INF
+        - cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
+        - cp $BUILD_HOME/lib/aws-moa*.jar .
+
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
+        - openeai-servicegen/target/**   # un-comment to make the servicegen facade code available for download
 
      - step:
         name: Deploy and test the facade locally
@@ -171,6 +153,7 @@ pipelines:
         #- emory-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
         - emory-aws-pipeline-scripts/upload_artifact_s3.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip itarch-bitbucket-downloads /emory-aws-account-service/
         - ls target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
+        - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
         - emory-aws-pipeline-scripts/upload_artifact_s3.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar itarch-bitbucket-downloads /emory-aws-account-service/
 
      - step:
