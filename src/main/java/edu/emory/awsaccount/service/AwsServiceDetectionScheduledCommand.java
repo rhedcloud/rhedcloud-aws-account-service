@@ -16,14 +16,24 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 
+import javax.jms.JMSException;
+
 import org.apache.log4j.Logger;
 import org.openeai.afa.ScheduledCommand;
 import org.openeai.afa.ScheduledCommandException;
 import org.openeai.afa.ScheduledCommandImpl;
 import org.openeai.config.CommandConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
+import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.PropertyConfig;
+import org.openeai.jms.producer.PointToPointProducer;
+import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectCreateException;
+import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.transport.RequestService;
 
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
@@ -52,6 +62,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
 	private String LOGTAG = "[AwsServiceDetectionScheduledCommand] ";
     private String m_accessKeyId = null;
     private String m_secretKey = null;
+    private ProducerPool m_awsAccountServiceProducerPool = null;
 
     public AwsServiceDetectionScheduledCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
@@ -91,16 +102,50 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         }
         setSecretKey(secretKey);
         
+        // This provider needs to send messages to the AWS account service
+ 		// to create UserNotifications.
+ 		ProducerPool p2p1 = null;
+ 		try {
+ 			p2p1 = (ProducerPool)getAppConfig()
+ 				.getObject("AwsAccountServiceProducerPool");
+ 			setAwsAccountServiceProducerPool(p2p1);
+ 		}
+ 		catch (EnterpriseConfigurationObjectException ecoe) {
+ 			// An error occurred retrieving an object from AppConfig. Log it and
+ 			// throw an exception.
+ 			String errMsg = "An error occurred retrieving an object from " +
+ 					"AppConfig. The exception is: " + ecoe.getMessage();
+ 			logger.fatal(LOGTAG + errMsg);
+ 			throw new InstantiationException(errMsg);
+ 		}	
+ 		
+ 		// Get a configured MOA Service and ServiceQuerySpecification object
+        // from AppConfig
+        com.amazon.aws.moa.jmsobjects.services.v1_0.Service aeoService = 
+        	new com.amazon.aws.moa.jmsobjects.services.v1_0.Service();
+        ServiceQuerySpecification  xeoQuerySpec = new ServiceQuerySpecification();
+        try {
+            aeoService = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) 
+            	getAppConfig().getObjectByType(aeoService.getClass().getName());
+            xeoQuerySpec = (ServiceQuerySpecification)getAppConfig()
+            	.getObjectByType(xeoQuerySpec.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from " +
+            	"AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new InstantiationException(errMsg);
+        }
+        
         // Create a connection to the master account and query
         // for all AWS services to demonstrate basic functionality.
         // Instantiate a basic credential provider
         logger.info(LOGTAG + "Initializing AWS credential provider...");
-        BasicAWSCredentials creds = new BasicAWSCredentials(accessKeyId, secretKey);
+        BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKeyId(), getSecretKey());
         AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);
 
         // Create the Support client
         logger.info(LOGTAG + "Creating the Support client...");
-        AWSSupport support = AWSSupportClientBuilder.standard().withRegion("us-east-1").withCredentials(cp).build();
+        AWSSupport support = AWSSupportClientBuilder.standard().withCredentials(cp).build();
 
         // Query for the list of AWS services to make sure all is working.
         DescribeServicesResult result = null;
@@ -138,13 +183,85 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         logger.info(LOGTAG + "Executing ...");
         
         // Query AWS with the Support API for the master list of services.
+        // Create a connection to the master account and query
+        // for all AWS services to demonstrate basic functionality.
+        // Instantiate a basic credential provider
+        logger.info(LOGTAG + "Initializing AWS credential provider...");
+        BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKeyId(), getSecretKey());
+        AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);
+
+        // Create the Support client
+        logger.info(LOGTAG + "Creating the Support client...");
+        AWSSupport support = AWSSupportClientBuilder.standard().withCredentials(cp).build();
+
+        // Query for the list of AWS services to make sure all is working.
+        DescribeServicesResult result = null;
+        try {
+            logger.info(LOGTAG + "Querying for AWS services...");
+            long startTime = System.currentTimeMillis();
+            DescribeServicesRequest request = new DescribeServicesRequest();
+            result = support.describeServices(request);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Retrieved service list in " + time + " ms.");
+        } catch (AWSSupportException ase) {
+            String errMsg = "An error occured querying for a list of services. " +
+            	"The exception is: " + ase.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, ase);
+        }
+
+        List<Service> serviceList = result.getServices();
+        logger.info(LOGTAG + "There are presently " + serviceList.size() + " services.");
+        if (getVerbose()) {
+        	ListIterator it = serviceList.listIterator();
+	        int i=0;
+	        while (it.hasNext()) {
+	            Service service = (Service)it.next();
+	            logger.info(LOGTAG + "Service number " + ++i + 
+	            	" is: " + service.getName() + " (" + service.getCode() + ")");
+	        }
+        }
+        
+        // For each service in the AWS master list, query for a corresponding
+        // service in the Emory registry. If there is not one, create it.
+        // If there is one, update it.
+        ListIterator it = serviceList.listIterator();
+        while (it.hasNext()) {
+        	com.amazonaws.services.support.model.Service service = 
+        		(com.amazonaws.services.support.model.Service)it.next();
+        	
+        	// Query for the AWS Service in the registry
+        	com.amazon.aws.moa.jmsobjects.services.v1_0.Service aeoService = 
+        		queryService(service.getCode());
+        	
+        	if (aeoService == null) {
+        		logger.info(LOGTAG + "No service found in AWS Account Service " +
+        			"for the AWS Support Service: " + service.getName() + " (" +
+        			service.getCode() + "). Creating a new service in the AWS " +
+        			"Account Service.");
+        		// com.amazon.aws.moa.jmsobjects.services.v1_0.Service newAeoService =
+        		//  	buildAeoServiceFromAwsService(service);
+        		// createService(newAeoService);
+        	}
+        	
+        	if (aeoService != null && isServiceUpdateRequired()) {
+        		logger.info(LOGTAG + "Service found in AWS Account Service " +
+        			"for the AWS Support Service: " + service.getName() + " (" +
+        			service.getCode() + "). Updating existing service in the AWS " +
+        			"Account Service.");
+        		// updateService(service, aeoService);
+        	}
+        	else {
+        		logger.info(LOGTAG + "Service found in AWS Account Service " +
+        			"for the AWS Support Service: " + service.getName() + " (" +
+        			service.getCode() + "). No update required. ");
+        	}	
+        }
         
         
-        // Query the AWS Account Service for Emory's master list of services.
         
-        // Iterate over the list of official AWS Services. If any of these 
-        // do not exist in Emory's master list, add them to the list of
-        // new services.
+        
+        
         
         // Iterate over the master list of Emory services. If any of these
         // do not exist in the AWS master list, add them to the list of 
@@ -219,4 +336,105 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private String getSecretKey() {
         return m_secretKey;
     }
+    
+	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+		m_awsAccountServiceProducerPool = pool;
+	}
+	
+	private ProducerPool getAwsAccountServiceProducerPool() {
+		return m_awsAccountServiceProducerPool;
+	}
+	
+	private com.amazon.aws.moa.jmsobjects.services.v1_0.Service queryService(String serviceCode)
+		throws ScheduledCommandException {
+		
+		String LOGTAG = "[AwsServiceDetectionScheduledCommand.queryService] ";
+		
+		if (serviceCode == null || serviceCode.equals("")) {
+			String errMsg = "No ServiceCode provided. Can't continue.";
+			logger.error(errMsg);
+			throw new ScheduledCommandException(errMsg);
+		}
+		
+		// Get a configured MOA Service and ServiceQuerySpecification object
+        // from AppConfig
+        com.amazon.aws.moa.jmsobjects.services.v1_0.Service service = 
+        	new com.amazon.aws.moa.jmsobjects.services.v1_0.Service();
+        ServiceQuerySpecification  querySpec = new ServiceQuerySpecification();
+        try {
+            service = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) 
+            	getAppConfig().getObjectByType(service.getClass().getName());
+            querySpec = (ServiceQuerySpecification)getAppConfig()
+            	.getObjectByType(querySpec.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from " +
+            	"AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, ecoe);
+        }
+        
+        // Get a RequestService to use for this transaction.
+ 		RequestService rs = null;
+ 		try {
+ 			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+ 		}
+ 		catch (JMSException jmse) {
+ 			String errMsg = "An error occurred getting a request service to use " +
+ 				"in this transaction. The exception is: " + jmse.getMessage();
+ 			logger.error(LOGTAG + errMsg);
+ 			throw new ScheduledCommandException(errMsg, jmse);
+ 		}
+ 		
+ 		// Set the values of the QuerySpec.
+ 		try {
+ 			querySpec.setServiceCode(serviceCode);
+ 		}
+ 		catch (EnterpriseFieldException efe) {
+ 			String errMsg = "An error occurred setting field values on the " +
+ 				"object. The exception is: " + efe.getMessage();
+ 			logger.error(errMsg);
+ 			throw new ScheduledCommandException(errMsg, efe);
+ 		}
+ 		
+ 		// Query for the Service object.
+ 		List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> results = null;
+ 		try {
+ 			long startTime = System.currentTimeMillis();
+ 			results = service.query(querySpec, rs);
+ 			long time = System.currentTimeMillis() - startTime;
+ 			logger.info(LOGTAG + "Queried the AWS Account Service for " +
+ 				"Service object in " + time + " ms.");
+ 		}
+ 		catch (EnterpriseObjectQueryException eoqe) {
+ 			String errMsg = "An error occurred querying for the " +
+ 				"Service object The exception is: " + eoqe.getMessage();
+ 			logger.error(LOGTAG + errMsg);
+ 			throw new ScheduledCommandException(errMsg, eoqe);
+ 		}
+ 		
+ 		// In any case, release the producer back to the pool.
+ 		finally {
+ 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+ 		}
+ 		
+ 		com.amazon.aws.moa.jmsobjects.services.v1_0.Service resultService = null;
+ 		
+ 		if (results.size() == 1) {
+ 			resultService = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service)results.get(0);
+ 		}
+ 		
+ 		if (results.size() > 1) {
+ 			String errMsg = "Unexpected results. More than one service was " +
+ 				"returned for ServiceCode " + serviceCode + ".";
+ 			logger.error(LOGTAG + errMsg);
+ 			throw new ScheduledCommandException(errMsg);
+ 		}
+ 		
+ 		return resultService;
+	}
+	
+	private boolean isServiceUpdateRequired() {
+		
+		return false;
+	}
 }
