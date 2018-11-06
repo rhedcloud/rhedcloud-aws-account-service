@@ -312,11 +312,11 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         return m_awsAccountServiceProducerPool;
     }
 
-    private com.amazon.aws.moa.jmsobjects.services.v1_0.Service queryService(String serviceCode) throws ScheduledCommandException {
+    private com.amazon.aws.moa.jmsobjects.services.v1_0.Service queryService(String awsServiceCode) throws ScheduledCommandException {
 
         String LOGTAG = "[AwsServiceDetectionScheduledCommand.queryService] ";
 
-        if (serviceCode == null || serviceCode.equals("")) {
+        if (awsServiceCode == null || awsServiceCode.equals("")) {
             String errMsg = "No ServiceCode provided. Can't continue.";
             logger.error(errMsg);
             throw new ScheduledCommandException(errMsg);
@@ -348,7 +348,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
 
         // Set the values of the QuerySpec.
         try {
-            querySpec.setServiceCode(serviceCode);
+            querySpec.setAwsServiceCode(awsServiceCode);
         } catch (EnterpriseFieldException efe) {
             String errMsg = "An error occurred setting field values on the " + "object. The exception is: " + efe.getMessage();
             logger.error(errMsg);
@@ -380,7 +380,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         }
 
         if (results.size() > 1) {
-            String errMsg = "Unexpected results. More than one service was " + "returned for ServiceCode " + serviceCode + ".";
+            String errMsg = "Unexpected results. More than one service was " + "returned for ServiceCode " + awsServiceCode + ".";
             logger.error(LOGTAG + errMsg);
             throw new ScheduledCommandException(errMsg);
         }
