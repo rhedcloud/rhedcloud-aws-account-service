@@ -82,7 +82,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         setAccessKeyId(accessKeyId);
 
         String secretKey = getProperties().getProperty("secretKey");
-        if (accessKeyId == null || accessKeyId.equals("")) {
+        if (secretKey == null || secretKey.equals("")) {
             String errMsg = "No base secretKey property specified. Can't continue.";
             throw new InstantiationException(errMsg);
         }
