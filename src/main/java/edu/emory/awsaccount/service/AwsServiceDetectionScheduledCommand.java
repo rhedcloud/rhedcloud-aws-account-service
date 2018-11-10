@@ -226,7 +226,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
                 com.amazon.aws.moa.jmsobjects.services.v1_0.Service newAeoService =
                 	buildAeoServiceFromAwsService(service);
                
-                // createService(newAeoService);
+                createService(newAeoService);
                 
                 String xmlService = null;
                 try {
