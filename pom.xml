@@ -126,10 +126,10 @@
 
   <dependency>
    <groupId>edu.emory.awsaccount.servicet</groupId>
-   <artifactId>openeai</artifactId>
-   <version>1</version>
+   <artifactId>openeai-core</artifactId>
+   <version>5.0.1</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/openeai.jar</systemPath>
+   <systemPath>${project.basedir}/lib/openeai-core-5.0.1.jar</systemPath>
   </dependency>
 
   <dependency>
