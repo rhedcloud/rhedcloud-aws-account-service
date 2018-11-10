@@ -56,6 +56,8 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private String m_accessKeyId = null;
     private String m_secretKey = null;
     private ProducerPool m_awsAccountServiceProducerPool = null;
+    private final static String ACTIVE_SERVICE_STATUS = "active";
+    private final static String DEFAULT_SERVICE_URL = "https://aws.amazon.com/products/";
 
     public AwsServiceDetectionScheduledCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
@@ -485,6 +487,8 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         try { 
 	        aeoService.setAwsServiceName(awsService.getName());
 	        aeoService.setAwsServiceCode(awsService.getCode());
+	        aeoService.setStatus(ACTIVE_SERVICE_STATUS);
+	        aeoService.setServiceLandingPageUrl(DEFAULT_SERVICE_URL);
         }
         catch (EnterpriseFieldException efe) {
         	String errMsg = "An error occurred setting the field values of " +
