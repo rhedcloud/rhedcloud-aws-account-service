@@ -88,7 +88,7 @@ pipelines:
         - sed -i 's/WS_LDAP_BIND_PASSWORD/'"$WS_LDAP_BIND_PASSWORD"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - sed -i 's/WS_LDAP_BIND_DN/'"$WS_LDAP_BIND_DN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - ls -laR $BUILD_HOME/.ebextensions
-        - cp $BUILD_HOME/lib/openeai.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
+        - cp $BUILD_HOME/lib/openeai-core-5.0.1.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         - cp $BUILD_HOME/lib/aws-moa*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         - cp $BUILD_HOME/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         # Create the axis2.war file for build environment
