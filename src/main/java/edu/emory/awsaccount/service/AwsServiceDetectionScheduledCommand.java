@@ -26,7 +26,10 @@ import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.XmlEnterpriseObjectException;
+import org.openeai.moa.objects.resources.Result;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
@@ -35,6 +38,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.support.AWSSupport;
 import com.amazonaws.services.support.AWSSupportClientBuilder;
 import com.amazonaws.services.support.model.AWSSupportException;
+import com.amazonaws.services.support.model.Category;
 import com.amazonaws.services.support.model.DescribeServicesRequest;
 import com.amazonaws.services.support.model.DescribeServicesResult;
 import com.amazonaws.services.support.model.Service;
@@ -209,23 +213,43 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
             // Query for the AWS Service in the registry
             com.amazon.aws.moa.jmsobjects.services.v1_0.Service aeoService = queryService(service.getCode());
 
+            // If there is no service found in the AWS Account Service, create it.
             if (aeoService == null) {
                 logger.info(LOGTAG + "No service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
                         + service.getCode() + "). Creating a new service in the AWS " + "Account Service.");
-                // com.amazon.aws.moa.jmsobjects.services.v1_0.Service
-                // newAeoService =
-                // buildAeoServiceFromAwsService(service);
+                com.amazon.aws.moa.jmsobjects.services.v1_0.Service newAeoService =
+                	buildAeoServiceFromAwsService(service);
+               
                 // createService(newAeoService);
+                
+                String xmlService = null;
+                try {
+                	xmlService = newAeoService.toXmlString();
+                }
+                catch (XmlEnterpriseObjectException xeoe) {
+                	String errMsg = "An error occurred serializing a " +
+                		"Service object to an XML string. The exception is: " +
+                		xeoe.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new ScheduledCommandException(errMsg, xeoe);
+                }
+                
+                logger.info(LOGTAG + "Created new service: " + xmlService);
             }
 
-            if (aeoService != null && isServiceUpdateRequired()) {
-                logger.info(LOGTAG + "Service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
-                        + service.getCode() + "). Updating existing service in the AWS " + "Account Service.");
-                // updateService(service, aeoService);
-            } else {
-                logger.info(LOGTAG + "Service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
-                        + service.getCode() + "). No update required. ");
-            }
+            // If there is a service found in the AWS Account Service, determine
+            // if an update is required.
+            if (aeoService != null) {
+            	if (isServiceUpdateRequired()) {
+	                logger.info(LOGTAG + "Service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
+	                        + service.getCode() + "). Updating existing service in the AWS " + "Account Service.");
+	                // updateService(service, aeoService);
+            	}
+            	else {
+                    logger.info(LOGTAG + "Service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
+                            + service.getCode() + "). No update required. ");
+                }
+            } 
         }
 
         // Iterate over the master list of Emory services. If any of these
@@ -387,9 +411,99 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
 
         return resultService;
     }
+    
+    private void createService(com.amazon.aws.moa.jmsobjects.services.v1_0.Service service)
+    	throws ScheduledCommandException {
+
+        String LOGTAG = "[AwsServiceDetectionScheduledCommand.createService] ";
+
+        if (service == null) {
+            String errMsg = "No Service provided. Can't continue.";
+            logger.error(errMsg);
+            throw new ScheduledCommandException(errMsg);
+        }
+
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use " +
+            	"in this transaction. The exception is: "
+                + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, jmse);
+        }
+
+        // Create the Service object.
+        Result result = null;
+        try {
+            long startTime = System.currentTimeMillis();
+            result = (Result)service.create(rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Created Service object in " + time + " ms. "
+            	+ "Result status is: " + result.getStatus());
+        } catch (EnterpriseObjectCreateException eoce) {
+            String errMsg = "An error occurred querying for the " 
+            	+ "Service object The exception is: " + eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, eoce);
+        }
+
+        // In any case, release the producer back to the pool.
+        finally {
+            getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer) rs);
+        }
+        
+        return;
+    }
 
     private boolean isServiceUpdateRequired() {
 
         return false;
     }
+    
+    private com.amazon.aws.moa.jmsobjects.services.v1_0.Service buildAeoServiceFromAwsService(
+    	com.amazonaws.services.support.model.Service awsService) throws 
+    	ScheduledCommandException {
+    
+    	// Get a configured MOA Service object from AppCondfig
+        com.amazon.aws.moa.jmsobjects.services.v1_0.Service aeoService = 
+        	new com.amazon.aws.moa.jmsobjects.services.v1_0.Service();
+        try {
+            aeoService = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getAppConfig()
+            		.getObjectByType(aeoService.getClass().getName());
+        } 
+        catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from " 
+            	+ "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, ecoe);
+        }
+        
+        // Set the simple fields of the aeoService
+        try { 
+	        aeoService.setAwsServiceName(awsService.getName());
+	        aeoService.setAwsServiceCode(awsService.getCode());
+        }
+        catch (EnterpriseFieldException efe) {
+        	String errMsg = "An error occurred setting the field values of " +
+        		"Service. The exception is: " + efe.getMessage();
+        	logger.error(LOGTAG + errMsg);
+        	throw new ScheduledCommandException(errMsg, efe);
+        }
+        
+        // Set the category values
+        List<Category> categoryList = awsService.getCategories();
+        ListIterator<Category> li = categoryList.listIterator();
+        while(li.hasNext()) {
+        	Category cat = (Category)li.next();
+        	aeoService.addCategory(cat.getName());
+        }
+        
+        return aeoService;
+    	
+    }
+    
+    
 }
