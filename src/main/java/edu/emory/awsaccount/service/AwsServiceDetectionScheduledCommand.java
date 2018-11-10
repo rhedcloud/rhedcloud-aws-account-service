@@ -32,6 +32,7 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Result;
 import org.openeai.transport.RequestService;
 
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -58,6 +59,9 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private ProducerPool m_awsAccountServiceProducerPool = null;
     private final static String ACTIVE_SERVICE_STATUS = "active";
     private final static String DEFAULT_SERVICE_URL = "https://aws.amazon.com/products/";
+    private final static String DEFAULT_AWS_HIPAA_ELIGIBLE = "unknown";
+    private final static String DEFAULT_EMORY_HIPAA_ELIGIBLE = "unknown";
+    private final static String DEFAULT_CREATE_USER = "AwsAccountService";
 
     public AwsServiceDetectionScheduledCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
@@ -489,6 +493,11 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
 	        aeoService.setAwsServiceCode(awsService.getCode());
 	        aeoService.setStatus(ACTIVE_SERVICE_STATUS);
 	        aeoService.setServiceLandingPageUrl(DEFAULT_SERVICE_URL);
+	        aeoService.setAwsHipaaEligible(DEFAULT_AWS_HIPAA_ELIGIBLE);
+	        aeoService.setEmoryHipaaEligible(DEFAULT_EMORY_HIPAA_ELIGIBLE);
+	        aeoService.setCreateUser(DEFAULT_CREATE_USER);
+	        Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
+	        aeoService.setCreateDatetime(createDatetime);
         }
         catch (EnterpriseFieldException efe) {
         	String errMsg = "An error occurred setting the field values of " +
