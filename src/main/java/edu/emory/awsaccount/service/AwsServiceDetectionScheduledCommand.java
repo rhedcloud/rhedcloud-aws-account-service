@@ -60,8 +60,8 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private final static String ACTIVE_SERVICE_STATUS = "active";
     private final static String DEPRECATED_SERVICE_STATUS = "deprecated";
     private final static String DEFAULT_SERVICE_URL = "https://aws.amazon.com/products/";
-    private final static String DEFAULT_AWS_HIPAA_ELIGIBLE = "unknown";
-    private final static String DEFAULT_SITE_HIPAA_ELIGIBLE = "unknown";
+    private final static String DEFAULT_AWS_HIPAA_ELIGIBLE = "false";
+    private final static String DEFAULT_SITE_HIPAA_ELIGIBLE = "false";
     private final static String DEFAULT_CREATE_USER = "AwsAccountService";
 
     public AwsServiceDetectionScheduledCommand(CommandConfig cConfig) throws InstantiationException {
