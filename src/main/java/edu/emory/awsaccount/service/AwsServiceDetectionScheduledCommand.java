@@ -58,6 +58,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private String m_secretKey = null;
     private ProducerPool m_awsAccountServiceProducerPool = null;
     private final static String ACTIVE_SERVICE_STATUS = "active";
+    private final static String DEPRECATED_SERVICE_STATUS = "deprecated";
     private final static String DEFAULT_SERVICE_URL = "https://aws.amazon.com/products/";
     private final static String DEFAULT_AWS_HIPAA_ELIGIBLE = "unknown";
     private final static String DEFAULT_EMORY_HIPAA_ELIGIBLE = "unknown";
@@ -249,7 +250,8 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
             	if (isServiceUpdateRequired()) {
 	                logger.info(LOGTAG + "Service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
 	                        + service.getCode() + "). Updating existing service in the AWS " + "Account Service.");
-	                // updateService(service, aeoService);
+	                // aeoService = buildNewServiceState(aeoService, service);
+	                // updateService(aeoService);
             	}
             	else {
                     logger.info(LOGTAG + "Service found in AWS Account Service " + "for the AWS Support Service: " + service.getName() + " ("
@@ -261,13 +263,36 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         // Iterate over the master list of Emory services. If any of these
         // do not exist in the AWS master list, add them to the list of
         // deprecated services.
+        List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> awsAccountServiceList =
+        	queryServices();
+        
+        logger.info(LOGTAG + "Found " + awsAccountServiceList.size() + 
+        	" services in the AWS Account Service registry.");
 
-        // Iterate over the list of new services and send a
-        // Service.Create-Request for each one.
-
-        // Iterate over the list of deprecated services and send
-        // a Service.Update-Request to change the AWS status of
-        // the service to deprecated.
+        // Iterate over the list of deprecated services, updating each
+        // to have a status of deprecated.
+        ListIterator awsAccountServiceListIterator = awsAccountServiceList.listIterator();
+        while (awsAccountServiceListIterator.hasNext()) {
+        	com.amazon.aws.moa.jmsobjects.services.v1_0.Service awsAccountService =
+        		(com.amazon.aws.moa.jmsobjects.services.v1_0.Service)
+        		awsAccountServiceListIterator.next();
+        	if (isInAwsServiceList(awsAccountService.getAwsServiceCode(), serviceList) == false) {
+        		logger.info("Service named " + awsAccountService.getAwsServiceName()
+        			+ " with code " + awsAccountService.getAwsServiceName() + " was " 
+        			+ " not found in the AWS master service list. Updating this " 
+        			+ "service to have deprecated status.");
+        		try {
+        			awsAccountService.setStatus(DEPRECATED_SERVICE_STATUS);
+        		}
+        		catch (EnterpriseFieldException efe) {
+        			String errMsg = "An error occurred setting the field " +
+        				"of the Service. The exception is: " + efe.getMessage();
+        			logger.error(LOGTAG + errMsg);
+        			throw new ScheduledCommandException(errMsg, efe);
+        		}
+        		// updateService(awsAccountService);
+        	}	
+        }
 
         long executionTime = System.currentTimeMillis() - executionStartTime;
         logger.info(LOGTAG + "Command execution completed in " + executionTime + " ms.");
@@ -418,6 +443,59 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         return resultService;
     }
     
+    private List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> queryServices() throws ScheduledCommandException {
+
+        String LOGTAG = "[AwsServiceDetectionScheduledCommand.queryServices] ";
+
+        // Get a configured MOA Service and ServiceQuerySpecification object
+        // from AppConfig
+        com.amazon.aws.moa.jmsobjects.services.v1_0.Service service = new com.amazon.aws.moa.jmsobjects.services.v1_0.Service();
+        ServiceQuerySpecification querySpec = new ServiceQuerySpecification();
+        try {
+            service = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getAppConfig().getObjectByType(service.getClass().getName());
+            querySpec = (ServiceQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from " + "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, ecoe);
+        }
+
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use " + "in this transaction. The exception is: "
+                    + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, jmse);
+        }
+
+        // Query for the Service object.
+        List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> results = null;
+        try {
+            long startTime = System.currentTimeMillis();
+            results = service.query(querySpec, rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Queried the AWS Account Service for " +
+            		"Service objects in " + time + " ms. Found " + 
+            		results.size() + " services.");
+        } catch (EnterpriseObjectQueryException eoqe) {
+            String errMsg = "An error occurred querying for the " + "Service object The exception is: " + eoqe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ScheduledCommandException(errMsg, eoqe);
+        }
+
+        // In any case, release the producer back to the pool.
+        finally {
+            getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer) rs);
+        }
+
+        com.amazon.aws.moa.jmsobjects.services.v1_0.Service resultService = null;
+
+        return results;
+    }
+    
     private void createService(com.amazon.aws.moa.jmsobjects.services.v1_0.Service service)
     	throws ScheduledCommandException {
 
@@ -518,5 +596,14 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     	
     }
     
-    
+    private boolean isInAwsServiceList(String serviceCode, List<Service> serviceList) {
+    	
+    	ListIterator li = serviceList.listIterator();
+    	while (li.hasNext()) {
+    		Service service = (Service)li.next();
+    		if (service.getCode().equalsIgnoreCase(serviceCode)) return true;
+    	}
+    	
+    	return false;
+    }
 }
