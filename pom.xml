@@ -41,7 +41,7 @@
    <artifactId>aws-moa</artifactId>
    <version>0.0.1-SNAPSHOT</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/aws-moa-master-94.jar</systemPath>
+   <systemPath>${project.basedir}/lib/aws-moa-master-95.jar</systemPath>
   </dependency>
 
   <dependency>
