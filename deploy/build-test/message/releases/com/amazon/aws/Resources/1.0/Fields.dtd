@@ -40,7 +40,9 @@
 <!ELEMENT AuthorizedSensitiveDataTypeDescription %STRDOM;>
 <!ELEMENT AwsHipaaEligible %STRDOM;>
 <!ELEMENT AwsServiceCode %STRDOM;>
+<!ELEMENT AwsServiceLandingPageUrl %STRDOM;>
 <!ELEMENT AwsServiceName %STRDOM;>
+<!ELEMENT AwsStatus %STRDOM;>
 <!ELEMENT BillDate %DATE;>
 <!ELEMENT BillingPeriodEndDatetime %DATETIME;>
 <!ELEMENT BillingPeriodStartDatetime %DATETIME;>
@@ -61,7 +63,6 @@
 <!ELEMENT DisableRollback %STRDOM;>
 <!ELEMENT EffectiveDate %DATE;>
 <!ELEMENT Email %STRDOM;>
-<!ELEMENT EmoryHipaaEligible %STRDOM;>
 <!ELEMENT EndDate %DATE;>
 <!ELEMENT FinancialAccountNumber %STRDOM;>
 <!ELEMENT FullName %STRDOM;>
@@ -123,13 +124,15 @@
 <!ELEMENT ServiceId %STRDOM;>
 <!ELEMENT ServiceGuidelineNumber %STRDOM;>
 <!ELEMENT ServiceGuidelineName %STRDOM;>
-<!ELEMENT ServiceLandingPageUrl %STRDOM;>
 <!ELEMENT ServiceRiskNumber %STRDOM;>
 <!ELEMENT ServiceRiskName %STRDOM;>
 <!ELEMENT ServiceTestExpectedResult %STRDOM;>
 <!ELEMENT ServiceTestId %STRDOM;>
 <!ELEMENT ServiceTestRequirementId %STRDOM;>
 <!ELEMENT ServiceTestStepId %STRDOM;>
+<!ELEMENT SiteHipaaEligible %STRDOM;>
+<!ELEMENT SiteServiceLandingPageUrl %STRDOM;>
+<!ELEMENT SiteStatus %STRDOM;>
 <!ELEMENT StackId %STRDOM;>
 <!ELEMENT StackName %STRDOM;>
 <!ELEMENT StackPolicyBody %STRDOM;>

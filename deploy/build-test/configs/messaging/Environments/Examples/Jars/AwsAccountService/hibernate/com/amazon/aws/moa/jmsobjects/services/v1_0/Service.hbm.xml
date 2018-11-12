@@ -2,18 +2,18 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.jmsobjects.services.v1_0">
 <class name="Service" table="SERVICE">
-<id name="ServiceId" column="SERVICE_ID" type="OpenEaiLong">
-<generator class="OpenEaiSequence">
-<param name="sequence">H_SERVICE_SEQ</param>
-</generator>
+<id name="ServiceId" column="SERVICE_ID">
+<generator class="assigned"/>
 </id>
 <property name="AwsServiceCode" column="AWS_SERVICE_CODE"/>
 <property name="AwsServiceName" column="AWS_SERVICE_NAME"/>
 <property name="AlternateServiceName" column="ALTERNATE_SERVICE_NAME"/>
 <property name="CombinedServiceName" column="COMBINED_SERVICE_NAME"/>
-<property name="Status" column="STATUS"/>
-<property name="ServiceLandingPageUrl" column="SERVICE_LANDING_PAGE_URL"/>
-<property name="Description" length="2500" column="DESCRIPTION"/>
+<property name="AwsStatus" column="AWS_STATUS"/>
+<property name="SiteStatus" column="SITE_STATUS"/>
+<property name="AwsServiceLandingPageUrl" column="AWS_SERVICE_LANDING_PAGE_URL"/>
+<property name="SiteServiceLandingPageUrl" column="SITE_SERVICE_LANDING_PAGE_URL"/>
+<property name="Description" length="2000" column="DESCRIPTION"/>
 <bag name="Category" table="SERVICE_CATEGORY">
 <key column="SERVICE_ID" unique="false"/>
 <element type="string" column="CATEGORY"/>
@@ -23,7 +23,7 @@
 <element type="string" column="CONSOLE_CATEGORY"/>
 </bag>
 <property name="AwsHipaaEligible" column="AWS_HIPAA_ELIGIBLE"/>
-<property name="EmoryHipaaEligible" column="EMORY_HIPAA_ELIGIBLE"/>
+<property name="SiteHipaaEligible" column="SITE_HIPAA_ELIGIBLE"/>
 <bag name="Tag" table="SERVICE_TAG">
 <key column="SERVICE_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Tag">
