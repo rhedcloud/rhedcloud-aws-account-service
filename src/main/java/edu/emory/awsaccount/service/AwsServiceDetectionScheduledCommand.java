@@ -57,8 +57,9 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private String m_accessKeyId = null;
     private String m_secretKey = null;
     private ProducerPool m_awsAccountServiceProducerPool = null;
-    private final static String ACTIVE_SERVICE_STATUS = "active";
-    private final static String DEPRECATED_SERVICE_STATUS = "deprecated";
+    private final static String ACTIVE_AWS_SERVICE_STATUS = "active";
+    private final static String DEPRECATED_AWS_SERVICE_STATUS = "deprecated";
+    private final static String BLOCKED_PENDING_REVIEW_SITE_SERVICE_STATUS = "Blocked Pending Review";
     private final static String DEFAULT_SERVICE_URL = "https://aws.amazon.com/products/";
     private final static String DEFAULT_AWS_HIPAA_ELIGIBLE = "false";
     private final static String DEFAULT_SITE_HIPAA_ELIGIBLE = "false";
@@ -282,7 +283,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         			+ " not found in the AWS master service list. Updating this " 
         			+ "service to have deprecated status.");
         		try {
-        			awsAccountService.setAwsStatus(DEPRECATED_SERVICE_STATUS);
+        			awsAccountService.setAwsStatus(DEPRECATED_AWS_SERVICE_STATUS);
         		}
         		catch (EnterpriseFieldException efe) {
         			String errMsg = "An error occurred setting the field " +
@@ -569,7 +570,8 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         try { 
 	        aeoService.setAwsServiceName(awsService.getName());
 	        aeoService.setAwsServiceCode(awsService.getCode());
-	        aeoService.setAwsStatus(ACTIVE_SERVICE_STATUS);
+	        aeoService.setAwsStatus(ACTIVE_AWS_SERVICE_STATUS);
+	        aeoService.setSiteStatus(BLOCKED_PENDING_REVIEW_SITE_SERVICE_STATUS);
 	        aeoService.setAwsServiceLandingPageUrl(DEFAULT_SERVICE_URL);
 	        aeoService.setAwsHipaaEligible(DEFAULT_AWS_HIPAA_ELIGIBLE);
 	        aeoService.setSiteHipaaEligible(DEFAULT_SITE_HIPAA_ELIGIBLE);
