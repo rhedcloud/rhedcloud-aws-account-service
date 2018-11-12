@@ -61,7 +61,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
     private final static String DEPRECATED_SERVICE_STATUS = "deprecated";
     private final static String DEFAULT_SERVICE_URL = "https://aws.amazon.com/products/";
     private final static String DEFAULT_AWS_HIPAA_ELIGIBLE = "unknown";
-    private final static String DEFAULT_EMORY_HIPAA_ELIGIBLE = "unknown";
+    private final static String DEFAULT_SITE_HIPAA_ELIGIBLE = "unknown";
     private final static String DEFAULT_CREATE_USER = "AwsAccountService";
 
     public AwsServiceDetectionScheduledCommand(CommandConfig cConfig) throws InstantiationException {
@@ -282,7 +282,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         			+ " not found in the AWS master service list. Updating this " 
         			+ "service to have deprecated status.");
         		try {
-        			awsAccountService.setStatus(DEPRECATED_SERVICE_STATUS);
+        			awsAccountService.setAwsStatus(DEPRECATED_SERVICE_STATUS);
         		}
         		catch (EnterpriseFieldException efe) {
         			String errMsg = "An error occurred setting the field " +
@@ -569,10 +569,10 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         try { 
 	        aeoService.setAwsServiceName(awsService.getName());
 	        aeoService.setAwsServiceCode(awsService.getCode());
-	        aeoService.setStatus(ACTIVE_SERVICE_STATUS);
-	        aeoService.setServiceLandingPageUrl(DEFAULT_SERVICE_URL);
+	        aeoService.setAwsStatus(ACTIVE_SERVICE_STATUS);
+	        aeoService.setAwsServiceLandingPageUrl(DEFAULT_SERVICE_URL);
 	        aeoService.setAwsHipaaEligible(DEFAULT_AWS_HIPAA_ELIGIBLE);
-	        aeoService.setEmoryHipaaEligible(DEFAULT_EMORY_HIPAA_ELIGIBLE);
+	        aeoService.setSiteHipaaEligible(DEFAULT_SITE_HIPAA_ELIGIBLE);
 	        aeoService.setCreateUser(DEFAULT_CREATE_USER);
 	        Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
 	        aeoService.setCreateDatetime(createDatetime);
