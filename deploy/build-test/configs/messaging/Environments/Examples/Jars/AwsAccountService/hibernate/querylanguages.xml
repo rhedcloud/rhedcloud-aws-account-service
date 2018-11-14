@@ -114,6 +114,13 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</ServiceSecurityAssessmentQuerySpecification>
 	</querylanguage>
 	<querylanguage>
+		<ServiceQuerySpecification>
+			<QueryLanguage type="hql" name="byConsoleCategory" value="from Service where :ConsoleCategory in elements(ConsoleCategory) ">
+				<Parameter name="ConsoleCategory"/>
+			</QueryLanguage>
+		</ServiceQuerySpecification>
+	</querylanguage>
+	<querylanguage>
 		<TermsOfUseQuerySpecification>
 			<QueryLanguage type="hql" name="inEffectTermsOfUse" value="from TermsOfUse where EffectiveDate &lt;= to_date(:currentDate, 'YYYY-MM-DD') and (ExpirationDate=null or ExpirationDate &gt;= to_date(:currentDate, 'YYYY-MM-DD')) ">
 				<Parameter name="currentDate"/>
