@@ -141,6 +141,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
         AWSSupport support = AWSSupportClientBuilder.standard().withCredentials(cp).build();
 
         // Query for the list of AWS services to make sure all is working.
+        /**
         DescribeServicesResult result = null;
         try {
             logger.info(LOGTAG + "Querying for AWS services...");
@@ -150,7 +151,7 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
             long time = System.currentTimeMillis() - startTime;
             logger.info(LOGTAG + "Retrieved service list in " + time + " ms.");
         } catch (AWSSupportException ase) {
-            String errMsg = "An error occured querying for a list of services. " + "The exception is: " + ase.getMessage();
+            String errMsg = "An error occurred querying for a list of services. " + "The exception is: " + ase.getMessage();
             logger.error(LOGTAG + errMsg, ase);
             throw new InstantiationException(errMsg);
         }
@@ -163,6 +164,8 @@ public class AwsServiceDetectionScheduledCommand extends AwsAccountScheduledComm
             Service service = (Service) it.next();
             logger.info(LOGTAG + "Service number " + ++i + " is: " + service.getName() + " (" + service.getCode() + ")");
         }
+        
+        **/
 
         logger.info(LOGTAG + " Initialization complete.");
     }
