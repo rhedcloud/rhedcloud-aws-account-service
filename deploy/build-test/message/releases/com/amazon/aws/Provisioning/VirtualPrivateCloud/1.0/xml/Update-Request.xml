@@ -34,6 +34,7 @@
 				<AccountId>357163498835</AccountId>
 				<Cidr>10.65.0.0/23</Cidr>
 				<VpnConnectionProfileId>1</VpnConnectionProfileId>
+				<Region>us-east-1</Region>
 				<Type>1</Type>
 				<Purpose>First development environment VPC, updated</Purpose>
 				<CreateUser>swheat</CreateUser>
@@ -55,6 +56,7 @@
 				<AccountId>357163498835</AccountId>
 				<Cidr>10.65.0.0/23</Cidr>
 				<VpnConnectionProfileId>1</VpnConnectionProfileId>
+				<Region>us-east-1</Region>
 				<Type>1</Type>
 				<Purpose>First development environment VPC</Purpose>
 				<CreateUser>swheat</CreateUser>
