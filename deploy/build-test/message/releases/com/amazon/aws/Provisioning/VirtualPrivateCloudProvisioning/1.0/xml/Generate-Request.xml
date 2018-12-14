@@ -32,12 +32,11 @@
 	</ControlAreaRequest>
 	<DataArea>
 		<VirtualPrivateCloudRequisition>
-			<AccountId>1239845673827</AccountId>
-			<AuthenticatedRequestorUserId>swheat</AuthenticatedRequestorUserId>
-			<AccountOwnerUserId>swheat</AccountOwnerUserId>
+			<AuthenticatedRequestorUserId>P0934572</AuthenticatedRequestorUserId>
+			<AccountOwnerUserId>P0934572</AccountOwnerUserId>
 			<FinancialAccountNumber>0000001536</FinancialAccountNumber>
-			<CustomerAdminUserId>swheat</CustomerAdminUserId>
-			<CustomerAdminUserId>jtjacks</CustomerAdminUserId>
+			<CustomerAdminUserId>P0934572</CustomerAdminUserId>
+			<Region>us-east-1</Region>
 			<Type>1</Type>
 			<ComplianceClass>none</ComplianceClass>
 			<Purpose>test</Purpose>

@@ -100,8 +100,8 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT UserNotificationQuerySpecification (Comparison*, QueryLanguage?, UserNotificationId?, AccountNotificationId?, AccountId?, UserId?, Type?, Priority?, Read?)>
 <!ELEMENT UserProfile (UserId, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?, LastLoginDatetime)>
 <!ELEMENT UserProfileQuerySpecification (UserId?, Property*)>
-<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnConnectionProfileId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnConnectionProfileId, Region, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioning (ProvisioningId, VirtualPrivateCloudRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
 <!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminUserId?, CreateUser?, LastUpdateUser?)>
-<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, RequestId?, AuthenticatedRequestorUserId, AccountOwnerUserId, FinancialAccountNumber, CustomerAdminUserId+, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>
+<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, RequestId?, AuthenticatedRequestorUserId, AccountOwnerUserId, FinancialAccountNumber, CustomerAdminUserId+, Region, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>
