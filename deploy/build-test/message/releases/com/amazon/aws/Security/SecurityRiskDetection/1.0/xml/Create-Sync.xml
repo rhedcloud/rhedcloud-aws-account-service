@@ -27,6 +27,7 @@
 	<DataArea>
 		<NewData>
 			<SecurityRiskDetection>
+				<SecurityRiskDetectionId>546</SecurityRiskDetectionId>
 				<AccountId>727542611512</AccountId>
 				<SecurityRiskDetector>S3PublicBucketDetector</SecurityRiskDetector>
 				<SecurityRiskRemediator>S3PublicBucketRemediator</SecurityRiskRemediator>

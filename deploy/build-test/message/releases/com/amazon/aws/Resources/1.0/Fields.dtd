@@ -33,6 +33,7 @@
 <!ELEMENT AlternateServiceName %STRDOM;>
 <!ELEMENT AmazonResourceName %STRDOM;>
 <!ELEMENT AnticipatedTime %STRDOM;>
+<!ELEMENT Arn %STRDOM;>
 <!ELEMENT AssessmentDatetime %DATETIME;>
 <!ELEMENT AssessorId %STRDOM;>
 <!ELEMENT AuthenticatedRequestorUserId %STRDOM;>
@@ -63,6 +64,7 @@
 <!ELEMENT DisableRollback %STRDOM;>
 <!ELEMENT EffectiveDate %DATE;>
 <!ELEMENT Email %STRDOM;>
+<!ELEMENT EmoryHipaaEligible %STRDOM;>
 <!ELEMENT EndDate %DATE;>
 <!ELEMENT FinancialAccountNumber %STRDOM;>
 <!ELEMENT FullName %STRDOM;>
@@ -103,6 +105,7 @@
 <!ELEMENT RecordId %STRDOM;>
 <!ELEMENT RecordType %STRDOM;>
 <!ELEMENT ReferenceId %STRDOM;>
+<!ELEMENT Region %STRDOM;>
 <!ELEMENT RequestId %STRDOM;>
 <!ELEMENT ResourceType %STRDOM;>
 <!ELEMENT Revision %STRDOM;>
@@ -124,8 +127,10 @@
 <!ELEMENT ServiceId %STRDOM;>
 <!ELEMENT ServiceGuidelineNumber %STRDOM;>
 <!ELEMENT ServiceGuidelineName %STRDOM;>
+<!ELEMENT ServiceLandingPageUrl %STRDOM;>
 <!ELEMENT ServiceRiskNumber %STRDOM;>
 <!ELEMENT ServiceRiskName %STRDOM;>
+<!ELEMENT ServiceSecurityAssessmentId %STRDOM;>
 <!ELEMENT ServiceTestExpectedResult %STRDOM;>
 <!ELEMENT ServiceTestId %STRDOM;>
 <!ELEMENT ServiceTestRequirementId %STRDOM;>
