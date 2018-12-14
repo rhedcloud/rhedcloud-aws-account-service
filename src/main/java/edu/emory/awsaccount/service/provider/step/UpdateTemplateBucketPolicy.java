@@ -192,7 +192,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			
 			// Build the new statement.
 			String p = "arn:aws:iam::" + newAccountId + 
-				":role/rhedcloud/RHEDcloudAwsAccountServiceRole";
+				":" + getProvisioningRoleName();
 			
 			Principal principal = new Principal(p);
 			S3ObjectResource resource = 
@@ -206,6 +206,8 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			// Add the new statement
 			statements.add(allowNewAccountAccess);
 			newBucketPolicy.setStatements(statements);
+			logger.info(LOGTAG + "The new bucket polic has " + statements.size()
+				+ " statements.");
 			logger.info(LOGTAG + "The new bucket policy is: " +
 				newBucketPolicy.toJson());
 			 
