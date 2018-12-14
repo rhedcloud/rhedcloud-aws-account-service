@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE com.amazon.aws.Services.Service.Create SYSTEM "../dtd/Create-Sync.dtd">
 <com.amazon.aws.Services.Service.Create>
-	<ControlAreaSync messageCategory="com.amazon.aws.Services.Service" messageObject="Service"
+	<ControlAreaSync messageCategory="com.amazon.aws.Services" messageObject="Service"
 		messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
 		<Sender>
 			<MessageId>

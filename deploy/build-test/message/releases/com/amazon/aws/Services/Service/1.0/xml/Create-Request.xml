@@ -2,7 +2,7 @@
 <!DOCTYPE com.amazon.aws.Services.Service.Create SYSTEM "../dtd/Create-Request.dtd">
 <com.amazon.aws.Services.Service.Create>
     <ControlAreaRequest messageCategory="com.amazon.aws.Services" messageObject="Service"
-        messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+        messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
         <Sender>
             <MessageId>
                 <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
