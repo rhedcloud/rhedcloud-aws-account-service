@@ -12,7 +12,9 @@ package edu.emory.awsaccount.service.provider.step;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import org.openeai.config.AppConfig;
@@ -22,6 +24,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.policy.Principal;
+import com.amazonaws.auth.policy.Resource;
 import com.amazonaws.auth.policy.Statement;
 import com.amazonaws.auth.policy.Statement.Effect;
 import com.amazonaws.auth.policy.actions.S3Actions;
@@ -189,10 +192,29 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			Collection<Statement> statements = newBucketPolicy.getStatements();
 			logger.info(LOGTAG + "Current bucket policy has " + statements.size() 
 				+ " statements.");
+
+/**
+			// Iterate over the list of statements and identify
+			// the statement that pertains to the template bucket.
+			Iterator it = statements.iterator();
+			while (it.hasNext()) {
+				Statement st = (Statement)it.next();
+				List<Resource> resources = st.getResources();
+				ListIterator li = resources.listIterator();
+				while (li.hasNext()) {
+					Resource re = (Resource)li.next();
+					if (re.getId().equals(getTemplateBucketName())) {
+						logger.info(LOGTAG + "Statement " + st.getId() + 
+							" pertains to the template bucket.");
+					}
+				}
+			}
+**/
 			
 			// Build the new statement.
 			String p = "arn:aws:iam::" + newAccountId + 
-				":" + getProvisioningRoleName();
+//				":" + getProvisioningRoleName();
+				":*";
 			
 			Principal principal = new Principal(p);
 			S3ObjectResource resource = 
@@ -206,7 +228,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			// Add the new statement
 			statements.add(allowNewAccountAccess);
 			newBucketPolicy.setStatements(statements);
-			logger.info(LOGTAG + "The new bucket polic has " + statements.size()
+			logger.info(LOGTAG + "The new bucket policy has " + statements.size()
 				+ " statements.");
 			logger.info(LOGTAG + "The new bucket policy is: " +
 				newBucketPolicy.toJson());
