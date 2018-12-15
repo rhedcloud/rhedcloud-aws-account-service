@@ -249,7 +249,10 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 					"BucketPolicy. The exception is: " + e.getMessage();
 				logger.error(LOGTAG + errMsg);
 				S3ResponseMetadata md = getAwsS3Client().getCachedResponseMetadata(request);
-				logger.error(LOGTAG + "S3 response metadata is: " + md.toString());
+				if (md != null) {
+					logger.error(LOGTAG + "S3 response metadata is: " + md.toString());
+				}
+				else logger.error(LOGTAG + "S3 response metadata is null.");
 				throw new StepException(errMsg, e);
 			}		
 		}
