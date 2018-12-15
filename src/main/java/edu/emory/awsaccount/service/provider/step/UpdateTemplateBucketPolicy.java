@@ -53,6 +53,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 	private final static String FAILED = "FAILED";
 	private String m_templateBucketName = null;
 	private String m_provisioningRoleName = null;
+	private String m_templateBucketPolicyStatementId = null;
 	private String m_accessKey = null;
 	private String m_secretKey = null;
 	private AmazonS3 m_awsS3Client = null;
@@ -77,6 +78,12 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		setProvisioningRoleName(provisioningRoleName);
 		logger.info(LOGTAG + "provisioningRoleName is: " + 
 			getProvisioningRoleName());
+		
+		String templateBucketPolicyStatementId = getProperties()
+				.getProperty("templateBucketPolicyStatement", null);
+			setTemplateBucketPolicyStatementId(templateBucketPolicyStatementId);
+			logger.info(LOGTAG + "templateBucketPolicyStatementId is: " + 
+				getTemplateBucketPolicyStatementId());
 		
 		String accessKey = getProperties().getProperty("accessKey", null);
 		setAccessKey(accessKey);
@@ -195,39 +202,39 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Current bucket policy has " + statements.size() 
 				+ " statements.");
 
-/**
 			// Iterate over the list of statements and identify
 			// the statement that pertains to the template bucket.
 			Iterator it = statements.iterator();
+			Statement templateBucketStatement = null;
 			while (it.hasNext()) {
 				Statement st = (Statement)it.next();
-				List<Resource> resources = st.getResources();
-				ListIterator li = resources.listIterator();
-				while (li.hasNext()) {
-					Resource re = (Resource)li.next();
-					if (re.getId().equals(getTemplateBucketName())) {
-						logger.info(LOGTAG + "Statement " + st.getId() + 
-							" pertains to the template bucket.");
-					}
+				if (st.getId()
+					.equalsIgnoreCase(getTemplateBucketPolicyStatementId())) {
+					
+					templateBucketStatement = st;
+					logger.info(LOGTAG + "Found template bucket statement.");
+					break;
 				}
 			}
-**/
 			
-			// Build the new statement.
+			List<Principal> principals = 
+				templateBucketStatement.getPrincipals();
+			
+			logger.info(LOGTAG + "templateBucketStatement has " 
+				+ principals.size() + " principals.");
+			
+			// Build the new principal.
 			String p = "arn:aws:iam::" + newAccountId + 
 				":" + getProvisioningRoleName();
 			
 			Principal principal = new Principal(p);
-			S3ObjectResource resource = 
-				new S3ObjectResource(getTemplateBucketName(), "*");
+			principals.add(principal);
 			
-			Statement allowNewAccountAccess = new Statement(Effect.Allow)
-				.withPrincipals(principal)
-				.withActions(S3Actions.GetObject)
-				.withResources(resource);
+			logger.info(LOGTAG + "Added new principal " + p + 
+					" templateBucketStatement now has " +
+					principals.size() + " principals.");
 			
-			// Add the new statement
-			statements.add(allowNewAccountAccess);
+			// Update the bucket policy
 			newBucketPolicy.setStatements(statements);
 			logger.info(LOGTAG + "The new bucket policy has " + statements.size()
 				+ " statements.");
@@ -496,8 +503,24 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		m_provisioningRoleName = name;
 	}
 
-	private String getProvisioningRoleName() {
-		return m_provisioningRoleName;
+	private String getTemplateBucketPolicyStatementId() {
+		return m_templateBucketPolicyStatementId;
 	}
+	
+	private void setTemplateBucketPolicyStatementId (String id) throws 
+		StepException {
+
+	if (id == null) {
+		String errMsg = "templateBucketPolicyStatementId property is null. " +
+			"Can't continue.";
+		throw new StepException(errMsg);
+	}
+
+		m_templateBucketPolicyStatementId = id;
+}
+
+private String getProvisioningRoleName() {
+	return m_provisioningRoleName;
+}
 	
 }
