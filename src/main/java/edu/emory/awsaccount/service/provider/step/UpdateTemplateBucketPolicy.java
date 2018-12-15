@@ -213,8 +213,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			
 			// Build the new statement.
 			String p = "arn:aws:iam::" + newAccountId + 
-//				":" + getProvisioningRoleName();
-				":*";
+				":" + getProvisioningRoleName();
 			
 			Principal principal = new Principal(p);
 			S3ObjectResource resource = 
