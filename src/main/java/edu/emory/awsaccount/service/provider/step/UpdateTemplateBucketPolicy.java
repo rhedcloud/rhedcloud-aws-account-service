@@ -31,9 +31,11 @@ import com.amazonaws.auth.policy.actions.S3Actions;
 import com.amazonaws.auth.policy.resources.S3ObjectResource;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.S3ResponseMetadata;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.BucketPolicy;
 import com.amazonaws.services.s3.model.ListBucketsRequest;
+import com.amazonaws.services.s3.model.SetBucketPolicyRequest;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
@@ -229,23 +231,27 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			newBucketPolicy.setStatements(statements);
 			logger.info(LOGTAG + "The new bucket policy has " + statements.size()
 				+ " statements.");
-			logger.info(LOGTAG + "The new bucket policy is: " +
+			logger.info(LOGTAG + "The new bucket policy JSON is: " +
 				newBucketPolicy.toJson());
+			logger.info(LOGTAG + "The new bucket policy String is: " +
+				newBucketPolicy.toString());
 			 
 			// Update the bucket policy.
+			SetBucketPolicyRequest request = new SetBucketPolicyRequest(getTemplateBucketName(), 
+				newBucketPolicy.toJson());
 			try {
-				logger.info(LOGTAG + "Getting template bucket policy...");
-				getAwsS3Client().setBucketPolicy(getTemplateBucketName(),
-					newBucketPolicy.toJson());
-				logger.info(LOGTAG + "Retrieved template bucket policy: " + 
-						templateBucketPolicy.getPolicyText());
+				logger.info(LOGTAG + "Updating template bucket policy...");
+				getAwsS3Client().setBucketPolicy(request);
+				logger.info(LOGTAG + "Updated template bucket policy.");		
 			}
 			catch (Exception e) {
-				String errMsg = "An error occurred querying for the " +
+				String errMsg = "An error occurred updating the " +
 					"BucketPolicy. The exception is: " + e.getMessage();
 				logger.error(LOGTAG + errMsg);
+				S3ResponseMetadata md = getAwsS3Client().getCachedResponseMetadata(request);
+				logger.error(LOGTAG + "S3 response metadata is: " + md.toString());
 				throw new StepException(errMsg, e);
-			}
+			}		
 		}
 				
 		// If allocateNewAccount is false, log it and
