@@ -30,10 +30,10 @@
   <!-- <dependency> <groupId>com.amazonaws</groupId> <artifactId>aws-java-sdk</artifactId> <version>1.11.123</version> </dependency> -->
   <dependency>
    <groupId>edu.emory.awsaccount.service</groupId>
-   <artifactId>aws-java-sdk-1.11.123</artifactId>
+   <artifactId>aws-java-sdk-1.11.470</artifactId>
    <version>1.11.123</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/aws-java-sdk-1.11.123.jar</systemPath>
+   <systemPath>${project.basedir}/lib/aws-java-sdk-1.11.470.jar</systemPath>
   </dependency>
 
   <dependency>
