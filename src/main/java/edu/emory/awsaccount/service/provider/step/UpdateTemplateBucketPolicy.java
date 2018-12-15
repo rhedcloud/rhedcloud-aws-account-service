@@ -80,7 +80,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			getProvisioningRoleName());
 		
 		String templateBucketPolicyStatementId = getProperties()
-				.getProperty("templateBucketPolicyStatement", null);
+				.getProperty("templateBucketPolicyStatementId", null);
 			setTemplateBucketPolicyStatementId(templateBucketPolicyStatementId);
 			logger.info(LOGTAG + "templateBucketPolicyStatementId is: " + 
 				getTemplateBucketPolicyStatementId());
