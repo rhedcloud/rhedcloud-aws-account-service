@@ -320,7 +320,7 @@ public class StackRequestCommand extends AwsAccountRequestCommand implements Req
         } catch (Exception e) {
             String errMsg = "Exception occurred processing input message in "
                     + "org.openeai.jms.consumer.commands.Command.  Exception: " + e.getMessage();
-            logger.error(LOGTAG + errMs);
+            logger.error(LOGTAG + errMsg);
             throw new CommandException(errMsg);
         }
 
