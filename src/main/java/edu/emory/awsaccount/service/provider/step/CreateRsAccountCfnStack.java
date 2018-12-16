@@ -28,6 +28,7 @@ import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
+import org.openeai.moa.objects.resources.Authentication;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
@@ -253,8 +254,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		String accountAlias = null;
 		if (step4 != null) {
 			logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
-			accountSequenceNumber = getResultProperty(step4, 
-				"accountAlias");
+			accountAlias = getResultProperty(step4, "accountAlias");
 			logger.info(LOGTAG + "Property accountAlias from preceding " +
 				"step is: " + accountAlias);
 			props.add(buildProperty("accountAlias", accountAlias));
@@ -430,6 +430,8 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    }    
 		    
 		    // TODO:Set the message authentication
+		    // Authentication auth = stack.getAuthentication();
+		    // auth.setAuthUserId(userId);
 			
 			// Get a request service from the pool and set the timeout interval.
 			RequestService rs = null;
