@@ -34,6 +34,7 @@ import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.Credentials;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.StackParameter;
@@ -176,7 +177,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[CreateRsAccountCfnStack.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		boolean isAuthorized = false;
+		boolean stackCreated = false;
 		
 		// Return properties
 		List<Property> props = new ArrayList<Property>();
@@ -417,7 +418,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		  	    throw new StepException(errMsg, efe);
 		    }
 		    
-		    // Log the state of the query spec.
+		    // Log the state of the requisition.
 		    try {
 		    	logger.info(LOGTAG + "Requisition is: " + req.toXmlString());
 		    }
@@ -427,6 +428,8 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
 		    }    
+		    
+		    // TODO:Set the message authentication
 			
 			// Get a request service from the pool and set the timeout interval.
 			RequestService rs = null;
@@ -454,7 +457,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 					" result.");
 			}
 			catch (EnterpriseObjectGenerateException eoge) {
-				String errMsg = "An error occurred generating the  " +
+				String errMsg = "An error occurred generating the " +
 		    	  "Stack object. The exception is: " + eoge.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, eoge);
@@ -469,6 +472,12 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 				Stack stackResult = (Stack)results.get(0);
 				logger.info(LOGTAG + "Stack result is: " + 
 					stackResult.getStackStatus());
+				props.add(buildProperty("stackStatus", 
+						stackResult.getStackStatus()));
+				if (stackResult.getStackStatus()
+						.equalsIgnoreCase("CREATE_COMPLETE")) {
+					stackCreated = true;
+				}
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
@@ -486,7 +495,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		}
 		
 		// Update the step.
-		if (allocateNewAccount == false || isAuthorized == true) {
+		if (allocateNewAccount == false || stackCreated == true) {
 			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
 		}
 		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
