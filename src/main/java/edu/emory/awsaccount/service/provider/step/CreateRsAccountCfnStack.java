@@ -10,16 +10,20 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.io.IOUtils;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
@@ -28,10 +32,13 @@ import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.StackParameter;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
+import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
@@ -47,7 +54,17 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
 public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 	
 	private String m_cloudFormationTemplateUrl = null;
+	private String m_cloudFormationTemplateBodyUrl = null;
+	private String m_cloudTrailSuffix =null;
+	private String m_rhedCloudIdp = null;
+	private String m_rhedCloudSamlIssuer = null;
+	private String m_rhedCloudSecurityRiskDetectionServiceUserArn = null;
+	private String m_rhedCloudAwsAccountServiceUserArn = null;
+	private String m_rhedCloudMaintenanceOperatorRoleArn = null;
+	private int m_requestTimeoutInterval = 10000;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
+	private final static String TEMPLATE_BODY_ENCODING = "UTF-8";
+	private final static String HIPAA_COMPLIANCE_CLASS = "HIPAA";
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -58,11 +75,74 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[CreateRsAccountCfnStack.init] ";
 		
 		// Get the custom step properties
+		// requestTimeoutInterval is the time to wait for the
+		// response to the request
+		String timeout = getProperties().getProperty("requestTimeoutInterval",
+			"10000");
+		int requestTimeoutInterval = Integer.parseInt(timeout);
+		setRequestTimeoutInterval(requestTimeoutInterval);
+		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+			getRequestTimeoutInterval());
+		
+		// cloudFormationTemplateUrl is the S3 bucket URL of the
+		// CloudFormation Template
 		String cloudFormationTemplateUrl = getProperties()
-				.getProperty("cloudFormationTemplateUrl", null);
-			setCloudFormationTemplateUrl(cloudFormationTemplateUrl);
-			logger.info(LOGTAG + "cloudFormationTemplateUrl is: " + 
-				getCloudFormationTemplateUrl());
+			.getProperty("cloudFormationTemplateUrl", null);
+		setCloudFormationTemplateUrl(cloudFormationTemplateUrl);
+		logger.info(LOGTAG + "cloudFormationTemplateUrl is: " + 
+			getCloudFormationTemplateUrl());
+		
+		// cloudFormationTemplateBodyUrl is a non S3 URL to the
+		// body of the template if an S3 URL cannot be used.
+		String cloudFormationTemplateBodyUrl = getProperties()
+			.getProperty("cloudFormationTemplateBodyUrl", null);
+		setCloudFormationTemplateBodyUrl(cloudFormationTemplateBodyUrl);
+		logger.info(LOGTAG + "cloudFormationTemplateBodyUrl is: " +
+			getCloudFormationTemplateBodyUrl());
+		
+		// cloudTrailSuffix is the final component of the cloudTrailName
+		// after account series and account sequence.
+		String cloudTrailSuffix = getProperties()
+			.getProperty("cloudTrailSuffix", null);
+		setCloudTrailSuffix(cloudTrailSuffix);
+		logger.info(LOGTAG + "cloudTrailSuffix is: " +
+			getCloudTrailSuffix());
+		
+		// rhedCloudIdp is the name of the identity provider.
+		String rhedCloudIdp = getProperties()
+			.getProperty("rhedCloudIdp", null);
+		setRhedCloudIdp(rhedCloudIdp);
+		logger.info(LOGTAG + "rhedCloudIdp is: " + getRhedCloudIdp());
+		
+		// rhedCloudSamlIssuer is the name of the SAML issuer.
+		String rhedCloudSamlIssuer = getProperties()
+			.getProperty("rhedCloudSamlIssuer", null);
+		setRhedCloudSamlIssuer(rhedCloudSamlIssuer);
+		logger.info(LOGTAG + "rhedCloudSamlIssuer is: " + getRhedCloudSamlIssuer());
+		
+		// rhedCloudSecurityRiskDetectionServiceUserArn is the ARN that the
+		// SecurityRiskDetectionService uses to access linked accounts.
+		String rhedCloudSecurityRiskDetectionServiceUserArn = getProperties()
+			.getProperty("rhedCloudSecurityRiskDetectionServiceUserArn", null);
+		setRhedCloudSecurityRiskDetectionServiceUserArn(rhedCloudSecurityRiskDetectionServiceUserArn);
+		logger.info(LOGTAG + "rhedCloudSecurityRiskDetectionServiceUserArn is: " + 
+			getRhedCloudSecurityRiskDetectionServiceUserArn());
+		
+		// rhedCloudAwsAccountServiceUserArn is the ARN that the
+		// SecurityRiskDetectionService uses to access linked accounts.
+		String rhedCloudAwsAccountServiceUserArn = getProperties()
+			.getProperty("rhedCloudAwsAccountServiceUserArn", null);
+		setRhedCloudAwsAccountServiceUserArn(rhedCloudAwsAccountServiceUserArn);
+		logger.info(LOGTAG + "rhedCloudAwsAccountServiceUserArn is: " + 
+			getRhedCloudAwsAccountServiceUserArn());
+		
+		// rhedCloudMaintenanceOperatorRoleArn...I have no idea what this is
+		// but I am guessing it is some role for the ops team.
+		String rhedCloudMaintenanceOperatorRoleArn = getProperties()
+			.getProperty("rhedCloudMaintenanceOperatorRoleArn", null);
+		setRhedCloudMaintenanceOperatorRoleArn(rhedCloudMaintenanceOperatorRoleArn);
+		logger.info(LOGTAG + "rhedCloudMaintenanceOperatorRoleArn is: " + 
+			getRhedCloudMaintenanceOperatorRoleArn());
 		
 		// This step needs to send messages to the AWS account service
 		// to create stacks.
@@ -135,13 +215,55 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
+		// Get the accountSequenceNumber property from the 
+		// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		ProvisioningStep step3 = 
+			getProvisioningStepByType("DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE");
+		String accountSequenceNumber = null;
+		if (step3 != null) {
+			logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
+			accountSequenceNumber = getResultProperty(step3, 
+				"accountSequenceNumber");
+			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
+				"step is: " + newAccountId);
+			props.add(buildProperty("accountSequenceNumber", 
+				accountSequenceNumber));
+		}
+		else {
+			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
+				"found. Cannot determine account sequence number.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
+		// Get the accountAlias property from the 
+		// VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST step.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		ProvisioningStep step4 = 
+			getProvisioningStepByType("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST");
+		String accountAlias = null;
+		if (step4 != null) {
+			logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
+			accountSequenceNumber = getResultProperty(step4, 
+				"accountAlias");
+			logger.info(LOGTAG + "Property accountAlias from preceding " +
+				"step is: " + accountAlias);
+			props.add(buildProperty("accountAlias", accountAlias));
+		}
+		else {
+			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
+				"found. Cannot determine account sequence number.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
 		// If allocateNewAccount is true and newAccountId is not null,
 		// send a Stack.Generate-Request to generate the rs-account stack.
 		if (allocateNewAccount && newAccountId != null) {
 			logger.info(LOGTAG + "allocateNewAccount is true and newAccountId is " + 
-				newAccountId + ". Sending an AccountProvisioningAuthorization." +
-				"Query-Request to determine if the user is authorized to provisiong " +
-				"a new account.");
+				newAccountId + ". Sending a Stack.Generate-Request to create the " +
+				"rhedcloud-aws-rs-account stack in a new account.");
 			
 			// Send an Stack.Generate-Request. Get a configured Stack and requisition
 			// object from AppConfig.
@@ -160,10 +282,105 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	throw new StepException(errMsg, ecoe);
 		    }
 		    
-		    // Set the values of the requisition.
+		    // Set the values of the requisition and place them in step props.
 		    try {
+		    	// AccountId
 		    	req.setAccountId(newAccountId);
-		    	req.setTemplateUrl(getCloudFormationTemplateUrl());
+		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	
+		    	// Template URL - we prefer to pull this from an S3 bucket,
+		    	// but if we have to we read it from a non-S3 URL.
+		    	if (getCloudFormationTemplateUrl() != null) {
+		    		req.setTemplateUrl(getCloudFormationTemplateUrl());
+		    		props.add(buildProperty("templateUrl", req.getTemplateUrl()));
+		    	}
+		    	else if (getCloudFormationTemplateBodyUrl() != null) {
+		    		req.setTemplateBody(getCloudFormationTemplateBody());
+		    		props.add(buildProperty("templateBodyUrl", 
+		    			getCloudFormationTemplateBodyUrl()));
+		    	}
+		    	else {
+		    		String errMsg = "No CloudFormation template source " +
+		    			"specified. Can't continue.";
+		    		logger.error(LOGTAG + errMsg);
+		    		throw new StepException(errMsg);
+		    	}
+		    	
+		    	// Set stack parameters
+		    	logger.info(LOGTAG + "Setting stack parameters...");
+		    	
+		    	// CloudTrailName
+		    	StackParameter cloudTrailName = req.newStackParameter();
+		    	cloudTrailName.setKey("CloudTrailName");
+		    	cloudTrailName.setValue(getCloudTrailName(accountAlias));
+		    	req.addStackParameter(cloudTrailName);
+		    	props.add(buildProperty("CloudTrailName", cloudTrailName.getValue()));
+		    	logger.info(LOGTAG + "Parameter CloudTrailName: " + 
+		    		cloudTrailName.getValue());
+		    	
+		    	// AddHIPAAIAMPolicy - Yes/No
+		    	StackParameter addHipaaIamPolicy = req.newStackParameter();
+		    	addHipaaIamPolicy.setKey("AddHIPAAIAMPolicy");
+		    	addHipaaIamPolicy.setValue(getAddHipaaIamPolicy());
+		    	req.addStackParameter(addHipaaIamPolicy);
+		    	props.add(buildProperty("AddHIPAAIAMPolicy", addHipaaIamPolicy.getValue()));
+		    	logger.info(LOGTAG + "Parameter AddHIPAAIAMPolicy: " + 
+		    		addHipaaIamPolicy.getValue());
+		    	
+		    	// RHEDcloudIDP
+		    	StackParameter rhedCloudIdp = req.newStackParameter();
+		    	rhedCloudIdp.setKey("RHEDcloudIDP");
+		    	rhedCloudIdp.setValue(getRhedCloudIdp());
+		    	req.addStackParameter(rhedCloudIdp);
+		    	props.add(buildProperty("RHEDcloudIDP", rhedCloudIdp.getValue()));
+		    	logger.info(LOGTAG + "Parameter RHEDcloudIDP: " + 
+		    		rhedCloudIdp.getValue());
+		        
+		        // RHECcloudSamlIssuer
+		    	StackParameter rhedCloudSamlIssuer = req.newStackParameter();
+		    	rhedCloudSamlIssuer.setKey("RHEDcloudSamlIssuer");
+		    	rhedCloudSamlIssuer.setValue(getRhedCloudSamlIssuer());
+		    	req.addStackParameter(rhedCloudSamlIssuer);
+		    	props.add(buildProperty("RHEDcloudSamlIssuer", 
+		    		rhedCloudSamlIssuer.getValue()));
+		    	logger.info(LOGTAG + "Parameter RHEDcloudSamlIssuer: " + 
+		    		rhedCloudSamlIssuer.getValue());
+		    	
+		    	// RHEDcloudSecurityRiskDetectionServiceUserArn
+		    	StackParameter rhedCloudSecurityRiskDetectionServiceUserArn = 
+		    		req.newStackParameter();
+		    	rhedCloudSecurityRiskDetectionServiceUserArn
+		    		.setKey("RHEDcloudSecurityRiskDetectionServiceUserArn");
+		    	rhedCloudSecurityRiskDetectionServiceUserArn
+		    		.setValue(getRhedCloudSecurityRiskDetectionServiceUserArn());
+		    	req.addStackParameter(rhedCloudSecurityRiskDetectionServiceUserArn);
+		    	props.add(buildProperty("RHEDcloudSecurityRiskDetectionServiceUserArn", 
+		    		rhedCloudSecurityRiskDetectionServiceUserArn.getValue()));
+		    	logger.info(LOGTAG + 
+		    		"Parameter RHEDcloudSecurityRiskDetectionServiceUserArn: " + 
+		    		rhedCloudSecurityRiskDetectionServiceUserArn.getValue());
+		    	
+		        // RHEDcloudAwsAccountServiceUserArn
+		    	StackParameter rhedCloudAwsAccountServiceUserArn = req.newStackParameter();
+		    	rhedCloudAwsAccountServiceUserArn.setKey("RHEDcloudAwsAccountServiceUserArn");
+		    	rhedCloudAwsAccountServiceUserArn.setValue(getRhedCloudAwsAccountServiceUserArn());
+		    	req.addStackParameter(rhedCloudAwsAccountServiceUserArn);
+		    	props.add(buildProperty("RHEDcloudAwsAccountServiceUserArn",
+		    		rhedCloudAwsAccountServiceUserArn.getValue()));
+		    	logger.info(LOGTAG + 
+		    		"Parameter RHEDcloudAwsAccountServiceUserArn: " + 
+		    		rhedCloudAwsAccountServiceUserArn.getValue());
+		    	
+		        // RHEDcloudMaintenanceOperatorRoleArn
+		    	StackParameter rhedCloudMaintenanceOperatorRoleArn = req.newStackParameter();
+		    	rhedCloudMaintenanceOperatorRoleArn.setKey("RHEDcloudMaintenanceOperatorRoleArn");
+		    	rhedCloudMaintenanceOperatorRoleArn.setValue(getRhedCloudMaintenanceOperatorRoleArn());
+		    	req.addStackParameter(rhedCloudMaintenanceOperatorRoleArn);
+		    	props.add(buildProperty("RHEDcloudMaintenanceOperatorRoleArn", 
+		    		rhedCloudMaintenanceOperatorRoleArn.getValue()));
+		    	logger.info(LOGTAG + 
+		    		"Parameter RHEDcloudMaintenanceOperatorRoleArn: " + 
+		    		rhedCloudMaintenanceOperatorRoleArn.getValue());
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
@@ -183,11 +400,14 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 	  	    	throw new StepException(errMsg, xeoe);
 		    }    
 			
-			// Get a producer from the pool
+			// Get a request service from the pool and set the timeout interval.
 			RequestService rs = null;
 			try {
-				rs = (RequestService)getAwsAccountServiceProducerPool()
+				PointToPointProducer p2p = 
+					(PointToPointProducer)getAwsAccountServiceProducerPool()
 					.getExclusiveProducer();
+				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+				rs = (RequestService)p2p;
 			}
 			catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
@@ -233,9 +453,8 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		// If allocateNewAccount is false, log it and add result props.
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
-				"no need to authorize the user to create a new account.");
+				"no need to create the rhedcloud-aws-rs-account stack.");
 			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
-			props.add(buildProperty("isAuthorized", "not applicable"));
 		}
 		
 		// Update the step.
@@ -311,6 +530,14 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
+
+	private void setRequestTimeoutInterval(int i) {
+		m_requestTimeoutInterval = i;
+	}
+	
+	private int getRequestTimeoutInterval() {
+		return m_requestTimeoutInterval;
+	}
 	
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
@@ -323,15 +550,169 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 	private void setCloudFormationTemplateUrl (String url) throws 
 		StepException {
 	
-		if (url == null) {
-			String errMsg = "cloudFormationTemplateUrl property is null. " +
-				"Can't continue.";
-			throw new StepException(errMsg);
-		}
 		m_cloudFormationTemplateUrl = url;
 	}
 
 	private String getCloudFormationTemplateUrl() {
 		return m_cloudFormationTemplateUrl;
 	}
+	
+	private void setCloudFormationTemplateBodyUrl (String url) throws 
+		StepException {
+
+		m_cloudFormationTemplateBodyUrl = url;
+	}
+
+	private String getCloudFormationTemplateBodyUrl() {
+		return m_cloudFormationTemplateBodyUrl;
+	}
+	
+	private String getCloudTrailName(String accountSeriesName, 
+		String accountSequenceNumber, String cloudTrailSuffix) {
+		
+		String cloudTrailName = accountSeriesName + "-" 
+			+ accountSequenceNumber + "-" + cloudTrailSuffix;
+		
+		return cloudTrailName;
+	}
+	
+	private void setCloudTrailSuffix (String suffix) throws 
+		StepException {
+
+		if (suffix == null) {
+			String errMsg = "cloudTrailSuffix property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_cloudTrailSuffix = suffix;
+	}
+
+	private String getCloudTrailSuffix() {
+		return m_cloudTrailSuffix;
+	}
+	
+	private String getCloudTrailName(String accountAlias) {
+		String cloudTrailName = accountAlias + "-" + getCloudTrailSuffix();
+		return cloudTrailName;
+	}
+	
+	private String getAddHipaaIamPolicy() {
+		
+		String addHipaaIamPolicy = "No";
+		
+		VirtualPrivateCloudRequisition req = 
+			getVirtualPrivateCloudProvisioning()
+			.getVirtualPrivateCloudRequisition();
+		
+		if (req.getComplianceClass()
+			.equalsIgnoreCase(HIPAA_COMPLIANCE_CLASS)) {
+			addHipaaIamPolicy = "Yes";
+		}
+		
+		return addHipaaIamPolicy;
+	}
+	
+	private void setRhedCloudIdp (String idp) throws 
+		StepException {
+	
+		if (idp == null) {
+			String errMsg = "rhedCloudIdp property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_rhedCloudIdp = idp;
+	}
+
+	private String getRhedCloudIdp() {
+		return m_rhedCloudIdp;
+	}
+	
+	private void setRhedCloudSamlIssuer (String issuer) throws 
+		StepException {
+	
+		if (issuer == null) {
+			String errMsg = "rhedCloudSamlIssuer property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_rhedCloudSamlIssuer = issuer;
+	}
+
+	private String getRhedCloudSamlIssuer() {
+		return m_rhedCloudSamlIssuer;
+	}
+	
+	private void setRhedCloudSecurityRiskDetectionServiceUserArn (String arn) 
+		throws StepException {
+	
+		if (arn == null) {
+			String errMsg = "setRhedCloudSecurityRiskDetectionServiceUserArn " +
+				"property is null. Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_rhedCloudSecurityRiskDetectionServiceUserArn = arn;
+	}
+
+	private String getRhedCloudSecurityRiskDetectionServiceUserArn() {
+		return m_rhedCloudSecurityRiskDetectionServiceUserArn;
+	}
+	
+	private void setRhedCloudAwsAccountServiceUserArn (String arn) 
+		throws StepException {
+	
+		if (arn == null) {
+			String errMsg = "setRhedCloudAwsAccountServiceUserArn " +
+				"property is null. Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_rhedCloudAwsAccountServiceUserArn = arn;
+	}
+
+	private String getRhedCloudAwsAccountServiceUserArn() {
+		return m_rhedCloudAwsAccountServiceUserArn;
+	}
+	
+	private void setRhedCloudMaintenanceOperatorRoleArn (String arn) 
+		throws StepException {
+	
+		if (arn == null) {
+			String errMsg = "setRhedCloudMaintenanceOperatorRoleArn " +
+				"property is null. Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_rhedCloudMaintenanceOperatorRoleArn = arn;
+	}
+
+	private String getRhedCloudMaintenanceOperatorRoleArn() {
+		return m_rhedCloudMaintenanceOperatorRoleArn;
+	}
+	
+	private String getCloudFormationTemplateBody() throws StepException{
+
+		String LOGTAG = getStepTag() + 
+			"[CreateRsAccountCfnStack.getCloudFormationTemplateBody] ";
+		String templateBody = null;
+		
+		if (getCloudFormationTemplateBodyUrl() != null) {
+			try {
+				URL url = new URL(getCloudFormationTemplateBodyUrl());
+				templateBody = IOUtils.toString(url, TEMPLATE_BODY_ENCODING);
+				return templateBody;
+			}
+			catch (IOException ioe) {
+				String errMsg = "An error occurred reading the CloudFormation"
+					+ " template body by URL. The exception is: " + 
+					ioe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+		}
+		else {
+			String errMsg = "CloudFormation template body URL is null. " +
+				"Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+	}
+	
 }
