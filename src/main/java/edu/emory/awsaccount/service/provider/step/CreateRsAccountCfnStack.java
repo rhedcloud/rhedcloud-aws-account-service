@@ -301,6 +301,11 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	props.add(buildProperty("accountId", req.getAccountId()));
 		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
 		    	
+		    	// Description
+		    	req.setDescription("RHEDcloud AWS CloudFormation template for account-level structures and policies");
+		    
+		    	// DisableRollback
+		    	req.setDisableRollback("false");
 		    	
 		    	// Template URL - we prefer to pull this from an S3 bucket,
 		    	// but if we have to we read it from a non-S3 URL.
@@ -398,6 +403,12 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	logger.info(LOGTAG + 
 		    		"Parameter RHEDcloudMaintenanceOperatorRoleArn: " + 
 		    		rhedCloudMaintenanceOperatorRoleArn.getValue());
+		    	
+		    	// Add capabilities
+		    	String cap1 = "CAPABILITY_IAM";
+		    	String cap2 = "CAPABILITY_NAMED_IAM";
+		    	req.addCapability(cap1);
+		    	req.addCapability(cap2);
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
