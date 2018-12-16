@@ -61,6 +61,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 	private String m_rhedCloudSecurityRiskDetectionServiceUserArn = null;
 	private String m_rhedCloudAwsAccountServiceUserArn = null;
 	private String m_rhedCloudMaintenanceOperatorRoleArn = null;
+	private String m_stackName = null;
 	private int m_requestTimeoutInterval = 10000;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private final static String TEMPLATE_BODY_ENCODING = "UTF-8";
@@ -108,6 +109,12 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		logger.info(LOGTAG + "cloudTrailSuffix is: " +
 			getCloudTrailSuffix());
 		
+		// stackName is the name to give the stack.
+		String stackName = getProperties()
+			.getProperty("stackName", null);
+		setStackName(stackName);
+		logger.info(LOGTAG + "stackName is: " + getStackName());
+
 		// rhedCloudIdp is the name of the identity provider.
 		String rhedCloudIdp = getProperties()
 			.getProperty("rhedCloudIdp", null);
@@ -287,17 +294,27 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	// AccountId
 		    	req.setAccountId(newAccountId);
 		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
+		    	
+		    	// StackName
+		    	req.setStackName(getStackName());
+		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
+		    	
 		    	
 		    	// Template URL - we prefer to pull this from an S3 bucket,
 		    	// but if we have to we read it from a non-S3 URL.
 		    	if (getCloudFormationTemplateUrl() != null) {
 		    		req.setTemplateUrl(getCloudFormationTemplateUrl());
 		    		props.add(buildProperty("templateUrl", req.getTemplateUrl()));
+		    		logger.info(LOGTAG + "templateUrl: " + req.getTemplateUrl());
 		    	}
 		    	else if (getCloudFormationTemplateBodyUrl() != null) {
 		    		req.setTemplateBody(getCloudFormationTemplateBody());
 		    		props.add(buildProperty("templateBodyUrl", 
 		    			getCloudFormationTemplateBodyUrl()));
+		    		logger.info(LOGTAG + "templateBody: " + 
+		    			req.getTemplateBody());
 		    	}
 		    	else {
 		    		String errMsg = "No CloudFormation template source " +
@@ -676,7 +693,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		throws StepException {
 	
 		if (arn == null) {
-			String errMsg = "setRhedCloudMaintenanceOperatorRoleArn " +
+			String errMsg = "rhedCloudMaintenanceOperatorRoleArn " +
 				"property is null. Can't continue.";
 			throw new StepException(errMsg);
 		}
@@ -685,6 +702,20 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 
 	private String getRhedCloudMaintenanceOperatorRoleArn() {
 		return m_rhedCloudMaintenanceOperatorRoleArn;
+	}
+	
+	private void setStackName (String name) 
+		throws StepException {
+	
+		if (name == null) {
+			String errMsg = "stackName property is null. Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_stackName = name;
+	}
+
+	private String getStackName() {
+		return m_stackName;
 	}
 	
 	private String getCloudFormationTemplateBody() throws StepException{
