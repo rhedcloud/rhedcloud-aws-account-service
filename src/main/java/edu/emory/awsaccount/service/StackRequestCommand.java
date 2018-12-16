@@ -302,8 +302,12 @@ public class StackRequestCommand extends AwsAccountRequestCommand implements Req
      *             operation.
      */
     public final Message execute(int messageNumber, Message aMessage) throws CommandException {
-        // Get the execution start time.
+    	
+    	// Get the execution start time.
         long startTime = System.currentTimeMillis();
+        
+        String LOGTAG = "[StackRequestCommand.execute] ";
+        logger.info(LOGTAG + "Executing...");
 
         // Make a local copy of the response documents to use in the replies.
         Document localResponseDoc = (Document) getResponseDocument().clone();
@@ -316,6 +320,7 @@ public class StackRequestCommand extends AwsAccountRequestCommand implements Req
         } catch (Exception e) {
             String errMsg = "Exception occurred processing input message in "
                     + "org.openeai.jms.consumer.commands.Command.  Exception: " + e.getMessage();
+            logger.error(LOGTAG + errMs);
             throw new CommandException(errMsg);
         }
 
@@ -331,6 +336,7 @@ public class StackRequestCommand extends AwsAccountRequestCommand implements Req
             msg.clearBody();
         } catch (JMSException jmse) {
             String errMsg = "Error clearing the message body.";
+            logger.error(LOGTAG + "Executing...");
             throw new CommandException(errMsg + ". The exception is: " + jmse.getMessage());
         }
 
@@ -376,8 +382,8 @@ public class StackRequestCommand extends AwsAccountRequestCommand implements Req
             String errCode = "AwsAccountService-1001";
             String errDesc = "Invalid AuthUserId. The value '" + authUserId
                     + "' is not valid. The expected format is user@domain/ip number.";
-            logger.fatal(LOGTAG + errDesc);
-            logger.fatal(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
+            logger.error(LOGTAG + errDesc);
+            logger.error(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
             ArrayList errors = new ArrayList();
             errors.add(buildError(errType, errCode, errDesc));
             String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
