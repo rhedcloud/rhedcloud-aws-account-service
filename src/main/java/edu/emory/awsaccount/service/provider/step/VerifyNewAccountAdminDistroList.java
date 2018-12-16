@@ -163,6 +163,8 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
  			String accountEmailAddress = getAccountEmailAddress();
  			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
  			props.add(buildProperty("accountEmailAddress", accountEmailAddress));
+ 			props.add(buildProperty("accountSeriesPrefix", getAccountSeriesPrefix()));
+ 			props.add(buildProperty("accountAlias", getAccountAlias()));
 		    
 		    // Set the values of the query spec.
 		    try {
@@ -351,9 +353,15 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		return m_accountSeriesPrefix;
 	}
 	
+	private String getAccountAlias() {
+		String alias = getAccountSeriesPrefix() + "-" 
+			+ getAccountSequenceNumber();
+				
+		return alias;
+	}
+	
 	private String getAccountEmailAddress() {
-		String emailAddress = getAccountSeriesPrefix() + "-" 
-			+ getAccountSequenceNumber() + "@emory.edu";
+		String emailAddress = getAccountAlias() + "@emory.edu";
 				
 		return emailAddress;
 	}
