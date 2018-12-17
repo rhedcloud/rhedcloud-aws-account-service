@@ -77,12 +77,14 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 		}
 		
 		logger.info(LOGTAG + "allocateNetAccount is: " + allocateNewAccount);
+		logger.info(LOGTAG + "accountId is: " + vpcr.getAccountId());
 		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
 		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
 		props.add(buildProperty("allocateNewAccount", 
 			Boolean.toString(allocateNewAccount)));
+		props.add(buildProperty("accountId", vpcr.getAccountId()));
 		
 	
 		logger.info(LOGTAG + "Set return props.");
