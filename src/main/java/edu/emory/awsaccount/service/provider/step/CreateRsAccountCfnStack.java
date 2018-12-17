@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -26,16 +27,10 @@ import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
-import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
-import org.openeai.moa.objects.resources.Authentication;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.Credentials;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.StackParameter;
@@ -45,9 +40,9 @@ import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If this is a new account request, send an 
- * AccountProvisioningAuthorization to determine if the user 
- * is authorized to create a new account.
+ * If this is a new account request, build and send a
+ * Stack.Generate-Request for the rs-account CloudFormation
+ * Template.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
@@ -332,84 +327,84 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	// Set stack parameters
 		    	logger.info(LOGTAG + "Setting stack parameters...");
 		    	
-		    	// CloudTrailName
-		    	StackParameter cloudTrailName = req.newStackParameter();
-		    	cloudTrailName.setKey("CloudTrailName");
-		    	cloudTrailName.setValue(getCloudTrailName(accountAlias));
-		    	req.addStackParameter(cloudTrailName);
-		    	props.add(buildProperty("CloudTrailName", cloudTrailName.getValue()));
-		    	logger.info(LOGTAG + "Parameter CloudTrailName: " + 
-		    		cloudTrailName.getValue());
+		    	// Parameter 1 - CloudTrailName
+		    	StackParameter parameter1 = req.newStackParameter();
+		    	parameter1.setKey("CloudTrailName");
+		    	parameter1.setValue(getCloudTrailName(accountAlias));
+		    	req.addStackParameter(parameter1);
+		    	props.add(buildProperty(parameter1.getKey(), 
+		    		parameter1.getValue()));
 		    	
-		    	// AddHIPAAIAMPolicy - Yes/No
-		    	StackParameter addHipaaIamPolicy = req.newStackParameter();
-		    	addHipaaIamPolicy.setKey("AddHIPAAIAMPolicy");
-		    	addHipaaIamPolicy.setValue(getAddHipaaIamPolicy());
-		    	req.addStackParameter(addHipaaIamPolicy);
-		    	props.add(buildProperty("AddHIPAAIAMPolicy", addHipaaIamPolicy.getValue()));
-		    	logger.info(LOGTAG + "Parameter AddHIPAAIAMPolicy: " + 
-		    		addHipaaIamPolicy.getValue());
+		    	// Parameter 2 - AddHIPAAIAMPolicy - Yes/No
+		    	StackParameter parameter2 = req.newStackParameter();
+		    	parameter2.setKey("AddHIPAAIAMPolicy");
+		    	parameter2.setValue(getAddHipaaIamPolicy());
+		    	req.addStackParameter(parameter2);
+		    	props.add(buildProperty(parameter2.getKey(), 
+		    		parameter2.getValue()));
 		    	
-		    	// RHEDcloudIDP
-		    	StackParameter rhedCloudIdp = req.newStackParameter();
-		    	rhedCloudIdp.setKey("RHEDcloudIDP");
-		    	rhedCloudIdp.setValue(getRhedCloudIdp());
-		    	req.addStackParameter(rhedCloudIdp);
-		    	props.add(buildProperty("RHEDcloudIDP", rhedCloudIdp.getValue()));
-		    	logger.info(LOGTAG + "Parameter RHEDcloudIDP: " + 
-		    		rhedCloudIdp.getValue());
+		    	// Parameter 3 - RHEDcloudIDP
+		    	StackParameter parameter3 = req.newStackParameter();
+		    	parameter3.setKey("RHEDcloudIDP");
+		    	parameter3.setValue(getRhedCloudIdp());
+		    	req.addStackParameter(parameter3);
+		    	props.add(buildProperty(parameter3.getKey(), 
+		    		parameter3.getValue()));
 		        
-		        // RHECcloudSamlIssuer
-		    	StackParameter rhedCloudSamlIssuer = req.newStackParameter();
-		    	rhedCloudSamlIssuer.setKey("RHEDcloudSamlIssuer");
-		    	rhedCloudSamlIssuer.setValue(getRhedCloudSamlIssuer());
-		    	req.addStackParameter(rhedCloudSamlIssuer);
-		    	props.add(buildProperty("RHEDcloudSamlIssuer", 
-		    		rhedCloudSamlIssuer.getValue()));
-		    	logger.info(LOGTAG + "Parameter RHEDcloudSamlIssuer: " + 
-		    		rhedCloudSamlIssuer.getValue());
+		        // Parameter 4 - RHECcloudSamlIssuer
+		    	StackParameter parameter4 = req.newStackParameter();
+		    	parameter4.setKey("RHEDcloudSamlIssuer");
+		    	parameter4.setValue(getRhedCloudSamlIssuer());
+		    	req.addStackParameter(parameter4);
+		    	props.add(buildProperty(parameter4.getKey(), 
+		    		parameter4.getValue()));
 		    	
-		    	// RHEDcloudSecurityRiskDetectionServiceUserArn
-		    	StackParameter rhedCloudSecurityRiskDetectionServiceUserArn = 
-		    		req.newStackParameter();
-		    	rhedCloudSecurityRiskDetectionServiceUserArn
-		    		.setKey("RHEDcloudSecurityRiskDetectionServiceUserArn");
-		    	rhedCloudSecurityRiskDetectionServiceUserArn
-		    		.setValue(getRhedCloudSecurityRiskDetectionServiceUserArn());
-		    	req.addStackParameter(rhedCloudSecurityRiskDetectionServiceUserArn);
-		    	props.add(buildProperty("RHEDcloudSecurityRiskDetectionServiceUserArn", 
-		    		rhedCloudSecurityRiskDetectionServiceUserArn.getValue()));
-		    	logger.info(LOGTAG + 
-		    		"Parameter RHEDcloudSecurityRiskDetectionServiceUserArn: " + 
-		    		rhedCloudSecurityRiskDetectionServiceUserArn.getValue());
+		    	// Parameter 5 - RHEDcloudSecurityRiskDetectionServiceUserArn
+		    	StackParameter parameter5 = req.newStackParameter();
+		    	parameter5.setKey("RHEDcloudSecurityRiskDetectionServiceUserArn");
+		    	parameter5.setValue(getRhedCloudSecurityRiskDetectionServiceUserArn());
+		    	req.addStackParameter(parameter5);
+		    	props.add(buildProperty(parameter5.getKey(), parameter5.getValue()));
 		    	
-		        // RHEDcloudAwsAccountServiceUserArn
-		    	StackParameter rhedCloudAwsAccountServiceUserArn = req.newStackParameter();
-		    	rhedCloudAwsAccountServiceUserArn.setKey("RHEDcloudAwsAccountServiceUserArn");
-		    	rhedCloudAwsAccountServiceUserArn.setValue(getRhedCloudAwsAccountServiceUserArn());
-		    	req.addStackParameter(rhedCloudAwsAccountServiceUserArn);
-		    	props.add(buildProperty("RHEDcloudAwsAccountServiceUserArn",
-		    		rhedCloudAwsAccountServiceUserArn.getValue()));
-		    	logger.info(LOGTAG + 
-		    		"Parameter RHEDcloudAwsAccountServiceUserArn: " + 
-		    		rhedCloudAwsAccountServiceUserArn.getValue());
+		        // Parameter 6 - RHEDcloudAwsAccountServiceUserArn
+		    	StackParameter parameter6 = req.newStackParameter();
+		    	parameter6.setKey("RHEDcloudAwsAccountServiceUserArn");
+		    	parameter6.setValue(getRhedCloudAwsAccountServiceUserArn());
+		    	req.addStackParameter(parameter6);
+		    	props.add(buildProperty(parameter6.getKey(),
+		    		parameter6.getValue()));
 		    	
-		        // RHEDcloudMaintenanceOperatorRoleArn
-		    	StackParameter rhedCloudMaintenanceOperatorRoleArn = req.newStackParameter();
-		    	rhedCloudMaintenanceOperatorRoleArn.setKey("RHEDcloudMaintenanceOperatorRoleArn");
-		    	rhedCloudMaintenanceOperatorRoleArn.setValue(getRhedCloudMaintenanceOperatorRoleArn());
-		    	req.addStackParameter(rhedCloudMaintenanceOperatorRoleArn);
-		    	props.add(buildProperty("RHEDcloudMaintenanceOperatorRoleArn", 
-		    		rhedCloudMaintenanceOperatorRoleArn.getValue()));
-		    	logger.info(LOGTAG + 
-		    		"Parameter RHEDcloudMaintenanceOperatorRoleArn: " + 
-		    		rhedCloudMaintenanceOperatorRoleArn.getValue());
+		        // Parameter 7 = RHEDcloudMaintenanceOperatorRoleArn
+		    	StackParameter parameter7 = req.newStackParameter();
+		    	parameter7.setKey("RHEDcloudMaintenanceOperatorRoleArn");
+		    	parameter7.setValue(getRhedCloudMaintenanceOperatorRoleArn());
+		    	req.addStackParameter(parameter7);
+		    	props.add(buildProperty(parameter7.getKey(), 
+		    		parameter7.getValue()));
+
+		    	// Log out all parameters.
+		    	List<StackParameter> params = req.getStackParameter();
+		    	ListIterator<StackParameter> spi = params.listIterator();
+		    	while (spi.hasNext()) {
+		    		StackParameter param = (StackParameter)spi.next();
+		    		logger.info(LOGTAG + "StackParameter " + param.getKey()
+		    			+ ": " + param.getValue());
+		    	}
 		    	
 		    	// Add capabilities
 		    	String cap1 = "CAPABILITY_IAM";
 		    	String cap2 = "CAPABILITY_NAMED_IAM";
 		    	req.addCapability(cap1);
 		    	req.addCapability(cap2);
+		    	
+		    	// Log out all capabilities and add them to the
+		    	// step properties.
+		    	List<String> capabilities = req.getCapability();
+		    	ListIterator<String> ci = capabilities.listIterator();
+		    	while (ci.hasNext()) {
+		    		String capability = (String)ci.next();
+		    		logger.info(LOGTAG + "Capability: " + capability);
+		    	}
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
