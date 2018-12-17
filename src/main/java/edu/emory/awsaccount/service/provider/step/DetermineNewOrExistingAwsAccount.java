@@ -84,7 +84,12 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
 		props.add(buildProperty("allocateNewAccount", 
 			Boolean.toString(allocateNewAccount)));
-		props.add(buildProperty("accountId", vpcr.getAccountId()));
+		if (vpcr.getAccountId() != null) {
+			props.add(buildProperty("accountId", vpcr.getAccountId()));
+		}
+		else {
+			props.add(buildProperty("accountId", "null"));
+		}
 		
 	
 		logger.info(LOGTAG + "Set return props.");
