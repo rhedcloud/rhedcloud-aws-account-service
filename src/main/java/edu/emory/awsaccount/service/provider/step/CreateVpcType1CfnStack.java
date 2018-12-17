@@ -296,7 +296,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		// If this is a type 1 VPC and there is an account number,
 		// send a Stack.Generate-Request to generate the rs-account stack.
-		if (vpcpr.getType().equalsIgnoreCase("1") && accountId != null) {
+		if (vpcpr.getType().equals("1") && accountId != null) {
 			logger.info(LOGTAG + "This is a request for a type 1 VPC " + 
 				" and the accountNumber is " + accountId + 
 				". Sending a Stack.Generate-Request to create the " +
@@ -553,7 +553,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		}
 		
 		// Update the step.
-		if (allocateNewAccount == false || stackCreated == true) {
+		if (vpcpr.getType().equals("1") == false || stackCreated == true) {
 			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
 		}
 		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
