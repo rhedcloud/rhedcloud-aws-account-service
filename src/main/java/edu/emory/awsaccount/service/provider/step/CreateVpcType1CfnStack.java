@@ -322,7 +322,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    // Set the values of the requisition and place them in step props.
 		    try {
 		    	// AccountId
-		    	req.setAccountId(newAccountId);
+		    	req.setAccountId(accountId);
 		    	props.add(buildProperty("accountId", req.getAccountId()));
 		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
 		    	
