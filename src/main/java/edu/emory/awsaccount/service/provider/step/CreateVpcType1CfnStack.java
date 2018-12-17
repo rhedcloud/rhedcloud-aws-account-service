@@ -128,44 +128,45 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		List<Property> props = new ArrayList<Property>();
 		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
 		
-		// Get the allocateNewAccount property from the
+		// Get the accountId property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		ProvisioningStep step1 = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
-		boolean allocateNewAccount = false;
+		String accountId = null;
 		if (step1 != null) {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
-			String sAllocateNewAccount = getResultProperty(step1, "allocateNewAccount");
-			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
-			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
-				"step is: " + allocateNewAccount);
+			accountId = getResultProperty(step1, "accountId");
+			logger.info(LOGTAG + "Property accountId from preceding " +
+				"step is: " + accountId);
+			props.add(buildProperty("accountId", accountId));
 		}
 		else {
 			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
-				"Cannot determine whether or not to authorize the new account " +
-				"requestor.";
+				"Cannot determine what the accountId is from this step. ";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
 		
-		// Get the newAccountId property from the GENERATE_NEW_ACCOUNT step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-		String newAccountId = null;
-		if (step2 != null) {
-			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
-			newAccountId = getResultProperty(step2, "newAccountId");
-			logger.info(LOGTAG + "Property newAccountId from preceding " +
-				"step is: " + newAccountId);
-			props.add(buildProperty("newAccountId", newAccountId));
-		}
-		else {
-			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
-				"determine whether or not to authorize the new account " +
-				"requestor.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
+		// If the existing accountId is null. Get the accountId of the newly 
+		// generated account.
+		if (accountId == null) {
+			// Get the newAccountId property from the GENERATE_NEW_ACCOUNT step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
+			if (step2 != null) {
+				logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
+				accountId = getResultProperty(step2, "newAccountId");
+				logger.info(LOGTAG + "Property newAccountId from preceding " +
+					"step is: " + accountId);
+				props.add(buildProperty("newAccountId", accountId));
+			}
+			else {
+				String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
+					"determine whether or not to authorize the new account " +
+					"requestor.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
 		}
 		
 		// Get the VPN inside CIDR properties from the 
@@ -288,12 +289,18 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
-		// If allocateNewAccount is true and newAccountId is not null,
+		// Get the VPCP requisition.
+		VirtualPrivateCloudRequisition vpcpr =
+			getVirtualPrivateCloudProvisioning()
+			.getVirtualPrivateCloudRequisition();
+		
+		// If this is a type 1 VPC and there is an account number,
 		// send a Stack.Generate-Request to generate the rs-account stack.
-		if (allocateNewAccount && newAccountId != null) {
-			logger.info(LOGTAG + "allocateNewAccount is true and newAccountId is " + 
-				newAccountId + ". Sending a Stack.Generate-Request to create the " +
-				"rhedcloud-aws-rs-account stack in a new account.");
+		if (vpcpr.getType().equalsIgnoreCase("1") && accountId != null) {
+			logger.info(LOGTAG + "This is a request for a type 1 VPC " + 
+				" and the accountNumber is " + accountId + 
+				". Sending a Stack.Generate-Request to create the " +
+				"rhedcloud-aws-vpc-type1 stack in the account.");
 			
 			// Send an Stack.Generate-Request. Get a configured Stack and requisition
 			// object from AppConfig.
@@ -537,9 +544,12 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		}
 		// If allocateNewAccount is false, log it and add result props.
 		else {
-			logger.info(LOGTAG + "allocateNewAccount is false. " +
-				"no need to create the rhedcloud-aws-rs-account stack.");
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			logger.info(LOGTAG + "This is not a type 1 VPC or there  " +
+				"is no account number. No need to create the " +
+				"rhedcloud-aws-vpc-type1 stack.");
+			props.add(buildProperty("vpcType", vpcpr.getType()));
+			props.add(buildProperty("accountId", accountId));
+			
 		}
 		
 		// Update the step.
