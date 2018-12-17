@@ -70,17 +70,20 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 	
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
+		
 		String LOGTAG = getStepTag() + 
-			"[ExampleStep.simulate] ";
+			"[CreateVpcType1CfnStack.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
-		Property prop = buildProperty("allocateNewAccount", "true");
     	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	logger.info(LOGTAG + "stepExecutionMethod is: " + SIMULATED_EXEC_TYPE);
 		
 		// Update the step.
+    	logger.info(LOGTAG + "Updating step...");
     	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	logger.info(LOGTAG + "Step updated.");
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
