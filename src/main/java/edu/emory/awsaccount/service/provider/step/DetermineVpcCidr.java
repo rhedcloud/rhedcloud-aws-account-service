@@ -12,6 +12,7 @@ package edu.emory.awsaccount.service.provider.step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -30,6 +31,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
+import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
@@ -261,10 +263,54 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 				VpnConnectionProfile p = (VpnConnectionProfile)profileResults.get(0);
 				String profileId = p.getVpnConnectionProfileId();
 				String network = p.getVpcNetwork();
+				
 				logger.info(LOGTAG + "vpnConnectionProfileId is: " + profileId);
 				props.add(buildProperty("vpnConnectionProfileId", profileId));
+				
 				logger.info(LOGTAG + "vpcNetwork is: " + network);
 				props.add(buildProperty("vpcNetwork", network));
+				
+				// Also need to add some details from the tunnel profiles.
+				List<TunnelProfile> tunnelProfiles = p.getTunnelProfile();
+				ListIterator li = tunnelProfiles.listIterator();
+				String vpn1InsideTunnelCidr1 = null;
+				String vpn1InsideTunnelCidr2 = null;
+				String vpn1CustomerGatewayIp = null;
+				String vpn2InsideTunnelCidr1 = null;
+				String vpn2InsideTunnelCidr2 = null;
+				String vpn2CustomerGatewayIp = null;
+				while (li.hasNext()) {
+					TunnelProfile tp = (TunnelProfile)li.next();
+					if (tp.getTunnelId().startsWith("1")) {
+						vpn1InsideTunnelCidr1 = tp.getVpnInsideIpCidr1();
+						vpn1InsideTunnelCidr2 = tp.getVpnInsideIpCidr2();
+						vpn1CustomerGatewayIp = tp.getCustomerGatewayIp();
+					}
+					if (tp.getTunnelId().startsWith("2")) {
+						vpn2InsideTunnelCidr1 = tp.getVpnInsideIpCidr1();
+						vpn2InsideTunnelCidr2 = tp.getVpnInsideIpCidr2();
+						vpn2CustomerGatewayIp = tp.getCustomerGatewayIp();
+					}
+				}
+				
+				logger.info(LOGTAG + "vpn1InsideTunnelCidr is: " + vpn1InsideTunnelCidr1);
+				props.add(buildProperty("vpn1InsideTunnelCidr", vpn1InsideTunnelCidr1));
+				
+				logger.info(LOGTAG + "vpn1InsideTunnelCidr2 is: " + vpn1InsideTunnelCidr2);
+				props.add(buildProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2));
+				
+				logger.info(LOGTAG + "vpn1CustomerGatewayIp is: " + vpn1CustomerGatewayIp);
+				props.add(buildProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp));
+				
+				logger.info(LOGTAG + "vpn2InsideTunnelCidr1 is: " + vpn2InsideTunnelCidr1);
+				props.add(buildProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1));
+				
+				logger.info(LOGTAG + "vpn2InsideTunnelCidr2 is: " + vpn2InsideTunnelCidr2);
+				props.add(buildProperty("vpn2InsideTunnelCidr2", vpn2InsideTunnelCidr2));
+				
+				logger.info(LOGTAG + "vpn2CustomerGatewayIp is: " + vpn2CustomerGatewayIp);
+				props.add(buildProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp));
+				
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
