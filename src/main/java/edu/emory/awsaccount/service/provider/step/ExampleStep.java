@@ -77,6 +77,8 @@ public class ExampleStep extends AbstractStep implements Step {
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
 		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		props.add(buildProperty("sleepTimeInMillis", 
+			Integer.toString(getSleepTimeInMillis())));
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
