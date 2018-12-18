@@ -149,7 +149,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		// If the existing accountId is null. Get the accountId of the newly 
 		// generated account.
-		if (accountId == null) {
+		if (accountId == null || accountId.equalsIgnoreCase("null")) {
 			// Get the newAccountId property from the GENERATE_NEW_ACCOUNT step.
 			logger.info(LOGTAG + "Getting properties from preceding steps...");
 			ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
@@ -167,6 +167,13 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg);
 			}
+		}
+		
+		if (accountId == null || accountId.equalsIgnoreCase("null")) {
+			String errMsg = "The value of accountId could not be " +
+				"found in preceding steps. Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
 		}
 		
 		// Get the VPN inside CIDR properties from the 
