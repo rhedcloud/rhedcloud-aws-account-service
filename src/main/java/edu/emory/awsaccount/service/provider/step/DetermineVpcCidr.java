@@ -293,8 +293,8 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 					}
 				}
 				
-				logger.info(LOGTAG + "vpn1InsideTunnelCidr is: " + vpn1InsideTunnelCidr1);
-				props.add(buildProperty("vpn1InsideTunnelCidr", vpn1InsideTunnelCidr1));
+				logger.info(LOGTAG + "vpn1InsideTunnelCidr1 is: " + vpn1InsideTunnelCidr1);
+				props.add(buildProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1));
 				
 				logger.info(LOGTAG + "vpn1InsideTunnelCidr2 is: " + vpn1InsideTunnelCidr2);
 				props.add(buildProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2));
