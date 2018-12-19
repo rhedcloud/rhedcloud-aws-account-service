@@ -31,6 +31,7 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
+import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.StackParameter;
@@ -176,8 +177,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		boolean stackCreated = false;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -188,7 +188,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
 			String sAllocateNewAccount = getResultProperty(step1, "allocateNewAccount");
 			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
 				"step is: " + allocateNewAccount);
 		}
@@ -209,7 +209,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			newAccountId = getResultProperty(step2, "newAccountId");
 			logger.info(LOGTAG + "Property newAccountId from preceding " +
 				"step is: " + newAccountId);
-			props.add(buildProperty("newAccountId", newAccountId));
+			addResultProperty("newAccountId", newAccountId);
 		}
 		else {
 			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
@@ -231,8 +231,8 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 				"accountSequenceNumber");
 			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
 				"step is: " + newAccountId);
-			props.add(buildProperty("accountSequenceNumber", 
-				accountSequenceNumber));
+			addResultProperty("accountSequenceNumber", 
+				accountSequenceNumber);
 		}
 		else {
 			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
@@ -252,7 +252,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			accountAlias = getResultProperty(step4, "accountAlias");
 			logger.info(LOGTAG + "Property accountAlias from preceding " +
 				"step is: " + accountAlias);
-			props.add(buildProperty("accountAlias", accountAlias));
+			addResultProperty("accountAlias", accountAlias);
 		}
 		else {
 			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
@@ -289,12 +289,12 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    try {
 		    	// AccountId
 		    	req.setAccountId(newAccountId);
-		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
 		    	
 		    	// StackName
 		    	req.setStackName(getStackName());
-		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
 		    	
 		    	// Description
@@ -307,13 +307,13 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	// but if we have to we read it from a non-S3 URL.
 		    	if (getCloudFormationTemplateUrl() != null) {
 		    		req.setTemplateUrl(getCloudFormationTemplateUrl());
-		    		props.add(buildProperty("templateUrl", req.getTemplateUrl()));
+		    		addResultProperty("templateUrl", req.getTemplateUrl());
 		    		logger.info(LOGTAG + "templateUrl: " + req.getTemplateUrl());
 		    	}
 		    	else if (getCloudFormationTemplateBodyUrl() != null) {
 		    		req.setTemplateBody(getCloudFormationTemplateBody());
-		    		props.add(buildProperty("templateBodyUrl", 
-		    			getCloudFormationTemplateBodyUrl()));
+		    		addResultProperty("templateBodyUrl", 
+		    			getCloudFormationTemplateBodyUrl());
 		    		logger.info(LOGTAG + "templateBody: " + 
 		    			req.getTemplateBody());
 		    	}
@@ -332,55 +332,55 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	parameter1.setKey("CloudTrailName");
 		    	parameter1.setValue(getCloudTrailName(accountAlias));
 		    	req.addStackParameter(parameter1);
-		    	props.add(buildProperty(parameter1.getKey(), 
-		    		parameter1.getValue()));
+		    	addResultProperty(parameter1.getKey(), 
+		    		parameter1.getValue());
 		    	
 		    	// Parameter 2 - AddHIPAAIAMPolicy - Yes/No
 		    	StackParameter parameter2 = req.newStackParameter();
 		    	parameter2.setKey("AddHIPAAIAMPolicy");
 		    	parameter2.setValue(getAddHipaaIamPolicy());
 		    	req.addStackParameter(parameter2);
-		    	props.add(buildProperty(parameter2.getKey(), 
-		    		parameter2.getValue()));
+		    	addResultProperty(parameter2.getKey(), 
+		    		parameter2.getValue());
 		    	
 		    	// Parameter 3 - RHEDcloudIDP
 		    	StackParameter parameter3 = req.newStackParameter();
 		    	parameter3.setKey("RHEDcloudIDP");
 		    	parameter3.setValue(getRhedCloudIdp());
 		    	req.addStackParameter(parameter3);
-		    	props.add(buildProperty(parameter3.getKey(), 
-		    		parameter3.getValue()));
+		    	addResultProperty(parameter3.getKey(), 
+		    		parameter3.getValue());
 		        
 		        // Parameter 4 - RHECcloudSamlIssuer
 		    	StackParameter parameter4 = req.newStackParameter();
 		    	parameter4.setKey("RHEDcloudSamlIssuer");
 		    	parameter4.setValue(getRhedCloudSamlIssuer());
 		    	req.addStackParameter(parameter4);
-		    	props.add(buildProperty(parameter4.getKey(), 
-		    		parameter4.getValue()));
+		    	addResultProperty(parameter4.getKey(), 
+		    		parameter4.getValue());
 		    	
 		    	// Parameter 5 - RHEDcloudSecurityRiskDetectionServiceUserArn
 		    	StackParameter parameter5 = req.newStackParameter();
 		    	parameter5.setKey("RHEDcloudSecurityRiskDetectionServiceUserArn");
 		    	parameter5.setValue(getRhedCloudSecurityRiskDetectionServiceUserArn());
 		    	req.addStackParameter(parameter5);
-		    	props.add(buildProperty(parameter5.getKey(), parameter5.getValue()));
+		    	addResultProperty(parameter5.getKey(), parameter5.getValue());
 		    	
 		        // Parameter 6 - RHEDcloudAwsAccountServiceUserArn
 		    	StackParameter parameter6 = req.newStackParameter();
 		    	parameter6.setKey("RHEDcloudAwsAccountServiceUserArn");
 		    	parameter6.setValue(getRhedCloudAwsAccountServiceUserArn());
 		    	req.addStackParameter(parameter6);
-		    	props.add(buildProperty(parameter6.getKey(),
-		    		parameter6.getValue()));
+		    	addResultProperty(parameter6.getKey(),
+		    		parameter6.getValue());
 		    	
 		        // Parameter 7 = RHEDcloudMaintenanceOperatorRoleArn
 		    	StackParameter parameter7 = req.newStackParameter();
 		    	parameter7.setKey("RHEDcloudMaintenanceOperatorRoleArn");
 		    	parameter7.setValue(getRhedCloudMaintenanceOperatorRoleArn());
 		    	req.addStackParameter(parameter7);
-		    	props.add(buildProperty(parameter7.getKey(), 
-		    		parameter7.getValue()));
+		    	addResultProperty(parameter7.getKey(), 
+		    		parameter7.getValue());
 
 		    	// Log out all parameters.
 		    	List<StackParameter> params = req.getStackParameter();
@@ -469,12 +469,22 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 				Stack stackResult = (Stack)results.get(0);
 				logger.info(LOGTAG + "Stack result is: " + 
 					stackResult.getStackStatus());
-				props.add(buildProperty("stackStatus", 
-						stackResult.getStackStatus()));
+				addResultProperty("stackStatus", 
+						stackResult.getStackStatus());
 				if (stackResult.getStackStatus()
 						.equalsIgnoreCase("CREATE_COMPLETE")) {
 					stackCreated = true;
 				}
+				
+				// Get the outputs and add them as result properties. 
+				List<Output> outputs = stackResult.getOutput();
+				ListIterator li = outputs.listIterator();
+				while (li.hasNext()) {
+					Output o = (Output)li.next();
+					addResultProperty(o.getOutputKey(), o.getOutputValue());
+					logger.info(LOGTAG + "CloudFormation Template Output: " +
+						o.getOutputKey() + "=" + o.getOutputValue());
+				}	
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
@@ -488,21 +498,21 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to create the rhedcloud-aws-rs-account stack.");
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 		}
 		
 		// Update the step.
 		if (allocateNewAccount == false || stackCreated == true) {
-			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
 		}
-		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
+		else update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -512,20 +522,19 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			"[CreateRsAccountCfnStack.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
-		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+		// Set return properties
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -535,18 +544,17 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -558,7 +566,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			"[CreateRsAccountCfnStack.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

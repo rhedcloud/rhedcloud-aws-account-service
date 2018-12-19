@@ -54,8 +54,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		String stepResult = FAILURE_RESULT;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the vpcNetwork property from the
 		// DETERMINE_VPC_CIDR step.
@@ -65,7 +64,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		if (step1 != null) {
 			logger.info(LOGTAG + "Step DETERMINE_VPC_CIDR found.");
 			vpcNetwork = getResultProperty(step1, "vpcNetwork");
-			props.add(buildProperty("vpcNetwork", vpcNetwork));
+			addResultProperty("vpcNetwork", vpcNetwork);
 			logger.info(LOGTAG + "Property vpcNetwork from preceding " +
 				"step is: " + vpcNetwork);
 		}
@@ -93,27 +92,27 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 
 			String mgmtPubMask =  Integer.toString(bits + 3);
 			logger.info(LOGTAG + "mgmtPubMask is: " + mgmtPubMask);
-			props.add(buildProperty("mgmtPubMask", mgmtPubMask));
+			addResultProperty("mgmtPubMask", mgmtPubMask);
 			
 			String privMask = Integer.toString(bits + 2);
 			logger.info(LOGTAG + "privMask is: " + privMask);
-			props.add(buildProperty("privMask", privMask));
+			addResultProperty("privMask", privMask);
 
 			String mgmt1Subnet = originalCidrNetwork + "/" + mgmtPubMask;
 			logger.info(LOGTAG + "mgmt1Subnet is: " + mgmt1Subnet);
-			props.add(buildProperty("mgmt1Subnet", mgmt1Subnet));
+			addResultProperty("mgmt1Subnet", mgmt1Subnet);
 			
 			String mgmt2Subnet = getNextSubnet(mgmt1Subnet, mgmtPubMask);
 			logger.info(LOGTAG + "mgmt2Subnet is: " + mgmt2Subnet);
-			props.add(buildProperty("mgmt2Subnet", mgmt2Subnet));
+			addResultProperty("mgmt2Subnet", mgmt2Subnet);
 			
 			String public1Subnet = getNextSubnet(mgmt2Subnet, mgmtPubMask);
 			logger.info(LOGTAG + "public1Subnet is: " + public1Subnet);
-			props.add(buildProperty("public1Subnet", public1Subnet));
+			addResultProperty("public1Subnet", public1Subnet);
 			
 			String public2Subnet = getNextSubnet(public1Subnet, mgmtPubMask);
 			logger.info(LOGTAG + "public2Subnet is: " + public2Subnet);
-			props.add(buildProperty("public2Subnet", public2Subnet));
+			addResultProperty("public2Subnet", public2Subnet);
 
 			String[] private1NetworkArray = getNextSubnet(public2Subnet, mgmtPubMask).split("/");
 			logger.info(LOGTAG + "private1NetworkArray is: " + private1NetworkArray);
@@ -122,11 +121,11 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 			
 			String private1Subnet = private1Network + "/" + privMask;
 			logger.info(LOGTAG + "private1Subnet is: " + private1Subnet);
-			props.add(buildProperty("private1Subnet", private1Subnet));
+			addResultProperty("private1Subnet", private1Subnet);
 
 			String private2Subnet = getNextSubnet(private1Subnet, privMask);
 			logger.info(LOGTAG + "private2Subnet is: " + private2Subnet);
-			props.add(buildProperty("private2Subnet", private2Subnet));
+			addResultProperty("private2Subnet", private2Subnet);
 			
 			// End pseudocode provided by Paul Petersen.
 			
@@ -137,18 +136,18 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "vpcNetwork property is null. Cannot " +
 				"compute subnets.");
-			props.add(buildProperty("vpcNetwork", "null"));
+			addResultProperty("vpcNetwork", "null");
 		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, stepResult, props);
+		update(COMPLETED_STATUS, stepResult);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -159,18 +158,17 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -180,18 +178,17 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -203,7 +200,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 			"[ComputeVpcSubnets.rollback] ";
 		logger.info(LOGTAG + "Rollback called, nothing to roll back.");
 		
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

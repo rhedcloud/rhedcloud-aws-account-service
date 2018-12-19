@@ -70,10 +70,8 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 			// throw an exception.
 			String errMsg = "An error occurred retrieving an object from " +
 					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			Property prop = buildProperty("errorMessage", errMsg);
-			addResultProperty(prop);
-			
+			logger.error(LOGTAG + errMsg);
+			addResultProperty("errorMessage", errMsg);
 			throw new StepException(errMsg);
 		}
 		
@@ -89,13 +87,12 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		boolean isAuthorized = false;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the VPC ProvisioningId to use to reserve the VpnConnection Profile
 		String provisioningId = getVirtualPrivateCloudProvisioning().getProvisioningId();
 		logger.info(LOGTAG + "The ProvisioningId is: " + provisioningId);
-		props.add(buildProperty("provisioningId", provisioningId));
+		addResultProperty("provisioningId", provisioningId);
 		
 		// Get a configured VpnConnectionProfile and
 		// VpnConnectionProfileRequistion from AppConfig
@@ -265,10 +262,10 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 				String network = p.getVpcNetwork();
 				
 				logger.info(LOGTAG + "vpnConnectionProfileId is: " + profileId);
-				props.add(buildProperty("vpnConnectionProfileId", profileId));
+				addResultProperty("vpnConnectionProfileId", profileId);
 				
 				logger.info(LOGTAG + "vpcNetwork is: " + network);
-				props.add(buildProperty("vpcNetwork", network));
+				addResultProperty("vpcNetwork", network);
 				
 				// Also need to add some details from the tunnel profiles.
 				List<TunnelProfile> tunnelProfiles = p.getTunnelProfile();
@@ -294,22 +291,22 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 				}
 				
 				logger.info(LOGTAG + "vpn1InsideTunnelCidr1 is: " + vpn1InsideTunnelCidr1);
-				props.add(buildProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1));
+				addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
 				
 				logger.info(LOGTAG + "vpn1InsideTunnelCidr2 is: " + vpn1InsideTunnelCidr2);
-				props.add(buildProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2));
+				addResultProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2);
 				
 				logger.info(LOGTAG + "vpn1CustomerGatewayIp is: " + vpn1CustomerGatewayIp);
-				props.add(buildProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp));
+				addResultProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp);
 				
 				logger.info(LOGTAG + "vpn2InsideTunnelCidr1 is: " + vpn2InsideTunnelCidr1);
-				props.add(buildProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1));
+				addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
 				
 				logger.info(LOGTAG + "vpn2InsideTunnelCidr2 is: " + vpn2InsideTunnelCidr2);
-				props.add(buildProperty("vpn2InsideTunnelCidr2", vpn2InsideTunnelCidr2));
+				addResultProperty("vpn2InsideTunnelCidr2", vpn2InsideTunnelCidr2);
 				
 				logger.info(LOGTAG + "vpn2CustomerGatewayIp is: " + vpn2CustomerGatewayIp);
-				props.add(buildProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp));
+				addResultProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp);
 				
 			}
 			else {
@@ -332,14 +329,14 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		}
 			
 		// Update the step.
-		update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+		update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -350,19 +347,18 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -372,18 +368,17 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -552,7 +547,7 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 			}
 		}
 		
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

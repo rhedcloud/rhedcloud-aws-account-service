@@ -18,15 +18,17 @@ import org.openeai.config.AppConfig;
 
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.amazonaws.services.identitymanagement.model.CreateSAMLProviderRequest;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * Example step that can serve as a placholder.
+ * If this is a new account, send a SamlProvider.Create-Request
+ * to create the SAML provider.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
- * @version 1.0 - 21 May 2017
+ * @version 1.0 - 18 May 2018
  **/
 public class CreateSamlProvider extends AbstractStep implements Step {
 
@@ -35,6 +37,8 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 			throws StepException {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
+		
+		
 	}
 	
 	protected List<Property> run() throws StepException {
@@ -42,15 +46,9 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[ExampleStep.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		// Wait some time.
-		try {
-			Thread.sleep(5000);
-		}
-		catch (InterruptedException ie) {
-			String errMsg = "Error occurred sleeping.";
-			logger.error(LOGTAG + errMsg + ie.getMessage());
-			throw new StepException(errMsg, ie);
-		}
+		CreateSAMLProviderRequest cspr = new CreateSAMLProviderRequest();
+		cspr.setName(getSamlProviderName());
+		cspr.setSAMLMetadataDocument(getSamlMetadataDocument());
 		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();

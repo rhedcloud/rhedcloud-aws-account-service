@@ -31,6 +31,7 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
+import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.StackParameter;
@@ -126,7 +127,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		// Return properties
 		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the accountId property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -138,7 +139,9 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			accountId = getResultProperty(step1, "accountId");
 			logger.info(LOGTAG + "Property accountId from preceding " +
 				"step is: " + accountId);
-			props.add(buildProperty("accountId", accountId));
+			if (accountId != null && accountId.equalsIgnoreCase("null") == false) {
+				addResultProperty("accountId", accountId);
+			}
 		}
 		else {
 			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
@@ -158,7 +161,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 				accountId = getResultProperty(step2, "newAccountId");
 				logger.info(LOGTAG + "Property newAccountId from preceding " +
 					"step is: " + accountId);
-				props.add(buildProperty("newAccountId", accountId));
+				addResultProperty("newAccountId", accountId);
 			}
 			else {
 				String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
@@ -194,37 +197,37 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 				"vpn1InsideTunnelCidr1");
 			logger.info(LOGTAG + "Property vpn1InsideTunnelCidr1 from preceding " +
 				"step is: " + vpn1InsideTunnelCidr1);
-			props.add(buildProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1));
+			addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
 			
 			vpn1InsideTunnelCidr2 = getResultProperty(step3, 
 				"vpn1InsideTunnelCidr2");
 			logger.info(LOGTAG + "Property vpn1InsideTunnelCidr2 from preceding " +
 				"step is: " + vpn1InsideTunnelCidr2);
-			props.add(buildProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2));
+			addResultProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2);
 			
 			vpn1CustomerGatewayIp = getResultProperty(step3, 
 				"vpn1CustomerGatewayIp");
 			logger.info(LOGTAG + "Property vpn1CustomerGatewayIp from preceding " +
 				"step is: " + vpn1CustomerGatewayIp);
-			props.add(buildProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp));
+			addResultProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp);
 			
 			vpn2InsideTunnelCidr1 = getResultProperty(step3, 
 				"vpn2InsideTunnelCidr1");
 			logger.info(LOGTAG + "Property vpn2InsideTunnelCidr1 from preceding " +
 				"step is: " + vpn2InsideTunnelCidr1);
-			props.add(buildProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1));
+			addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
 			
 			vpn2InsideTunnelCidr2 = getResultProperty(step3, 
 				"vpn2InsideTunnelCidr2");
 			logger.info(LOGTAG + "Property vpn2InsideTunnelCidr2 from preceding " +
 				"step is: " + vpn2InsideTunnelCidr2);
-			props.add(buildProperty("vpn2InsideTunnelCidr2",vpn2InsideTunnelCidr2));
+			addResultProperty("vpn2InsideTunnelCidr2",vpn2InsideTunnelCidr2);
 			
 			vpn2CustomerGatewayIp = getResultProperty(step3, 
 				"vpn2CustomerGatewayIp");
 			logger.info(LOGTAG + "Property vpn2CustomerGatewayIp from preceding " +
 				"step is: " + vpn2CustomerGatewayIp);
-			props.add(buildProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp));
+			addResultProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp);
 		}
 		else {
 			String errMsg = "Step DETERMINE_VPC_CIDR not " +
@@ -251,43 +254,43 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 				"vpcNetwork");
 			logger.info(LOGTAG + "Property vpcNetwork from preceding " +
 				"step is: " + vpcNetwork);
-			props.add(buildProperty("vpcNetwork", vpcNetwork));
+			addResultProperty("vpcNetwork", vpcNetwork);
 			
 			mgmt1Subnet = getResultProperty(step4, 
 				"mgmt1Subnet");
 			logger.info(LOGTAG + "Property mgmt1Subnet from preceding " +
 				"step is: " + mgmt1Subnet);
-			props.add(buildProperty("mgmt1Subnet", mgmt1Subnet));
+			addResultProperty("mgmt1Subnet", mgmt1Subnet);
 			
 			mgmt2Subnet = getResultProperty(step4, 
 				"mgmt2Subnet");
 			logger.info(LOGTAG + "Property mgmt2Subnet from preceding " +
 				"step is: " + mgmt2Subnet);
-			props.add(buildProperty("mgmt2Subnet", mgmt2Subnet));
+			addResultProperty("mgmt2Subnet", mgmt2Subnet);
 			
 			public1Subnet = getResultProperty(step4, 
 				"public1Subnet");
 			logger.info(LOGTAG + "Property public1Subnet from preceding " +
 				"step is: " + public1Subnet);
-			props.add(buildProperty("public1Subnet", public1Subnet));
+			addResultProperty("public1Subnet", public1Subnet);
 			
 			public2Subnet = getResultProperty(step4, 
 				"public2Subnet");
 			logger.info(LOGTAG + "Property public2Subnet from preceding " +
 				"step is: " + public2Subnet);
-			props.add(buildProperty("public2Subnet", public2Subnet));
+			addResultProperty("public2Subnet", public2Subnet);
 			
 			private1Subnet = getResultProperty(step4, 
 				"private1Subnet");
 			logger.info(LOGTAG + "Property private1Subnet from preceding " +
 				"step is: " + private1Subnet);
-			props.add(buildProperty("private1Subnet", private1Subnet));
+			addResultProperty("private1Subnet", private1Subnet);
 			
 			private2Subnet = getResultProperty(step4, 
 				"private2Subnet");
 			logger.info(LOGTAG + "Property private2Subnet from preceding " +
 				"step is: " + private2Subnet);
-			props.add(buildProperty("private2Subnet", private2Subnet));
+			addResultProperty("private2Subnet", private2Subnet);
 		}
 		else {
 			String errMsg = "Step COMPUTE_VPC_SUBNETS not " +
@@ -297,7 +300,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		}
 		
 		// Update the step, so the parameters are visible for execution.
-		update(IN_PROGRESS_STATUS, NO_RESULT, props);
+		update(IN_PROGRESS_STATUS, NO_RESULT);
 		
 		// Get the VPCP requisition.
 		VirtualPrivateCloudRequisition vpcpr =
@@ -333,12 +336,12 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    try {
 		    	// AccountId
 		    	req.setAccountId(accountId);
-		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
 		    	
 		    	// StackName
 		    	req.setStackName(getStackName());
-		    	props.add(buildProperty("accountId", req.getAccountId()));
+		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
 		    	
 		    	// Description
@@ -351,13 +354,13 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    	// but if we have to we read it from a non-S3 URL.
 		    	if (getCloudFormationTemplateUrl() != null) {
 		    		req.setTemplateUrl(getCloudFormationTemplateUrl());
-		    		props.add(buildProperty("templateUrl", req.getTemplateUrl()));
+		    		addResultProperty("templateUrl", req.getTemplateUrl());
 		    		logger.info(LOGTAG + "templateUrl: " + req.getTemplateUrl());
 		    	}
 		    	else if (getCloudFormationTemplateBodyUrl() != null) {
 		    		req.setTemplateBody(getCloudFormationTemplateBody());
-		    		props.add(buildProperty("templateBodyUrl", 
-		    			getCloudFormationTemplateBodyUrl()));
+		    		addResultProperty("templateBodyUrl", 
+		    			getCloudFormationTemplateBodyUrl());
 		    		logger.info(LOGTAG + "templateBody: " + 
 		    			req.getTemplateBody());
 		    	}
@@ -535,14 +538,24 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			
 			if (results.size() == 1) {
 				Stack stackResult = (Stack)results.get(0);
-				logger.info(LOGTAG + "Stack result is: " + 
+				logger.info(LOGTAG + "Stack status is: " + 
 					stackResult.getStackStatus());
-				props.add(buildProperty("stackStatus", 
-						stackResult.getStackStatus()));
+				addResultProperty("stackStatus", 
+						stackResult.getStackStatus());
 				if (stackResult.getStackStatus()
 						.equalsIgnoreCase("CREATE_COMPLETE")) {
 					stackCreated = true;
 				}
+				
+				// Get the outputs and add them as result properties. 
+				List<Output> outputs = stackResult.getOutput();
+				ListIterator li = outputs.listIterator();
+				while (li.hasNext()) {
+					Output o = (Output)li.next();
+					addResultProperty(o.getOutputKey(), o.getOutputValue());
+					logger.info(LOGTAG + "CloudFormation Template Output: " +
+						o.getOutputKey() + "=" + o.getOutputValue());
+				}	
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
@@ -552,21 +565,22 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 				throw new StepException(errMsg);
 			}
 		}
-		// If allocateNewAccount is false, log it and add result props.
+		// If this is not a type1 VPC or there is no account 
+		// number, log it and add result props.
 		else {
 			logger.info(LOGTAG + "This is not a type 1 VPC or there  " +
 				"is no account number. No need to create the " +
 				"rhedcloud-aws-vpc-type1 stack.");
-			props.add(buildProperty("vpcType", vpcpr.getType()));
-			props.add(buildProperty("accountId", accountId));
+			addResultProperty("vpcType", vpcpr.getType());
+			addResultProperty("accountId", accountId);
 			
 		}
 		
 		// Update the step.
 		if (vpcpr.getType().equals("1") == false || stackCreated == true) {
-			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
 		}
-		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
+		else update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
@@ -585,11 +599,11 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
@@ -607,10 +621,10 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
@@ -629,7 +643,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			"[CreateRsAccountCfnStack.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

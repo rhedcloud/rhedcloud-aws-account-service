@@ -128,10 +128,9 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		String newAccountId = null;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
-		props.add(buildProperty("templateBucketName", getTemplateBucketName()));
-		props.add(buildProperty("provisioningRoleName", getProvisioningRoleName()));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+		addResultProperty("templateBucketName", getTemplateBucketName());
+		addResultProperty("provisioningRoleName", getProvisioningRoleName());
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -142,7 +141,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
 			String sAllocateNewAccount = getResultProperty(step1, "allocateNewAccount");
 			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
 				"step is: " + allocateNewAccount);
 		}
@@ -160,7 +159,7 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		if (step2 != null) {
 			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
 			newAccountId = getResultProperty(step2, "newAccountId");
-			props.add(buildProperty("newAccountId", newAccountId));
+			addResultProperty("newAccountId", newAccountId);
 			logger.info(LOGTAG + "Property newAccountId from preceding " +
 				"step is: " + newAccountId);
 		}
@@ -269,8 +268,9 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to update the template bucket policy.");
-			props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
-			props.add(buildProperty("newAccountId", "not applicable"));
+			addResultProperty("allocatedNewAccount", 
+				Boolean.toString(allocatedNewAccount));
+			addResultProperty("newAccountId", "not applicable");
 		}
 		
 		// Update the step.
@@ -283,14 +283,14 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, stepResult, props);
+		update(COMPLETED_STATUS, stepResult);
 		
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -301,18 +301,17 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -322,18 +321,17 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -412,9 +410,9 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 				throw new StepException(errMsg, e);
 			}
 			
-			props.add(buildProperty("orgRootId", getOrgRootId()));	
-			props.add(buildProperty("getPendingDeleteOuId", getPendingDeleteOuId()));
-			props.add(buildProperty("movedAccountToPendingDeleteOu", 
+			addResultProperty("orgRootId", getOrgRootId()));	
+			addResultProperty("getPendingDeleteOuId", getPendingDeleteOuId()));
+			addResultProperty("movedAccountToPendingDeleteOu", 
 				Boolean.toString(movedAccountToPendingDeleteOu)));
 			
 		}
@@ -423,12 +421,12 @@ public class UpdateTemplateBucketPolicy extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "No account was created or it is no longer " +
 				"in the organization root, so there is nothing to roll back.");
-			props.add(buildProperty("movedAccountToPendingDeleteOu", 
+			addResultProperty("movedAccountToPendingDeleteOu", 
 				"not applicable"));
 		}
 **/
 		
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

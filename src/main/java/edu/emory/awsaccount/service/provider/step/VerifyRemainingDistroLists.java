@@ -232,8 +232,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		boolean isValid = false;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -244,7 +243,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
 			String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
 				"step is: " + allocateNewAccount);
 		}
@@ -264,7 +263,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		if (step2 != null) {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
 			accountSequenceNumber = getResultProperty(step2, "accountSequenceNumber");
-			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
+			addResultProperty("accountSequenceNumber", accountSequenceNumber);
 			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
 				"step is: " + accountSequenceNumber);
 			setAccountSequenceNumber(accountSequenceNumber);
@@ -307,10 +306,10 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			}
 			
 			// Set properties
-			props.add(buildProperty("remainingValidDistroLists", 
-				Integer.toString(remainingValidDistroLists)));
-			props.add(buildProperty("lessThanAlertThreshold", 
-				Boolean.toString(lessThanAlertThreshold)));
+			addResultProperty("remainingValidDistroLists", 
+				Integer.toString(remainingValidDistroLists));
+			addResultProperty("lessThanAlertThreshold", 
+				Boolean.toString(lessThanAlertThreshold));
 						
 			logger.info(LOGTAG + "There are " + remainingValidDistroLists +
 				" remaining in the series.");
@@ -339,7 +338,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 				}
 				logger.info(LOGTAG + "Created incident " + incident.getNumber() +
 						" in ServiceNow.");
-				props.add(buildProperty("incidentNumber", incident.getNumber()));
+				addResultProperty("incidentNumber", incident.getNumber());
 			}
 			if (lessThanAlertThreshold && getNotifyCentralAdminsOnAlert()) {
 				logger.info(LOGTAG + "notifyCentralAdminsOnAlert is true, " +
@@ -351,8 +350,8 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 							.notifyCentralAdministrators(notification);
 					logger.info(LOGTAG + "Notified " + adminCount + 
 							" central administrators.");
-					props.add(buildProperty("centralAdminsNotified", 
-						Integer.toString(adminCount)));
+					addResultProperty("centralAdminsNotified", 
+						Integer.toString(adminCount));
 				}
 				catch (ProviderException pe) {
 					String errMsg = "An error occurred notifying central " +
@@ -367,21 +366,21 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to verify a new account distro list.");
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
-			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
-			props.add(buildProperty("remainingValidDistroLists", "not applicable"));
-			props.add(buildProperty("lessThanAlertThreshold", "not applicable"));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
+			addResultProperty("accountSequenceNumber", accountSequenceNumber);
+			addResultProperty("remainingValidDistroLists", "not applicable");
+			addResultProperty("lessThanAlertThreshold", "not applicable");
 		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+		update(COMPLETED_STATUS, SUCCESS_RESULT);
 		
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -392,19 +391,18 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -414,18 +412,17 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -437,7 +434,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			"[VerifyRemainingDistroLists.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
