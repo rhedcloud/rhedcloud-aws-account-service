@@ -11,12 +11,15 @@
 
 package edu.emory.awsaccount.service.provider.step;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 // Java utilities
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
+import java.util.TimeZone;
 
 // Log4j
 import org.apache.log4j.Category;
@@ -177,8 +180,6 @@ public abstract class AbstractStep {
 		setExecutionStartTime();
 		
 		// Update the step to indicate it is in progress.
-		addResultProperty(buildProperty("startTime", 
-			Long.toString(System.currentTimeMillis())));
 		update(IN_PROGRESS_STATUS, NO_RESULT);
 		
 		String LOGTAG = getStepTag() + 
@@ -748,6 +749,21 @@ public abstract class AbstractStep {
 	
 	protected void setExecutionStartTime() {
 		m_executionStartTime = System.currentTimeMillis();
+		
+		addResultProperty(buildProperty("startTime", 
+				Long.toString(getExecutionStartTime())));
+	
+		java.util.Date date = new java.util.Date(getExecutionStartTime());
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+		String formattedDate = format.format(date);
+		
+		addResultProperty(buildProperty("startTimeFormatted", 
+			formattedDate));
+		
+		logger.info(LOGTAG + "Set step startTime to " 
+			+ getExecutionStartTime() + 
+			"or: " + formattedDate);
 	}
 	
 	protected long getExecutionStartTime() {
@@ -758,6 +774,20 @@ public abstract class AbstractStep {
 		m_executionTime = System.currentTimeMillis() - m_executionStartTime;
 		logger.info(LOGTAG + "Setting execution time: " + m_executionTime + " = " + System.currentTimeMillis() + " - " + m_executionStartTime);
 		
+		addResultProperty(buildProperty("endTime", 
+				Long.toString(getExecutionTime())));
+			
+		java.util.Date date = new java.util.Date(getExecutionTime());
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+		String formattedDate = format.format(date);
+		
+		addResultProperty(buildProperty("endTimeFormatted", 
+			formattedDate));
+		
+		logger.info(LOGTAG + "Set step endTime to " 
+			+ getExecutionTime() + 
+			"or: " + formattedDate);
 	}
 	
 	protected long getExecutionTime() {	
