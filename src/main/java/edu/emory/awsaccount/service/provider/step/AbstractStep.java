@@ -89,15 +89,17 @@ public abstract class AbstractStep {
 	private VirtualPrivateCloudProvisioning m_vpcp = null;
 	private VirtualPrivateCloudProvisioningProvider m_vpcpp = null;
 	private AppConfig m_appConfig = null;
-	protected String COMPLETED_STATUS = "completed";
-	protected String PENDING_STATUS = "pending";
-	protected String ROLLBACK_STATUS = "rolled back";
-	protected String SUCCESS_RESULT = "success";
-	protected String FAILURE_RESULT = "failure";
-	protected String RUN_EXEC_TYPE = "executed";
-	protected String SIMULATED_EXEC_TYPE = "simulated";
-	protected String SKIPPED_EXEC_TYPE = "skipped";
-	protected String FAILURE_EXEC_TYPE = "failure";
+	protected final String IN_PROGRESS_STATUS = "in progress";
+	protected final String COMPLETED_STATUS = "completed";
+	protected final String PENDING_STATUS = "pending";
+	protected final String ROLLBACK_STATUS = "rolled back";
+	protected final String NO_RESULT = null;
+	protected final String SUCCESS_RESULT = "success";
+	protected final String FAILURE_RESULT = "failure";
+	protected final String RUN_EXEC_TYPE = "executed";
+	protected final String SIMULATED_EXEC_TYPE = "simulated";
+	protected final String SKIPPED_EXEC_TYPE = "skipped";
+	protected final String FAILURE_EXEC_TYPE = "failure";
 	protected String m_stepTag = null;
 	protected long m_executionStartTime = 0;
 	protected long m_executionTime = 0;
@@ -173,12 +175,16 @@ public abstract class AbstractStep {
 	
 	public List<Property> execute() throws StepException {
 		setExecutionStartTime();
+		
+		// Update the step to indicate it is in progress.
+		List<Property> props = new ArrayList<Property>();
+		props.add(buildProperty("startTime", 
+			Long.toString(System.currentTimeMillis())));
+		update(IN_PROGRESS_STATUS, NO_RESULT, props);
+		
 		String LOGTAG = getStepTag() + 
 			"[AbstractStep.execute] ";
 		logger.info(LOGTAG + "Determining execution method.");
-		
-		// There are the return properties.
-		List<Property> props = new ArrayList<Property>();
 		
 		// Determine if the step should be skipped, simulated, or failed.
 		// If skipStep is true, log it skip it and return a property indicating
@@ -719,6 +725,10 @@ public abstract class AbstractStep {
 	
 	protected void setExecutionStartTime() {
 		m_executionStartTime = System.currentTimeMillis();
+	}
+	
+	protected long getExecutionStartTime() {
+		return m_executionStartTime;
 	}
 	
 	protected void setExecutionTime() {
