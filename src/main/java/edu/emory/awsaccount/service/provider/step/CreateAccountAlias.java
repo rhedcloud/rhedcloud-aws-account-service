@@ -42,11 +42,11 @@ import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If this is a new account request, create account metadata
+ * If this is a new account request, create and account alias.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
- * @version 1.0 - 30 August 2018
+ * @version 1.0 - 19 December 2018
  **/
 public class CreateAccountAlias extends AbstractStep implements Step {
 	
@@ -58,7 +58,7 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[CreateAccountMetadata.init] ";
+		String LOGTAG = getStepTag() + "[CreateAccountAlias.init] ";
 		
 		// This step needs to send messages to the AWS account service
 		// to create account metadata.
@@ -221,7 +221,7 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateAccountMetadata.simulate] ";
+			"[CreateAccountAlias.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -242,7 +242,7 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateAccountMetadata.fail] ";
+			"[CreateAccountAlias.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -260,133 +260,13 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 	}
 	
 	public void rollback() throws StepException {
-		
 		super.rollback();
-		
+		String LOGTAG = getStepTag() + 
+				"[CreateAccountAlias.rollback] ";
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[CreateAccountMetadata.rollback] ";
-		logger.info(LOGTAG + "Rollback called, deleting account metadata.");
 		
-		// Get the result props
-		List<Property> props = getResultProperties();
-		
-		// Get the account number
-		String newAccountId = getResultProperty("newAccountId");
-		
-		// If the newAccountId is not null, query for the account object
-		// and then delete it.
-		if (newAccountId != null) {
-		
-			// Query for the account
-			// Get a configured account object and account query spec
-			// from AppConfig.
-			Account account = new Account();
-			AccountQuerySpecification querySpec = new AccountQuerySpecification();
-		    try {
-		    	account = (Account)getAppConfig()
-			    	.getObjectByType(account.getClass().getName());
-		    	querySpec = (AccountQuerySpecification)getAppConfig()
-				    	.getObjectByType(querySpec.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-		    
-		    // Set the values of the query spec
-		    try {
-		    	querySpec.setAccountId(newAccountId);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting a field value. " +
-		    		"The exception is: " + efe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException();
-		    }
-		    
-		    // Get a producer from the pool
- 			RequestService rs = null;
- 			try {
- 				rs = (RequestService)getAwsAccountServiceProducerPool()
- 					.getExclusiveProducer();
- 			}
- 			catch (JMSException jmse) {
- 				String errMsg = "An error occurred getting a producer " +
- 					"from the pool. The exception is: " + jmse.getMessage();
- 				logger.error(LOGTAG + errMsg);
- 				throw new StepException(errMsg, jmse);
- 			}
- 		    
- 			// Query for the account metadata
- 			List results = null;
- 			try { 
- 				long queryStartTime = System.currentTimeMillis();
- 				results = account.query(querySpec, rs);
- 				long createTime = System.currentTimeMillis() - queryStartTime;
- 				logger.info(LOGTAG + "Queried for Account in " + createTime +
- 					" ms. Got " + results.size() + " result(s).");
- 			}
- 			catch (EnterpriseObjectQueryException eoqe) {
- 				String errMsg = "An error occurred querying for the object. " +
- 		    	  "The exception is: " + eoqe.getMessage();
- 		    	logger.error(LOGTAG + errMsg);
- 		    	throw new StepException(errMsg, eoqe);
- 			}
- 			finally {
- 				// Release the producer back to the pool
- 				getAwsAccountServiceProducerPool()
- 					.releaseProducer((MessageProducer)rs);
- 			}
- 			
- 			// If there is a result, delete the account metadata
- 			if (results.size() > 0) {
- 				account = (Account)results.get(0);
- 				
- 				// Get a producer from the pool
- 	 			rs = null;
- 	 			try {
- 	 				rs = (RequestService)getAwsAccountServiceProducerPool()
- 	 					.getExclusiveProducer();
- 	 			}
- 	 			catch (JMSException jmse) {
- 	 				String errMsg = "An error occurred getting a producer " +
- 	 					"from the pool. The exception is: " + jmse.getMessage();
- 	 				logger.error(LOGTAG + errMsg);
- 	 				throw new StepException(errMsg, jmse);
- 	 			}
- 	 		    
- 	 			// Delete the account metadata
- 	 			try { 
- 	 				long deleteStartTime = System.currentTimeMillis();
- 	 				account.delete("Delete", rs);
- 	 				long deleteTime = System.currentTimeMillis() - deleteStartTime;
- 	 				logger.info(LOGTAG + "Deleted Account in " + deleteTime +
- 	 					" ms. Got " + results.size() + " result(s).");
- 	 				addResultProperty("deletedAccountMetadataOnRollback", "true");
- 	 			}
- 	 			catch (EnterpriseObjectDeleteException eode) {
- 	 				String errMsg = "An error occurred deleting the object. " +
- 	 		    	  "The exception is: " + eode.getMessage();
- 	 		    	logger.error(LOGTAG + errMsg);
- 	 		    	throw new StepException(errMsg, eode);
- 	 			}
- 	 			finally {
- 	 				// Release the producer back to the pool
- 	 				getAwsAccountServiceProducerPool()
- 	 					.releaseProducer((MessageProducer)rs);
- 	 			}
- 			}
-		}
-		// If newAccountId is null, there is nothing to roll back.
-		// Log it.
-		else {
-			logger.info(LOGTAG + "No account metadata was created by this " +
-				"step, so there is nothing to roll back.");
-			addResultProperty("deletedAccountMetadataOnRollback", "not applicable");
-		}
-		
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
+			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.

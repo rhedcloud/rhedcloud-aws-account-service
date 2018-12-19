@@ -478,13 +478,15 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 				
 				// Get the outputs and add them as result properties. 
 				List<Output> outputs = stackResult.getOutput();
-				ListIterator li = outputs.listIterator();
-				while (li.hasNext()) {
-					Output o = (Output)li.next();
-					addResultProperty(o.getOutputKey(), o.getOutputValue());
-					logger.info(LOGTAG + "CloudFormation Template Output: " +
-						o.getOutputKey() + "=" + o.getOutputValue());
-				}	
+				if (outputs != null) {
+					ListIterator li = outputs.listIterator();
+					while (li.hasNext()) {
+						Output o = (Output)li.next();
+						addResultProperty(o.getOutputKey(), o.getOutputValue());
+						logger.info(LOGTAG + "CloudFormation Template Output: " +
+							o.getOutputKey() + "=" + o.getOutputValue());
+					}	
+				}
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
