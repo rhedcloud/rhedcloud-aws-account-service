@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Properties;
 
 import javax.jms.JMSException;
 
@@ -51,6 +52,7 @@ import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
 
@@ -94,6 +96,32 @@ implements UserNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, eoce);
 		}
+		
+		// Verify that required e-mail types are set.
+		Properties props = getProperties();
+		String requiredEmailNotificationTypes = 
+			props.getProperty("requiredEmailnotificationTypes");
+		logger.info(LOGTAG + "Required e-mail types are: " + requiredEmailNotificationTypes);
+		if (requiredEmailNotificationTypes == null ||
+			requiredEmailNotificationTypes.equals("")) {
+			String errMsg = "No required e-mail notification types " +
+				"specified. Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		// Set required e-mail Types.
+		List<String> requiredEmailNotificationTypeList = new ArrayList();
+		String[] requiredEmailNotificationTypeArray = 
+			requiredEmailNotificationTypes.split(",");
+		
+		for (int i=0; i < requiredEmailNotificationTypeArray.length; i++) {
+			String type = requiredEmailNotificationTypeArray[i];
+			requiredEmailNotificationTypeList.add(type.trim());
+		}
+		logger.info(LOGTAG + "Required e-mail notification type list " +
+			"has " + requiredEmailNotificationTypeList.size() + " types.");
+		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
 		
 		// This provider needs to send messages to the AWS account service
 		// to create UserNotifications.
@@ -290,17 +318,121 @@ implements UserNotificationProvider {
 		return uNotification;
 	}
 	
-	public void processAdditionalNotifications(UserNotification notification) {
+	public void processAdditionalNotifications(UserNotification notification) 
+		throws ProviderException {
+		
+		String userId = null;
+		if (notification != null) {
+			userId = notification.getUserId();
+		}
+		else {
+			String errMsg = "UserNotification is null. Can't continue.";
+			logger.error(errMsg);
+			throw new ProviderException(errMsg);
+		}
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
 		logger.info(LOGTAG + "Not yet implement. No additional notifications will be sent.");
 		
 		// Get the AccountUser object for the user.
+		// Get a configured AccountUser and query spec from AppConfig
+    	AccountUser accountUser = new AccountUser();
+    	AccountUserQuerySpecification querySpec = new AccountUserQuerySpecification();
+		try {
+			accountUser = (AccountUser)m_appConfig
+					.getObjectByType(accountUser.getClass().getName());
+			querySpec = (AccountUserQuerySpecification)m_appConfig
+				.getObjectByType(querySpec.getClass().getName());
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, ecoe);
+		}
 		
-		// If they have a property called EmailNotifications with a value of
-		// true, send them and e-mail.
+		// Set the values of the querySpec.
+		try {
+			querySpec.setUserId(userId);
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"query specification object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+    	
+    	// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Query for the AccountUsers for this account.
+		List accountUserList = null;
+		try {
+			long startTime = System.currentTimeMillis();
+			accountUserList = accountUser.query(querySpec, rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Queried for AccountUser for UserId " +
+				userId + " in " + time + " ms. Returned " + 
+				accountUserList.size() + " user(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the " +
+					"AccountUser object The exception is: " + 
+					eoqe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg + eoqe);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+    	}
 		
-		// Otherwise log that no additional notification methods were requested.
+		// Get the AccountUser
+		AccountUser notificationAccountUser = null;
+		if (accountUserList.size() == 1) {
+			notificationAccountUser = (AccountUser)accountUserList.get(0);
+		}
+		else {
+			String errMsg = "An unexpected number of AccountUser objects " +
+				"was returned. Expected 1, got " + accountUserList.size();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		// Get the sendUserNotificationEmails property.
+		boolean sendUserNotificationEmails = false;
+		List<Property> props = notificationAccountUser.getProperty();
+		ListIterator propsIterator = props.listIterator();
+		while(propsIterator.hasNext()) {
+			Property prop = (Property)propsIterator.next();
+			if (prop.getKey().equalsIgnoreCase("sendUserNotificationEmails")) {
+				if (prop.getValue().equalsIgnoreCase("true")) {
+					sendUserNotificationEmails = true;
+				}
+			}
+		}
+		
+		// If sendEmail is true, send the user an e-mail notification.
+		// Otherwise, log that no e-mail is required.
+		if (sendEmailNotification(notification, accountUser)) {
+			logger.info(LOGTAG + "sending e-mail for user " +
+				notificationAccountUser.getUserId() + "(" +
+				notificationAccountUser.getFullName() + ")");
+		}
+		else {
+			logger.info(LOGTAG + "Will not send e-mail for user " +
+				notificationAccountUser.getUserId() + "(" +
+				notificationAccountUser.getFullName() + ").");
+		}
 		
 		return;
 	}
@@ -324,6 +456,46 @@ implements UserNotificationProvider {
 	
 	private void setUserIdList (String accountId, List userIdList) {
 		m_userIdLists.put(accountId, userIdList);
+	}
+	
+	private boolean sendEmailNotification(UserNotification notification, AccountUser user) {
+		
+		String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
+		boolean sendEmailNotification = false;
+		
+		// If the notification matches the list of e-mail required types,
+		// return true. Otherwise, determine if the user prefers to 
+		// receive e-mail notifications.
+		if (isEmailRequired(notification)) {
+			return true;
+		}
+		else {
+			// If they have a property called sendUserNotificationEmails with a
+			// value of true, send them an e-mail. Otherwise log that no additional
+			// notification methods were requested.
+			if (sendUserNotificationEmails) {
+				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
+						"true for user " + notificationAccountUser.getUserId() + "(" +
+						notificationAccountUser.getFullName() + "). Sending e-mail.");
+			}
+			else {
+				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
+					"false for user " + notificationAccountUser.getUserId() + "(" +
+					notificationAccountUser.getFullName() + "). Will not send " +
+					"e-mail.");
+			}
+		}
+		return sendEmailNotification;	
+	}
+	
+	private boolean isEmailRequired(UserNotification notification) {
+		
+		boolean isEmailRequired = false;
+		
+		// Build the list of override types from properties.
+		
+		
+		
 	}
 
 }
