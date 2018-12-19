@@ -296,6 +296,9 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
+		// Update the step, so the parameters are visible for execution.
+		update(IN_PROGRESS_STATUS, NO_RESULT, props);
+		
 		// Get the VPCP requisition.
 		VirtualPrivateCloudRequisition vpcpr =
 			getVirtualPrivateCloudProvisioning()
