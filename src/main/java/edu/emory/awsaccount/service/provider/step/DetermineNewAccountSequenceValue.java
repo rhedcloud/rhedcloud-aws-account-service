@@ -48,7 +48,6 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		String LOGTAG = getStepTag() + "[DetermineNewAccountSequence.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		ArrayList<Property> props = new ArrayList<Property>();
 		String accountSequenceNumber = null;
 		
 		// Get the allocateNewAccount property from the
@@ -109,24 +108,24 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		}
 		
 		// Set return properties.
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		if (accountSequenceNumber != null) {
-			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
+			addResultProperty("accountSequenceNumber", accountSequenceNumber);
 		}
 		else {
-			props.add(buildProperty("accountSequenceNumber", "not incremented"));
+			addResultProperty("accountSequenceNumber", "not incremented");
 		}
-		props.add(buildProperty("allocateNewAccount", 
-				Boolean.toString(allocateNewAccount)));
+		addResultProperty("allocateNewAccount", 
+				Boolean.toString(allocateNewAccount));
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -137,19 +136,18 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -159,18 +157,17 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -182,7 +179,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 			"[DetermineNewAccountSequence.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

@@ -89,8 +89,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		boolean isValid = false;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -101,7 +100,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
 			String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
 				"step is: " + allocateNewAccount);
 		}
@@ -121,7 +120,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		if (step2 != null) {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
 			accountSequenceNumber = getResultProperty(step2, "accountSequenceNumber");
-			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
+			addResultProperty("accountSequenceNumber", accountSequenceNumber);
 			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
 				"step is: " + accountSequenceNumber);
 			setAccountSequenceNumber(accountSequenceNumber);
@@ -162,9 +161,9 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		    // Build the account e-mail address to validate.
  			String accountEmailAddress = getAccountEmailAddress();
  			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
- 			props.add(buildProperty("accountEmailAddress", accountEmailAddress));
- 			props.add(buildProperty("accountSeriesPrefix", getAccountSeriesPrefix()));
- 			props.add(buildProperty("accountAlias", getAccountAlias()));
+ 			addResultProperty("accountEmailAddress", accountEmailAddress);
+ 			addResultProperty("accountSeriesPrefix", getAccountSeriesPrefix());
+ 			addResultProperty("accountAlias", getAccountAlias());
 		    
 		    // Set the values of the query spec.
 		    try {
@@ -231,11 +230,11 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 				if (statusCode.equalsIgnoreCase("0")) {
 					isValid = true;
 					logger.info(LOGTAG + "isValid is true");
-					props.add(buildProperty("isValid", Boolean.toString(isValid)));
+					addResultProperty("isValid", Boolean.toString(isValid));
 				}
 				else {
 					logger.info(LOGTAG + "isValid is false");
-					props.add(buildProperty("isValid", Boolean.toString(isValid)));
+					addResultProperty("isValid", Boolean.toString(isValid));
 				}
 			}
 			else {
@@ -252,9 +251,11 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to verify a new account distro list.");
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
-			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
-			props.add(buildProperty("isValid", "not applicable"));
+			addResultProperty("allocateNewAccount", 
+				Boolean.toString(allocateNewAccount));
+			addResultProperty("accountSequenceNumber", 
+				accountSequenceNumber);
+			addResultProperty("isValid", "not applicable");
 		}
 		
 		// Update the step.
@@ -267,14 +268,14 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, stepResult, props);
+		update(COMPLETED_STATUS, stepResult);
 		
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -285,19 +286,18 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -307,18 +307,18 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+    	logger.info(LOGTAG + "Step failure simulation completed in "
+    		+ time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -330,7 +330,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			"[VerifyNewAccountAdminDistroList.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

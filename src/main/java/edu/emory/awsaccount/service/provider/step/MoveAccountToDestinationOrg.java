@@ -31,17 +31,20 @@ import com.amazonaws.services.organizations.model.MoveAccountResult;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If a new account was just created, place it in the admin organization.
+ * If the account is a standard account, pleace it in the standard
+ * OU, if it is a HIPAA account place it in the HIPAA OU.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
- * @version 1.0 - 30 August 2018
+ * @version 1.0 - 19 December 2018
  **/
-public class MoveAccountToAdminOrg extends AbstractStep implements Step {
+public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 	
 	private String m_accessKey = null;
 	private String m_secretKey = null;
 	private String m_sourceParentId = null;
+	private String m_standardDestinationParentId = null;
+	private String m_hipaaDestinationParentId = null;
 	private String m_destinationParentId = null;
 	
 	private AWSOrganizationsClient m_awsOrganizationsClient = null;
@@ -52,7 +55,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[MoveAccountToAdminOrg.init] ";
+		String LOGTAG = getStepTag() + "[MoveAccountToDestinationOrg.init] ";
 		
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
@@ -69,11 +72,14 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		setSourceParentId(sourceParentId);
 		logger.info(LOGTAG + "sourceParentId is: " + getSourceParentId());
 		
-		String destinationParentId = getProperties().getProperty("destinationParentId", null);
-		setDestinationParentId(destinationParentId);
-		logger.info(LOGTAG + "destinationParentId is: " + getDestinationParentId());
-	
+		String standardDestinationParentId = getProperties().getProperty("standardDestinationParentId", null);
+		setStandardDestinationParentId(standardDestinationParentId);
+		logger.info(LOGTAG + "standardDestinationParentId is: " + getStandardDestinationParentId());
 		
+		String hipaaDestinationParentId = getProperties().getProperty("hipaaDestinationParentId", null);
+		setHipaaDestinationParentId(hipaaDestinationParentId);
+		logger.info(LOGTAG + "hipaaDestinationParentId is: " + getHipaaDestinationParentId());
+
 		// Set the AWS account credentials
 		BasicAWSCredentials creds = new BasicAWSCredentials(accessKey, 
 			secretKey);
@@ -101,7 +107,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[MoveAccountToAdminOrg.run] ";
+		String LOGTAG = getStepTag() + "[MoveAccountToDestinationOrg.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean accountMoved = false;
@@ -134,8 +140,24 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
+		// Determine the compliance class of the account.
+		String complianceClass = getVirtualPrivateCloudProvisioning()
+				.getVirtualPrivateCloudRequisition().getComplianceClass();
+		if (complianceClass.equalsIgnoreCase("HIPAA")) {
+			setDestinationParentId(getHipaaDestinationParentId());
+		}
+		else {
+			setDestinationParentId(getStandardDestinationParentId());
+		}
+		
+		logger.info(LOGTAG + "This account has a compliance class of " +
+			complianceClass + ". Setting destinationParentId to: " +
+			getDestinationParentId());
+		addResultProperty("complianceClass", complianceClass);
+		addResultProperty("destinationParentId", getDestinationParentId());
+		
 		// If allocatedNewAccount is true and the newAccountId is not null,
-		// move the account to the admin organizational unit.
+		// move the account to the destination organizational unit.
 		if (allocatedNewAccount == true && newAccountId != null) {
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
 				"is " + newAccountId + ". Moving the account to the admin org unit.");
@@ -182,7 +204,8 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to move an account.");
-			addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
+			addResultProperty("allocatedNewAccount", 
+				Boolean.toString(allocatedNewAccount));
 			addResultProperty("newAccountId", "not applicable");
 		}
 		
@@ -215,13 +238,15 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+    	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+    	logger.info(LOGTAG + "Step simulation completed in " 
+    		+ time + "ms.");
     	
     	// Return the properties.
     	return getResultProperties();
@@ -241,7 +266,8 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+    	logger.info(LOGTAG + "Step failure simulation completed in "
+    		+ time + "ms.");
     	
     	// Return the properties.
     	return getResultProperties();
@@ -402,16 +428,42 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 	private void setDestinationParentId (String id) throws 
 		StepException {
 	
-		if (id == null) {
-			String errMsg = "destinationParentId property is null. " +
-				"Can't continue.";
-			throw new StepException(errMsg);
-		}
-	
 		m_destinationParentId = id;
 	}
 
 	private String getDestinationParentId() {
 		return m_destinationParentId;
+	}
+	
+	private void setStandardDestinationParentId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "standardDestinationParentId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_standardDestinationParentId = id;
+	}
+
+	private String getStandardDestinationParentId() {
+		return m_standardDestinationParentId;
+	}
+	
+	private void setHipaaDestinationParentId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "hipaaDestinationParentId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_hipaaDestinationParentId = id;
+	}
+	
+	private String getHipaaDestinationParentId() {
+		return m_hipaaDestinationParentId;
 	}
 }

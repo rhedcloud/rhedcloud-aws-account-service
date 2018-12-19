@@ -93,8 +93,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		boolean accountMetadataCreated = false;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the allocatedNewAccount property from the
 		// GENERATE_NEW_ACCOUNT step.
@@ -108,19 +107,19 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
 			String sAllocatedNewAccount = getResultProperty(step1, "allocatedNewAccount");
 			allocatedNewAccount = Boolean.parseBoolean(sAllocatedNewAccount);
-			props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
+			addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
 			logger.info(LOGTAG + "Property allocatedNewAccount from preceding " +
 				"step is: " + allocatedNewAccount);
 			newAccountId = getResultProperty(step1, "newAccountId");
-			props.add(buildProperty("newAccountId", newAccountId));
+			addResultProperty("newAccountId", newAccountId);
 			logger.info(LOGTAG + "Property newAccountId from preceding " +
 				"step is: " + newAccountId);
 			newAccountName = getResultProperty(step1, "newAccountName");
-			props.add(buildProperty("newAccountName", newAccountName));
+			addResultProperty("newAccountName", newAccountName);
 			logger.info(LOGTAG + "Property newAccountName from preceding " +
 				"step is: " + newAccountName);
 			accountEmailAddress = getResultProperty(step1, "accountEmailAddress");
-			props.add(buildProperty("accountEmailAddress", accountEmailAddress));
+			addResultProperty("accountEmailAddress", accountEmailAddress);
 			logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
 				"step is: " + accountEmailAddress);
 			
@@ -218,10 +217,10 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 				logger.info(LOGTAG + "Create Account in " + createTime +
 					" ms.");
 				accountMetadataCreated = true;
-				props.add(buildProperty("allocatedNewAccount", 
-					Boolean.toString(allocatedNewAccount)));
-				props.add(buildProperty("createdAccountMetadata", 
-					Boolean.toString(accountMetadataCreated)));
+				addResultProperty("allocatedNewAccount", 
+					Boolean.toString(allocatedNewAccount));
+				addResultProperty("createdAccountMetadata", 
+					Boolean.toString(accountMetadataCreated));
 			}
 			catch (EnterpriseObjectCreateException eoce) {
 				String errMsg = "An error occurred creating the object. " +
@@ -240,10 +239,10 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocatedNewAccount is false. " +
 				"no need to create account metadata.");
-			props.add(buildProperty("allocatedNewAccount", 
-				Boolean.toString(allocatedNewAccount)));
-			props.add(buildProperty("createdAccountMetadata", 
-				"not applicable"));
+			addResultProperty("allocatedNewAccount", 
+				Boolean.toString(allocatedNewAccount));
+			addResultProperty("createdAccountMetadata", 
+				"not applicable");
 		}
 		
 		// Update the step result.
@@ -256,14 +255,14 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, stepResult, props);
+		update(COMPLETED_STATUS, stepResult);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -274,19 +273,18 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -296,18 +294,17 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -415,7 +412,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
  	 				long deleteTime = System.currentTimeMillis() - deleteStartTime;
  	 				logger.info(LOGTAG + "Deleted Account in " + deleteTime +
  	 					" ms. Got " + results.size() + " result(s).");
- 	 				props.add(buildProperty("deletedAccountMetadataOnRollback", "true"));
+ 	 				addResultProperty("deletedAccountMetadataOnRollback", "true");
  	 			}
  	 			catch (EnterpriseObjectDeleteException eode) {
  	 				String errMsg = "An error occurred deleting the object. " +
@@ -435,10 +432,10 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "No account metadata was created by this " +
 				"step, so there is nothing to roll back.");
-			props.add(buildProperty("deletedAccountMetadataOnRollback", "not applicable"));
+			addResultProperty("deletedAccountMetadataOnRollback", "not applicable");
 		}
 		
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

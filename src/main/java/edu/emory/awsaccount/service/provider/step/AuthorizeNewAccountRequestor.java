@@ -82,7 +82,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		
 		// Return properties
 		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -93,7 +93,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
 			String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
 				"step is: " + allocateNewAccount);
 		}
@@ -137,7 +137,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		    // Get the UserId of the account requestor.
 		    String requestorUserId = getVirtualPrivateCloudProvisioning()
 		    	.getVirtualPrivateCloudRequisition().getAuthenticatedRequestorUserId();
-		    props.add(buildProperty("requestorUserId", requestorUserId));
+		    addResultProperty("requestorUserId", requestorUserId);
 		    
 		    // Set the values of the query spec.
 		    try {
@@ -204,11 +204,11 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 				if (sIsAuthorized.equalsIgnoreCase("true")) {
 					isAuthorized = true;
 					logger.info(LOGTAG + "isAuthorized is true");
-					props.add(buildProperty("isAuthorized", Boolean.toString(isAuthorized)));
+					addResultProperty("isAuthorized", Boolean.toString(isAuthorized));
 				}
 				else {
 					logger.info(LOGTAG + "isAuthorized is false");
-					props.add(buildProperty("isAuthorized", Boolean.toString(isAuthorized)));
+					addResultProperty("isAuthorized", Boolean.toString(isAuthorized));
 				}
 			}
 			else {
@@ -224,15 +224,15 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to authorize the user to create a new account.");
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
-			props.add(buildProperty("isAuthorized", "not applicable"));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
+			addResultProperty("isAuthorized", "not applicable");
 		}
 		
 		// Update the step.
 		if (allocateNewAccount == false || isAuthorized == true) {
-			update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
 		}
-		else update(COMPLETED_STATUS, FAILURE_RESULT, props);
+		else update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
@@ -250,19 +250,18 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -272,18 +271,17 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -295,7 +293,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 			"[AuthorizeNewAccountRequestor.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;

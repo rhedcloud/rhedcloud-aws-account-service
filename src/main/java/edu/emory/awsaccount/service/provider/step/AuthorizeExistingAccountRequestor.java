@@ -101,8 +101,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean isAuthorized = false;
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -123,7 +122,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 					.getVirtualPrivateCloudRequisition()
 					.getAuthenticatedRequestorUserId();
 			logger.info(LOGTAG + "requestorUserId is: " + requestorUserId);
-			props.add(buildProperty("requestorUserId", requestorUserId));
+			addResultProperty("requestorUserId", requestorUserId);
 			List roleAssignments = roleAssignmentQuery(requestorUserId);
 			
 			// Get the the AccountId
@@ -131,17 +130,17 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 					.getVirtualPrivateCloudRequisition()
 					.getAccountId();
 			logger.info(LOGTAG + "accountId is: " + accountId);
-			props.add(buildProperty("accountId", accountId));
+			addResultProperty("accountId", accountId);
 			
 			// Build the administrator role dn
 			String adminRoleDn = getAdminRoleDn(accountId);
 			logger.info(LOGTAG + "adminRoleDn is: " + adminRoleDn);
-			props.add(buildProperty("adminRoleDn", adminRoleDn));
+			addResultProperty("adminRoleDn", adminRoleDn);
 			
 			// Determine if the user is in the admin role
 			boolean isInAdminRole = isUserInRole(adminRoleDn, roleAssignments);
-			props.add(buildProperty("isInAdminRole", 
-					Boolean.toString(isInAdminRole)));
+			addResultProperty("isInAdminRole", 
+					Boolean.toString(isInAdminRole));
 			if (isInAdminRole == true) {
 				logger.info(LOGTAG + "User is in the admin role.");
 			}
@@ -152,13 +151,13 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			// Build the administrator role dn
 			String centralAdminRoleDn = getCentralAdminRoleDn(accountId);
 			logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
-			props.add(buildProperty("centralAdminRoleDn", centralAdminRoleDn));
+			addResultProperty("centralAdminRoleDn", centralAdminRoleDn);
 			
 			// Determine if the user is in the central admin role
 			boolean isInCentralAdminRole = isUserInRole(centralAdminRoleDn, 
 				roleAssignments);
-			props.add(buildProperty("isInCentralAdminRole", 
-					Boolean.toString(isInCentralAdminRole)));
+			addResultProperty("isInCentralAdminRole", 
+					Boolean.toString(isInCentralAdminRole));
 			if (isInCentralAdminRole == true) {
 				logger.info(LOGTAG + "User is in the central admin role.");
 			}
@@ -169,8 +168,8 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			if (isInAdminRole == true || isInCentralAdminRole) {
 				isAuthorized = true;
 			}
-			props.add(buildProperty("isAuthorized", 
-					Boolean.toString(isAuthorized)));	
+			addResultProperty("isAuthorized", 
+					Boolean.toString(isAuthorized));	
 		}
 		// If allocateNewAccount is true, there is nothing to do.
 		// update the properties and complete the step.
@@ -179,8 +178,8 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 				"A new account will be created, so there is no " +
 				"need to authorize the requestor for an existing " +
 				"account");
-			props.add(buildProperty("allocateNewAccount", "true"));
-			props.add(buildProperty("isAuthorized", "not applicable"));
+			addResultProperty("allocateNewAccount", "true");
+			addResultProperty("isAuthorized", "not applicable");
 		}
 		
 		// Determine the step result
@@ -202,14 +201,14 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		}
     	
 		// Update the step
-		update(COMPLETED_STATUS, stepResult, props);
+		update(COMPLETED_STATUS, stepResult);
 		
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> simulate() throws StepException {
@@ -218,19 +217,18 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
-    	Property prop = buildProperty("accountSequenceNumber", "10000");
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+    	Property prop = buildProperty("isAuthorized", "true");
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -239,18 +237,17 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -261,7 +258,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
@@ -269,18 +266,18 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 	}
 	
 	private void setUserDnTemplate(String template) 
-			throws StepException {
-			
-			String LOGTAG = getStepTag() + 
-				"[AuthorizeExistingAccountRequestor.setUserDnTemplate] ";
-			
-			if (template == null) {
-				String errMsg = "userDnTemplate property is null. " +
-					"Can't authorize existing account requestors.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
-			}
-			m_userDnTemplate = template;
+		throws StepException {
+		
+		String LOGTAG = getStepTag() + 
+			"[AuthorizeExistingAccountRequestor.setUserDnTemplate] ";
+		
+		if (template == null) {
+			String errMsg = "userDnTemplate property is null. " +
+				"Can't authorize existing account requestors.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		m_userDnTemplate = template;
 	}
 		
 	private String getUserDnTemplate() {

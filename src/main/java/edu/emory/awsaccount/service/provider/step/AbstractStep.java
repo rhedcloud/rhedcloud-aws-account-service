@@ -177,10 +177,9 @@ public abstract class AbstractStep {
 		setExecutionStartTime();
 		
 		// Update the step to indicate it is in progress.
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("startTime", 
+		addResultProperty(buildProperty("startTime", 
 			Long.toString(System.currentTimeMillis())));
-		update(IN_PROGRESS_STATUS, NO_RESULT, props);
+		update(IN_PROGRESS_STATUS, NO_RESULT);
 		
 		String LOGTAG = getStepTag() + 
 			"[AbstractStep.execute] ";
@@ -191,15 +190,15 @@ public abstract class AbstractStep {
 		// that the step was skipped.
 		if (getSkipStep()) {
 			logger.info(LOGTAG + "skipStep is true, skipping this step.");
-			props.add(buildProperty("stepExecutionMethod", "skipped"));
+			addResultProperty(buildProperty("stepExecutionMethod", "skipped"));
 			setExecutionTime();
-			return props;
+			return getResultProperties();
 		}
 		
 		// If simulateStep is true, log it and call the simulate method.
 		if (getSimulateStep()) {
 			logger.info(LOGTAG + "simulateStep is true, simulating this step.");
-			props = simulate();
+			List<Property> props = simulate();
 			setExecutionTime();
 			return props;
 		}
@@ -207,7 +206,7 @@ public abstract class AbstractStep {
 		// If failStep is true, log it and call the fail method.
 		if (getFailStep()) {
 			logger.info(LOGTAG + "failStep is true, failing this step.");
-			props = fail();
+			List<Property> props = fail();
 			setExecutionTime();
 			return props;
 		}
@@ -215,7 +214,7 @@ public abstract class AbstractStep {
 		// Otherwise run the step logic.
 		else {
 			logger.info(LOGTAG + "Running the step.");
-			props = run();
+			List<Property> props = run();
 			setExecutionTime();
 			return props;
 		}
@@ -690,8 +689,32 @@ public abstract class AbstractStep {
 		m_resultProperties = resultProps;
 	}
 	
-	protected void addResultProperty(Property prop) {
+	private void addResultProperty(Property prop) {
 		m_resultProperties.add(prop);
+	}
+	
+	protected void addResultProperty(String key, String value) {
+		
+		if (getResultProperties() == null) {
+			List<Property> resultProperties = new ArrayList<Property>();
+			setResultProperties(resultProperties);
+		}
+		
+		Property newProp = buildProperty(key, value);
+		
+		// If the list already contains a Property
+		// with this key value, remove it.
+		List<Property> properties = getResultProperties();
+		ListIterator li = properties.listIterator();
+		while (li.hasNext()) {
+			Property oldProp = (Property)li.next();
+			if (oldProp.getKey().equalsIgnoreCase(key)) {
+				properties.remove(oldProp);
+			}
+		}
+		
+		// Add the new property
+		properties.add(newProp);
 	}
 	
 	public List<Property> getResultProperties() {
@@ -742,24 +765,22 @@ public abstract class AbstractStep {
 		return m_executionTime;
 	}
 	
-	public void update(String status, String result,
-		List props) throws StepException {
+	public void update(String status, String result) throws StepException {
 		
 		// Update the baseline state of the VPCP
 		queryForVpcpBaseline();
 		
-		// If the current status is pending, update the 
+		// If the current status is in progress, update the 
 		// execution time. Note that we don't want to
 		// update the execution on update for steps that
 		// have already completed or are in any other status
-		// that pending.
-		if (getStatus().equalsIgnoreCase(PENDING_STATUS)) {
+		// that in progress.
+		if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS)) {
 			setExecutionTime();
 		}
 		// Update the fields of this step.
 		setStatus(status);
 		setResult(result);
-		setResultProperties(props);
 		
 		// Get the corresponding provisioning step.
 		ProvisioningStep pStep = getProvisioningStepById(getStepId());

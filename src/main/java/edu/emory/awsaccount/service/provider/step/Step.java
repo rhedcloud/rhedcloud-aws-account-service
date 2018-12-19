@@ -87,6 +87,6 @@ public interface Step {
      * @return String, the step result
      * @throws StepException 
      */
-    public void update(String status, String result, List props) 
+    public void update(String status, String result) 
     	throws StepException;
 }

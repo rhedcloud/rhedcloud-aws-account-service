@@ -142,9 +142,8 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		String newAccountId = null;
 		
 		// Return properties
-		List<Property> props = new ArrayList<Property>();
-		props.add(buildProperty("stepExecutionMethod", RUN_EXEC_TYPE));
-		props.add(buildProperty("accountSeriesName", getAccountSeriesName()));
+		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+		addResultProperty("accountSeriesName", getAccountSeriesName());
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -155,7 +154,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
 			String sAllocateNewAccount = getResultProperty(step1, "allocateNewAccount");
 			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-			props.add(buildProperty("allocateNewAccount", Boolean.toString(allocateNewAccount)));
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
 				"step is: " + allocateNewAccount);
 		}
@@ -174,7 +173,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		if (step2 != null) {
 			logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
 			accountSequenceNumber = getResultProperty(step2, "accountSequenceNumber");
-			props.add(buildProperty("accountSequenceNumber", accountSequenceNumber));
+			addResultProperty("accountSequenceNumber", accountSequenceNumber);
 			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
 				"step is: " + accountSequenceNumber);
 		}
@@ -193,7 +192,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		if (step3 != null) {
 			logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
 			accountEmailAddress = getResultProperty(step3, "accountEmailAddress");
-			props.add(buildProperty("accountEmailAddress", accountEmailAddress));
+			addResultProperty("accountEmailAddress", accountEmailAddress);
 			logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
 				"step is: " + accountEmailAddress);
 		}
@@ -213,7 +212,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			// Build account name
 			String newAccountName = getAccountSeriesName() + " " + 
 				accountSequenceNumber;
-			props.add(buildProperty("newAccountName", newAccountName));
+			addResultProperty("newAccountName", newAccountName);
 			
 			// Build the request.
 			CreateAccountRequest request = new CreateAccountRequest();
@@ -274,16 +273,16 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 				allocatedNewAccount = true;
 				newAccountId = casResult.getCreateAccountStatus().getAccountId();
 				logger.info(LOGTAG + "Successfully created new account: " + newAccountId);
-				props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
-				props.add(buildProperty("newAccountId", newAccountId));	
+				addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
+				addResultProperty("newAccountId", newAccountId);	
 			}
 			else {
 				allocatedNewAccount = false;
 				String failureReason = casResult.getCreateAccountStatus().getFailureReason();
 				if (failureReason == null) failureReason = "none returned";
 				logger.info(LOGTAG + "Failed to create new account. Failure reason: " + failureReason);
-				props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
-				props.add(buildProperty("failureReason", failureReason));	
+				addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
+				addResultProperty("failureReason", failureReason);	
 			}
 		}
 				
@@ -292,8 +291,8 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to create a new account.");
-			props.add(buildProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount)));
-			props.add(buildProperty("newAccountId", "not applicable"));
+			addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
+			addResultProperty("newAccountId", "not applicable");
 		}
 		
 		// Update the step.
@@ -306,14 +305,14 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, stepResult, props);
+		update(COMPLETED_STATUS, stepResult);
 		
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
     	
 	}
 	
@@ -324,19 +323,17 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE));
-    	Property prop = buildProperty("accountSequenceNumber", "10000");
+    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT, props);
+    	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	protected List<Property> fail() throws StepException {
@@ -346,18 +343,17 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	props.add(buildProperty("stepExecutionMethod", FAILURE_EXEC_TYPE));
+    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT, props);
+    	update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
     	
     	// Return the properties.
-    	return props;
+    	return getResultProperties();
 	}
 	
 	public void rollback() throws StepException {
@@ -436,10 +432,10 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 				throw new StepException(errMsg, e);
 			}
 			
-			props.add(buildProperty("orgRootId", getOrgRootId()));	
-			props.add(buildProperty("getPendingDeleteOuId", getPendingDeleteOuId()));
-			props.add(buildProperty("movedAccountToPendingDeleteOu", 
-				Boolean.toString(movedAccountToPendingDeleteOu)));
+			addResultProperty("orgRootId", getOrgRootId());	
+			addResultProperty("getPendingDeleteOuId", getPendingDeleteOuId());
+			addResultProperty("movedAccountToPendingDeleteOu", 
+				Boolean.toString(movedAccountToPendingDeleteOu));
 			
 		}
 		// If createdNewAccount or isAccountInOrgRoot is false, there is 
@@ -447,11 +443,11 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "No account was created or it is no longer " +
 				"in the organization root, so there is nothing to roll back.");
-			props.add(buildProperty("movedAccountToPendingDeleteOu", 
-				"not applicable"));
+			addResultProperty("movedAccountToPendingDeleteOu", 
+				"not applicable");
 		}
 		
-		update(ROLLBACK_STATUS, SUCCESS_RESULT, getResultProperties());
+		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
