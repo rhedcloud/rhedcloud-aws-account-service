@@ -908,4 +908,29 @@ public abstract class AbstractStep {
 		
 		setVirtualPrivateCloudProvisioning(vpcp);
 	}
+	
+	protected String getStepPropertyValue(String stepType, String key) 
+		throws StepException {
+		String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
+		
+		// Get the property value with the named step and key.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		ProvisioningStep step = getProvisioningStepByType(stepType);
+		String value = null;
+		if (step != null) {
+			logger.info(LOGTAG + "Step " + stepType + " found.");
+			value = getResultProperty(step, key);
+			addResultProperty(key, value);
+			logger.info(LOGTAG + "Property " + " key from preceding " +
+				"step " + stepType  + "is: " + value);	
+		}
+		else {
+			String errMsg = "Step " + stepType + " not found. " +
+				"Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
+		return value;
+	}
 }
