@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URL;
 // Java utilities
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -401,6 +402,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 			}
 			
+			// Return the results
 			return results;
 	}
 	
@@ -1276,7 +1278,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						logger.error(LOGTAG + errMsg);
 						try {
 							logger.info(LOGTAG + "Setting completed status and failure result...");
-							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}
 						catch (StepException se2) {
@@ -1296,7 +1298,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						logger.error(LOGTAG + errMsg);
 						try {
 							logger.info(LOGTAG + "Setting completed status and failure result...");
-							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}
 						catch (StepException se2) {
@@ -1316,7 +1318,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						logger.error(LOGTAG + errMsg);
 						try {
 							logger.info(LOGTAG + "Setting completed status and failure result...");
-							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}
 						catch (StepException se2) {
@@ -1336,7 +1338,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						logger.error(LOGTAG + errMsg);
 						try {
 							logger.info(LOGTAG + "Setting completed status and failure result...");
-							step.update(COMPLETED_STATUS, FAILURE_RESULT, step.getResultProperties());
+							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}
 						catch (StepException se2) {
@@ -1382,7 +1384,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						logger.error(LOGTAG + errMsg);
 						try {
 							logger.info(LOGTAG + "Setting completed status and failure result...");
-							step.update(COMPLETED_STATUS, FAILURE_RESULT, resultProps);
+							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}
 						catch (StepException se2) {
@@ -1419,7 +1421,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 				getVirtualPrivateCloudProvisioning().setActualTime(Long.toString(executionTime));
 			}
 			catch (EnterpriseFieldException efe) {
-				String errMsg = "An error setting field values on the " +
+				String errMsg = "An error occurred setting field values on the " +
 			    	  "VPCP object. The exception is: " + efe.getMessage();
 			    logger.error(LOGTAG + errMsg);
 			}

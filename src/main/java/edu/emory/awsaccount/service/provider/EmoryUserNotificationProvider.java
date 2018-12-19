@@ -121,7 +121,7 @@ implements UserNotificationProvider {
 		}
 		logger.info(LOGTAG + "Required e-mail notification type list " +
 			"has " + requiredEmailNotificationTypeList.size() + " types.");
-		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
+//		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
 		
 		// This provider needs to send messages to the AWS account service
 		// to create UserNotifications.
@@ -462,7 +462,7 @@ implements UserNotificationProvider {
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
 		boolean sendEmailNotification = false;
-		
+/**		
 		// If the notification matches the list of e-mail required types,
 		// return true. Otherwise, determine if the user prefers to 
 		// receive e-mail notifications.
@@ -485,6 +485,7 @@ implements UserNotificationProvider {
 					"e-mail.");
 			}
 		}
+**/
 		return sendEmailNotification;	
 	}
 	
@@ -494,7 +495,7 @@ implements UserNotificationProvider {
 		
 		// Build the list of override types from properties.
 		
-		
+		return isEmailRequired;
 		
 	}
 
