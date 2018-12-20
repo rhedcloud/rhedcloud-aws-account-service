@@ -704,18 +704,27 @@ public abstract class AbstractStep {
 		Property newProp = buildProperty(key, value);
 		
 		// If the list already contains a Property
-		// with this key value, remove it.
+		// with this key value, update its value.
+		boolean replacedValue = false;
 		List<Property> properties = getResultProperties();
 		ListIterator li = properties.listIterator();
 		while (li.hasNext()) {
 			Property oldProp = (Property)li.next();
 			if (oldProp.getKey().equalsIgnoreCase(key)) {
-				properties.remove(oldProp);
+				try {
+					oldProp.setValue(value);
+				}
+				catch (EnterpriseFieldException efe) {
+					
+				}
+				replacedValue = true;
 			}
 		}
+		// Otherwise, add the new property.
+		if (replacedValue = false) {
+			properties.add(newProp);
+		}
 		
-		// Add the new property
-		properties.add(newProp);
 	}
 	
 	public List<Property> getResultProperties() {
@@ -771,13 +780,14 @@ public abstract class AbstractStep {
 	}
 	
 	protected void setExecutionTime() {
-		m_executionTime = System.currentTimeMillis() - m_executionStartTime;
+		Long executionEndTime = System.currentTimeMillis();
+		m_executionTime = executionEndTime - m_executionStartTime;
 		logger.info(LOGTAG + "Setting execution time: " + m_executionTime + " = " + System.currentTimeMillis() + " - " + m_executionStartTime);
 		
 		addResultProperty(buildProperty("endTime", 
-				Long.toString(getExecutionTime())));
+				Long.toString(executionEndTime)));
 			
-		java.util.Date date = new java.util.Date(getExecutionTime());
+		java.util.Date date = new java.util.Date(executionEndTime);
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
 		String formattedDate = format.format(date);
@@ -786,8 +796,7 @@ public abstract class AbstractStep {
 			formattedDate));
 		
 		logger.info(LOGTAG + "Set step endTime to " 
-			+ getExecutionTime() + 
-			"or: " + formattedDate);
+			+ getExecutionTime() + "or: " + formattedDate);
 	}
 	
 	protected long getExecutionTime() {	
