@@ -728,7 +728,7 @@ public abstract class AbstractStep {
 			if (oldProp.getKey().equalsIgnoreCase(key)) {
 				try {
 					oldProp.setValue(value);
-					logger.info(LOGTAG + "Found an existing property with " +
+					logger.debug(LOGTAG + "Found an existing property with " +
 						"key " + key + ". Replaced its value with: " + value);
 				}
 				catch (EnterpriseFieldException efe) {
@@ -740,7 +740,7 @@ public abstract class AbstractStep {
 		// Otherwise, add the new property.
 		if (replacedValue == false) {
 			properties.add(newProp);
-			logger.info(LOGTAG + "No existing property with " +
+			logger.debug(LOGTAG + "No existing property with " +
 				"key " + key + ". Added property with value: " +
 				value);
 		}
@@ -850,7 +850,7 @@ public abstract class AbstractStep {
 		// that in progress.
 		if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS)) {
 			
-			setExecutionTime();
+//			setExecutionTime();
 		}
 		
 		// If the status is changing from in progress to anything else,
@@ -858,6 +858,7 @@ public abstract class AbstractStep {
 		if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS) == true &&
 			status.equalsIgnoreCase(IN_PROGRESS_STATUS) == false) {
 			
+			setExecutionTime();
 			setEndTime();
 		}
 		
@@ -968,14 +969,13 @@ public abstract class AbstractStep {
 		String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 		
 		// Get the property value with the named step and key.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		logger.info(LOGTAG + "Getting propertyfrom preceding step...");
 		ProvisioningStep step = getProvisioningStepByType(stepType);
 		String value = null;
 		if (step != null) {
-			logger.info(LOGTAG + "Step " + stepType + " found.");
 			value = getResultProperty(step, key);
 			addResultProperty(key, value);
-			logger.info(LOGTAG + "Property " + " key from preceding " +
+			logger.info(LOGTAG + "Property " + key + " from preceding " +
 				"step " + stepType  + "is: " + value);	
 		}
 		else {

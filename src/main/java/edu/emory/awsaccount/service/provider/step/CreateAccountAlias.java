@@ -100,6 +100,8 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 			getStepPropertyValue("VERIFY_REMAINING_DISTRO_LISTS", "accountAlias");
 		
 		boolean allocatedNewAccount = Boolean.getBoolean(allocateNewAccount);
+		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
+		logger.info(LOGTAG + "newAccountId: " + newAccountId);
 		
 		// If allocatedNewAccount is true and newAccountId is not null, 
 		// Send an AccountAlias.Create-Request to the AWS Account service.
