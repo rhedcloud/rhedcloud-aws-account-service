@@ -107,7 +107,7 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 				getStepPropertyValue("CREATE_RS_ACCOUNT_CFN_STACK", "RHEDcloudIdp");
 		String samlMetadataDocument = getSamlMetadataDocument(samlIssuerUrl);
 		
-		boolean allocatedNewAccount = Boolean.getBoolean(allocateNewAccount);
+		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
 		

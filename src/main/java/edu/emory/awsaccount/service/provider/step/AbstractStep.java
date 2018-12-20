@@ -976,7 +976,7 @@ public abstract class AbstractStep {
 			value = getResultProperty(step, key);
 			addResultProperty(key, value);
 			logger.info(LOGTAG + "Property " + key + " from preceding " +
-				"step " + stepType  + "is: " + value);	
+				"step " + stepType  + " is: " + value);	
 		}
 		else {
 			String errMsg = "Step " + stepType + " not found. " +
