@@ -969,7 +969,8 @@ public abstract class AbstractStep {
 		String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 		
 		// Get the property value with the named step and key.
-		logger.info(LOGTAG + "Getting propertyfrom preceding step...");
+		logger.info(LOGTAG + "Getting " + key + " property from "  
+			+ "preceding step " + stepType);
 		ProvisioningStep step = getProvisioningStepByType(stepType);
 		String value = null;
 		if (step != null) {

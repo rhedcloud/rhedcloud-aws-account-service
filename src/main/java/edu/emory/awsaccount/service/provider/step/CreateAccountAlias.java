@@ -97,7 +97,8 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
 		String name = 
-			getStepPropertyValue("VERIFY_REMAINING_DISTRO_LISTS", "accountAlias");
+			getStepPropertyValue("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST",
+				"accountAlias");
 		
 		boolean allocatedNewAccount = Boolean.getBoolean(allocateNewAccount);
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
