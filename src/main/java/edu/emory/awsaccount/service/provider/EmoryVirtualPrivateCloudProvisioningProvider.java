@@ -1382,8 +1382,10 @@ implements VirtualPrivateCloudProvisioningProvider {
 						String errMsg = "An error occurred executing Step " + 
 							step.getStepId() + "The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
+			
 						try {
 							logger.info(LOGTAG + "Setting completed status and failure result...");
+							step.addResultProperty("finalErrMsg", errMsg);
 							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status and failure result.");
 						}

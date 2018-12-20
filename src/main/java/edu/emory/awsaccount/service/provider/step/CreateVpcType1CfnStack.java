@@ -64,7 +64,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[CreateRsAccountCfnStack.init] ";
+		String LOGTAG = getStepTag() + "[CreateVpcType1CfnStack.init] ";
 		
 		// Get the custom step properties
 		// requestTimeoutInterval is the time to wait for the
@@ -120,7 +120,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[CreateRsAccountCfnStack.run] ";
+		String LOGTAG = getStepTag() + "[CreateVpcType1CfnStack.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean stackCreated = false;
@@ -518,6 +518,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			List results = null;
 			try { 
 				long generateStartTime = System.currentTimeMillis();
+				logger.info(LOGTAG + "Sending the Stack.Generate-Request...");
 				results = stack.generate(req, rs);
 				long generateTime = System.currentTimeMillis() - generateStartTime;
 				logger.info(LOGTAG + "Generated CloudFormation Stack in "
@@ -596,7 +597,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateRsAccountCfnStack.simulate] ";
+			"[CreateVpcType1CfnStack.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -618,7 +619,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateRsAccountCfnStack.fail] ";
+			"[CreateVpcType1CfnStack.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -642,7 +643,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateRsAccountCfnStack.rollback] ";
+			"[CreateVpcType1CfnStack.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
