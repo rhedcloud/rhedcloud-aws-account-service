@@ -645,20 +645,32 @@ implements VirtualPrivateCloudProvisioningProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, jmse);
 		}
-		// Create the VirtualPrivateCloudProvisioningObject.
+		// Update the VirtualPrivateCloudProvisioningObject.
+		Result result = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			vpcp.update(rs);
+			result = (Result)vpcp.update(rs);
 			long time = System.currentTimeMillis() - startTime;
 			logger.info(LOGTAG + "Updated VirtualPrivateCloudProvisioning " +
 				"object in " + time + " ms.");
 		}
 		catch (EnterpriseObjectUpdateException eoce) {
+			List<org.openeai.moa.objects.resources.Error> errors = result.getError();
+			String errList = "";
+			if (errors != null) {
+				ListIterator li = errors.listIterator();
+				while (li.hasNext()) {
+					org.openeai.moa.objects.resources.Error error = 
+						(org.openeai.moa.objects.resources.Error)li.next();
+					errList = errList + error.getErrorNumber() + ": " + 
+						error.getErrorDescription() + " ";
+				}
+			}
 			String errMsg = "An error occurred updating the VirtualPrivate" +
 					"CloudProvisioning object The exception is: " + 
-					eoce.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, eoce);
+					eoce.getMessage() + "The errors list is: " + errList;
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, eoce);
 		}
 		// In any case, release the producer back to the pool.
 		finally {

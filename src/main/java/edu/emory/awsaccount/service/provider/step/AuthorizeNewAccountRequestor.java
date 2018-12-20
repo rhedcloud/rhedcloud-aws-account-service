@@ -251,7 +251,7 @@ public class AuthorizeNewAccountRequestor extends AbstractStep implements Step {
 		
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	Property prop = buildProperty("accountSequenceNumber", "10000");
+    	addResultProperty("isAuthorized", "true");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);

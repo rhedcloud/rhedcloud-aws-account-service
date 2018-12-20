@@ -74,7 +74,6 @@ public class GenerateVpnConnection extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		Property prop = buildProperty("allocateNewAccount", "true");
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 		
 		// Update the step.

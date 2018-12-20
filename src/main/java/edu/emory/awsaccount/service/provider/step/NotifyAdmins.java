@@ -76,7 +76,6 @@ public class NotifyAdmins extends AbstractStep implements Step {
 		
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
-		Property prop = buildProperty("allocateNewAccount", "true");
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 		
 		// Update the step.
