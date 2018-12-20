@@ -694,7 +694,7 @@ public abstract class AbstractStep {
 		m_resultProperties.add(prop);
 	}
 	
-	protected void addResultProperty(String key, String value) {
+	public void addResultProperty(String key, String value) {
 		
 		String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] "; 
 		

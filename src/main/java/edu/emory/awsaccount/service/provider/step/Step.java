@@ -89,4 +89,7 @@ public interface Step {
      */
     public void update(String status, String result) 
     	throws StepException;
+    
+    public void addResultProperty(String key, String value)
+    	throws StepException;
 }
