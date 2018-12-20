@@ -178,6 +178,13 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		    	Datetime createDatetime = new Datetime("Create", 
 		    		System.currentTimeMillis());
 		    	account.setCreateDatetime(createDatetime);
+		    	
+		    	// Set the account to be SRD exempt initially.
+		    	// This will be changed later in the provisioning.
+		    	Property prop = account.newProperty();
+		    	prop.setKey("srdExempt");
+		    	prop.setValue("true");
+		    	account.addProperty(prop);
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
