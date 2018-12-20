@@ -267,7 +267,6 @@ public class UserNotificationSyncCommand extends AwsAccountSyncCommand
 			logger.error(LOGTAG + errMsg);
 		}
 			
-		
 		// Build the UserNotification object from the element passed in.
 		try {
 			uNotification.buildObjectFromInput(eUserNotification);

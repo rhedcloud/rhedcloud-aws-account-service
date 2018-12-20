@@ -137,7 +137,6 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);

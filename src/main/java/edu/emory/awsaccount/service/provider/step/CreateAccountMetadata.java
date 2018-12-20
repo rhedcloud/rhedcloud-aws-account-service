@@ -274,7 +274,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	Property prop = buildProperty("accountSequenceNumber", "10000");
+    	addResultProperty("accountMetadataCreated", "true");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);

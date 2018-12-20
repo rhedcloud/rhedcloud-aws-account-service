@@ -106,6 +106,7 @@ public abstract class AbstractStep {
 	protected String m_stepTag = null;
 	protected long m_executionStartTime = 0;
 	protected long m_executionTime = 0;
+	protected long m_executionEndTime = 0;
 	protected Properties m_props = null;
 
 	public void init (String provisioningId, Properties props, 
@@ -191,7 +192,7 @@ public abstract class AbstractStep {
 		// that the step was skipped.
 		if (getSkipStep()) {
 			logger.info(LOGTAG + "skipStep is true, skipping this step.");
-			addResultProperty(buildProperty("stepExecutionMethod", "skipped"));
+			addResultProperty("stepExecutionMethod", "skipped");
 			setExecutionTime();
 			return getResultProperties();
 		}
@@ -668,7 +669,7 @@ public abstract class AbstractStep {
 		return pStep;
 	}
 	
-	
+/**	
 	protected Property buildProperty(String key, String value) {
 		Property prop = m_vpcp.newProvisioningStep().newProperty();
 		try {
@@ -683,7 +684,7 @@ public abstract class AbstractStep {
 		}
     	return prop;
 	}
-	
+**/	
 	
 	
 	protected void setResultProperties(List<Property> resultProps) {
@@ -702,8 +703,20 @@ public abstract class AbstractStep {
 			List<Property> resultProperties = new ArrayList<Property>();
 			setResultProperties(resultProperties);
 		}
+	
+//		Property newProp = buildProperty(key, value);	
 		
-		Property newProp = buildProperty(key, value);
+		Property newProp = m_vpcp.newProvisioningStep().newProperty();
+		try {
+			newProp.setKey(key);
+			newProp.setValue(value);
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the field values " +
+				"of a property object. The exception is: " +
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+		}
 		
 		// If the list already contains a Property
 		// with this key value, update its value.
@@ -764,22 +777,24 @@ public abstract class AbstractStep {
 	}
 	
 	protected void setExecutionStartTime() {
+		
+		String LOGTAG = getStepTag() + 
+			"[AbstractStep.setExecutionStartTime] ";
+		
 		m_executionStartTime = System.currentTimeMillis();
 		
-		addResultProperty(buildProperty("startTime", 
-				Long.toString(getExecutionStartTime())));
+		addResultProperty("startTime", Long.toString(getExecutionStartTime()));
 	
 		java.util.Date date = new java.util.Date(getExecutionStartTime());
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
 		String formattedDate = format.format(date);
 		
-		addResultProperty(buildProperty("startTimeFormatted", 
-			formattedDate));
+		addResultProperty("startTimeFormatted", formattedDate);
 		
 		logger.info(LOGTAG + "Set step startTime to " 
 			+ getExecutionStartTime() + 
-			"or: " + formattedDate);
+			" or: " + formattedDate);
 	}
 	
 	protected long getExecutionStartTime() {
@@ -787,28 +802,40 @@ public abstract class AbstractStep {
 	}
 	
 	protected void setExecutionTime() {
-		Long executionEndTime = System.currentTimeMillis();
-		m_executionTime = executionEndTime - m_executionStartTime;
-		logger.info(LOGTAG + "Setting execution time: " + m_executionTime + " = " + System.currentTimeMillis() + " - " + m_executionStartTime);
+		long currentTime = System.currentTimeMillis();
+		m_executionTime = currentTime - getExecutionStartTime();
+		logger.info(LOGTAG + "Setting execution time: " + m_executionTime + 
+			" = " + currentTime + " - " + m_executionStartTime);
 		
-		addResultProperty(buildProperty("endTime", 
-				Long.toString(executionEndTime)));
+		addResultProperty("executionTime", Long.toString(getExecutionTime()));
+		
+		logger.info(LOGTAG + "Set step executionTime to " 
+			+ Long.toString(m_executionTime)); 
+	}
+	
+	protected long getExecutionTime() {
+		logger.info(LOGTAG + "Returning execution time: " + m_executionTime);
+		return m_executionTime;
+	}
+	
+	protected void setEndTime() {
+		m_executionEndTime = System.currentTimeMillis();
+		
+		addResultProperty("executionEndTime", Long.toString(m_executionEndTime));
 			
-		java.util.Date date = new java.util.Date(executionEndTime);
+		java.util.Date date = new java.util.Date(m_executionEndTime);
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
 		String formattedDate = format.format(date);
 		
-		addResultProperty(buildProperty("endTimeFormatted", 
-			formattedDate));
+		addResultProperty("executionEndTimeFormatted", formattedDate);
 		
-		logger.info(LOGTAG + "Set step endTime to " 
-			+ getExecutionTime() + "or: " + formattedDate);
+		logger.info(LOGTAG + "Set step executionEndTime to " 
+			+ getExecutionEndTime() + "or: " + formattedDate);
 	}
 	
-	protected long getExecutionTime() {	
-		logger.info(LOGTAG + "Returing execution time: " + m_executionTime);
-		return m_executionTime;
+	protected long getExecutionEndTime() {
+		return m_executionEndTime;
 	}
 	
 	public void update(String status, String result) throws StepException {
@@ -822,8 +849,19 @@ public abstract class AbstractStep {
 		// have already completed or are in any other status
 		// that in progress.
 		if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS)) {
+			
 			setExecutionTime();
 		}
+		
+		// If the status is changing from in progress to anything else,
+		// set the executionEndTime.
+		if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS) == true &&
+			status.equalsIgnoreCase(IN_PROGRESS_STATUS) == false) {
+			
+			setEndTime();
+		}
+		
+		
 		// Update the fields of this step.
 		setStatus(status);
 		setResult(result);

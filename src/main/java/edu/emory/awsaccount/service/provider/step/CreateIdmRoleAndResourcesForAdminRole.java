@@ -74,8 +74,8 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		Property prop = buildProperty("allocateNewAccount", "true");
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+		addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+		addResultProperty("idmRoleCreated", "true");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);

@@ -218,7 +218,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	Property prop = buildProperty("isAuthorized", "true");
+    	addResultProperty("isAuthorized", "true");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);

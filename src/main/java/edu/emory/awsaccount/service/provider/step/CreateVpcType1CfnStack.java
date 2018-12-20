@@ -603,7 +603,6 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	Property prop = buildProperty("accountSequenceNumber", "10000");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);

@@ -74,8 +74,8 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
-		Property prop = buildProperty("allocateNewAccount", "true");
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+    	addResultProperty("idmResourcesCreated", "true");
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
