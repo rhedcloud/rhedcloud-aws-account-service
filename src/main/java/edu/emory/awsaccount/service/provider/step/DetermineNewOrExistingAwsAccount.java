@@ -76,7 +76,7 @@ public class DetermineNewOrExistingAwsAccount extends AbstractStep implements St
 			allocateNewAccount = true;
 		}
 		
-		logger.info(LOGTAG + "allocateNetAccount is: " + allocateNewAccount);
+		logger.info(LOGTAG + "allocateNewAccount is: " + allocateNewAccount);
 		logger.info(LOGTAG + "accountId is: " + vpcr.getAccountId());
 		
 		// Set result properties.
