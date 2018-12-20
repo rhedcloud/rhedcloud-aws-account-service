@@ -725,7 +725,7 @@ public abstract class AbstractStep {
 			}
 		}
 		// Otherwise, add the new property.
-		if (replacedValue = false) {
+		if (replacedValue == false) {
 			properties.add(newProp);
 			logger.info(LOGTAG + "No existing property with " +
 				"key " + key + ". Added property with value: " +
