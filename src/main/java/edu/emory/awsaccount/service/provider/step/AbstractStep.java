@@ -696,6 +696,8 @@ public abstract class AbstractStep {
 	
 	protected void addResultProperty(String key, String value) {
 		
+		String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] "; 
+		
 		if (getResultProperties() == null) {
 			List<Property> resultProperties = new ArrayList<Property>();
 			setResultProperties(resultProperties);
@@ -713,6 +715,8 @@ public abstract class AbstractStep {
 			if (oldProp.getKey().equalsIgnoreCase(key)) {
 				try {
 					oldProp.setValue(value);
+					logger.info(LOGTAG + "Found an existing property with " +
+						"key " + key + ". Replaced its value with: " + value);
 				}
 				catch (EnterpriseFieldException efe) {
 					
@@ -723,6 +727,9 @@ public abstract class AbstractStep {
 		// Otherwise, add the new property.
 		if (replacedValue = false) {
 			properties.add(newProp);
+			logger.info(LOGTAG + "No existing property with " +
+				"key " + key + ". Added property with value: " +
+				value);
 		}
 		
 	}
