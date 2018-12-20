@@ -108,6 +108,8 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 		String samlMetadataDocument = getSamlMetadataDocument(samlIssuerUrl);
 		
 		boolean allocatedNewAccount = Boolean.getBoolean(allocateNewAccount);
+		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
+		logger.info(LOGTAG + "newAccountId: " + newAccountId);
 		
 		// If allocatedNewAccount is true and newAccountId is not null, 
 		// Send a SamlProvider.Create-Request to the AWS Account service.
