@@ -1366,8 +1366,8 @@ implements VirtualPrivateCloudProvisioningProvider {
 					// Execute the step
 					List<Property> resultProps = null;
 					try {
-						logger.info(LOGTAG + "Executing Step " + 
-								step.getStepId() + ": " + 
+						logger.info(LOGTAG + "Executing [Step-" + 
+								step.getStepId() + "] " + 
 								step.getDescription());
 						long startTime = System.currentTimeMillis();
 						resultProps = step.execute();
@@ -1382,8 +1382,8 @@ implements VirtualPrivateCloudProvisioningProvider {
 						// If the result of the step is failure, roll back
 						// all completed steps and return.
 						if (step.getResult().equals(FAILURE_RESULT)) {
-							logger.info(LOGTAG + "Step " + step.getStepId() +
-								" failed. Rolling back all completed steps.");
+							logger.info(LOGTAG + "[Step " + step.getStepId() +
+								"] failed. Rolling back all completed steps.");
 							rollbackCompletedSteps(completedSteps);
 							return;
 						}
@@ -1391,8 +1391,8 @@ implements VirtualPrivateCloudProvisioningProvider {
 					catch (StepException se) {
 						// An error occurred executing the step.
 						// Log it and roll back all preceding steps.
-						String errMsg = "[StepExecutionException] An error occurred executing Step-" + 
-							step.getStepId() + "The exception is: " + se.getMessage();
+						String errMsg = "[StepExecutionException] An error occurred executing [Step-" + 
+							step.getStepId() + "]. The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
 			
 						try {
