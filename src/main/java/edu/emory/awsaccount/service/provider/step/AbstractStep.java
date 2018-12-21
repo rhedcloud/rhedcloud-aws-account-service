@@ -695,7 +695,8 @@ public abstract class AbstractStep {
 		m_resultProperties.add(prop);
 	}
 	
-	public void addResultProperty(String key, String value) {
+	public void addResultProperty(String key, String value)
+		throws StepException {
 		
 		String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] "; 
 		
@@ -716,6 +717,7 @@ public abstract class AbstractStep {
 				"of a property object. The exception is: " +
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, efe);
 		}
 		
 		// If the list already contains a Property
@@ -776,7 +778,7 @@ public abstract class AbstractStep {
 		return value;
 	}
 	
-	protected void setExecutionStartTime() {
+	protected void setExecutionStartTime() throws StepException {
 		
 		String LOGTAG = getStepTag() + 
 			"[AbstractStep.setExecutionStartTime] ";
@@ -801,7 +803,7 @@ public abstract class AbstractStep {
 		return m_executionStartTime;
 	}
 	
-	protected void setExecutionTime() {
+	protected void setExecutionTime() throws StepException {
 		long currentTime = System.currentTimeMillis();
 		m_executionTime = currentTime - getExecutionStartTime();
 		logger.info(LOGTAG + "Setting execution time: " + m_executionTime + 
@@ -818,7 +820,7 @@ public abstract class AbstractStep {
 		return m_executionTime;
 	}
 	
-	protected void setEndTime() {
+	protected void setEndTime() throws StepException {
 		m_executionEndTime = System.currentTimeMillis();
 		
 		addResultProperty("executionEndTime", Long.toString(m_executionEndTime));

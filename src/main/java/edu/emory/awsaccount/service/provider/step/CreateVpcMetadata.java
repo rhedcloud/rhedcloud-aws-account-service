@@ -116,7 +116,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 				.getType();
 		String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS",
 			"vpcNetwork"); 
-		String vpnConnectionProfileId = getStepPropertyValue("COMPUTE_VPC_SUBNETS",
+		String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR",
 			"vpnConnectionProfileId");
 			
 		// Get a configured VPC object from AppConfig.
