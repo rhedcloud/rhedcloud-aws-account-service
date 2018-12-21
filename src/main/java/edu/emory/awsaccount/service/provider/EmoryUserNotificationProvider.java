@@ -109,7 +109,7 @@ implements UserNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-		
+/**		
 		// Set required e-mail Types.
 		List<String> requiredEmailNotificationTypeList = new ArrayList();
 		String[] requiredEmailNotificationTypeArray = 
@@ -121,8 +121,8 @@ implements UserNotificationProvider {
 		}
 		logger.info(LOGTAG + "Required e-mail notification type list " +
 			"has " + requiredEmailNotificationTypeList.size() + " types.");
-//		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
-		
+		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
+**/		
 		// This provider needs to send messages to the AWS account service
 		// to create UserNotifications.
 		ProducerPool p2p1 = null;
