@@ -133,6 +133,7 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 		    
 		    // Set the values of the account.
 		    try {
+		    	samlProvider.setAccountId(newAccountId);
 		    	samlProvider.setName(samlIdpName);;
 		    	samlProvider.setSamlMetadataDocument(samlMetadataDocument);
 		    }
