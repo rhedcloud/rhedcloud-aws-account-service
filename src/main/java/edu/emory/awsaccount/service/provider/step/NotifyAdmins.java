@@ -132,6 +132,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
+		
 		// Get a configured account notification object from AppConfig.
 		AccountNotification aNotification = new AccountNotification();
 	    try {
