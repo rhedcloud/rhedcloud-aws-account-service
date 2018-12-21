@@ -1401,8 +1401,13 @@ implements VirtualPrivateCloudProvisioningProvider {
 							logger.info(LOGTAG + "Setting completed status, "
 								+ "failure result, and final error details...");
 							// Add an error step property limited to 255 characters.
+							String stepExecutionException = 
+								se.getMessage().substring(0, 254);
 							step.addResultProperty("stepExecutionException", 
-								se.getMessage().substring(0, 254));
+								stepExecutionException);
+							logger.info(LOGTAG + "Added property " +
+									"stepExecutionException: " +
+									stepExecutionException);
 							step.update(COMPLETED_STATUS, FAILURE_RESULT);
 							logger.info(LOGTAG + "Updated to completed status " +
 								"and failure result.");
