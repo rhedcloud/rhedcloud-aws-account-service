@@ -891,8 +891,12 @@ public abstract class AbstractStep {
 		
 		// Perform the step update.
 		try {
+			long updateStartTime = System.currentTimeMillis();
+			logger.info(LOGTAG + "Updating the VPCP with new step information...");
 			getVirtualPrivateCloudProvisioningProvider()
 				.update(getVirtualPrivateCloudProvisioning());
+			long time = System.currentTimeMillis() - updateStartTime;
+			logger.info(LOGTAG = "Updated VPCP with new step state in " + time + " ms.");
 		}
 		catch (ProviderException pe) {
 			String errMsg = "An error occurred updating the VPCP object " +
