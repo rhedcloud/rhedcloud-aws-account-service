@@ -841,6 +841,9 @@ public abstract class AbstractStep {
 	}
 	
 	public void update(String status, String result) throws StepException {
+		String LOGTAG = getStepTag() + "[AbstractStep.update] ";
+		logger.info(LOGTAG + "Updating step with status " + status + 
+			" and result " + result);
 		
 		// Update the baseline state of the VPCP
 		queryForVpcpBaseline();
