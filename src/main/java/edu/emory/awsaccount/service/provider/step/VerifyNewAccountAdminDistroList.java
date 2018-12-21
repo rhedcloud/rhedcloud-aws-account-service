@@ -20,6 +20,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
@@ -44,6 +45,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	private ProducerPool m_emailAddressValidationServiceProducerPool = null;
 	private String m_accountSeriesPrefix = null;
 	private String m_accountSequenceNumber = null;
+	private int m_requestTimeoutInterval = 10000;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -52,7 +54,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
 		String LOGTAG = getStepTag() + "[VerifyNewAccountAdminDistroList.init] ";
-		
+	
 		// This step needs to send messages to the 
 		// EmailAddressValidationService to validate e-mail
 		// addresses.
@@ -77,6 +79,15 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		setAccountSeriesPrefix(accountSeriesPrefix);
 		logger.info(LOGTAG + "accountSeriesPrefix is: " + 
 				getAccountSeriesPrefix());
+		
+		// requestTimeoutInterval is the time to wait for the
+		// response to the request
+		String timeout = getProperties().getProperty("requestTimeoutInterval",
+			"10000");
+		int requestTimeoutInterval = Integer.parseInt(timeout);
+		setRequestTimeoutInterval(requestTimeoutInterval);
+		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+			getRequestTimeoutInterval());
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
@@ -190,8 +201,11 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				rs = (RequestService)getEmailAddressValidationServiceProducerPool()
+				PointToPointProducer p2p = 
+					(PointToPointProducer)getEmailAddressValidationServiceProducerPool()
 					.getExclusiveProducer();
+				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+				rs = (RequestService)p2p;
 			}
 			catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
@@ -371,5 +385,13 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	
 	private String getAccountSequenceNumber() {
 		return m_accountSequenceNumber;
+	}
+	
+	private void setRequestTimeoutInterval(int i) {
+		m_requestTimeoutInterval = i;
+	}
+	
+	private int getRequestTimeoutInterval() {
+		return m_requestTimeoutInterval;
 	}
 }

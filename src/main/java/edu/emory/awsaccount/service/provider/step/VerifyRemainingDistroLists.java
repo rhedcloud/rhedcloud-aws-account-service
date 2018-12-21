@@ -20,6 +20,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
@@ -72,6 +73,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	private String m_notificationPriority = null;
 	private String m_notificationSubject = null;
 	private String m_notificationText = null;
+	private int m_requestTimeoutInterval = 10000;
 	
 
 	public void init (String provisioningId, Properties props, 
@@ -81,6 +83,15 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
 		String LOGTAG = getStepTag() + "[VerifyRemainingDistroLists.init] ";
+		
+		// requestTimeoutInterval is the time to wait for the
+		// response to the request
+		String timeout = getProperties().getProperty("requestTimeoutInterval",
+			"10000");
+		int requestTimeoutInterval = Integer.parseInt(timeout);
+		setRequestTimeoutInterval(requestTimeoutInterval);
+		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+			getRequestTimeoutInterval());
 		
 		// This step needs to send messages to the 
 		// EmailAddressValidationService to validate e-mail
@@ -783,6 +794,14 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		return m_accountSequenceNumber;
 	}
 	
+	private void setRequestTimeoutInterval(int i) {
+		m_requestTimeoutInterval = i;
+	}
+	
+	private int getRequestTimeoutInterval() {
+		return m_requestTimeoutInterval;
+	}
+	
 	private boolean isValid(String emailAddress) throws StepException {
 		String LOGTAG = getStepTag() + "[VerifyRemainingDistroLists.isValid] ";
 		
@@ -840,8 +859,11 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getEmailAddressValidationServiceProducerPool()
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getEmailAddressValidationServiceProducerPool()
 				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+			rs = (RequestService)p2p;
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a producer " +

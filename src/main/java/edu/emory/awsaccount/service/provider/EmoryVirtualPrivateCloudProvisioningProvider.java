@@ -1421,6 +1421,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						finally {
 							rollbackCompletedSteps(completedSteps);
 						}
+						return;
 					}
 				}
 				else {
