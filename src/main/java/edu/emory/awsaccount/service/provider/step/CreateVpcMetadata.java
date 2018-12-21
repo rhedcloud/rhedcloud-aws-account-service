@@ -118,6 +118,11 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 			"vpcNetwork"); 
 		String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR",
 			"vpnConnectionProfileId");
+		
+		// Get the VirtualPrivateCloudRequisition
+		VirtualPrivateCloudRequisition req = 
+			getVirtualPrivateCloudProvisioning()
+			.getVirtualPrivateCloudRequisition();
 			
 		// Get a configured VPC object from AppConfig.
 		VirtualPrivateCloud vpc = new VirtualPrivateCloud();
@@ -140,6 +145,11 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 	    	vpc.setType(vpcType);
 	    	vpc.setCidr(vpcCidr);
 	    	vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
+	    	vpc.setPurpose(req.getPurpose());
+	    	vpc.setCreateUser(req.getAuthenticatedRequestorUserId());
+	    	Datetime createDatetime = new Datetime("Create", 
+	    			System.currentTimeMillis());
+	    	vpc.setCreateDatetime(createDatetime);
 	    }
 	    catch (EnterpriseFieldException efe) {
 	    	String errMsg = "An error occurred setting the values of the " +
