@@ -1392,18 +1392,20 @@ implements VirtualPrivateCloudProvisioningProvider {
 						// An error occurred executing the step.
 						// Log it and roll back all preceding steps.
 						LOGTAG = LOGTAG +  "[StepExecutionException][Step-" + 
-								step.getStepId() + "]";
+								step.getStepId() + "] ";
 						String errMsg = "An error occurred executing step" + 
 							step.getStepId() + ". The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
 			
 						try {
-							logger.info(LOGTAG + "Setting completed status and failure result...");
+							logger.info(LOGTAG + "Setting completed status, "
+								+ "failure result, and final error details...");
 							// Add an error step property limited to 255 characters.
 							step.addResultProperty("stepExecutionException", 
 								se.getMessage().substring(0, 254));
 							step.update(COMPLETED_STATUS, FAILURE_RESULT);
-							logger.info(LOGTAG + "Updated to completed status and failure result.");
+							logger.info(LOGTAG + "Updated to completed status " +
+								"and failure result.");
 						}
 						catch (StepException se2) {
 							String errMsg2 = "An error occurred updating the " +
