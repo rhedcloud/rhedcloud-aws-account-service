@@ -98,9 +98,10 @@ implements UserNotificationProvider {
 		}
 		
 		// Verify that required e-mail types are set.
+/**		
 		Properties props = getProperties();
 		String requiredEmailNotificationTypes = 
-			props.getProperty("requiredEmailnotificationTypes");
+			props.getProperty("requiredEmailNotificationTypes");
 		logger.info(LOGTAG + "Required e-mail types are: " + requiredEmailNotificationTypes);
 		if (requiredEmailNotificationTypes == null ||
 			requiredEmailNotificationTypes.equals("")) {
@@ -109,7 +110,7 @@ implements UserNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-/**		
+			
 		// Set required e-mail Types.
 		List<String> requiredEmailNotificationTypeList = new ArrayList();
 		String[] requiredEmailNotificationTypeArray = 
