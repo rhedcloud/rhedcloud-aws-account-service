@@ -1397,7 +1397,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						// Log it and roll back all preceding steps.
 						LOGTAG = LOGTAG +  "[StepExecutionException][Step-" + 
 								step.getStepId() + "] ";
-						String errMsg = "An error occurred executing step" + 
+						String errMsg = "An error occurred executing step " + 
 							step.getStepId() + ". The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
 			

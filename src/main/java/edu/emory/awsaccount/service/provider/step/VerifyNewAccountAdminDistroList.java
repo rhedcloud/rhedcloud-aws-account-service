@@ -123,7 +123,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			throw new StepException(errMsg);
 		}
 		
-		// Get the accountSequenceNumner property from the
+		// Get the accountSequenceNumbner property from the
 		// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		ProvisioningStep step2 = getProvisioningStepByType("DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE");
@@ -301,6 +301,30 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+    	
+		// Get the accountSequenceNumbner property from the
+		// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		ProvisioningStep step2 = getProvisioningStepByType("DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE");
+		String accountSequenceNumber = null;
+		if (step2 != null) {
+			logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
+			accountSequenceNumber = getResultProperty(step2, "accountSequenceNumber");
+			addResultProperty("accountSequenceNumber", accountSequenceNumber);
+			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
+				"step is: " + accountSequenceNumber);
+			setAccountSequenceNumber(accountSequenceNumber);
+		}
+		else {
+			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not found. " +
+				"Cannot determine account sequence number.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+    	
+    	String accountEmailAddress = getAccountEmailAddress();
+			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
+			addResultProperty("accountEmailAddress", accountEmailAddress);
 		
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
