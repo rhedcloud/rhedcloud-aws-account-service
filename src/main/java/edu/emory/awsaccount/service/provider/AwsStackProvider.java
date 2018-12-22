@@ -747,7 +747,7 @@ implements StackProvider {
 		while (isCompleted == false) {
 			// Throw an exception if maxWaitTime is exceeded.
 			if (System.currentTimeMillis() - startTime > getMaxWaitTime()) {
-				String errMsg = "Maximum wait time of " + getWaitInterval() + 
+				String errMsg = "Maximum wait time of " + getMaxWaitTime() + 
 					" ms for completion of CloudFormation template has been " 
 					+ "exceeded. Template may still be in progress.";
 				throw new ProviderException(errMsg);
