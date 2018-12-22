@@ -199,8 +199,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			long createStartTime = System.currentTimeMillis();
 			aNotification.create(rs);
 			long createTime = System.currentTimeMillis() - createStartTime;
-			logger.info(LOGTAG + "Create Account in " + createTime +
-				" ms.");
+			logger.info(LOGTAG + "Created AccountNotification in "
+				+ createTime + " ms.");
 			sentNotification = true;
 			addResultProperty("sentNotification", 
 				Boolean.toString(sentNotification));
@@ -215,18 +215,18 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			// Release the producer back to the pool
 			getAwsAccountServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
-			
-			// Update the step.
-			update(COMPLETED_STATUS, SUCCESS_RESULT);
-	    	
-	    	// Log completion time.
-	    	long time = System.currentTimeMillis() - startTime;
-	    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-	    	
-	    	// Return the properties.
-	    	return getResultProperties();
 		}	
+		
+		// Update the step.
+		update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
+    	// Log completion time.
+    	long time = System.currentTimeMillis() - startTime;
+    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+    	
+    	// Return the properties.
+    	return getResultProperties();
+
 	}
 	
 	protected List<Property> simulate() throws StepException {
@@ -316,7 +316,6 @@ public class NotifyAdmins extends AbstractStep implements Step {
 		
 		String text = "";
 		
-		text = text + "Dear UserFirstName UserLastName,\n\n";
 		text = text + "Your recent request for a Virtual Private Cloud in the AWS@Emory Service has been provisioned successfully. \n\n";
 		text = text + "To log into your account and for detailed instructions visit https://dev.aws.emory.edu. ";
 		text = text + "Please note that your new site-to-site VPN connection between Emory and AWS may take some time to initialize. You can check the status of your site-to-site VPN connection by logging into the VPCP Console at https://dev.vpcp.emory.edu and checking the status of your VPN connection on the VPC tab.\n\n";
