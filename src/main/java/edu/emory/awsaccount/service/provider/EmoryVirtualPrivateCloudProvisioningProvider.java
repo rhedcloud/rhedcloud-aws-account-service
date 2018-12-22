@@ -1377,7 +1377,6 @@ implements VirtualPrivateCloudProvisioningProvider {
 							step.getResult() + " in " + time + " ms.");
 						logger.info(LOGTAG + "Step result properties are: " + 
 							resultPropsToXmlString(resultProps));
-						completedSteps.add(step);
 						
 						// If the result of the step is failure, roll back
 						// all completed steps and return.
@@ -1387,6 +1386,11 @@ implements VirtualPrivateCloudProvisioningProvider {
 							rollbackCompletedSteps(completedSteps);
 							return;
 						}
+						
+						// Add all successfully completed steps to the list
+						// of completed steps.
+						completedSteps.add(step);
+						
 					}
 					catch (StepException se) {
 						// An error occurred executing the step.
@@ -1501,7 +1505,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 			// Update the state of the VPCP object in this transaction.
 			queryForVpcpBaseline();
 			
-			// Set the status to complete, the result to success, and the
+			// Set the status to complete, the result to failure, and the
 			// execution time.
 			try {
 				getVirtualPrivateCloudProvisioning().setStatus(COMPLETED_STATUS);
