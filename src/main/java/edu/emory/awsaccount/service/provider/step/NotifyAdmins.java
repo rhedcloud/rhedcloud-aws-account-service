@@ -119,11 +119,15 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			"step is: " + newAccountId);
 		
 		// If the newAccountId is null, get the accountId from the
-		// VPCP requisition.
+		// VPCP requisition. Otherwise accountId is the value of
+		// the newAccountId
 		if (newAccountId == null || newAccountId.equalsIgnoreCase("null")) {
 			accountId = req.getAccountId();
 			logger.info(LOGTAG + "newAccountId is null, getting the accountId " +
 				"from the requisition object: " + accountId);
+		}
+		else {
+			accountId = newAccountId;
 		}
 		
 		if (accountId == null || newAccountId.equalsIgnoreCase("null")) {
@@ -131,10 +135,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		else {
-			accountId = newAccountId;
-		}
-		
+			
 		// Get a configured account notification object from AppConfig.
 		AccountNotification aNotification = new AccountNotification();
 	    try {
