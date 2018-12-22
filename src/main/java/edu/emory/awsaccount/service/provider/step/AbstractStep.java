@@ -699,14 +699,12 @@ public abstract class AbstractStep {
 		throws StepException {
 		
 		String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] "; 
-		logger.info(LOGTAG + "Adding result property key: " + value);
+		logger.debug(LOGTAG + "Adding result property " + key + ": " + value);
 		
 		if (getResultProperties() == null) {
 			List<Property> resultProperties = new ArrayList<Property>();
 			setResultProperties(resultProperties);
 		}
-	
-//		Property newProp = buildProperty(key, value);	
 		
 		Property newProp = m_vpcp.newProvisioningStep().newProperty();
 		try {
@@ -731,11 +729,15 @@ public abstract class AbstractStep {
 			if (oldProp.getKey().equalsIgnoreCase(key)) {
 				try {
 					oldProp.setValue(value);
-					logger.info(LOGTAG + "Found an existing property with " +
+					logger.debug(LOGTAG + "Found an existing property with " +
 						"key " + key + ". Replaced its value with: " + value);
 				}
 				catch (EnterpriseFieldException efe) {
-					
+					String errMsg = "An error occurred setting the field values " +
+						"of a property object. The exception is: " +
+						efe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, efe);
 				}
 				replacedValue = true;
 			}
@@ -743,7 +745,7 @@ public abstract class AbstractStep {
 		// Otherwise, add the new property.
 		if (replacedValue == false) {
 			properties.add(newProp);
-			logger.info(LOGTAG + "No existing property with " +
+			logger.debug(LOGTAG + "No existing property with " +
 				"key " + key + ". Added property with value: " +
 				value);
 		}
