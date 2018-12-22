@@ -94,8 +94,8 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		logger.info(LOGTAG + "The ProvisioningId is: " + provisioningId);
 		addResultProperty("provisioningId", provisioningId);
 		
-		// Get a configured VpnConnectionProfile and
-		// VpnConnectionProfileRequistion from AppConfig
+		// Get a configured VpnConnectionProfileAssignment and
+		// VpnConnectionProfileAssignmentRequistion from AppConfig
 		VpnConnectionProfileAssignment vcpa = new 
 			VpnConnectionProfileAssignment();
 		VpnConnectionProfileAssignmentRequisition vcpar = new
