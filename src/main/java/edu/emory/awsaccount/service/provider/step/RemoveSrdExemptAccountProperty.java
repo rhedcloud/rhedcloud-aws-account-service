@@ -103,11 +103,10 @@ public class RemoveSrdExemptAccountProperty extends AbstractStep implements Step
 		// Get the allocatedNewAccount property from the
 		// GENERATE_NEW_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step1 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
 		String accountId = null;
 		String newAccountId = null;
 		
-		newAccountId = getStepPropertyValue("getVirtualPrivateCloudProvisioning()",
+		newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT",
 			"newAccountId");
 		addResultProperty("newAccountId", newAccountId);
 		logger.info(LOGTAG + "Property newAccountId from preceding " +
