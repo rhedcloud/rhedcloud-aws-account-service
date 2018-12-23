@@ -30,6 +30,7 @@ import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
@@ -152,8 +153,8 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		    }
 		    
 		    // Get the VPCP requisition object.
-		    VirtualPrivateCloudRequisition req = getVirtualPrivateCloudProvisioning()
-		    	.getVirtualPrivateCloudRequisition();
+		    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+		    VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
 		    
 		    // Set the values of the account.
 		    try {
@@ -181,10 +182,17 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		    	
 		    	// Set the account to be SRD exempt initially.
 		    	// This will be changed later in the provisioning.
-		    	Property prop = account.newProperty();
-		    	prop.setKey("srdExempt");
-		    	prop.setValue("true");
-		    	account.addProperty(prop);
+		    	Property prop1 = account.newProperty();
+		    	prop1.setKey("srdExempt");
+		    	prop1.setValue("true");
+		    	account.addProperty(prop1);
+		    	
+		    	// Set the initialProvisioningId property.
+		    	Property prop2 = account.newProperty();
+		    	prop2.setKey("initialProvisioningId");
+		    	prop1.setValue(vpcp.getProvisioningId());
+		    	account.addProperty(prop1);
+		    	
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
