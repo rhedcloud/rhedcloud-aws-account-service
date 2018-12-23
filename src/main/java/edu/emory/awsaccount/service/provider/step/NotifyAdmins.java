@@ -154,6 +154,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	    	aNotification.setAccountId(accountId);
 	    	aNotification.setType("Provisioning");
 	    	aNotification.setPriority("High");
+	    	aNotification.setSubject("Successful Provisioning");
 	    	aNotification.setText(getNotificationText(req));
 	    	aNotification
 	    		.setCreateUser(req.getAuthenticatedRequestorUserId());
