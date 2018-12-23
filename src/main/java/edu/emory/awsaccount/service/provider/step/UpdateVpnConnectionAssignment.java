@@ -176,6 +176,19 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 		if (assignmentResults.size() == 1) {
 			vcpa = (VpnConnectionProfileAssignment)assignmentResults.get(0);
 			
+			// Log the state of the object.
+		    try {
+		    	logger.info(LOGTAG + "VpnConnectionProfileAssignment returned is: "
+		    		+ vcpa.toXmlString());
+		    }
+		    catch (XmlEnterpriseObjectException xeoe) {
+		    	String errMsg = "An error occurred serializing the query " +
+		  	    	  "spec to XML. The exception is: " + xeoe.getMessage();
+	  	    	logger.error(LOGTAG + errMsg);
+	  	    	throw new StepException(errMsg, xeoe);
+		    }    
+			
+			
 		    // Set the values of the VpnConnectionProfileAssignment.
 		    try {
 		    	vcpa.setOwnerId(vpcId);
@@ -189,7 +202,8 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 		    
 		    // Log the state of the object.
 		    try {
-		    	logger.info(LOGTAG + "Query spec is: " + vcpa.toXmlString());
+		    	logger.info(LOGTAG + "updated VpnConnectionProfileAssignment: " 
+		    		+ vcpa.toXmlString());
 		    }
 		    catch (XmlEnterpriseObjectException xeoe) {
 		    	String errMsg = "An error occurred serializing the query " +
