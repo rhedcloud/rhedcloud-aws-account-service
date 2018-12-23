@@ -55,10 +55,12 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
 			throws StepException {
 		
+		super.init(provisioningId, props, aConfig, vpcpp);
+		
 		String LOGTAG = getStepTag() + "[UpdateVpnConnectionAssignment.init] ";
 		
 		// This step needs to send messages to the Network Ops Service
-		// to determine the VPC CIDR.
+		// to update or delete the VpnConnectionProfileAssignment.
 		ProducerPool p2p1 = null;
 		try {
 			p2p1 = (ProducerPool)getAppConfig()
@@ -75,7 +77,7 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 			throw new StepException(errMsg);
 		}
 		
-		super.init(provisioningId, props, aConfig, vpcpp);
+		logger.info(LOGTAG + "Initialization complete.");
 	}
 	
 	protected List<Property> run() throws StepException {
