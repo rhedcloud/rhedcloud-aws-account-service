@@ -175,6 +175,11 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 		    	operationsEmailAddress.setEmail(accountEmailAddress);
 		    	account.addEmailAddress(operationsEmailAddress);
 		    	
+		    	EmailAddress securityEmailAddress = account.newEmailAddress();
+		    	securityEmailAddress.setType("security");
+	//	    	securityEmailAddress.setEmail(securityEmailAddress);
+	//	    	account.addEmailAddress(securityEmailAddress);
+		    	
 		    	account.setCreateUser(req.getAuthenticatedRequestorUserId());
 		    	Datetime createDatetime = new Datetime("Create", 
 		    		System.currentTimeMillis());
