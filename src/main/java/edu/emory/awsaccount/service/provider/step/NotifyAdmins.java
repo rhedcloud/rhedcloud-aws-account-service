@@ -156,6 +156,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	    	aNotification.setPriority("High");
 	    	aNotification.setSubject("Successful Provisioning");
 	    	aNotification.setText(getNotificationText(req));
+	    	aNotification.setReferenceId(vpcp.getProvisioningId());
 	    	aNotification
 	    		.setCreateUser(req.getAuthenticatedRequestorUserId());
 	    	Datetime createDatetime = new Datetime("Create", 
@@ -166,6 +167,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	    	// This will be changed later in the provisioning.
 	    	Annotation annotation = aNotification.newAnnotation();
 	    	annotation.setText("AwsAccountService Provisioning");
+	    	annotation.setCreateUser(req.getAuthenticatedRequestorUserId());
+	    	annotation.setCreateDatetime(createDatetime);
 	    	aNotification.addAnnotation(annotation);
 	    }
 	    catch (EnterpriseFieldException efe) {
