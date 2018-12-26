@@ -10,7 +10,6 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -23,35 +22,30 @@ import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectDeleteException;
-import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-import edu.emory.moa.jmsobjects.lightweightdirectoryservices.v1_0.OrganizationalUnit;
-import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
-import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProvisioning;
-import edu.emory.moa.objects.resources.v1_0.OrganizationalUnitQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
+import edu.emory.moa.jmsobjects.lightweightdirectoryservices.v1_0.Group;
+import edu.emory.moa.objects.resources.v1_0.GroupQuerySpecification;
+
 
 /**
- * If this is a new account, provision an organizational unit
+ * If this is a new account, provision a group for the admin role
  * for the new account in the Lightweight Directory Service (LDS).
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
- * @version 1.0 - 21 May 2017
+ * @version 1.0 - 26 December 2018
  **/
-public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
+public class CreateLdsGroup extends AbstractStep implements Step {
 	
 	private ProducerPool m_ldsServiceProducerPool = null;
-	private String m_organizationalUnitDescriptionTemplate = null;
-	private String m_organizationalUnitDnTemplate = null;
+	private String m_groupDescriptionTemplate = null;
+	private String m_groupDnTemplate = null;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -59,23 +53,21 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[CreateLdsOrganizationalUnit.init] ";
+		String LOGTAG = getStepTag() + "[CreateLdsGroup.init] ";
 		
 		logger.info(LOGTAG + "Getting custom step properties...");
-		String organizationalUnitDescriptionTemplate = getProperties()
-				.getProperty("organizationalUnitDescriptionTemplate", null);
-		setOrganizationalUnitDescriptionTemplate(organizationalUnitDescriptionTemplate);
-		logger.info(LOGTAG + "organizationalUnitDescriptionTemplate is: " + 
-				getOrganizationalUnitDescriptionTemplate());
+		String groupDescriptionTemplate = getProperties()
+				.getProperty("groupDescriptionTemplate", null);
+		setGroupDescriptionTemplate(groupDescriptionTemplate);
+		logger.info(LOGTAG + "groupDescriptionTemplate is: " + 
+				getGroupDescriptionTemplate());
 		
-		String organizationalUnitDnTemplate = getProperties()
-				.getProperty("organizationalUnitDnTemplate", null);
-		setOrganizationalUnitDnTemplate(organizationalUnitDnTemplate);
-		logger.info(LOGTAG + "organizationalUnitDnTemplate is: " + 
-				getOrganizationalUnitDnTemplate());
+		String groupDnTemplate = getProperties().getProperty("groupDnTemplate", null);
+		setGroupDnTemplate(groupDnTemplate);
+		logger.info(LOGTAG + "groupDnTemplate is: " + getGroupDnTemplate());
 		
 		// This step needs to send messages to the LDS Service
-		// to provision or deprovision the OU for the new account.
+		// to provision or deprovision the groups for the new account.
 		ProducerPool p2p1 = null;
 		try {
 			p2p1 = (ProducerPool)getAppConfig()
@@ -97,7 +89,7 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[CreateLdsOrganizationalUnit.run] ";
+		String LOGTAG = getStepTag() + "[CreateLdsGroup.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		// Get the generateNewAccount and the newAccountId properties
@@ -113,17 +105,20 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
 		
 		// If allocatedNewAccount is true and newAccountId is not null, 
-		// Send an OrganizationalUnit.Create-Request to the AWS Account service.
+		// Send an Group.Create-Request to the AWS Account service.
 		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
-				"is not null. Sending an OrganizationUnit.Create-Request to create an" +
-				"LDS OU.");
+				"is not null. Sending an Group.Create-Request to create an" +
+				"LDS group.");
 			
-			// Get a configured OrganizationalUnit object from AppConfig.
-			OrganizationalUnit ou = new OrganizationalUnit();
+			// Get a configured Group object from AppConfig.
+			Group group = new Group();
+			GroupQuerySpecification querySpec = new GroupQuerySpecification();
 		    try {
-		    	ou = (OrganizationalUnit)getAppConfig()
-			    		.getObjectByType(ou.getClass().getName());
+		    	group = (Group)getAppConfig()
+			    	.getObjectByType(group.getClass().getName());
+		    	querySpec = (GroupQuerySpecification)getAppConfig()
+			    	.getObjectByType(querySpec.getClass().getName());
 		    }
 		    catch (EnterpriseConfigurationObjectException ecoe) {
 		    	String errMsg = "An error occurred retrieving an object from " +
@@ -132,12 +127,12 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		    	throw new StepException(errMsg, ecoe);
 		    }
 		    
-		    // Set the values of the OrganizationalUnit.
+		    // Set the values of the Group.
 		    try {
-		    	ou.addobjectClass("organizationalUnit");
-		    	ou.addobjectClass("top");
-		    	ou.setdescription(buildDescriptionValueFromTemplate(newAccountId));
-		    	ou.setdistinguishedName(buildDnValueFromTemplate(newAccountId));
+		    	group.addobjectClass("group");
+		    	group.addobjectClass("top");
+		    	group.setdescription(buildDescriptionValueFromTemplate(newAccountId));
+		    	group.setdistinguishedName(buildDnValueFromTemplate(newAccountId));
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
@@ -146,10 +141,10 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		  	    throw new StepException(errMsg, efe);
 		    }
 		    
-		    // Log the state of the OrganizationalUnit.
+		    // Log the state of the Group.
 		    try {
-		    	logger.info(LOGTAG + "OrganizationalUnit is: " +
-		    		ou.toXmlString());
+		    	logger.info(LOGTAG + "Group is: " +
+		    		group.toXmlString());
 		    }
 		    catch (XmlEnterpriseObjectException xeoe) {
 		    	String errMsg = "An error occurred serializing the object " +
@@ -173,20 +168,91 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		    
 			try { 
 				long createStartTime = System.currentTimeMillis();
-				ou.create(rs);
+				group.create(rs);
 				long createTime = System.currentTimeMillis() - createStartTime;
-				logger.info(LOGTAG + "Created OrganizationalUnit  in "
+				logger.info(LOGTAG + "Created Group  in "
 					+ createTime + " ms.");
-				addResultProperty("createdOrganizationalUnit", "true"); 
-				addResultProperty("distinguishedName", ou.getdistinguishedName()); 
+				addResultProperty("createdGroup", "true"); 
+				addResultProperty("distinguishedName", group.getdistinguishedName()); 
 				
 			}
 			catch (EnterpriseObjectCreateException eoce) {
 				String errMsg = "An error occurred creating the  " +
-		    	  "OrganizationalUnit object. " +
+		    	  "Group object. " +
 		    	  "The exception is: " + eoce.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, eoce);
+			}
+			finally {
+				// Release the producer back to the pool
+				getLdsServiceProducerPool()
+					.releaseProducer((MessageProducer)rs);
+			}
+			
+			// Query for the new group by dn to get the generated GUID.
+		    // Set the values of the query spec.
+		    try {
+		    	querySpec.setdistinguishedName(group.getdistinguishedName());
+		    }
+		    catch (EnterpriseFieldException efe) {
+		    	String errMsg = "An error occurred setting the values of the " +
+		  	    	  "object. The exception is: " + efe.getMessage();
+		  	    logger.error(LOGTAG + errMsg);
+		  	    throw new StepException(errMsg, efe);
+		    }
+		    
+		    // Log the state of the query spec.
+		    try {
+		    	logger.info(LOGTAG + "querySpec is: " +
+		    		group.toXmlString());
+		    }
+		    catch (XmlEnterpriseObjectException xeoe) {
+		    	String errMsg = "An error occurred serializing the object " +
+		  	    	  "to XML. The exception is: " + xeoe.getMessage();
+	  	    	logger.error(LOGTAG + errMsg);
+	  	    	throw new StepException(errMsg, xeoe);
+		    }    
+			
+			// Get a producer from the pool
+			rs = null;
+			try {
+				rs = (RequestService)getLdsServiceProducerPool()
+					.getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a producer " +
+					"from the pool. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, jmse);
+			}
+		    
+			List results = null;
+			try { 
+				long queryStartTime = System.currentTimeMillis();
+				results = group.query(querySpec, rs);
+				long queryTime = System.currentTimeMillis() - queryStartTime;
+				logger.info(LOGTAG + "Queries for group in "
+					+ queryTime + " ms. There are " + results.size() + " result(s).");
+				if (results.size() == 1) {
+					Group resultGroup = (Group)results.get(0);
+					String guid = group.getobjectGUID();
+					logger.info(LOGTAG + "GUID for new group is: " + guid);
+					addResultProperty("guid", guid);
+					
+				}
+				else {
+					String errMsg = "Invalid number of groups returned. " +
+						"Expected 1, got " + results.size();
+					logger.error(errMsg);
+					throw new StepException(errMsg);
+				}
+				
+			}
+			catch (EnterpriseObjectQueryException eoqe) {
+				String errMsg = "An error occurred querying for the  " +
+		    	  "Group object. The exception is: " + eoqe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+		    	throw new StepException(errMsg, eoqe);
 			}
 			finally {
 				// Release the producer back to the pool
@@ -201,11 +267,11 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		else {
 			logger.info(LOGTAG + "allocatedNewAccount is false or there " +
 				"is no newAccountId. There is no need to create a new " +
-				"organizationalUnit.");
+				"groupt.");
 			addResultProperty("allocatedNewAccount", 
 				Boolean.toString(allocatedNewAccount)); 
 			addResultProperty("newAccountId", newAccountId); 
-			addResultProperty("createdOrganizationalUnit", "not applicable");
+			addResultProperty("createdGroup", "not applicable");
 					
 		}
 		
@@ -224,7 +290,7 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateLdsOrganizationalUnit.simulate] ";
+			"[CreateLdsGroup.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -244,7 +310,7 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateLdsOrganizationalUnit.fail] ";
+			"[CreateLdsGroup.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -264,32 +330,32 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 	public void rollback() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateLdsOrganizationalUnit.rollback] ";
+			"[CreateLdsGroup.rollback] ";
 		
 		// Get the generateNewAccount and the newAccountId properties
 		// from previous steps to determine if a new account has been
 		// provisioned
-		String createdOrganizationalUnit = 
-			getResultProperty("createdOrganizationalUnit");
+		String createdGroup = 
+			getResultProperty("createdGroup");
 		boolean rollbackRequired = 
-			Boolean.parseBoolean(createdOrganizationalUnit);
+			Boolean.parseBoolean(createdGroup);
 		String distinguishedName = 
 			getResultProperty("distinguishedName");
 		
-		// If the step property createdOrganizationalUnit is true,
-		// Query for the Organizational unit and then delete it.
+		// If the step property createdGroup is true,
+		// Query for the Group and then delete it.
 		if (rollbackRequired) {
-			// Query for the OrganizationalUnit by distinguished name.
+			// Query for the Group by distinguished name.
 			
-			// Get a configured OrganizationalUnit object and query spec 
+			// Get a configured Group object and query spec 
 			// from AppConfig.
-			OrganizationalUnit ou = new OrganizationalUnit();
-			OrganizationalUnitQuerySpecification querySpec = 
-				new OrganizationalUnitQuerySpecification();
+			Group group = new Group();
+			GroupQuerySpecification querySpec = 
+				new GroupQuerySpecification();
 		    try {
-		    	ou = (OrganizationalUnit)getAppConfig()
-			    		.getObjectByType(ou.getClass().getName());
-		    	querySpec = (OrganizationalUnitQuerySpecification)getAppConfig()
+		    	group = (Group)getAppConfig()
+			    		.getObjectByType(group.getClass().getName());
+		    	querySpec = (GroupQuerySpecification)getAppConfig()
 		    			.getObjectByType(querySpec.getClass().getName());
 		    }
 		    catch (EnterpriseConfigurationObjectException ecoe) {
@@ -338,9 +404,9 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 			List results = null;
 			try { 
 				long queryStartTime = System.currentTimeMillis();
-				results = ou.query(querySpec, rs);
+				results = group.query(querySpec, rs);
 				long queryTime = System.currentTimeMillis() - queryStartTime;
-				logger.info(LOGTAG + "Queried for OrganizationalUnit  in "
+				logger.info(LOGTAG + "Queried for Group in "
 					+ queryTime + " ms. There are " + results.size() +
 					" result(s)."); 
 			}
@@ -360,12 +426,12 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 			// If there is exactly one result delete it and set result
 			// properties.
 			if (results.size() == 1) {
-				ou = (OrganizationalUnit)results.get(0);
+				group = (Group)results.get(0);
 				
-			    // Log the state of the OrganizationalUnit.
+			    // Log the state of the Group.
 			    try {
-			    	logger.info(LOGTAG + "OrganizationalUnit is: " +
-			    		ou.toXmlString());
+			    	logger.info(LOGTAG + "Group is: " +
+			    		group.toXmlString());
 			    }
 			    catch (XmlEnterpriseObjectException xeoe) {
 			    	String errMsg = "An error occurred serializing the object " +
@@ -389,16 +455,15 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 			    
 				try { 
 					long deleteStartTime = System.currentTimeMillis();
-					ou.delete("Delete", rs);
+					group.delete("Delete", rs);
 					long deleteTime = System.currentTimeMillis() - deleteStartTime;
-					logger.info(LOGTAG + "Deleted OrganizationalUnit in "
+					logger.info(LOGTAG + "Deleted Group in "
 						+ deleteTime + " ms.");
-					addResultProperty("deletedOrganizationalUnit", "true"); 
+					addResultProperty("deletedGroup", "true"); 
 				}
 				catch (EnterpriseObjectDeleteException eode) {
 					String errMsg = "An error occurred deleting the  " +
-			    	  "OrganizationalUnit object. " +
-			    	  "The exception is: " + eode.getMessage();
+			    	  "Group object. The exception is: " + eode.getMessage();
 			    	logger.error(LOGTAG + errMsg);
 			    	throw new StepException(errMsg, eode);
 				}
@@ -411,7 +476,7 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 			
 			// Otherwise, log an error.
 			else {
-				String errMsg = "Invalid number of OrganizationalUnit objects"
+				String errMsg = "Invalid number of Group objects"
 					+ " returned. Got " + results.size() +
 					", exected exactly 1.";
 				logger.error(LOGTAG + errMsg);
@@ -419,11 +484,11 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 			}
 		}
 		
-		// No organizational unit was created, there is nothing to roll back.
+		// No group was created, there is nothing to roll back.
 		else {
-			logger.info("No organizational unit was created. There is nothing "
+			logger.info("No group was created. There is nothing "
 				+ "to roll back.");
-			addResultProperty("deletedOrganizationalUnit", "not applicable");
+			addResultProperty("deletedGroup", "not applicable");
 		}
 		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
@@ -441,46 +506,46 @@ public class CreateLdsOrganizationalUnit extends AbstractStep implements Step {
 		return m_ldsServiceProducerPool;
 	}
 	
-	private void setOrganizationalUnitDescriptionTemplate (String template) throws 
+	private void setGroupDescriptionTemplate (String template) throws 
 		StepException {
 	
 		if (template == null) {
-			String errMsg = "organizationalUnitDescriptionTemplate property is null. " +
+			String errMsg = "groupDescriptionTemplate property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
 	
-		m_organizationalUnitDescriptionTemplate = template;
+		m_groupDescriptionTemplate = template;
 	}
 
-	private String getOrganizationalUnitDescriptionTemplate() {
-		return m_organizationalUnitDescriptionTemplate;
+	private String getGroupDescriptionTemplate() {
+		return m_groupDescriptionTemplate;
 	}
 	
 	private String buildDescriptionValueFromTemplate(String accountId) {
-		String description = getOrganizationalUnitDescriptionTemplate()
+		String description = getGroupDescriptionTemplate()
 			.replace("ACCOUNT_NUMBER", accountId);
 		return description;
 	}
 	
-	private void setOrganizationalUnitDnTemplate (String template) throws 
+	private void setGroupDnTemplate (String template) throws 
 		StepException {
 	
 		if (template == null) {
-			String errMsg = "organizationalUnitDnTemplate property is null. " +
+			String errMsg = "groupDnTemplate property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
 
-		m_organizationalUnitDnTemplate = template;
+		m_groupDnTemplate = template;
 	}
 
-	private String getOrganizationalUnitDnTemplate() {
-		return m_organizationalUnitDnTemplate;
+	private String getGroupDnTemplate() {
+		return m_groupDnTemplate;
 	}
 	
 	private String buildDnValueFromTemplate(String accountId) {
-		String dn = getOrganizationalUnitDnTemplate()
+		String dn = getGroupDnTemplate()
 			.replace("ACCOUNT_NUMBER", accountId);
 		return dn;
 	}
