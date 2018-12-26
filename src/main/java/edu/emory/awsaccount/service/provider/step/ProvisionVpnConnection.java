@@ -14,14 +14,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jms.JMSException;
+
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
+import org.openeai.config.EnterpriseFieldException;
+import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectGenerateException;
+import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.EnterpriseObjectUpdateException;
+import org.openeai.moa.XmlEnterpriseObjectException;
+import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProvisioning;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
 
 /**
  * Example step that can serve as a placholder.
@@ -33,6 +48,9 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
 public class ProvisionVpnConnection extends AbstractStep implements Step {
 
 	private ProducerPool m_networkOpsServiceProducerPool = null;
+	private String m_remoteVpnIpAddressForTesting = null;
+	private String m_presharedKeyTemplateForTesting = null;
+	private String m_vpnConnectionProfileId = null;
 	
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -60,6 +78,19 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
+		logger.info(LOGTAG + "Getting custom step properties...");
+		String remoteVpnIpAddressForTesting = getProperties()
+				.getProperty("remoteVpnIpAddressForTesting", null);
+		setRemoteVpnIpAddressForTesting(remoteVpnIpAddressForTesting);
+		logger.info(LOGTAG + "remoteVpnIpAddressForTesting is: " + 
+				getRemoteVpnIpAddressForTesting());
+		
+		String presharedKeyTemplateForTesting = getProperties()
+				.getProperty("presharedKeyTemplateForTesting", null);
+		setPresharedKeyTemplateForTesting(presharedKeyTemplateForTesting);
+		logger.info(LOGTAG + "presharedKeyTemplateForTesting is: " + 
+				getPresharedKeyTemplateForTesting());
+		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 	
@@ -68,21 +99,226 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[ProvisionVpnConnection.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		// Wait some time.
+		// Get the VpcId property from a previous step.
+		String vpcId = 
+			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
+		String vpnConnectionProfileId = 
+			getStepPropertyValue("UPDATE_VPN_CONNECTION_PROFILE_ASSIGNMENT", 
+			"vpnConnectionProfileId");
+		setVpnConnectionProfileId(vpnConnectionProfileId);
+		
+		// Get a configured VpnConnectionProfile and
+		// VpnConnectionProfileQuery from AppConfig
+		VpnConnectionProfile vpnConnectionProfile = new 
+			VpnConnectionProfile();
+		VpnConnectionProfileQuerySpecification querySpec = 
+			new VpnConnectionProfileQuerySpecification();
+	    try {
+	    	vpnConnectionProfile = (VpnConnectionProfile)getAppConfig()
+		    		.getObjectByType(vpnConnectionProfile.getClass().getName());
+	    	querySpec = (VpnConnectionProfileQuerySpecification)getAppConfig()
+		    		.getObjectByType(querySpec.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
+    
+	    String provisioningId = getVirtualPrivateCloudProvisioning()
+	    		.getProvisioningId();
+	    
+	    // Set the values of the querySpec.
+	    try {
+	    	querySpec.setVpnConnectionProfileId(vpnConnectionProfileId);
+	    }
+	    catch (EnterpriseFieldException efe) {
+	    	String errMsg = "An error occurred setting the values of the " +
+	  	    	  "requisition. The exception is: " + efe.getMessage();
+	  	    logger.error(LOGTAG + errMsg);
+	  	    throw new StepException(errMsg, efe);
+	    }
+	    
+	    // Log the state of the querySpec.
+	    try {
+	    	logger.info(LOGTAG + "querySpec is: " + querySpec.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the querySpec " +
+	  	    	  "to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new StepException(errMsg, xeoe);
+	    }    
+		
+		// Get a producer from the pool
+		RequestService rs = null;
 		try {
-			Thread.sleep(5000);
+			rs = (RequestService)getNetworkOpsServiceProducerPool()
+				.getExclusiveProducer();
 		}
-		catch (InterruptedException ie) {
-			String errMsg = "Error occurred sleeping.";
-			logger.error(LOGTAG + errMsg + ie.getMessage());
-			throw new StepException(errMsg, ie);
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, jmse);
+		}
+	    
+		List profileResults = null;
+		try { 
+			long queryStartTime = System.currentTimeMillis();
+			profileResults = vpnConnectionProfile.query(querySpec, rs);
+			long queryTime = System.currentTimeMillis() - queryStartTime;
+			logger.info(LOGTAG + "Queried for VpnConnectionProfile " +
+				"for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
+				+ queryTime + " ms. Returned " + profileResults.size() + 
+				" result(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the  " +
+	    	  "VpnConnectionProfile object. " +
+	    	  "The exception is: " + eoqe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, eoqe);
+		}
+		finally {
+			// Release the producer back to the pool
+			getNetworkOpsServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
 		}
 		
-		// Set return properties.
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+		// If there is exactly one result, provision the VPN connection.
+		if (profileResults.size() == 1) {
+			vpnConnectionProfile = (VpnConnectionProfile)profileResults.get(0);
+			
+			// Log the state of the object.
+		    try {
+		    	logger.info(LOGTAG + "VpnConnectionProfile returned is: "
+		    		+ vpnConnectionProfile.toXmlString());
+		    }
+		    catch (XmlEnterpriseObjectException xeoe) {
+		    	String errMsg = "An error occurred serializing the object " +
+		  	    	  "to XML. The exception is: " + xeoe.getMessage();
+	  	    	logger.error(LOGTAG + errMsg);
+	  	    	throw new StepException(errMsg, xeoe);
+		    }    
+			
+		    // Get a configured VpnConnectionProvisioning object and
+		    // VpnConnectionRequisition object from AppConfig
+		    VpnConnectionProvisioning vpnProvisioning = new 
+				VpnConnectionProvisioning();
+			VpnConnectionRequisition vpnReq = 
+				new VpnConnectionRequisition();
+		    try {
+		    	vpnProvisioning = (VpnConnectionProvisioning)getAppConfig()
+			    		.getObjectByType(vpnProvisioning.getClass().getName());
+		    	vpnReq = (VpnConnectionRequisition)getAppConfig()
+			    		.getObjectByType(vpnReq.getClass().getName());
+		    }
+		    catch (EnterpriseConfigurationObjectException ecoe) {
+		    	String errMsg = "An error occurred retrieving an object from " +
+		    	  "AppConfig. The exception is: " + ecoe.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+		    	throw new StepException(errMsg, ecoe);
+		    }
+			
+		    // Set the values of the VpnConnectionRequisition.
+		    try {
+		    	vpnReq.setVpnConnectionProfile(vpnConnectionProfile);
+		    	vpnReq.setOwnerId(vpcId);
+		    	vpnReq.setRemoteVpnIpAddress(getRemoteVpnIpAddress());
+		    	vpnReq.setPresharedKey(getPresharedKey());
+		    }
+		    catch (EnterpriseFieldException efe) {
+		    	String errMsg = "An error occurred setting the values of the " +
+		  	    	  "object. The exception is: " + efe.getMessage();
+		  	    logger.error(LOGTAG + errMsg);
+		  	    throw new StepException(errMsg, efe);
+		    }
+		    
+		    // Log the state of the object.
+		    try {
+		    	logger.info(LOGTAG + "updated VpnConnectionRequisition: " 
+		    		+ vpnReq.toXmlString());
+		    }
+		    catch (XmlEnterpriseObjectException xeoe) {
+		    	String errMsg = "An error occurred serializing the " +
+		  	    	  "object to XML. The exception is: " + xeoe.getMessage();
+	  	    	logger.error(LOGTAG + errMsg);
+	  	    	throw new StepException(errMsg, xeoe);
+		    }    
+			
+			// Get a producer from the pool
+			rs = null;
+			try {
+				rs = (RequestService)getNetworkOpsServiceProducerPool()
+					.getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a producer " +
+					"from the pool. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, jmse);
+			}
+		    
+			List results = null;
+			try { 
+				long generateStartTime = System.currentTimeMillis();
+				results = vpnProvisioning.generate(vpnReq, rs);
+				long generateTime = System.currentTimeMillis() - generateStartTime;
+				logger.info(LOGTAG + "Generate VpnConnectionProvisioning" +
+					" in " + generateTime + " ms.");
+			}
+			catch (EnterpriseObjectGenerateException eoge) {
+				String errMsg = "An error occurred generating the  " +
+		    	  "VpnConnectionProvisinoing object. The " +
+		    	  "exception is: " + eoge.getMessage();
+		    	logger.error(LOGTAG + errMsg);
+		    	throw new StepException(errMsg, eoge);
+			}
+			finally {
+				// Release the producer back to the pool
+				getNetworkOpsServiceProducerPool()
+					.releaseProducer((MessageProducer)rs);
+			}
+			
+			if (results.size() == 1) {
+				VpnConnectionProvisioning vcp = 
+					(VpnConnectionProvisioning)results.get(0);
+				// Add result properties
+				addResultProperty("generatedVpnConnectionProvisioning", 
+						"true");
+				addResultProperty("vpnConnectionProvisioningId", 
+					vcp.getProvisioningId());
+				
+				addResultProperty("remoteVpnIpAddress", 
+					vpnReq.getRemoteVpnIpAddress());
+				addResultProperty("presharedKey", 
+					vpnReq.getPresharedKey());
+			}
+			else {
+				String errMsg = "Invalid number of results returned from " +
+					"VpnConnectionProvisioning.Generate-Request. " +
+					results.size() + " results returned. " +
+					"Expected exactly 1.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+			
+		}
+	    // If there is not exactly one assignment returned, log it and 
+		// throw an exception.
+		else {
+			String errMsg = "Invalid number of results returned from " +
+				"VpnConnectionProfile.Query-Request. " +
+				profileResults.size() + " results returned. " +
+				"Expected exactly 1.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
 		
 		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+		update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
@@ -96,7 +332,7 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[ExampleStep.simulate] ";
+			"[ProvisionVpnConnection.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -116,7 +352,7 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[ExampleStep.fail] ";
+			"[ProvisionVpnConnection.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -136,9 +372,10 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	public void rollback() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[ExampleStep.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+			"[ProvisiongVpnConnection.rollback] ";
+		
+// TODO: Implement deprovisioning
+		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
@@ -153,4 +390,66 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	private ProducerPool getNetworkOpsServiceProducerPool() {
 		return m_networkOpsServiceProducerPool;
 	}
+
+	private void setRemoteVpnIpAddressForTesting(String ipAddress)  
+		throws StepException {
+	
+		m_remoteVpnIpAddressForTesting = ipAddress;
+	}
+	
+	private String getRemoteVpnIpAddressForTesting() {
+		return m_remoteVpnIpAddressForTesting;
+	}
+	
+	private void setPresharedKeyTemplateForTesting(String template)  
+		throws StepException {
+	
+		m_presharedKeyTemplateForTesting = template;
+	}
+		
+	private String getPresharedKeyTemplateForTesting() {
+		return m_presharedKeyTemplateForTesting;
+	}
+	
+	private void setVpnConnectionProfileId(String id) {
+		m_vpnConnectionProfileId = id;
+	}
+	
+	private String getVpnConnectionProfileId() {
+		return m_vpnConnectionProfileId;
+	}
+	
+	private String getPresharedKey() {
+		
+		String key = null;
+		if (getActualPresharedKey() == null) {
+			key = getPresharedKeyTemplateForTesting() +
+				String.format("%03d", getVpnConnectionProfileId());
+		}
+		else {
+			key = getActualPresharedKey();
+		}
+		return key;	
+	}
+	
+	private String getActualPresharedKey() {
+		return null;
+	}
+	
+	private String getRemoteVpnIpAddress() {
+		
+		String ip = null;
+		if (getActualRemoteVpnIpAddress() == null) {
+			ip = getRemoteVpnIpAddressForTesting();
+		}
+		else {
+			ip = getActualRemoteVpnIpAddress();
+		}
+		return ip;	
+	}
+	
+	private String getActualRemoteVpnIpAddress() {
+		return null;
+	}
+	
 }
