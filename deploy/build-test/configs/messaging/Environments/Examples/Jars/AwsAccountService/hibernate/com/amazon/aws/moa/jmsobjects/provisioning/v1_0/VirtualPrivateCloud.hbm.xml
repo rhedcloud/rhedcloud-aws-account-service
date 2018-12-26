@@ -11,6 +11,13 @@
 <property name="Region" column="REGION"/>
 <property name="Type" column="TYPE_"/>
 <property name="Purpose" column="PURPOSE"/>
+<bag name="Property" table="VIRTUAL_PRIVATE_CLOUD_PROPERTY">
+<key column="VPC_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
+<property name="Key" column="KEY_"/>
+<property name="Value" column="VALUE"/>
+</composite-element>
+</bag>
 <property name="CreateUser" column="CREATE_USER"/>
 <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
