@@ -235,7 +235,7 @@ public class CreateLdsGroup extends AbstractStep implements Step {
 					+ queryTime + " ms. There are " + results.size() + " result(s).");
 				if (results.size() == 1) {
 					Group resultGroup = (Group)results.get(0);
-					String guid = group.getobjectGUID();
+					String guid = resultGroup.getobjectGUID();
 					logger.info(LOGTAG + "GUID for new group is: " + guid);
 					addResultProperty("guid", guid);
 					
