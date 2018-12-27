@@ -352,7 +352,7 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 	    
 	    // Set the values of the querySpec.
 	    try {
-	    	querySpec.setOwnerId(provisioningId);
+	    	querySpec.setOwnerId(vpcId);
 	    }
 	    catch (EnterpriseFieldException efe) {
 	    	String errMsg = "An error occurred setting the values of the " +
