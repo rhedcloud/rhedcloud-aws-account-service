@@ -118,7 +118,7 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 				"is not null. Sending an AccountAlias.Create-Request to create an" +
 				"acount alias.");
 			
-			// Get a configured account object from AppConfig.
+			// Get a configured SamlProvider object from AppConfig.
 			SamlProvider samlProvider = new SamlProvider();
 		    try {
 		    	samlProvider = (SamlProvider)getAppConfig()
@@ -131,7 +131,7 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 		    	throw new StepException(errMsg, ecoe);
 		    }
 		    
-		    // Set the values of the account.
+		    // Set the values of the SamlProvider.
 		    try {
 		    	samlProvider.setAccountId(newAccountId);
 		    	samlProvider.setName(samlIdpName);;
@@ -144,7 +144,7 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 		  	    throw new StepException(errMsg, efe);
 		    }
 		    
-		    // Log the state of the SamlProvicer.
+		    // Log the state of the SamlProvider.
 		    try {
 		    	logger.info(LOGTAG + "SamlProvider to create is: " +
 		    		samlProvider.toXmlString());

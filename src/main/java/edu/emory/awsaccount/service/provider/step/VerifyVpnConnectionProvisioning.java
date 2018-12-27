@@ -147,6 +147,13 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 					"configured properly in the time allowed.");
 				break;
 			}
+			else if (isFailure(vcp)) {
+				vpnConnectionProvisioningSuccess = false;
+				stepResult = FAILURE_RESULT;
+				addResultProperty("provisioningMessage", "Neither VPN tunnel " +
+					"configured properly in the time allowed.");
+				break;
+			}
 		}
 		
 		// If the max wait time has expired and provisioning is not completely
@@ -164,6 +171,11 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 					"site-to-site VPN tunnel configured properly in the time " +
 					"allowed. The connection should still operate and be " +
 					"completed automatically later.");
+			}
+			else {
+				addResultProperty("provisioningMessage", "Neither " +
+					"site-to-site VPN tunnel configured properly in the time " +
+					"allowed.");
 			}
 		}
 		
@@ -282,6 +294,14 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		else return false;
 	}
 	
+private boolean isFailure(VpnConnectionProvisioning vcp) {
+		
+		if (vcp.getProvisioningResult().equalsIgnoreCase(FAILURE_RESULT)) {
+			return true;
+		}
+		else return false;
+	}
+	
 	private boolean isPartialSuccess(VpnConnectionProvisioning vcp) {
 		
 		List<ProvisioningStep> steps = vcp.getProvisioningStep();
@@ -326,7 +346,7 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 	    	throw new StepException(errMsg, ecoe);
 	    }
 		
-	    // Set the values of the query spce.
+	    // Set the values of the query spec.
 	    try {
 	    	querySpec.setProvisioningId(provisioningId);
 	    }
