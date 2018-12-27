@@ -24,6 +24,7 @@ import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
+import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
@@ -37,7 +38,8 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionProvisioningQuerySpecif
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
 
 /**
- * Example step that can serve as a placholder.
+ * Veridy that the VpnConnection was provisioned properly by querying
+ * for the VpnConnectionProvisioning object and evaluating the results.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
@@ -366,18 +368,18 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		List results = null;
 		try { 
 			long queryStartTime = System.currentTimeMillis();
-			results = vpnProvisioning.generate(querySpec, rs);
+			results = vpnProvisioning.query(querySpec, rs);
 			long queryTime = System.currentTimeMillis() - queryStartTime;
 			logger.info(LOGTAG + "Queried for VpnConnectionProvisioning" +
 				" with ProvisioningId " + provisioningId + "in " + queryTime +
 				"ms. There are " + results.size() + " result(s).");
 		}
-		catch (EnterpriseObjectGenerateException eoge) {
-			String errMsg = "An error occurred generating the  " +
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the  " +
 	    	  "VpnConnectionProvisinoing object. The " +
-	    	  "exception is: " + eoge.getMessage();
+	    	  "exception is: " + eoqe.getMessage();
 	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoge);
+	    	throw new StepException(errMsg, eoqe);
 		}
 		finally {
 			// Release the producer back to the pool
