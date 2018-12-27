@@ -421,10 +421,18 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	
 	private String getPresharedKey() {
 		
+		String LOGTAG = getStepTag() + "[ProvisionVpnConnection.getPresharedKey] ";
 		String key = null;
+		String keyPrefix = getPresharedKeyTemplateForTesting();
+		String keySuffix = null;
+		int vpnConnectionProfileId = Integer.parseInt(getVpnConnectionProfileId());
 		if (getActualPresharedKey() == null) {
-			key = getPresharedKeyTemplateForTesting() +
-				String.format("%03d", getVpnConnectionProfileId());
+			logger.info(LOGTAG + "Formatting " + vpnConnectionProfileId + 
+				" as three padded characters...");
+			keySuffix =	String.format("%03d", vpnConnectionProfileId);
+			logger.info(LOGTAG + "keySuffix is: " + keySuffix);
+			key = keyPrefix + keySuffix;
+			logger.info(LOGTAG + "key is: " + key);
 		}
 		else {
 			key = getActualPresharedKey();
