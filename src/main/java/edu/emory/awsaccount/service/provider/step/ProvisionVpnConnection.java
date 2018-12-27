@@ -103,7 +103,7 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 		String vpcId = 
 			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
 		String vpnConnectionProfileId = 
-			getStepPropertyValue("UPDATE_VPN_CONNECTION_PROFILE_ASSIGNMENT", 
+			getStepPropertyValue("UPDATE_VPN_CONNECTION_ASSIGNMENT", 
 			"vpnConnectionProfileId");
 		setVpnConnectionProfileId(vpnConnectionProfileId);
 		
