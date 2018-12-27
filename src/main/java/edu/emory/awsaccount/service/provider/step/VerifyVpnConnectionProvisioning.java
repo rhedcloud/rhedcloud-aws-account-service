@@ -21,6 +21,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.XmlEnterpriseObjectException;
@@ -46,6 +47,7 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 	
 	int m_sleepTimeInMillis = 5000;
 	int m_maxWaitTimeInMillis = 600000;
+	int m_requestTimeoutIntervalInMillis = 10000;
 	private ProducerPool m_networkOpsServiceProducerPool = null;
 
 	public void init (String provisioningId, Properties props, 
@@ -86,10 +88,17 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		
 		String maxWaitTime = getProperties()
 				.getProperty("maxWaitTimeInMillis", "600000");
-			int maxWaitTimeInMillis = Integer.parseInt(sleepTime);
+			int maxWaitTimeInMillis = Integer.parseInt(maxWaitTime);
 			setMaxWaitTimeInMillis(maxWaitTimeInMillis);
 			logger.info(LOGTAG + "maxWaitTimeInMillis is: " + 
 				getMaxWaitTimeInMillis());
+			
+		String requestTimeoutInterval = getProperties()
+				.getProperty("requestTimeoutIntervalInMillis", "10000");
+			int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+				getRequestTimeoutIntervalInMillis());
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
@@ -104,7 +113,8 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		String stepResult = FAILURE_RESULT;
 		
 		// Get the vpnConnectionProvisioningId property from a previous step.
-		String provisioningId = getStepPropertyValue("PROVISION_VPN_CONNECTION", "vpnConnectionProvisioningId");
+		String provisioningId = getStepPropertyValue("PROVISION_VPN_CONNECTION", 
+			"vpnConnectionProvisioningId");
 		
 		// While the step run time is less that the maxWaitTime,
 		// query for the VpnConnectionProvisioning object and 
@@ -254,6 +264,14 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		return m_maxWaitTimeInMillis;
 	}
 	
+	private void setRequestTimeoutIntervalInMillis(int time) {
+		m_requestTimeoutIntervalInMillis = time;
+	}
+	
+	private int getRequestTimeoutIntervalInMillis() {
+		return m_requestTimeoutIntervalInMillis;
+	}
+	
 	private boolean isSuccess(VpnConnectionProvisioning vcp) {
 		
 		if (vcp.getProvisioningResult().equalsIgnoreCase(SUCCESS_RESULT)) {
@@ -332,8 +350,11 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getNetworkOpsServiceProducerPool()
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
 				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a producer " +
