@@ -324,9 +324,8 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 		String LOGTAG = getStepTag() + 
 			"[UpdateVpnConnectionAssignment.rollback] ";
 		
-		// Get the VpcId property from a previous step.
-		String vpcId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
+		// Get the VpcId property from this step.
+		String vpcId = getResultProperty("VpcId");
 		
 		// Get a configured VpnConnectionProfileAssignment and
 		// VpnConnectionProfileAssignmentQuerySpecification from
