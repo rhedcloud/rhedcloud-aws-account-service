@@ -89,7 +89,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[CreateSamlProvider.run] ";
+		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		boolean generatedRole = false;
