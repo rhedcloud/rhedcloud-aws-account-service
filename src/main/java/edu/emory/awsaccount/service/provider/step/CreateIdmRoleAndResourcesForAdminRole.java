@@ -185,7 +185,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	res4.setResourceDescription("Provisions members to group AwsUsers on IDV Roles LBD Connector. This group contains all AWS users.");
 		    	res4.setResourceCategoryKey("group");
 		    	Entitlement ent4 = res4.newEntitlement();
-		    	ent4.setEntitlementDN("\\EMORYDEV\\EmoryDev\\Data\\Groups\\AwsUser");
+		    	ent4.setEntitlementDN("\\EMORYDEV\\EmoryDev\\Data\\Groups\\AwsUsers");
 		    	ent4.setEntitlementApplication("IDV");
 		    	res4.setEntitlement(ent4);
 		    	req.addResource(res4);
