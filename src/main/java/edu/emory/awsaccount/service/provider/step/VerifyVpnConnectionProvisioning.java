@@ -288,16 +288,23 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 	
 	private boolean isSuccess(VpnConnectionProvisioning vcp) {
 		
-		if (vcp.getProvisioningResult().equalsIgnoreCase(SUCCESS_RESULT)) {
-			return true;
+		if (vcp.getProvisioningResult() != null) {
+			if (vcp.getProvisioningResult().equalsIgnoreCase(SUCCESS_RESULT)) {
+				return true;
+			}
+			else return false;
 		}
+		
 		else return false;
 	}
 	
-private boolean isFailure(VpnConnectionProvisioning vcp) {
+	private boolean isFailure(VpnConnectionProvisioning vcp) {
 		
-		if (vcp.getProvisioningResult().equalsIgnoreCase(FAILURE_RESULT)) {
-			return true;
+		if (vcp.getProvisioningResult() != null) {
+			if (vcp.getProvisioningResult().equalsIgnoreCase(FAILURE_RESULT)) {
+				return true;
+			}
+			else return false;
 		}
 		else return false;
 	}
@@ -319,8 +326,7 @@ private boolean isFailure(VpnConnectionProvisioning vcp) {
 		}
 		
 		return false;
-	}
-	
+	}	
 	
 	private VpnConnectionProvisioning queryForVpnProvisioning(String provisioningId)
 		throws StepException {
