@@ -247,7 +247,7 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 	    	ra = (RoleAssignment)getAppConfig()
 		    	.getObjectByType(ra.getClass().getName());
 	    	req = (RoleAssignmentRequisition)getAppConfig()
-	    		.getObjectByType(ra.getClass().getName());
+	    		.getObjectByType(req.getClass().getName());
 	    }
 	    catch (EnterpriseConfigurationObjectException ecoe) {
 	    	String errMsg = "An error occurred retrieving an object from " +
