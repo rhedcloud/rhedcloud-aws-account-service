@@ -102,7 +102,7 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[ExampleStep.run] ";
+		String LOGTAG = getStepTag() + "[AssignAdminsToAdminRole.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
 		// Set result properties.
@@ -113,8 +113,6 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		String centralAdminRoleGuid = 
-				getStepPropertyValue("CREATE_LDS_GROUP_FOR_CENTRAL_ADMIN_ROLE", "guid");
 		
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
@@ -145,9 +143,15 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 			adminUserIds.add(ownerId);
 			
 			logger.info(LOGTAG + "There are " + adminUserIds.size() + " admin user IDs.");
-			logger.info(LOGTAG + "AdminUserIds are: " + toUserIdListString(adminUserIds));
 			
-			ListIterator li = adminUserIds.listIterator();
+			List<String> distinctAdminUserIds = buildDistinctUserIdList(adminUserIds);
+			
+			logger.info(LOGTAG + "There are " + distinctAdminUserIds.size() + 
+				"distinct admin user IDs.");
+			logger.info(LOGTAG + "Distinct AdminUserIds are: " +
+				toUserIdListString(distinctAdminUserIds));
+			
+			ListIterator li = distinctAdminUserIds.listIterator();
 			int i = 0;
 			while (li.hasNext()) {
 				String id = (String)li.next();
@@ -157,7 +161,8 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 			
 			logger.info(LOGTAG + "Generated " + i + " admin RoleAssignments.");
 			addResultProperty("addedAdminsToAdminRole", "true");
-			addResultProperty("adminUserIds", toUserIdListString(adminUserIds));
+			addResultProperty("distinctAdminUserIds", 
+				toUserIdListString(distinctAdminUserIds));
 		}
 		
 		// Otherwise, add result properties and log that no action was required.
@@ -406,6 +411,21 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 		}
 		
 		return list;
+	}
+	
+	private List<String> buildDistinctUserIdList(List userIds) {
+		
+		List<String> distinctUserIds = new ArrayList<String>();
+		
+		ListIterator li = userIds.listIterator();
+		while (li.hasNext()) {
+			String id = (String)li.next();
+			if (distinctUserIds.contains(id) == false) {
+				distinctUserIds.add(id);
+			}
+		}
+		
+		return distinctUserIds;
 	}
 	
 }
