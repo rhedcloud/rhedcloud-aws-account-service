@@ -102,6 +102,8 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+		String accountAlias = 
+				getStepPropertyValue("CREATE_ACCOUNT_ALIAS", "accountAlias");
 		String adminRoleGuid = 
 				getStepPropertyValue("CREATE_LDS_GROUP_FOR_ADMIN_ROLE", "guid");
 		
@@ -168,13 +170,13 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	res2.setEntitlement(ent2);
 		    	req.addResource(res2);
 		    	
-		    	// Resource 3
+		    	// Resource 3 
 		    	Resource res3 = role.newResource();
-		    	res3.setResourceName("EADG_AWS-Account-99");
-		    	res3.setResourceDescription("Provisions members to group AWS-Account-99 on Enterprise AD Connector");
+		    	res3.setResourceName("EADG_" + accountAlias);
+		    	res3.setResourceDescription("Provisions members to group " + accountAlias + " on Enterprise AD Connector");
 		    	res3.setResourceCategoryKey("group");
 		    	Entitlement ent3 = res3.newEntitlement();
-		    	ent3.setEntitlementDN("CN=AWS-Account-99,OU=AWS,DC=entdev,DC=emory,DC=edu");
+		    	ent3.setEntitlementDN("CN=" + accountAlias + ",OU=AWS,DC=entdev,DC=emory,DC=edu");
 		    	ent3.setEntitlementApplication("EAD");
 		    	res3.setEntitlement(ent3);
 		    	req.addResource(res3);
