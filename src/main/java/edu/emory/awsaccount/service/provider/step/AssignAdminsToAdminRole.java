@@ -383,14 +383,12 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 	}
 	
 	private String buildIdentityDnFromTemplate(String userId) {
-		String dn = getIdentityDnTemplate();
-		dn.replace("USER_ID", userId);
+		String dn = getIdentityDnTemplate().replace("USER_ID", userId);
 		return dn;
 	}
 	
 	private String buildRoleDnFromTemplate(String accountId) {
-		String dn = getRoleDnTemplate();
-		dn.replace("ACCOUNT_NUMBER", accountId);
+		String dn = getRoleDnTemplate().replace("ACCOUNT_NUMBER", accountId);
 		return dn;
 	}
 	
