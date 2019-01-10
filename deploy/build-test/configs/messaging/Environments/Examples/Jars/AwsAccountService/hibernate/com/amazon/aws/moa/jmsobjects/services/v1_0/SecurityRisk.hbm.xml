@@ -17,7 +17,7 @@
 <property name="AssessmentDatetime" type="OpenEaiDatetime" column="ASSESSMENT_DATETIME"/>
 
 <bag name="Countermeasure" table="SECURITY_RISK_COUNTER_MEASURE">
-<key column="SecurityRiskId"/>
+<key column="SECURITY_RISK_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Countermeasure" >
 <property name="Status" column="STATUS"/>
 <property name="Description" column="DESCRIPTION" length="2500"/>
