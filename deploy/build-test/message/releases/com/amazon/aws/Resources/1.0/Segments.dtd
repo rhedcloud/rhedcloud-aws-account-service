@@ -54,7 +54,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
 <!-- not sure CountermeasureId needed -->
-<!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId, Status, Description, Verifier?, VerificationDatetime?)>
+<!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
 <!ELEMENT EmailAddress (Type, Email)>
@@ -87,8 +87,8 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT ServiceTestStep (ServiceTestStepId?, ServiceTestId, SequenceNumber, Description)>
 <!ELEMENT Stack (StackId, StackName, Description?, StackParameter*, Tag*, Output*, CreateDatetime, Capability*, NotificationOptions?, StackStatus, DisableRollback, StackPolicy?)>
 <!ELEMENT StackParameter (Key, Value)>
-<!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, StackId?, StackName?)>
-<!ELEMENT StackRequisition (AccountId, Credentials?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
+<!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, Region?, StackId?, StackName?)>
+<!ELEMENT StackRequisition (AccountId, Credentials?, Region?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
 <!ELEMENT Tag (Key, Value)>
 <!ELEMENT TermsOfUse (TermsOfUseId?, Revision, EffectiveDate, ExpirationDate?, Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT TermsOfUseAgreement (TermsOfUseAgreementId?, TermsOfUseId, UserId, Status, PresentedDatetime, AgreedDatetime?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>

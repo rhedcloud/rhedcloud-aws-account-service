@@ -36,7 +36,15 @@
 				<VpnConnectionProfileId>1</VpnConnectionProfileId>
 				<Region>us-east-1</Region>
 				<Type>1</Type>
-				<Purpose>First development environment VPC</Purpose>
+				<Purpose>George test</Purpose>
+				<Property>
+					<Key>TestKey</Key>
+					<Value>TestValue</Value>
+				</Property>
+				<Property>
+					<Key>TestKey2</Key>
+					<Value>TestValue</Value>
+				</Property>
 				<CreateUser>swheat</CreateUser>
 				<CreateDatetime>
 					<Year>2016</Year>
