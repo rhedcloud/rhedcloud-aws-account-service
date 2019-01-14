@@ -1236,6 +1236,25 @@ implements VirtualPrivateCloudProvisioningProvider {
 			logger.info(LOGTAG +  "Processing ProvisioningId number: " 
 				+ getProvisioningId());
 			
+			// Get the FailStep if it exists.
+			int failStep = 0;
+			String purpose = m_vpcp.getVirtualPrivateCloudRequisition().getPurpose();
+			if (purpose != null) {
+				if (purpose.startsWith("FailStep")) {
+					String[] args = purpose.split("=");
+					String sFailStep = args[1];
+					logger.info(LOGTAG + "sFailStep is: " + sFailStep);
+					try {
+						failStep = Integer.parseInt(sFailStep);
+					}
+					catch (Exception e) {
+						String errMsg = "Invalid format for FailStep.";
+						logger.error(LOGTAG + errMsg);
+					}
+					logger.info(LOGTAG + "failStep is: " + failStep);
+				}
+			}
+			
 			// Get a list of all step properties.
 			List<PropertyConfig> stepPropConfigs = null;
 			try {
@@ -1279,6 +1298,14 @@ implements VirtualPrivateCloudProvisioningProvider {
 						Class stepClass = Class.forName(className);
 						step = (Step)stepClass.newInstance();
 						logger.info(LOGTAG + "Initializing step " + i + ".");
+						
+						// If this is the failStep, set the failStep to be true.
+						if (i == failStep) {
+							logger.info(LOGTAG + "This step (" + i + ") is the FailStep. " +
+								"Setting failStep property to true.");
+							props.setProperty("failStep", "true");
+						}
+						
 						step.init(getProvisioningId(), props, getAppConfig(), 
 							getVirtualPrivateCloudProvisioningProvider());
 					}
