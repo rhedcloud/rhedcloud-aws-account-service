@@ -339,6 +339,12 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
 		    	
+		    	// Region
+		    	VirtualPrivateCloudRequisition vpcr =
+		    		getVirtualPrivateCloudProvisioning()
+		    		.getVirtualPrivateCloudRequisition();
+		    	req.setRegion(vpcr.getRegion());
+		    	
 		    	// StackName
 		    	req.setStackName(getStackName());
 		    	addResultProperty("accountId", req.getAccountId());
