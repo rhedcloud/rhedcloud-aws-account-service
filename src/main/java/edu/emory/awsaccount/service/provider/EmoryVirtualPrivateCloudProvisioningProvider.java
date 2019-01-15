@@ -1305,6 +1305,9 @@ implements VirtualPrivateCloudProvisioningProvider {
 								"Setting failStep property to true.");
 							props.setProperty("failStep", "true");
 						}
+						else {
+							logger.info(LOGTAG + "This step (" + i + ") is not the FailStep.");
+						}
 						
 						step.init(getProvisioningId(), props, getAppConfig(), 
 							getVirtualPrivateCloudProvisioningProvider());

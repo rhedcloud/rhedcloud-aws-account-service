@@ -173,7 +173,8 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		DescribeStacksResult result = null;
 		try {
-			AmazonCloudFormationClient client = buildCloudFormationClient(querySpec.getAccountId());
+			AmazonCloudFormationClient client = 
+				buildCloudFormationClient(querySpec.getAccountId(), querySpec.getRegion());
 			result = client.describeStacks(request);
 		}
 		catch (Exception e) {
@@ -284,7 +285,7 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		CreateStackResult result = null;
 		try{
-			AmazonCloudFormationClient client = buildCloudFormationClient(req.getAccountId());
+			AmazonCloudFormationClient client = buildCloudFormationClient(req.getAccountId(), req.getRegion());
 			result = client.createStack(csr);
 			// If the request does not want an immediate response,
 			// wait for completion
@@ -355,13 +356,16 @@ implements StackProvider {
 		// Get the accountId
 		String accountId = parseAccountIdFromStackId(stack.getStackId());
 		
+		// Get the region
+		String region = parseRegionFromStackId(stack.getStackId());
+		
 		// Submit the stack request.
 		logger.info(LOGTAG + "Requesting the stack be deleted with stack " +
 			"request: " + dsr.toString() + " and accountId: " + accountId);
 		long startTime = System.currentTimeMillis();
 		DeleteStackResult result = null;
 		try {
-			AmazonCloudFormationClient client = buildCloudFormationClient(accountId);
+			AmazonCloudFormationClient client = buildCloudFormationClient(accountId, region);
 			result = client.deleteStack(dsr);
 			// If the request does not want an immediate response,
 			// wait for completion
@@ -402,10 +406,11 @@ implements StackProvider {
      * account with the correct role
      * 
      */
-    private AmazonCloudFormationClient buildCloudFormationClient(String accountId) {
+    private AmazonCloudFormationClient buildCloudFormationClient(String accountId, String region) {
     	// Build the roleArn of the role to assume from the base ARN and 
         // the account number in the query spec.
         logger.info(LOGTAG + "The account targeted by this request is: " + accountId);
+        logger.info(LOGTAG + "The region targeted by this request is: " + region);
         logger.info(LOGTAG + "The roleArnPattern is: " + getRoleArnPattern());
         String roleArn = getRoleArnPattern().replace("ACCOUNT_NUMBER", accountId);
         logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn); 
@@ -415,7 +420,10 @@ implements StackProvider {
         AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);      
         
         // Create the STS client
-        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withCredentials(cp).build();       
+        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard()
+        								.withCredentials(cp)
+        								.withRegion(region)
+        								.build();       
         
         // Assume the appropriate role in the appropriate account.
         AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn)
@@ -616,6 +624,28 @@ implements StackProvider {
 		}
 		else {
 			return accountId;
+		}
+	}
+	
+	private String parseRegionFromStackId(String stackId)
+		throws ProviderException {
+		String LOGTAG = "[AwsStackProvider.parseRegionIdFromStackId] ";
+		StringTokenizer st = new StringTokenizer(stackId, ":");
+		int i = 0;
+		String region = null;
+		while (st.hasMoreTokens()) {
+			i++;
+			String token = st.nextToken();
+			logger.info(LOGTAG + "Token " + i + ": " + 
+				token);
+			if (i == 5) region = token;
+		}
+		if (region == null) {
+			String errMsg = "No region parsed from StackId.";
+			throw new ProviderException(errMsg);
+		}
+		else {
+			return region;
 		}
 	}
 	
