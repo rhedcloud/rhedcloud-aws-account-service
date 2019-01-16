@@ -21,6 +21,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectGenerateException;
@@ -48,6 +49,7 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecificati
 public class DetermineVpcCidr extends AbstractStep implements Step {
 	
 	private ProducerPool m_networkOpsServiceProducerPool = null;
+	private int m_requestTimeoutInterval = 10000;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -74,6 +76,15 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 			addResultProperty("errorMessage", errMsg);
 			throw new StepException(errMsg);
 		}
+		
+		// requestTimeoutInterval is the time to wait for the
+		// response to the request
+		String timeout = getProperties().getProperty("requestTimeoutInterval",
+			"10000");
+		int requestTimeoutInterval = Integer.parseInt(timeout);
+		setRequestTimeoutInterval(requestTimeoutInterval);
+		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+			getRequestTimeoutInterval());
 		
 		logger.info(LOGTAG + "Initialization complete.");
 		
@@ -437,11 +448,14 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 	  	    	throw new StepException(errMsg, xeoe);
 		    }    
 			
-			// Get a producer from the pool
+		    // Get a request service from the pool and set the timeout interval.
 			RequestService rs = null;
 			try {
-				rs = (RequestService)getNetworkOpsServiceProducerPool()
+				PointToPointProducer p2p = 
+					(PointToPointProducer)getNetworkOpsServiceProducerPool()
 					.getExclusiveProducer();
+				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+				rs = (RequestService)p2p;
 			}
 			catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
@@ -559,6 +573,14 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 	
 	private ProducerPool getNetworkOpsServiceProducerPool() {
 		return m_networkOpsServiceProducerPool;
+	}
+	
+	private void setRequestTimeoutInterval(int i) {
+		m_requestTimeoutInterval = i;
+	}
+	
+	private int getRequestTimeoutInterval() {
+		return m_requestTimeoutInterval;
 	}
 	
 }
