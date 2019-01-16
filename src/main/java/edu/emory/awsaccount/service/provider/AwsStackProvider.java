@@ -440,7 +440,7 @@ implements StackProvider {
         // Create the IAM client
         AmazonCloudFormationClient cfc = 
         	(AmazonCloudFormationClient)AmazonCloudFormationClientBuilder
-        	.standard().withCredentials(credProvider).build();
+        	.standard().withCredentials(credProvider).withRegion(region).build();
     
         return cfc;
     }
