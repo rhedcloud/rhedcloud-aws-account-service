@@ -149,8 +149,11 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getNetworkOpsServiceProducerPool()
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
 				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+			rs = (RequestService)p2p;
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a producer " +
@@ -517,11 +520,14 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 						"ProvisioningId of this run (" + provisioningId + "). Deleting " +
 						"the assignment.");
 					
-					// Get a producer from the pool
+					// Get a request service from the pool and set the timeout interval.
 					rs = null;
 					try {
-						rs = (RequestService)getNetworkOpsServiceProducerPool()
+						PointToPointProducer p2p = 
+							(PointToPointProducer)getNetworkOpsServiceProducerPool()
 							.getExclusiveProducer();
+						p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+						rs = (RequestService)p2p;
 					}
 					catch (JMSException jmse) {
 						String errMsg = "An error occurred getting a producer " +
