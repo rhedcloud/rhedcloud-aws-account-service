@@ -297,6 +297,8 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    		getVirtualPrivateCloudProvisioning()
 		    		.getVirtualPrivateCloudRequisition();
 		    	req.setRegion(vpcr.getRegion());
+		    	addResultProperty("region", req.getRegion());
+		    	logger.info(LOGTAG + "Region is: " + req.getRegion());
 		    	
 		    	// StackName
 		    	req.setStackName(getStackName());
