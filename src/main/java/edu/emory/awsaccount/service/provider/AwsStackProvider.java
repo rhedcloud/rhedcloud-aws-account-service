@@ -294,6 +294,7 @@ implements StackProvider {
 				try {
 					querySpec.setStackName(req.getStackName());
 					querySpec.setAccountId(req.getAccountId());
+					querySpec.setRegion(req.getRegion());
 				}
 				catch (EnterpriseFieldException efe) {
 					String errMsg = "An error occurred setting values of " +
