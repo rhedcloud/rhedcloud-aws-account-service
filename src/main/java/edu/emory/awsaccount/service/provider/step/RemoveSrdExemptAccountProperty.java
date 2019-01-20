@@ -91,8 +91,6 @@ public class RemoveSrdExemptAccountProperty extends AbstractStep implements Step
 		String LOGTAG = getStepTag() + "[RemoveSrdExemptAccountProperty.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		boolean accountMetadataCreated = false;
-		
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
@@ -100,8 +98,7 @@ public class RemoveSrdExemptAccountProperty extends AbstractStep implements Step
 	    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
 	    VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
 	    
-		// Get the allocatedNewAccount property from the
-		// GENERATE_NEW_ACCOUNT step.
+		// Get the accountId.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		String accountId = null;
 		String newAccountId = null;
