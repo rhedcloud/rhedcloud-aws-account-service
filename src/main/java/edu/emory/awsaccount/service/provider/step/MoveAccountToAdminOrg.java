@@ -16,8 +16,11 @@ import java.util.ListIterator;
 import java.util.Properties;
 
 import org.openeai.config.AppConfig;
+
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.organizations.AWSOrganizationsClient;
@@ -109,89 +112,80 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
-		// Get the allocatedNewAccount property from the
-		// GENERATE_NEW_ACCOUNT step.
+		// Get the VirtualPrivateCloudRequisition object.
+	    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+	    VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
+	    
+		// Get the accountId.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step1 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-		boolean allocatedNewAccount = false;
-		String newAccountId = null;
-		if (step1 != null) {
-			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
-			String sAllocatedNewAccount = getResultProperty(step1, "allocatedNewAccount");
-			allocatedNewAccount = Boolean.parseBoolean(sAllocatedNewAccount);
-			addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
-			logger.info(LOGTAG + "Property allocatedNewAccount from preceding " +
-				"step is: " + allocatedNewAccount);
-			newAccountId = getResultProperty(step1, "newAccountId");
-			addResultProperty("newAccountId", newAccountId);
-			logger.info(LOGTAG + "Property newAccountId from preceding " +
-				"step is: " + newAccountId);
+		String accountId = null;
+		
+		accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT",
+			"newAccountId");
+		addResultProperty("newAccountId", accountId);
+		logger.info(LOGTAG + "Property newAccountId from preceding " +
+			"step is: " + accountId);
+		
+		// If the newAccountId is null, get the accountId from the
+		// VPCP requisition. Otherwise the accountId is the newAccountId.
+		if (accountId == null || accountId.equalsIgnoreCase("null")) {
+			accountId = req.getAccountId();
+			logger.info(LOGTAG + "newAccountId is null, getting the accountId " +
+				"from the requisition object: " + accountId);
+			addResultProperty("existingAccountId", accountId);
 		}
-		else {
-			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. " +
-				"Can't continue.";
+		if (accountId == null || accountId.equalsIgnoreCase("null")) {
+			String errMsg = "accountId is null. Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
-		// If allocatedNewAccount is true and the newAccountId is not null,
-		// move the account to the admin organizational unit.
-		if (allocatedNewAccount == true && newAccountId != null) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
-				"is " + newAccountId + ". Moving the account to the admin org unit.");
-			
-			// Build the request.
-			MoveAccountRequest request = new MoveAccountRequest();
-			request.setAccountId(newAccountId);
-			request.setDestinationParentId(getDestinationParentId());
-			request.setSourceParentId(getSourceParentId());
-			
-			// Send the request.
-			try {
-				logger.info(LOGTAG + "Sending the move account request...");
-				long moveStartTime = System.currentTimeMillis();
-				MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
-				long moveTime = System.currentTimeMillis() - moveStartTime;
-				logger.info(LOGTAG + "received response to move account request in " +
-					moveTime + " ms.");
-				accountMoved = true;
-			}
-			catch (Exception e) {
-				String errMsg = "An error occurred moving the account. " +
-					"The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
-			
-			addResultProperty("sourceParentId", getSourceParentId());	
-			addResultProperty("destinationParentId", getDestinationParentId());
-			addResultProperty("movedAccount", Boolean.toString(accountMoved));
-			
-			if 	(accountMoved) {
-				logger.info(LOGTAG + "Successfully moved account " +
-					newAccountId + "to org unit " + getDestinationParentId());
-				
-			}
-			else {
-				logger.info(LOGTAG + "Account was not moved.");
-			}
-		}
-				
-		// If allocatedNewAccount is false, log it and
-		// add result props.
 		else {
-			logger.info(LOGTAG + "allocateNewAccount is false. " +
-				"no need to move an account.");
-			addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
-			addResultProperty("newAccountId", "not applicable");
+			addResultProperty("toMoveAccountId", accountId);
 		}
 		
+		// Move the account to the admin organizational unit.
+		logger.info(LOGTAG + "Moving the account " + accountId + 
+			"to the admin org unit.");
+		
+		// Build the request.
+		MoveAccountRequest request = new MoveAccountRequest();
+		request.setAccountId(accountId);
+		request.setDestinationParentId(getDestinationParentId());
+		request.setSourceParentId(getSourceParentId());
+		
+		// Send the request.
+		try {
+			logger.info(LOGTAG + "Sending the move account request...");
+			long moveStartTime = System.currentTimeMillis();
+			MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
+			long moveTime = System.currentTimeMillis() - moveStartTime;
+			logger.info(LOGTAG + "received response to move account request in " +
+				moveTime + " ms.");
+			accountMoved = true;
+		}
+		catch (Exception e) {
+			String errMsg = "An error occurred moving the account. " +
+				"The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+		
+		addResultProperty("sourceParentId", getSourceParentId());	
+		addResultProperty("destinationParentId", getDestinationParentId());
+		addResultProperty("movedAccount", Boolean.toString(accountMoved));
+		
+		if 	(accountMoved) {
+			logger.info(LOGTAG + "Successfully moved account " +
+				accountId + "to org unit " + getDestinationParentId());
+			
+		}
+		else {
+			logger.info(LOGTAG + "Account was not moved.");
+		}
+
 		// Update the step result.
 		String stepResult = FAILURE_RESULT;
-		if (accountMoved == true && allocatedNewAccount == true) {
-			stepResult = SUCCESS_RESULT;
-		}
-		if (allocatedNewAccount == false) {
+		if (accountMoved == true) {
 			stepResult = SUCCESS_RESULT;
 		}
 		
