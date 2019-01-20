@@ -60,6 +60,7 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 	private String m_rhedCloudAwsAccountServiceUserArn = null;
 	private String m_rhedCloudMaintenanceOperatorRoleArn = null;
 	private String m_stackName = null;
+	private String m_region = null;
 	private int m_requestTimeoutInterval = 10000;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private final static String TEMPLATE_BODY_ENCODING = "UTF-8";
@@ -112,6 +113,12 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			.getProperty("stackName", null);
 		setStackName(stackName);
 		logger.info(LOGTAG + "stackName is: " + getStackName());
+		
+		// region is the region in which to create the stack.
+		String region = getProperties()
+			.getProperty("region", "us-east-1");
+		setRegion(region);
+		logger.info(LOGTAG + "region is: " + getRegion());
 
 		// rhedCloudIdp is the name of the identity provider.
 		String rhedCloudIdp = getProperties()
@@ -293,12 +300,9 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
 		    	
 		    	// Region
-		    	VirtualPrivateCloudRequisition vpcr =
-		    		getVirtualPrivateCloudProvisioning()
-		    		.getVirtualPrivateCloudRequisition();
-		    	req.setRegion(vpcr.getRegion());
-		    	addResultProperty("region", req.getRegion());
-		    	logger.info(LOGTAG + "Region is: " + req.getRegion());
+		    	req.setRegion(getRegion());
+		    	addResultProperty("region", getRegion());
+		    	logger.info(LOGTAG + "Region is: " + getRegion());
 		    	
 		    	// StackName
 		    	req.setStackName(getStackName());
@@ -750,6 +754,20 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 
 	private String getStackName() {
 		return m_stackName;
+	}
+	
+	private void setRegion (String region) 
+		throws StepException {
+	
+		if (region == null) {
+			String errMsg = "region property is null. Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_region = region;
+	}
+
+	private String getRegion() {
+		return m_region;
 	}
 	
 	private String getCloudFormationTemplateBody() throws StepException{
