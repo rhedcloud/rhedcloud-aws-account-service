@@ -321,6 +321,7 @@ implements StackProvider {
 		try {
 			querySpec.setStackName(req.getStackName());
 			querySpec.setAccountId(req.getAccountId());
+			querySpec.setRegion(req.getRegion());
 		}
 		catch (EnterpriseFieldException efe) {
 			logger.error(LOGTAG + efe.getMessage());
