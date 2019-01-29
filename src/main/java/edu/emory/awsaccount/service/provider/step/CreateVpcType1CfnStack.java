@@ -178,6 +178,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
+		addResultProperty("accountId", accountId);
 		
 		// Get the VPN inside CIDR properties from the 
 		// DETERMINE_VPC_CIDR step.
