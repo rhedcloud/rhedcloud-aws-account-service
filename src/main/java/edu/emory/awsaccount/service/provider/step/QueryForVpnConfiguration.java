@@ -474,8 +474,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     		Element e = (Element)li.next();
     		if (isMatchingTunnel(e, insideIpCidr)) {
     			logger.info(LOGTAG + "This is the matching tunnel.");
-    			remoteIpAddress = e.getChild("ipsec_tunnel")
-    				.getChild("vpn_gateway")
+    			remoteIpAddress = e.getChild("vpn_gateway")
     				.getChild("tunnel_outside_address")
     				.getChildText("ip_address");
     		}
@@ -530,8 +529,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     		Element e = (Element)li.next();
     		if (isMatchingTunnel(e, insideIpCidr)) {
     			logger.info(LOGTAG + "This is the matching tunnel.");
-    			presharedKey = e.getChild("ipsec_tunnel")
-    				.getChild("ike")
+    			presharedKey = e.getChild("ike")
     				.getChildText("pre_shared_key");
     		}
     		else {
