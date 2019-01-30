@@ -10,6 +10,8 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,6 +19,10 @@ import java.util.Properties;
 
 import javax.jms.JMSException;
 
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -77,7 +83,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 	private final static String IN_PROGRESS = "IN_PROGRESS";
 	private final static String SUCCEEDED = "SUCCEEDED";
 	private final static String FAILED = "FAILED";
-	private String m_accessKey = null;
+	private String m_accessKeyId = null;
 	private String m_secretKey = null;
 	private String m_roleArnPattern = null;
 	private int m_roleAssumptionDurationSeconds = 0;
@@ -96,9 +102,9 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Getting custom step properties...");
 		
 		// Access key
-		String accessKey = getProperties().getProperty("accessKey", null);
-		setAccessKey(accessKey);
-		logger.info(LOGTAG + "accessKey is: " + getAccessKey());
+		String accessKeyId = getProperties().getProperty("accessKeyId", null);
+		setAccessKeyId(accessKeyId);
+		logger.info(LOGTAG + "accessKeyId is: " + getAccessKeyId());
 		
 		// Secret key
 		String secretKey = getProperties().getProperty("secretKey", null);
@@ -160,7 +166,8 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		
 		String vpn2CustomerGatewayConfig = getCustomerGatewayConfig(vpn2ConnectionId);
 		logger.info(LOGTAG + "vpn2CustomerGatewayConfig is: " + vpn2CustomerGatewayConfig);
-/**		
+
+/**
 		// Get the remote ip address for the VPN connections
 		String vpn1RemoteIpAddress = getRemoteIpAddress(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn1RemoteIpAddress is: " + vpn1RemoteIpAddress);
@@ -257,20 +264,20 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		return m_client;
 	}
 	
-	private void setAccessKey (String accessKey) throws 
+	private void setAccessKeyId (String accessKeyId) throws 
 		StepException {
 	
-		if (accessKey == null) {
-			String errMsg = "accessKey property is null. " +
+		if (accessKeyId == null) {
+			String errMsg = "accessKeyId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
 		
-		m_accessKey = accessKey;
+		m_accessKeyId = accessKeyId;
 	}
 
-	private String getAccessKey() {
-		return m_accessKey;
+	private String getAccessKeyId() {
+		return m_accessKeyId;
 	}
 	
 	private void setSecretKey (String secretKey) throws 
@@ -404,7 +411,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
         logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn); 
         		
 		// Instantiate a basic credential provider
-        BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKey(), getSecretKey());
+        BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKeyId(), getSecretKey());
         AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);      
         
         // Create the STS client
@@ -431,6 +438,46 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
         	.standard().withCredentials(credProvider).withRegion(region).build();
     
         return ec2c;
+    }
+    
+    private String getRemoteIpAddress(String customerGatewayConfig, 	
+    	String insideIpCidr) throws StepException {
+    	String LOGTAG = getStepTag() + "[getRemoteIpAddress] ";
+    	
+    	String remoteIpAddress = null;
+   
+    	SAXBuilder sb = new SAXBuilder();
+    	
+    	Document cgcDoc = null;
+    	try {
+    		cgcDoc = sb.build(new StringReader(customerGatewayConfig));
+    	
+    	}
+    	catch (IOException ioe) {
+    		String errMsg = "An error occured building and XML document " +
+    			"from the customer gateway configuration string. The " +
+    			"exception is: " + ioe.getMessage();
+    		logger.error(LOGTAG + errMsg);
+    		throw new StepException(errMsg, ioe);
+     	}
+    	catch (JDOMException je) {
+    		String errMsg = "An error occured building and XML document " +
+    			"from the customer gateway configuration string. The " +
+    			"exception is: " + je.getMessage();
+    		logger.error(LOGTAG + errMsg);
+    		throw new StepException(errMsg, je);
+     	}
+    	
+    	Element rootElement = cgcDoc.getRootElement();
+    	
+    	List tunnels = rootElement.getChildren();
+    	
+    		
+    	return remoteIpAddress;
+    	
+    	
+    	
+    	
     }
 	
 }
