@@ -549,9 +549,10 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
         	
     }
 	
-    private boolean isMatchingTunnel(Element e, String insideIpCidr) {
+    private boolean isMatchingTunnel(Element e, String insideIpCidr) 
+    	throws StepException {
     	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
-    	
+/**    	
     	String ipAddress = e.getChild("vpc_gateway")
     		.getChildText("tunnel_inside_address");
     	
@@ -561,7 +562,8 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	SubnetInfo subnet = (new SubnetUtils(insideIpCidr)).getInfo();
     	boolean isMatchingTunnel = subnet.isInRange(ipAddress);
     	logger.info(LOGTAG + "isMatchingTunnel: " + isMatchingTunnel);
+**/    	
+    	return true;
     	
-    	return isMatchingTunnel;
     }
 }
