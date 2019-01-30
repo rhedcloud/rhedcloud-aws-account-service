@@ -175,7 +175,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		String vpn2RemoteIpAddress = getRemoteIpAddress(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn2RemoteIpAddress is: " + vpn2RemoteIpAddress);
 		addResultProperty("vpn2RemoteIpAddress", vpn2RemoteIpAddress);
-/**		
+	
 		// Get the preshared key for the VPN connections
 		String vpn1PresharedKey = getPresharedKey(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn1PresharedKey is: " + vpn1PresharedKey);
@@ -184,7 +184,6 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		String vpn2PresharedKey = getPresharedKey(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn2PresharedKey is: " + vpn2RemoteIpAddress);
 		addResultProperty("vpn2PresharedKey", vpn2PresharedKey);
-**/
 		
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
