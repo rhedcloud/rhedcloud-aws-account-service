@@ -19,6 +19,8 @@ import java.util.Properties;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.net.util.SubnetUtils;
+import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -550,7 +552,15 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     private boolean isMatchingTunnel(Element e, String insideIpCidr) {
     	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
     	
-    	boolean isMatchingTunnel = true;
+    	String ipAddress = e.getChild("vpc_gateway")
+    		.getChildText("tunnel_inside_address");
+    	
+    	logger.info(LOGTAG + "ipAddress is: " + ipAddress + 
+    		" insideIpCidr is: " + insideIpCidr);
+    	
+    	SubnetInfo subnet = (new SubnetUtils(insideIpCidr)).getInfo();
+    	boolean isMatchingTunnel = subnet.isInRange(ipAddress);
+    	logger.info(LOGTAG + "isMatchingTunnel: " + isMatchingTunnel);
     	
     	return isMatchingTunnel;
     }
