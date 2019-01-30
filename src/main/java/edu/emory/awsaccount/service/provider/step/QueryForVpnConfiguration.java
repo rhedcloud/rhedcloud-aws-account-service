@@ -167,16 +167,15 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		String vpn2CustomerGatewayConfig = getCustomerGatewayConfig(vpn2ConnectionId);
 		logger.info(LOGTAG + "vpn2CustomerGatewayConfig is: " + vpn2CustomerGatewayConfig);
 
-/**
 		// Get the remote ip address for the VPN connections
 		String vpn1RemoteIpAddress = getRemoteIpAddress(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn1RemoteIpAddress is: " + vpn1RemoteIpAddress);
 		addResultProperty("vpn1RemoteIpAddress", vpn1RemoteIpAddress);
-		
+	
 		String vpn2RemoteIpAddress = getRemoteIpAddress(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn2RemoteIpAddress is: " + vpn2RemoteIpAddress);
 		addResultProperty("vpn2RemoteIpAddress", vpn2RemoteIpAddress);
-		
+/**		
 		// Get the preshared key for the VPN connections
 		String vpn1PresharedKey = getPresharedKey(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
 		logger.info(LOGTAG + "vpn1PresharedKey is: " + vpn1PresharedKey);
@@ -471,13 +470,36 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	Element rootElement = cgcDoc.getRootElement();
     	
     	List tunnels = rootElement.getChildren();
-    	
+    	ListIterator li = tunnels.listIterator();
+    	while (li.hasNext()) {
+    		Element e = (Element)li.next();
+    		if (isMatchingTunnel(e, insideIpCidr)) {
+    			logger.info(LOGTAG + "This is the matching tunnel.");
+    			remoteIpAddress = e.getChild("ipsec_tunnel")
+    				.getChild("vpn_gateway")
+    				.getChild("tunnel_outside_address")
+    				.getChildText("ip_address");
+    		}
+    		else {
+    			logger.info(LOGTAG + "This is not the matching tunnel.");
+    		}
+    	}
     		
+    	if (remoteIpAddress == null) {
+    		String errMsg = "remoteIpAddress is null. Can't continue.";
+    		logger.error(LOGTAG + errMsg);
+    		throw new StepException(errMsg);
+    	}
+    	
     	return remoteIpAddress;
-    	
-    	
-    	
     	
     }
 	
+    private boolean isMatchingTunnel(Element e, String insideIpCidr) {
+    	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
+    	
+    	boolean isMatchingTunnel = true;
+    	
+    	return isMatchingTunnel;
+    }
 }
