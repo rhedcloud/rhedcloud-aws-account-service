@@ -494,6 +494,61 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	return remoteIpAddress;
     	
     }
+    
+    private String getPresharedKey(String customerGatewayConfig, 	
+    	String insideIpCidr) throws StepException {
+    	String LOGTAG = getStepTag() + "[getPresharedKey] ";
+    	
+    	String presharedKey = null;
+   
+    	SAXBuilder sb = new SAXBuilder();
+    	
+    	Document cgcDoc = null;
+    	try {
+    		cgcDoc = sb.build(new StringReader(customerGatewayConfig));
+    	
+    	}
+    	catch (IOException ioe) {
+    		String errMsg = "An error occured building and XML document " +
+    			"from the customer gateway configuration string. The " +
+    			"exception is: " + ioe.getMessage();
+    		logger.error(LOGTAG + errMsg);
+    		throw new StepException(errMsg, ioe);
+     	}
+    	catch (JDOMException je) {
+    		String errMsg = "An error occured building and XML document " +
+    			"from the customer gateway configuration string. The " +
+    			"exception is: " + je.getMessage();
+    		logger.error(LOGTAG + errMsg);
+    		throw new StepException(errMsg, je);
+     	}
+    	
+    	Element rootElement = cgcDoc.getRootElement();
+    	
+    	List tunnels = rootElement.getChildren();
+    	ListIterator li = tunnels.listIterator();
+    	while (li.hasNext()) {
+    		Element e = (Element)li.next();
+    		if (isMatchingTunnel(e, insideIpCidr)) {
+    			logger.info(LOGTAG + "This is the matching tunnel.");
+    			presharedKey = e.getChild("ipsec_tunnel")
+    				.getChild("ike")
+    				.getChildText("pre_shared_key");
+    		}
+    		else {
+    			logger.info(LOGTAG + "This is not the matching tunnel.");
+    		}
+    	}
+    		
+    	if (presharedKey == null) {
+    		String errMsg = "presharedKey is null. Can't continue.";
+    		logger.error(LOGTAG + errMsg);
+    		throw new StepException(errMsg);
+    	}
+    	
+    	return presharedKey;
+        	
+    }
 	
     private boolean isMatchingTunnel(Element e, String insideIpCidr) {
     	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
