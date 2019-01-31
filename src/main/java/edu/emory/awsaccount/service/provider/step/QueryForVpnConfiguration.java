@@ -527,7 +527,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	
     	Element rootElement = cgcDoc.getRootElement();
     	
-    	List tunnels = rootElement.getChildren();
+    	List tunnels = rootElement.getChildren("ipsec_tunnel");
     	ListIterator li = tunnels.listIterator();
     	while (li.hasNext()) {
     		Element e = (Element)li.next();
