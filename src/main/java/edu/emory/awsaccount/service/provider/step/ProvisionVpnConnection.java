@@ -117,13 +117,13 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 		String vpnInsideIpCidr2 = 
 			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
 		String remoteVpnIpAddress1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-			"remoteVpnIpAddress1");
+			"vpn1RemoteIpAddress");
 		String remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-			"remoteVpnIpAddress2");
+			"vpn2RemoteIpAddress");
 		String presharedKey1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-			"presharedKey1");
+			"vpn1PresharedKey");
 		String presharedKey2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-			"presharedKey2");
+			"vpn2PresharedKey");
 		
 		// Compute the local tunnel ids
 		int tunnelId1 = 10000 + Integer.parseInt(vpnConnectionProfileId);
