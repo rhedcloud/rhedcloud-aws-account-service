@@ -108,19 +108,28 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 			getStepPropertyValue("UPDATE_VPN_CONNECTION_ASSIGNMENT", 
 			"vpnConnectionProfileId");
 		setVpnConnectionProfileId(vpnConnectionProfileId);
+		String remoteVpnConnectionId1 = 
+			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn1ConnectionId");
+		String vpnInsideIpCidr1 = 
+			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn1InsideTunnelCidr1");
+		String remoteVpnConnectionId2 = 
+			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
+		String vpnInsideIpCidr2 = 
+			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
+		String remoteVpnIpAddress1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+			"remoteVpnIpAddress1");
+		String remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+			"remoteVpnIpAddress2");
+		String presharedKey1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+			"presharedKey1");
+		String presharedKey2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+			"presharedKey2");
 		
-		// Get the VPN connection info from a previous step.
-		String remoteVpnConnectionId1 = "bullshit";
-		String vpnInsideIpCidr1 = "bullshit";
-		String remoteVpnIpAddress1 = "bullshit";
-		String presharedKey1 = "bullshit";
-		String localTunnelId1 = "bullshit";
-		
-		String remoteVpnConnectionId2 = "bullshit";
-		String vpnInsideIpCidr2 = "bullshit";
-		String remoteVpnIpAddress2 = "bullshit";
-		String presharedKey2 = "bullshit";
-		String localTunnelId2 = "bullshit";
+		// Compute the local tunnel ids
+		int tunnelId1 = 10000 + Integer.parseInt(vpnConnectionProfileId);
+		String localTunnelId1 = Integer.toString(tunnelId1);
+		int tunnelId2 = 20000 + Integer.parseInt(vpnConnectionProfileId);
+		String localTunnelId2 = Integer.toString(tunnelId2);
 		
 		// Get a configured VpnConnectionProfile and
 		// VpnConnectionProfileQuery from AppConfig
@@ -326,6 +335,9 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 						"true");
 				addResultProperty("vpnConnectionProvisioningId", 
 					vcp.getProvisioningId());
+		    	addResultProperty("vpnConnectionProfile", 
+		    		vpnConnectionProfileId);
+		    	addResultProperty("ownerId", vpcId);
 				addResultProperty("remoteVpnConnectionId1", 
 						remoteVpnConnectionId1);
 				addResultProperty("vpnInsideIpCidr1", 
