@@ -470,7 +470,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	
     	Element rootElement = cgcDoc.getRootElement();
     	
-    	List tunnels = rootElement.getChildren();
+    	List tunnels = rootElement.getChildren("ipsec_tunnel");
     	ListIterator li = tunnels.listIterator();
     	while (li.hasNext()) {
     		Element e = (Element)li.next();
@@ -479,6 +479,8 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     			remoteIpAddress = e.getChild("vpn_gateway")
     				.getChild("tunnel_outside_address")
     				.getChildText("ip_address");
+    			logger.info(LOGTAG + "remoteIpAddress is: " 
+    				+ remoteIpAddress);
     		}
     		else {
     			logger.info(LOGTAG + "This is not the matching tunnel.");
@@ -533,6 +535,8 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     			logger.info(LOGTAG + "This is the matching tunnel.");
     			presharedKey = e.getChild("ike")
     				.getChildText("pre_shared_key");
+    			logger.info(LOGTAG + "presharedKey is: " 
+    				+ presharedKey);
     		}
     		else {
     			logger.info(LOGTAG + "This is not the matching tunnel.");
