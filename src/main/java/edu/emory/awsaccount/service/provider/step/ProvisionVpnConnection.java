@@ -34,6 +34,8 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProvisioning;
+import edu.emory.moa.objects.resources.v1_0.RemoteVpnConnectionInfo;
+import edu.emory.moa.objects.resources.v1_0.RemoteVpnTunnel;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
@@ -106,6 +108,19 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 			getStepPropertyValue("UPDATE_VPN_CONNECTION_ASSIGNMENT", 
 			"vpnConnectionProfileId");
 		setVpnConnectionProfileId(vpnConnectionProfileId);
+		
+		// Get the VPN connection info from a previous step.
+		String remoteVpnConnectionId1 = "bullshit";
+		String vpnInsideIpCidr1 = "bullshit";
+		String remoteVpnIpAddress1 = "bullshit";
+		String presharedKey1 = "bullshit";
+		String localTunnelId1 = "bullshit";
+		
+		String remoteVpnConnectionId2 = "bullshit";
+		String vpnInsideIpCidr2 = "bullshit";
+		String remoteVpnIpAddress2 = "bullshit";
+		String presharedKey2 = "bullshit";
+		String localTunnelId2 = "bullshit";
 		
 		// Get a configured VpnConnectionProfile and
 		// VpnConnectionProfileQuery from AppConfig
@@ -226,8 +241,29 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 		    try {
 		    	vpnReq.setVpnConnectionProfile(vpnConnectionProfile);
 		    	vpnReq.setOwnerId(vpcId);
-		    	vpnReq.setRemoteVpnIpAddress(getRemoteVpnIpAddress());
-		    	vpnReq.setPresharedKey(getPresharedKey());
+		    	
+		    	RemoteVpnConnectionInfo rvci1 = 
+		    		vpnReq.newRemoteVpnConnectionInfo();
+		    	rvci1.setRemoteVpnConnectionId(remoteVpnConnectionId1);
+		    	RemoteVpnTunnel rvt1 = rvci1.newRemoteVpnTunnel();
+		    	rvt1.setVpnInsideIpCidr(vpnInsideIpCidr1);
+		    	rvt1.setRemoteVpnIpAddress(remoteVpnIpAddress1);
+		    	rvt1.setPresharedKey(presharedKey1);
+		    	rvt1.setLocalTunnelId(localTunnelId1);
+		    	rvci1.addRemoteVpnTunnel(rvt1);
+		    	vpnReq.addRemoteVpnConnectionInfo(rvci1);
+		    	
+		    	RemoteVpnConnectionInfo rvci2 = 
+		    		vpnReq.newRemoteVpnConnectionInfo();
+		    	rvci2.setRemoteVpnConnectionId(remoteVpnConnectionId2);
+		    	RemoteVpnTunnel rvt2 = rvci2.newRemoteVpnTunnel();
+		    	rvt2.setVpnInsideIpCidr(vpnInsideIpCidr2);
+		    	rvt2.setRemoteVpnIpAddress(remoteVpnIpAddress2);
+		    	rvt2.setPresharedKey(presharedKey2);
+		    	rvt2.setLocalTunnelId(localTunnelId2);
+		    	rvci2.addRemoteVpnTunnel(rvt2);
+		    	vpnReq.addRemoteVpnConnectionInfo(rvci2);
+	    	
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
@@ -290,11 +326,26 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 						"true");
 				addResultProperty("vpnConnectionProvisioningId", 
 					vcp.getProvisioningId());
-				
-				addResultProperty("remoteVpnIpAddress", 
-					vpnReq.getRemoteVpnIpAddress());
-				addResultProperty("presharedKey", 
-					vpnReq.getPresharedKey());
+				addResultProperty("remoteVpnConnectionId1", 
+						remoteVpnConnectionId1);
+				addResultProperty("vpnInsideIpCidr1", 
+						vpnInsideIpCidr1);
+				addResultProperty("remoteVpnIpAddress1", 
+						remoteVpnIpAddress1);
+				addResultProperty("presharedKey1", 
+						presharedKey1);
+				addResultProperty("localTunnelId1", 
+						localTunnelId1);
+				addResultProperty("remoteVpnConnectionId2", 
+						remoteVpnConnectionId2);
+				addResultProperty("vpnInsideIpCidr2", 
+						vpnInsideIpCidr2);
+				addResultProperty("remoteVpnIpAddress2", 
+						remoteVpnIpAddress2);
+				addResultProperty("presharedKey2", 
+						presharedKey2);
+				addResultProperty("localTunnelId2", 
+						localTunnelId2);		
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
