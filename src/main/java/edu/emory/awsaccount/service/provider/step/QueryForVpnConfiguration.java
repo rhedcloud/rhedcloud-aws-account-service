@@ -558,7 +558,8 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
    	
     	String ipAddress = e.getChild("vpc_gateway")
-    		.getChildText("tunnel_inside_address");
+    		.getChild("tunnel_inside_address")
+    		.getChildText("ip_address");
     	
     	logger.info(LOGTAG + "ipAddress is: " + ipAddress + 
     		" insideIpCidr is: " + insideIpCidr);
