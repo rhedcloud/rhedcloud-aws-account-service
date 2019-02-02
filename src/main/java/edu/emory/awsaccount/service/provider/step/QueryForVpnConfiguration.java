@@ -557,7 +557,7 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     	throws StepException {
     	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
    	
-    	String ipAddress = e.getChild("vpc_gateway")
+    	String ipAddress = e.getChild("vpn_gateway")
     		.getChild("tunnel_inside_address")
     		.getChildText("ip_address");
     	
