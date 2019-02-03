@@ -551,6 +551,10 @@ implements VirtualPrivateCloudProvisioningProvider {
 		return 1;
 	}
 	
+	public List<String> getCentralAdministrators() {
+		return new ArrayList<String>();
+	}
+	 
 	public Incident generateIncident(IncidentRequisition req) {
 		return new Incident();
 	}
