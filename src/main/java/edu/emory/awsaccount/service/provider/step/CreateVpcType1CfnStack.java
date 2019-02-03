@@ -300,6 +300,20 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
+		// Get the VPC sequence number.
+		String vpcSequenceNumber = 
+			getStepPropertyValue("DETERMINE_NEW_VPC_SEQUENCE_VALUE",
+				"vpcSequenceNumber");
+		logger.info(LOGTAG + "Property vpcSequenceNumber from preceding " +
+				"step is: " + vpcSequenceNumber);
+			addResultProperty("vpcSequenceNumber", vpcSequenceNumber);
+		if (vpcSequenceNumber == null) {
+			String errMsg = "VPC sequence number not found in preceding step. " +
+				"Cannot proceed.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		
 		// Update the step, so the parameters are visible for execution.
 		update(IN_PROGRESS_STATUS, NO_RESULT);
 		
@@ -349,7 +363,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    	logger.info(LOGTAG + "Region is: " + req.getRegion());
 		    	
 		    	// StackName
-		    	req.setStackName(getStackName());
+		    	req.setStackName(getStackName() + "-" + vpcSequenceNumber);
 		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
 		    	

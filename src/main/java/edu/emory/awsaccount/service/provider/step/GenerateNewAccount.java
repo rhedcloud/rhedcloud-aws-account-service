@@ -184,30 +184,29 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
-		// Get the accountEmailAddress property from the
-		// VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step3 = getProvisioningStepByType("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST");
-		String accountEmailAddress = null;
-		if (step3 != null) {
-			logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
-			accountEmailAddress = getResultProperty(step3, "accountEmailAddress");
-			addResultProperty("accountEmailAddress", accountEmailAddress);
-			logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
-				"step is: " + accountEmailAddress);
-		}
-		else {
-			String errMsg = "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST not found. " +
-				"Cannot determine the e-mail address for a new account.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
 		// If allocateNewAccount is true and the account e-mail address is not null,
 		// create a new account.
-		if (allocateNewAccount == true && accountEmailAddress != null) {
-			logger.info(LOGTAG + "allocateNewAccount is true and accountEmailAddress " + 
-				"is " + accountEmailAddress + ". Creating a new AWS Account.");
+		if (allocateNewAccount == true) {
+			logger.info(LOGTAG + "allocateNewAccount is true. Creating a new AWS Account.");
+			
+			// Get the accountEmailAddress property from the
+			// VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step3 = getProvisioningStepByType("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST");
+			String accountEmailAddress = null;
+			if (step3 != null) {
+				logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
+				accountEmailAddress = getResultProperty(step3, "accountEmailAddress");
+				addResultProperty("accountEmailAddress", accountEmailAddress);
+				logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
+					"step is: " + accountEmailAddress);
+			}
+			else {
+				String errMsg = "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST not found. " +
+					"Cannot determine the e-mail address for a new account.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
 			
 			// Build account name
 			String newAccountName = getAccountSeriesName() + " " + 
