@@ -1099,6 +1099,25 @@ implements VirtualPrivateCloudProvisioningProvider {
 		return i;
 	}
 	
+	public List<String> getCentralAdministrators()
+		throws ProviderException {
+		
+		// Query for the list of central administrators.
+		List<RoleAssignment> roleAssignments = 
+			roleAssignmentQuery(getCentralAdminRoleDn());
+		
+		ListIterator li = roleAssignments.listIterator();
+		List<String> userIds = new ArrayList<String>();
+		while (li.hasNext()) {
+			RoleAssignment ra = (RoleAssignment)li.next();
+			String userDn = (String)ra.getExplicitIdentityDNs().getDistinguishedName().get(0);
+			String userId = parseUserId(userDn);
+			userIds.add(userId);
+		}
+		
+		return userIds;
+	}
+	
 	private String parseUserId(String dn) {
 		StringTokenizer st1 = new StringTokenizer(dn, ",");
 		String firstToken = st1.nextToken();
