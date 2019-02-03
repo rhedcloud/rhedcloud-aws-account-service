@@ -27,14 +27,14 @@ import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If a new account is needed, increment the account sequence to get the 
- * Emory serial number of the new AWS account.
+ * Increment the VPC sequence to get the Emory serial number of the new
+ * AWS VPC.
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2018
  **/
-public class DetermineNewAccountSequenceValue extends AbstractStep implements Step {
+public class DetermineNewVpcSequenceValue extends AbstractStep implements Step {
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -45,79 +45,48 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineNewAccountSequenceValue.run] ";
+		String LOGTAG = getStepTag() + "[DetermineNewVpcSequenceValue.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		String accountSequenceNumber = null;
-		
-		// Get the allocateNewAccount property from the
-		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
-		String predecessorStepType = "DETERMINE_NEW_OR_EXISTING_ACCOUNT";
-		
-		logger.info(LOGTAG + "Getting predecessor step by type: " + predecessorStepType);
-		
-		ProvisioningStep step = getProvisioningStepByType(predecessorStepType);
-		
-		if (step != null) {
-			logger.info(LOGTAG + "Predecessor step found: " + step.getType());
+		String vpcSequenceNumber = null;
+
+		// Get the VPC Sequence object from AppConfig
+		Sequence vpcSeq = null;
+		try {
+			vpcSeq = (Sequence)getAppConfig().getObject("VpcSequence");
 		}
-		else {
-			logger.error(LOGTAG + " step " + predecessorStepType + " not found.");
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, ecoe);
 		}
 		
-		logger.info(LOGTAG + "Getting predecessor step properties...");
-		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
-		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-		logger.info(LOGTAG + "allocateNewAccount property is: " + allocateNewAccount);
-		
-		
-		// If allocateNewAccount is true, increment the sequence number and
-		// set the accountSequenceNumber property.
-		if (allocateNewAccount) {
-			// Get the AccountSequence object from AppConfig
-			Sequence accountSeq = null;
-			try {
-				accountSeq = (Sequence)getAppConfig().getObject("AccountSequence");
-			}
-			catch (EnterpriseConfigurationObjectException ecoe) {
-				// An error occurred retrieving an object from AppConfig. Log it and
-				// throw an exception.
-				String errMsg = "An error occurred retrieving an object from " +
-						"AppConfig. The exception is: " + ecoe.getMessage();
-				logger.fatal(LOGTAG + errMsg);
-				throw new StepException(errMsg, ecoe);
-			}
-			
-			// Increment the sequence value
-			try {
-				accountSequenceNumber = accountSeq.next();
-				logger.info(LOGTAG + "Account sequence was incremented to: " 
-						+ accountSequenceNumber);
-			}
-			catch (SequenceException se) {
-				String errMsg = "An error occurred incrementing the " +
-					"AccountSequence. The exception is: " + se.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, se);
-			}
+		// Increment the sequence value
+		try {
+			vpcSequenceNumber = vpcSeq.next();
+			logger.info(LOGTAG + "VPC sequence was incremented to: " 
+					+ vpcSequenceNumber);
 		}
-		// If allocateNewAccount is false, log it.
-		else {
-			logger.info(LOGTAG + "allocateNewAccount is false. " +
-				"The account sequence was not incremented.");
+		catch (SequenceException se) {
+			String errMsg = "An error occurred incrementing the " +
+				"VPC Sequence. The exception is: " + se.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, se);
 		}
+		
 		
 		// Set return properties.
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		if (accountSequenceNumber != null) {
-			addResultProperty("accountSequenceNumber", accountSequenceNumber);
+		if (vpcSequenceNumber != null) {
+			addResultProperty("vpcSequenceNumber", vpcSequenceNumber);
 		}
 		else {
-			addResultProperty("accountSequenceNumber", "not incremented");
+			addResultProperty("vpcSequenceNumber", "not incremented");
 		}
-		addResultProperty("allocateNewAccount", 
-				Boolean.toString(allocateNewAccount));
-		// Update the step.
+		
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
     	
     	// Log completion time.
@@ -132,7 +101,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequenceValue.simulate] ";
+			"[DetermineNewVpcSequenceValue.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -152,7 +121,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequenceValue.fail] ";
+			"[DetermineNewVpcSequenceValue.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -175,7 +144,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequenceValue.rollback] ";
+			"[DetermineNewVpcSequenceValue.rollback] ";
 		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
