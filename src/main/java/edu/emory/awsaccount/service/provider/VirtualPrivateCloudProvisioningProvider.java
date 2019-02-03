@@ -121,5 +121,15 @@ public interface VirtualPrivateCloudProvisioningProvider {
      * @throws ProviderException with details of the error sending the notification.
      */
     public int notifyCentralAdministrators(UserNotification notification) throws ProviderException;
+    
+    /**
+     * 
+     * <P>
+     * 
+     * @param List<String>, a list of central administrator user IDs.
+     *            <P>
+     * @throws ProviderException with details of the error retrieving the list of Ids.
+     */
+    public List<String> getCentralAdministrators() throws ProviderException;
 
 }
