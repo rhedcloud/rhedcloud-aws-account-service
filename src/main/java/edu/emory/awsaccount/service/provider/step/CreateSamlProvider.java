@@ -101,11 +101,6 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		String samlIssuerUrl = 
-			getStepPropertyValue("CREATE_RS_ACCOUNT_CFN_STACK", "RHEDcloudSamlIssuer");
-		String samlIdpName = 
-				getStepPropertyValue("CREATE_RS_ACCOUNT_CFN_STACK", "RHEDcloudIdp");
-		String samlMetadataDocument = getSamlMetadataDocument(samlIssuerUrl);
 		
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
@@ -113,10 +108,17 @@ public class CreateSamlProvider extends AbstractStep implements Step {
 		
 		// If allocatedNewAccount is true and newAccountId is not null, 
 		// Send a SamlProvider.Create-Request to the AWS Account service.
-		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
+		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("not applicable") == false)) {
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
 				"is not null. Sending an AccountAlias.Create-Request to create an" +
 				"acount alias.");
+			
+			String samlIssuerUrl = 
+					getStepPropertyValue("CREATE_RS_ACCOUNT_CFN_STACK", "RHEDcloudSamlIssuer");
+			String samlIdpName = 
+						getStepPropertyValue("CREATE_RS_ACCOUNT_CFN_STACK", "RHEDcloudIdp");
+			String samlMetadataDocument = getSamlMetadataDocument(samlIssuerUrl);
+				
 			
 			// Get a configured SamlProvider object from AppConfig.
 			SamlProvider samlProvider = new SamlProvider();
