@@ -112,18 +112,6 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 			logger.info(LOGTAG + "Property allocatedNewAccount from preceding " +
 				"step is: " + allocatedNewAccount);
 			newAccountId = getResultProperty(step1, "newAccountId");
-			addResultProperty("newAccountId", newAccountId);
-			logger.info(LOGTAG + "Property newAccountId from preceding " +
-				"step is: " + newAccountId);
-			newAccountName = getResultProperty(step1, "newAccountName");
-			addResultProperty("newAccountName", newAccountName);
-			logger.info(LOGTAG + "Property newAccountName from preceding " +
-				"step is: " + newAccountName);
-			accountEmailAddress = getResultProperty(step1, "accountEmailAddress");
-			addResultProperty("accountEmailAddress", accountEmailAddress);
-			logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
-				"step is: " + accountEmailAddress);
-			
 		}
 		else {
 			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. " +
@@ -138,6 +126,18 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
 				"is not null. Sending an Account.Create-Request to create account " +
 				"metadata.");
+			
+			addResultProperty("newAccountId", newAccountId);
+			logger.info(LOGTAG + "Property newAccountId from preceding " +
+				"step is: " + newAccountId);
+			newAccountName = getResultProperty(step1, "newAccountName");
+			addResultProperty("newAccountName", newAccountName);
+			logger.info(LOGTAG + "Property newAccountName from preceding " +
+				"step is: " + newAccountName);
+			accountEmailAddress = getResultProperty(step1, "accountEmailAddress");
+			addResultProperty("accountEmailAddress", accountEmailAddress);
+			logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
+				"step is: " + accountEmailAddress);
 			
 			// Get a configured account object from AppConfig.
 			Account account = new Account();
