@@ -473,7 +473,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    	StackParameter parameter13 = req.newStackParameter();
 		    	parameter13.setKey("RHEDcloud2CustomerGatewayIp");
 		    	parameter13.setValue(vpn2CustomerGatewayIp);
-		    	req.addStackParameter(parameter11);
+		    	req.addStackParameter(parameter13);
 		    	
 		    	// Log out all parameters.
 		    	List<StackParameter> params = req.getStackParameter();
