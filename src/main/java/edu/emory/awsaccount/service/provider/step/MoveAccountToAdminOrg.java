@@ -128,13 +128,13 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		
 		// If the newAccountId is null, get the accountId from the
 		// VPCP requisition. Otherwise the accountId is the newAccountId.
-		if (accountId == null || accountId.equalsIgnoreCase("null")) {
+		if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
 			accountId = req.getAccountId();
 			logger.info(LOGTAG + "newAccountId is null, getting the accountId " +
 				"from the requisition object: " + accountId);
 			addResultProperty("existingAccountId", accountId);
 		}
-		if (accountId == null || accountId.equalsIgnoreCase("null")) {
+		if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
 			String errMsg = "accountId is null. Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
