@@ -226,54 +226,54 @@ public class CreateRsAccountCfnStack extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		
-		// Get the accountSequenceNumber property from the 
-		// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step3 = 
-			getProvisioningStepByType("DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE");
-		String accountSequenceNumber = null;
-		if (step3 != null) {
-			logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
-			accountSequenceNumber = getResultProperty(step3, 
-				"accountSequenceNumber");
-			logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
-				"step is: " + newAccountId);
-			addResultProperty("accountSequenceNumber", 
-				accountSequenceNumber);
-		}
-		else {
-			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
-				"found. Cannot determine account sequence number.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-		// Get the accountAlias property from the 
-		// VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step4 = 
-			getProvisioningStepByType("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST");
-		String accountAlias = null;
-		if (step4 != null) {
-			logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
-			accountAlias = getResultProperty(step4, "accountAlias");
-			logger.info(LOGTAG + "Property accountAlias from preceding " +
-				"step is: " + accountAlias);
-			addResultProperty("accountAlias", accountAlias);
-		}
-		else {
-			String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
-				"found. Cannot determine account sequence number.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
 		// If allocateNewAccount is true and newAccountId is not null,
 		// send a Stack.Generate-Request to generate the rs-account stack.
 		if (allocateNewAccount && newAccountId != null) {
 			logger.info(LOGTAG + "allocateNewAccount is true and newAccountId is " + 
 				newAccountId + ". Sending a Stack.Generate-Request to create the " +
 				"rhedcloud-aws-rs-account stack in a new account.");
+			
+			// Get the accountSequenceNumber property from the 
+			// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step3 = 
+				getProvisioningStepByType("DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE");
+			String accountSequenceNumber = null;
+			if (step3 != null) {
+				logger.info(LOGTAG + "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE found.");
+				accountSequenceNumber = getResultProperty(step3, 
+					"accountSequenceNumber");
+				logger.info(LOGTAG + "Property accountSequenceNumber from preceding " +
+					"step is: " + newAccountId);
+				addResultProperty("accountSequenceNumber", 
+					accountSequenceNumber);
+			}
+			else {
+				String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
+					"found. Cannot determine account sequence number.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+			
+			// Get the accountAlias property from the 
+			// VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step4 = 
+				getProvisioningStepByType("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST");
+			String accountAlias = null;
+			if (step4 != null) {
+				logger.info(LOGTAG + "Step VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST found.");
+				accountAlias = getResultProperty(step4, "accountAlias");
+				logger.info(LOGTAG + "Property accountAlias from preceding " +
+					"step is: " + accountAlias);
+				addResultProperty("accountAlias", accountAlias);
+			}
+			else {
+				String errMsg = "Step DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE not " +
+					"found. Cannot determine account sequence number.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
 			
 			// Send an Stack.Generate-Request. Get a configured Stack and requisition
 			// object from AppConfig.
