@@ -96,9 +96,6 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		String name = 
-			getStepPropertyValue("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST",
-				"accountAlias");
 		
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount);
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
@@ -106,10 +103,13 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		
 		// If allocatedNewAccount is true and newAccountId is not null, 
 		// Send an AccountAlias.Create-Request to the AWS Account service.
-		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
+		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("not applicable") == false)) {
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
 				"is not null. Sending an AccountAlias.Create-Request to create an" +
 				"acount alias.");
+			
+			String name = getStepPropertyValue("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST",
+				"accountAlias");
 			
 			// Get a configured account object from AppConfig.
 			AccountAlias accountAlias = new AccountAlias();
