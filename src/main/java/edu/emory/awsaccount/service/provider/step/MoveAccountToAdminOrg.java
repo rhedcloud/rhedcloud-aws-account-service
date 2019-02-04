@@ -45,6 +45,9 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 	private String m_accessKey = null;
 	private String m_secretKey = null;
 	private String m_sourceParentId = null;
+	private String m_rootSourceParentId = null;
+	private String m_standardSourceParentId = null;
+	private String m_hipaaSourceParentId = null;
 	private String m_destinationParentId = null;
 	
 	private AWSOrganizationsClient m_awsOrganizationsClient = null;
@@ -68,9 +71,17 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		setSecretKey(secretKey);
 		logger.info(LOGTAG + "secretKey is: present");
 		
-		String sourceParentId = getProperties().getProperty("sourceParentId", null);
-		setSourceParentId(sourceParentId);
-		logger.info(LOGTAG + "sourceParentId is: " + getSourceParentId());
+		String rootSourceParentId = getProperties().getProperty("rootSourceParentId", null);
+		setRootSourceParentId(rootSourceParentId);
+		logger.info(LOGTAG + "rootSourceParentId is: " + getRootSourceParentId());
+		
+		String standardSourceParentId = getProperties().getProperty("standardSourceParentId", null);
+		setStandardSourceParentId(standardSourceParentId);
+		logger.info(LOGTAG + "standardSourceParentId is: " + getStandardSourceParentId());
+		
+		String hipaaSourceParentId = getProperties().getProperty("hipaaSourceParentId", null);
+		setHipaaSourceParentId(hipaaSourceParentId);
+		logger.info(LOGTAG + "hipaaSourceParentId is: " + getHipaaSourceParentId());
 		
 		String destinationParentId = getProperties().getProperty("destinationParentId", null);
 		setDestinationParentId(destinationParentId);
@@ -119,6 +130,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		// Get the accountId.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		String accountId = null;
+		Boolean isExistingAccount = false;
 		
 		accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT",
 			"newAccountId");
@@ -132,6 +144,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 			accountId = req.getAccountId();
 			logger.info(LOGTAG + "newAccountId is null, getting the accountId " +
 				"from the requisition object: " + accountId);
+			isExistingAccount = true;
 			addResultProperty("existingAccountId", accountId);
 		}
 		if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
@@ -143,9 +156,24 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 			addResultProperty("toMoveAccountId", accountId);
 		}
 		
+		// Determine the sourceParentId.
+		setSourceParentId(getRootSourceParentId());
+		
+		// If this is an existing account set the sourceParentId accordingly
+		if (isExistingAccount == true) {
+			if (req.getComplianceClass().equalsIgnoreCase("HIPAA")) {
+				logger.info(LOGTAG + "Account is an existing HIPAA account.");
+				setSourceParentId(getHipaaSourceParentId());
+			}
+			else {
+				logger.info(LOGTAG + "Account is an existing standard account.");
+				setSourceParentId(getStandardSourceParentId());
+			}
+		}
+		
 		// Move the account to the admin organizational unit.
 		logger.info(LOGTAG + "Moving the account " + accountId + 
-			"to the admin org unit.");
+			"from the " + getSourceParentId() + " to the admin org unit.");
 		
 		// Build the request.
 		MoveAccountRequest request = new MoveAccountRequest();
@@ -377,20 +405,52 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		return m_secretKey;
 	}
 	
-	private void setSourceParentId (String id) throws 
+	private void setRootSourceParentId (String id) throws 
 		StepException {
 	
 		if (id == null) {
-			String errMsg = "sourceParentId property is null. " +
+			String errMsg = "rootSourceParentId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
 	
-		m_sourceParentId = id;
+		m_rootSourceParentId = id;
 	}
 
-	private String getSourceParentId() {
-		return m_sourceParentId;
+	private String getRootSourceParentId() {
+		return m_rootSourceParentId;
+	}
+	
+	private void setStandardSourceParentId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "standardSourceParentId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_standardSourceParentId = id;
+	}
+
+	private String getStandardSourceParentId() {
+		return m_standardSourceParentId;
+	}
+
+	private void setHipaaSourceParentId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "hipaaSourceParentId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_hipaaSourceParentId = id;
+	}
+	
+	private String getHipaaSourceParentId() {
+		return m_hipaaSourceParentId;
 	}
 	
 	private void setDestinationParentId (String id) throws 
@@ -407,5 +467,21 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 
 	private String getDestinationParentId() {
 		return m_destinationParentId;
+	}
+	
+	private void setSourceParentId (String id) throws 
+		StepException {
+	
+		if (id == null) {
+			String errMsg = "sourceParentId property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_sourceParentId = id;
+	}
+	
+	private String getSourceParentId() {
+		return m_sourceParentId;
 	}
 }
