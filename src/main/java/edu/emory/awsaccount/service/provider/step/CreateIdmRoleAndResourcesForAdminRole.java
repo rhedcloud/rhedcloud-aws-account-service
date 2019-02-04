@@ -102,10 +102,6 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		String accountAlias = 
-				getStepPropertyValue("CREATE_ACCOUNT_ALIAS", "accountAlias");
-		String adminRoleGuid = 
-				getStepPropertyValue("CREATE_LDS_GROUP_FOR_ADMIN_ROLE", "guid");
 		
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
@@ -117,6 +113,11 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
 				"is not null. Sending a Role.Generate-Request to generate an IDM" +
 				"role.");
+			
+			String accountAlias = 
+					getStepPropertyValue("CREATE_ACCOUNT_ALIAS", "accountAlias");
+			String adminRoleGuid = 
+					getStepPropertyValue("CREATE_LDS_GROUP_FOR_ADMIN_ROLE", "guid");
 			
 			// Get a configured Role object and RoleRequisision from AppConfig.
 			Role role = new Role();

@@ -102,8 +102,6 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
 		String newAccountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		String auditorRoleGuid = 
-				getStepPropertyValue("CREATE_LDS_GROUP_FOR_AUDITOR_ROLE", "guid");
 		
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
@@ -115,6 +113,9 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
 				"is not null. Sending a Role.Generate-Request to generate an IDM" +
 				"role.");
+			
+			String auditorRoleGuid = 
+				getStepPropertyValue("CREATE_LDS_GROUP_FOR_AUDITOR_ROLE", "guid");
 			
 			// Get a configured Role object and RoleRequisision from AppConfig.
 			Role role = new Role();
