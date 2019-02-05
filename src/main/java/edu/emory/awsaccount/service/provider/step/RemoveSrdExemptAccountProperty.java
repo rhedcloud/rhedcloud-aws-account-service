@@ -111,7 +111,7 @@ public class RemoveSrdExemptAccountProperty extends AbstractStep implements Step
 		
 		// If the newAccountId is null, get the accountId from the
 		// VPCP requisition. Otherwise the accountId is the newAccountId.
-		if (newAccountId == null || newAccountId.equalsIgnoreCase("null")) {
+		if (newAccountId == null || newAccountId.equalsIgnoreCase("not applicable")) {
 			accountId = req.getAccountId();
 			logger.info(LOGTAG + "newAccountId is null, getting the accountId " +
 				"from the requisition object: " + accountId);
