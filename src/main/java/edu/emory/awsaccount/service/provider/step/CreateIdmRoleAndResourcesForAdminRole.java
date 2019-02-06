@@ -457,7 +457,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 			throw new StepException(errMsg);
 		}
 	
-		m_resource4EntitlementDn = dn;
+		m_resource5EntitlementDn = dn;
 	}
 	
 	private String getResource5EntitlementDn() {
