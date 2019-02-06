@@ -168,6 +168,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	req.setRoleCategoryKey("aws");
 		    	
 		    	// Resource 1
+		    	logger.info(LOGTAG + "Setting values for resource 1.");
 		    	Resource res1 = role.newResource();
 		    	String res1name = "MDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
 		    	res1.setResourceName(res1name.replace("ACCOUNT_NUMBER", newAccountId));
@@ -182,6 +183,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	req.addResource(res1);
 		    	
 		    	// Resource 2
+		    	logger.info(LOGTAG + "Setting values for resource 2.");
 		    	Resource res2 = role.newResource();
 		    	String res2name = "HDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
 		    	res2.setResourceName(res2name.replace("ACCOUNT_NUMBER", newAccountId));
@@ -196,6 +198,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	req.addResource(res2);
 		    	
 		    	// Resource 3 
+		    	logger.info(LOGTAG + "Setting values for resource 3.");
 		    	Resource res3 = role.newResource();
 		    	res3.setResourceName("EADG_" + accountAlias);
 		    	res3.setResourceDescription("Provisions members to group " + accountAlias + " on Enterprise AD Connector");
@@ -207,6 +210,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	req.addResource(res3);
 		    	
 		    	// Resource 4
+		    	logger.info(LOGTAG + "Setting values for resource 4.");
 		    	Resource res4 = role.newResource();
 		    	res4.setResourceName("RGR_AwsUsers");
 		    	res4.setResourceDescription("Provisions members to group AwsUsers on IDV Roles LBD Connector. This group contains all AWS users.");
@@ -218,6 +222,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	req.addResource(res4);
 		    	
 		    	// Resource 5
+		    	logger.info(LOGTAG + "Setting values for resource 5.");
 		    	Resource res5 = role.newResource();
 		    	res5.setResourceName("RGR_AwsVpnAllow");
 		    	res5.setResourceDescription("Provisions members to group AwsVpnAllow on IDV Roles LBD Connector. This group is used to automatically grant access to VPNAllow and AWSAllow.");
@@ -230,7 +235,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "AccountAlias. The exception is: " + efe.getMessage();
+		  	    	  "RoleRequisition. The exception is: " + efe.getMessage();
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
@@ -427,7 +432,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		return dn;
 	}
 	
-	private void setResource4EntitlementDn (String dn) throws 
+	private void setResource4EntitlementDn(String dn) throws 
 		StepException {
 	
 		if (dn == null) {

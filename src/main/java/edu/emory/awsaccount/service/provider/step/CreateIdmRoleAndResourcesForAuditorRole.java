@@ -151,6 +151,7 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 		    	req.setRoleCategoryKey("aws");
 		    	
 		    	// Resource 1
+		    	logger.info(LOGTAG + "Setting values for resource 1.");
 		    	Resource res1 = role.newResource();
 		    	String res1name = "MDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAuditorRole";
 		    	res1.setResourceName(res1name.replace("ACCOUNT_NUMBER", newAccountId));
@@ -165,6 +166,7 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 		    	req.addResource(res1);
 		    	
 		    	// Resource 2
+		    	logger.info(LOGTAG + "Setting values for resource 2.");
 		    	Resource res2 = role.newResource();
 		    	String res2name = "HDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAuditorRole";
 		    	res2.setResourceName(res2name.replace("ACCOUNT_NUMBER", newAccountId));
@@ -179,6 +181,7 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 		    	req.addResource(res2);
 		    	
 		    	// Resource 3
+		    	logger.info(LOGTAG + "Setting values for resource 3.");
 		    	Resource res3 = role.newResource();
 		    	res3.setResourceName("RGR_AwsUsers");
 		    	res3.setResourceDescription("Provisions members to group AwsUsers on IDV Roles LBD Connector. This group contains all AWS users.");
@@ -191,7 +194,7 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 		    }
 		    catch (EnterpriseFieldException efe) {
 		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "AccountAlias. The exception is: " + efe.getMessage();
+		  	    	  "RoleRequisition. The exception is: " + efe.getMessage();
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
