@@ -48,6 +48,7 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 	
 	private ProducerPool m_idmServiceProducerPool = null;
 	private int m_requestTimeoutIntervalInMillis = 10000;
+	private String m_resource3EntitlementDn = null;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -83,6 +84,13 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
 			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
 				getRequestTimeoutIntervalInMillis());
+			
+		String resource3EntitlementDn = getProperties()
+				.getProperty("resource3EntitlementDn");
+		setResource4EntitlementDn(resource3EntitlementDn);
+		logger.info(LOGTAG + "resource3EntitlementDn is: " +
+			resource3EntitlementDn);
+		logger.info(LOGTAG + getResource3EntitlementDn());
 
 		logger.info(LOGTAG + "Initialization complete.");
 		
@@ -356,5 +364,20 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 	
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
+	}
+	private void setResource3EntitlementDn (String dn) throws 
+		StepException {
+	
+		if (dn == null) {
+			String errMsg = "resource3EntitlementDn property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_resource3EntitlementDn = dn;
+	}
+	
+	private String getResource3EntitlementDn() {
+		return m_resource3EntitlementDn;
 	}
 }
