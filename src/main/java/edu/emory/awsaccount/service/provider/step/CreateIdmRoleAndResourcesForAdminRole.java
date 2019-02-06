@@ -22,6 +22,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.XmlEnterpriseObjectException;
@@ -226,8 +227,11 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				rs = (RequestService)getIdmServiceProducerPool()
+				PointToPointProducer p2p = 
+					(PointToPointProducer)getIdmServiceProducerPool()
 					.getExclusiveProducer();
+				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+				rs = (RequestService)p2p;
 			}
 			catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
