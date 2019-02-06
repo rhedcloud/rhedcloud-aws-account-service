@@ -162,8 +162,8 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 			
 			logger.info(LOGTAG + "Generated " + i + " admin RoleAssignments.");
 			addResultProperty("addedAdminsToAdminRole", "true");
-			addResultProperty("distinctAdminUserIds", 
-				toUserIdListString(distinctAdminUserIds));
+			addResultProperty("distinctCentralAdminUsers", 
+				Integer.toString(distinctAdminUserIds.size()));
 		}
 		
 		// Otherwise, add result properties and log that no action was required.
