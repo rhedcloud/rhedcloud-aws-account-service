@@ -87,7 +87,7 @@ public class CreateIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 			
 		String resource3EntitlementDn = getProperties()
 				.getProperty("resource3EntitlementDn");
-		setResource4EntitlementDn(resource3EntitlementDn);
+		setResource3EntitlementDn(resource3EntitlementDn);
 		logger.info(LOGTAG + "resource3EntitlementDn is: " +
 			resource3EntitlementDn);
 		logger.info(LOGTAG + getResource3EntitlementDn());
