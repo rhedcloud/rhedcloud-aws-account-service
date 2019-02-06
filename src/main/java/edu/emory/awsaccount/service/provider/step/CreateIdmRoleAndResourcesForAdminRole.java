@@ -48,6 +48,9 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 	
 	private ProducerPool m_idmServiceProducerPool = null;
 	private int m_requestTimeoutIntervalInMillis = 10000;
+	private String m_resource3EntitlementDnTemplate = null;
+	private String m_resource4EntitlementDn = null;
+	private String m_resource5EntitlementDn = null;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -83,6 +86,26 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
 			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
 				getRequestTimeoutIntervalInMillis());
+			
+		String resource3EntitlementDnTemplate = getProperties()
+				.getProperty("resource3EntitlementDnTemplate");
+		setResource3EntitlementDnTemplate(resource3EntitlementDnTemplate);
+		logger.info(LOGTAG + "resource3EntitlementDnTemplate is: " + 
+				getResource3EntitlementDnTemplate());
+		
+		String resource4EntitlementDn = getProperties()
+				.getProperty("resource4EntitlementDn");
+		setResource4EntitlementDn(resource4EntitlementDn);
+		logger.info(LOGTAG + "resource4EntitlementDn is: " +
+			resource4EntitlementDn);
+		logger.info(LOGTAG + getResource4EntitlementDn());
+		
+		String resource5EntitlementDn = getProperties()
+				.getProperty("resource5EntitlementDn");
+		setResource5EntitlementDn(resource5EntitlementDn);
+		logger.info(LOGTAG + "resource5EntitlementDn is: " +
+			resource5EntitlementDn);
+		logger.info(LOGTAG + getResource5EntitlementDn());
 
 		logger.info(LOGTAG + "Initialization complete.");
 		
@@ -178,7 +201,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	res3.setResourceDescription("Provisions members to group " + accountAlias + " on Enterprise AD Connector");
 		    	res3.setResourceCategoryKey("group");
 		    	Entitlement ent3 = res3.newEntitlement();
-		    	ent3.setEntitlementDN("CN=" + accountAlias + ",OU=AWS,DC=entdev,DC=emory,DC=edu");
+		    	ent3.setEntitlementDN(getResource3EntitlementDn(accountAlias));
 		    	ent3.setEntitlementApplication("EAD");
 		    	res3.setEntitlement(ent3);
 		    	req.addResource(res3);
@@ -189,7 +212,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	res4.setResourceDescription("Provisions members to group AwsUsers on IDV Roles LBD Connector. This group contains all AWS users.");
 		    	res4.setResourceCategoryKey("group");
 		    	Entitlement ent4 = res4.newEntitlement();
-		    	ent4.setEntitlementDN("\\EMORYDEV\\EmoryDev\\Data\\Groups\\AwsUsers");
+		    	ent4.setEntitlementDN(getResource4EntitlementDn());
 		    	ent4.setEntitlementApplication("IDV");
 		    	res4.setEntitlement(ent4);
 		    	req.addResource(res4);
@@ -200,7 +223,7 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 		    	res5.setResourceDescription("Provisions members to group AwsVpnAllow on IDV Roles LBD Connector. This group is used to automatically grant access to VPNAllow and AWSAllow.");
 		    	res5.setResourceCategoryKey("group");
 		    	Entitlement ent5 = res5.newEntitlement();
-		    	ent5.setEntitlementDN("\\EMORYDEV\\EmoryDev\\Data\\Groups\\AwsVpnAllow");
+		    	ent5.setEntitlementDN(getResource5EntitlementDn());
 		    	ent5.setEntitlementApplication("IDV");
 		    	res5.setEntitlement(ent5);
 		    	req.addResource(res5);
@@ -381,4 +404,59 @@ public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
 	}
+	
+	private void setResource3EntitlementDnTemplate (String template) throws 
+		StepException {
+	
+		if (template == null) {
+			String errMsg = "resource3EntitlementDnTemplate property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_resource3EntitlementDnTemplate = template;
+	}
+	
+	private String getResource3EntitlementDnTemplate() {
+		return m_resource3EntitlementDnTemplate;
+	}
+	
+	private String getResource3EntitlementDn(String accountAlias) {
+		String dn = getResource3EntitlementDnTemplate()
+			.replace("ACCOUNT_ALIAS", accountAlias);
+		return dn;
+	}
+	
+	private void setResource4EntitlementDn (String dn) throws 
+		StepException {
+	
+		if (dn == null) {
+			String errMsg = "resource4EntitlementDn property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_resource4EntitlementDn = dn;
+	}
+	
+	private String getResource4EntitlementDn() {
+		return m_resource4EntitlementDn;
+	}
+	
+	private void setResource5EntitlementDn (String dn) throws 
+		StepException {
+	
+		if (dn == null) {
+			String errMsg = "resource5EntitlementDn property is null. " +
+				"Can't continue.";
+			throw new StepException(errMsg);
+		}
+	
+		m_resource4EntitlementDn = dn;
+	}
+	
+	private String getResource5EntitlementDn() {
+		return m_resource5EntitlementDn;
+	}
+	
 }
