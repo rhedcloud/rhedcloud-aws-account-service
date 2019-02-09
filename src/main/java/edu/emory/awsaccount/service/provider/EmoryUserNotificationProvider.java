@@ -11,15 +11,19 @@
 
 package edu.emory.awsaccount.service.provider;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 // Java utilities
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.jms.JMSException;
+import javax.mail.internet.AddressException;
 
 // Log4j
 import org.apache.log4j.Category;
@@ -33,10 +37,12 @@ import org.openeai.OpenEaiObject;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
+import org.openeai.config.MailServiceConfig;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
+import org.openeai.loggingutils.MailService;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
@@ -74,6 +80,7 @@ implements UserNotificationProvider {
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private HashMap<String, List> m_userIdLists = new HashMap<String, List>();
 	private String LOGTAG = "[EmoryUserNotificationProvider] ";
+	private List<String> m_requiredEmailNotificationTypeList = null;
 	
 	/**
 	 * @see UserNotificationProvider.java
@@ -97,8 +104,21 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg, eoce);
 		}
 		
-		// Verify that required e-mail types are set.
-/**		
+		// Get a mail service from AppConfig.
+		MailServiceConfig msConfig = new MailServiceConfig();
+		try {
+			msConfig = (MailServiceConfig)aConfig
+					.getObject("UserNotificationMailSerivce");
+			setMailService(msConfig.getMailService());
+		} 
+		catch (EnterpriseConfigurationObjectException eoce) {
+			String errMsg = "Error retrieving a PropertyConfig object from "
+					+ "AppConfig: The exception is: " + eoce.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, eoce);
+		}
+		
+		// Verify that required e-mail types are set.	
 		Properties props = getProperties();
 		String requiredEmailNotificationTypes = 
 			props.getProperty("requiredEmailNotificationTypes");
@@ -123,7 +143,7 @@ implements UserNotificationProvider {
 		logger.info(LOGTAG + "Required e-mail notification type list " +
 			"has " + requiredEmailNotificationTypeList.size() + " types.");
 		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
-**/		
+	
 		// This provider needs to send messages to the AWS account service
 		// to create UserNotifications.
 		ProducerPool p2p1 = null;
@@ -375,7 +395,7 @@ implements UserNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, jmse);
 		}
-		// Query for the AccountUsers for this account.
+		// Query for the AccountUser for this notification.
 		List accountUserList = null;
 		try {
 			long startTime = System.currentTimeMillis();
@@ -409,25 +429,32 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg);
 		}
 		
-		// Get the sendUserNotificationEmails property.
-		boolean sendUserNotificationEmails = false;
-		List<Property> props = notificationAccountUser.getProperty();
-		ListIterator propsIterator = props.listIterator();
-		while(propsIterator.hasNext()) {
-			Property prop = (Property)propsIterator.next();
-			if (prop.getKey().equalsIgnoreCase("sendUserNotificationEmails")) {
-				if (prop.getValue().equalsIgnoreCase("true")) {
-					sendUserNotificationEmails = true;
-				}
-			}
-		}
-		
 		// If sendEmail is true, send the user an e-mail notification.
 		// Otherwise, log that no e-mail is required.
 		if (sendEmailNotification(notification, accountUser)) {
-			logger.info(LOGTAG + "sending e-mail for user " +
+			logger.info(LOGTAG + "Sending e-mail for user " +
 				notificationAccountUser.getUserId() + "(" +
 				notificationAccountUser.getFullName() + ")");
+			MailService ms = getMailService();
+			try {
+				ms.setFromAddress("AwsAccountService@emory.edu");
+				ms.setRecipientList(accountUser.getEmailAddress().getEmail());
+			}
+			catch (AddressException ae) {
+				
+			}
+			ms.setSubject("AWS at Emory Dev Notification: " + notification.getSubject());
+			ms.setMessageBody(buildEmailMessageBody(notification, accountUser));
+			long startTime = System.currentTimeMillis();
+			logger.info(LOGTAG + "Sending e-mail message...");
+			boolean sentMessage = ms.sendMessage();
+			long endTime = System.currentTimeMillis() - startTime;
+			if (sentMessage == true) {
+				logger.info(LOGTAG + "Sent e-mail");
+			}
+			else {
+				
+			}
 		}
 		else {
 			logger.info(LOGTAG + "Will not send e-mail for user " +
@@ -463,30 +490,34 @@ implements UserNotificationProvider {
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
 		boolean sendEmailNotification = false;
-/**		
+	
 		// If the notification matches the list of e-mail required types,
 		// return true. Otherwise, determine if the user prefers to 
 		// receive e-mail notifications.
 		if (isEmailRequired(notification)) {
+			logger.info(LOGTAG + "An e-mail notification is required for " +
+				"all notifications of type " + notification.getType() + ". " +
+				"Sending e-mail notification to user " + user.getUserId() + "(" +
+				user.getFullName() + "). Sending e-mail.");
 			return true;
 		}
 		else {
 			// If they have a property called sendUserNotificationEmails with a
 			// value of true, send them an e-mail. Otherwise log that no additional
 			// notification methods were requested.
-			if (sendUserNotificationEmails) {
+			if (sendUserNotificationEmails(user) == true) {
 				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
-						"true for user " + notificationAccountUser.getUserId() + "(" +
-						notificationAccountUser.getFullName() + "). Sending e-mail.");
+						"true for user " + user.getUserId() + "(" +
+						user.getFullName() + "). Sending e-mail.");
 			}
 			else {
 				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
-					"false for user " + notificationAccountUser.getUserId() + "(" +
-					notificationAccountUser.getFullName() + "). Will not send " +
+					"false for user " + user.getUserId() + "(" +
+					user.getFullName() + "). Will not send " +
 					"e-mail.");
 			}
 		}
-**/
+		
 		return sendEmailNotification;	
 	}
 	
@@ -495,9 +526,66 @@ implements UserNotificationProvider {
 		boolean isEmailRequired = false;
 		
 		// Build the list of override types from properties.
+		List<String> types = getRequiredEmailNotificationTypeList();
+		ListIterator li = types.listIterator();
+		while(li.hasNext()) {
+			String type = (String)li.next();
+			if (type.equalsIgnoreCase(notification.getType())) {
+				isEmailRequired = true;
+			}
+		}
 		
 		return isEmailRequired;
 		
+	}
+	
+	private void setRequiredEmailNotificationTypeList(List<String> types) {
+		m_requiredEmailNotificationTypeList = types;
+	}
+	
+	private List<String> getRequiredEmailNotificationTypeList() {
+		return m_requiredEmailNotificationTypeList;
+	}
+	
+	private boolean sendUserNotificationEmails(AccountUser user) {
+		boolean sendUserNotificationEmails = false;
+		
+		List props = user.getProperty();
+		ListIterator li = props.listIterator();
+		while (li.hasNext()) {
+			Property prop = (Property)li.next();
+			if (prop.getKey().equalsIgnoreCase("sendUserNotificationEmails")) {
+				if (prop.getValue().equalsIgnoreCase("true")) {
+					sendUserNotificationEmails = true;
+				}
+			}
+		}
+		
+		return sendUserNotificationEmails;
+	}
+	
+	private String buildEmailMessageBody(UserNotification notification, AccountUser user) {
+		
+		String messageBody = "Dear " + user.getFullName() + ", \n\n";
+		messageBody = messageBody + "You are receiving this e-mail, because you opted into " +
+			"e-mail notifications in the AWS at Emory VPCP Console. To discontinue these e-mail " +
+			"notifications, visit the VPCP console and click on your name in the upper right hand " +
+			"corner to update your user profile.\n\n";
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = notification.getCreateDatetime().toCalendar();
+		String formattedCreateDatetime = dateFormat.format(cal);
+		
+		messageBody = messageBody + " Notification Datetime: " + formattedCreateDatetime + "\n";
+		messageBody = messageBody + "   User Notification ID: " + notification.getAccountNotificationId() + "\n";
+		messageBody = messageBody + "Account Notification ID: " + notification.getAccountNotificationId() + "\n";
+		messageBody = messageBody + "           Reference ID: " + notification.getReferenceId() + "\n";
+		messageBody = messageBody + "    	            Type: " + notification.getType() + "\n";
+		messageBody = messageBody + "                Subject: " + notification.getSubject() + "\n\n";
+		messageBody = messageBody + notification.getText() + "\n\n";
+		messageBody = messageBody + "For more details, please log into the VPCP console for the Dev account series at https://dev.aws.emory.edu.";
+		
+		return messageBody;
 	}
 
 }
