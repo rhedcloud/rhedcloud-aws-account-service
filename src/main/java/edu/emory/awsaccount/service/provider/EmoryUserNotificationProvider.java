@@ -56,6 +56,8 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
@@ -63,6 +65,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
+import com.amazonaws.services.organizations.model.Account;
 
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
@@ -532,7 +535,8 @@ implements UserNotificationProvider {
 		return sendUserNotificationEmails;
 	}
 	
-	private String buildEmailMessageBody(UserNotification notification, DirectoryPerson dp) {
+	private String buildEmailMessageBody(UserNotification notification, DirectoryPerson dp)
+		throws ProviderException {
 		
 		String messageBody = "Dear " + dp.getFullName() + ", \n\n";
 		messageBody = messageBody + "You are receiving this e-mail, because you opted into " +
@@ -540,16 +544,34 @@ implements UserNotificationProvider {
 			"notifications, visit the VPCP console and click on your name in the upper right hand " +
 			"corner to update your user profile.\n\n";
 		
+		String accountName = null;
+		String accountId = null;
+		String accountOwner = null;
+		
+		if (notification.getAccountNotificationId() != null) {
+			AccountNotification accountNotification = 
+				accountNotificationQuery(notification.getAccountNotificationId());
+			com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account account = 
+				accountQuery(accountNotification.getAccountId());
+			accountName = account.getAccountName();
+			accountId = account.getAccountId();
+			String accountOwnerId = account.getAccountOwnerId();
+			DirectoryPerson ownerDp = directoryPersonQuery(accountOwnerId);
+			accountOwner = ownerDp.getFullName() + " (" + ownerDp.getKey() + ")";
+		}
+		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = notification.getCreateDatetime().toCalendar();
 		java.util.Date date = cal.getTime();
 		String formattedCreateDatetime = dateFormat.format(date);
 		
-		String accountName = "AWS Dev Whatever";
-		String accountId = "999999999999";
+		
 		
 		messageBody = messageBody + "Notification Datetime: " + formattedCreateDatetime + "\n";
-		messageBody = messageBody + "Account: " + accountName + " (" + accountId + ").";
+		if (accountId != null) {
+			messageBody = messageBody + "Account: " + accountName + " (" + accountId + ")\n";
+			messageBody = messageBody + "Account Owner: " + accountOwner + "\n";
+		}
 		messageBody = messageBody + "Type: " + notification.getType() + "\n";
 		messageBody = messageBody + "Subject: " + notification.getSubject() + "\n\n";
 		messageBody = messageBody + "Body: " + notification.getText() + "\n\n";
@@ -640,19 +662,95 @@ implements UserNotificationProvider {
 	}	
 	
 	private UserProfile userProfileQuery(String userId) 
+	throws ProviderException {
+	
+	// Query the AwsAccountService service for the user's
+    // UserProfile object.
+
+	// Get a configured UserProfile and
+    // UserProfileQuerySpecification from AppConfig
+	UserProfile userProfile = new UserProfile();
+	UserProfileQuerySpecification querySpec = new UserProfileQuerySpecification();
+	try {
+		userProfile = (UserProfile)m_appConfig
+			.getObjectByType(userProfile.getClass().getName());
+		querySpec = (UserProfileQuerySpecification)m_appConfig
+			.getObjectByType(querySpec.getClass().getName());
+	}
+	catch (EnterpriseConfigurationObjectException ecoe) {
+		String errMsg = "An error occurred retrieving an object from " +
+				"AppConfig. The exception is: " + ecoe.getMessage();
+		logger.error(LOGTAG + errMsg);
+		throw new ProviderException(errMsg, ecoe);
+	}
+	
+	// Set the values of the querySpec.
+	try {
+		querySpec.setUserId(userId);
+	}
+	catch (EnterpriseFieldException efe) {
+		String errMsg = "An error occurred setting the values of the " +
+			"query specification object. The exception is: " + 
+			efe.getMessage();
+		logger.error(LOGTAG + errMsg);
+		throw new ProviderException(errMsg, efe);
+	}
+	
+	// Get a RequestService to use for this transaction.
+	RequestService rs = null;
+	try {
+		rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+	}
+	catch (JMSException jmse) {
+		String errMsg = "An error occurred getting a request service to use " +
+			"in this transaction. The exception is: " + jmse.getMessage();
+		logger.error(LOGTAG + errMsg);
+		throw new ProviderException(errMsg, jmse);
+	}
+	// Query for the UserProfile.
+	List userProfileList = null;
+	try {
+		long startTime = System.currentTimeMillis();
+		userProfileList = userProfile.query(querySpec, rs);
+		long time = System.currentTimeMillis() - startTime;
+		logger.info(LOGTAG + "Queried for the UserProfile for " +
+			"userId " + userId + " in " + time + " ms. Returned " + 
+			userProfileList.size() + " user profile(s).");
+	}
+	catch (EnterpriseObjectQueryException eoqe) {
+		String errMsg = "An error occurred querying for the " +
+				"RoleAssignment objects The exception is: " + 
+				eoqe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, eoqe);
+	}
+	// In any case, release the producer back to the pool.
+	finally {
+		getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+	}
+	
+	if (userProfileList.size() == 0) {
+		return null;
+	}
+	else {
+		UserProfile up = (UserProfile)userProfileList.get(0);
+		return up;
+	}
+}	
+
+	private com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account accountQuery(String accountId) 
 		throws ProviderException {
 		
-    	// Query the AwsAccountService service for the user's
-	    // UserProfile object.
+    	// Query the AwsAccountService service for the account object.
 	
-    	// Get a configured UserProfile and
-	    // UserProfileQuerySpecification from AppConfig
-		UserProfile userProfile = new UserProfile();
-    	UserProfileQuerySpecification querySpec = new UserProfileQuerySpecification();
+    	// Get a configured Account and
+	    // AccountQuerySpecification from AppConfig
+		com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account account = new com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account();
+    	AccountQuerySpecification querySpec = new AccountQuerySpecification();
 		try {
-			userProfile = (UserProfile)m_appConfig
-				.getObjectByType(userProfile.getClass().getName());
-			querySpec = (UserProfileQuerySpecification)m_appConfig
+			account =(com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account)
+				m_appConfig.getObjectByType(account.getClass().getName());
+			querySpec = (AccountQuerySpecification)m_appConfig
 				.getObjectByType(querySpec.getClass().getName());
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
@@ -664,7 +762,7 @@ implements UserNotificationProvider {
 		
 		// Set the values of the querySpec.
 		try {
-			querySpec.setUserId(userId);
+			querySpec.setAccountId(accountId);
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
@@ -685,15 +783,15 @@ implements UserNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, jmse);
 		}
-		// Query for the UserProfile.
-		List userProfileList = null;
+		// Query for the Account.
+		List accountList = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			userProfileList = userProfile.query(querySpec, rs);
+			accountList = account.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for the UserProfile for " +
-				"userId " + userId + " in " + time + " ms. Returned " + 
-				userProfileList.size() + " user profile(s).");
+			logger.info(LOGTAG + "Queried for the Account for " +
+				"accountId " + accountId + " in " + time + " ms. Returned " + 
+				accountList.size() + " account(s).");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the " +
@@ -707,12 +805,92 @@ implements UserNotificationProvider {
 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
     	}
 		
-		if (userProfileList.size() == 0) {
+		if (accountList.size() == 0) {
 			return null;
 		}
 		else {
-			UserProfile up = (UserProfile)userProfileList.get(0);
-			return up;
+			com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account a = 
+				(com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account)accountList.get(0);
+			return a;
 		}
 	}	
+
+	private AccountNotification accountNotificationQuery(String accountNotificationId) 
+		throws ProviderException {
+		
+    	// Query the AwsAccountService service for the account 
+		// notificationobject.
+	
+    	// Get a configured AccountNotification and
+	    // AccountNotificationQuerySpecification from AppConfig
+		AccountNotification notification = new AccountNotification();
+    	AccountNotificationQuerySpecification querySpec = 
+    		new AccountNotificationQuerySpecification();
+		try {
+			notification =(AccountNotification)
+				m_appConfig.getObjectByType(notification.getClass().getName());
+			querySpec = (AccountNotificationQuerySpecification)m_appConfig
+				.getObjectByType(querySpec.getClass().getName());
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, ecoe);
+		}
+		
+		// Set the values of the querySpec.
+		try {
+			querySpec.setAccountNotificationId(accountNotificationId);
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"query specification object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+    	
+    	// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Query for the AccountNotification.
+		List accountNotificationList = null;
+		try {
+			long startTime = System.currentTimeMillis();
+			accountNotificationList = notification.query(querySpec, rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Queried for the AccountNotification for " +
+				"accountNotificationId " + accountNotificationId + " in " + time + " ms. Returned " + 
+				accountNotificationList.size() + " account(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the " +
+					"RoleAssignment objects The exception is: " + 
+					eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoqe);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+    	}
+		
+		if (accountNotificationList.size() == 0) {
+			return null;
+		}
+		else {
+			AccountNotification an = (AccountNotification)accountNotificationList.get(0);
+			return an;
+		}
+	}	
+
 }
