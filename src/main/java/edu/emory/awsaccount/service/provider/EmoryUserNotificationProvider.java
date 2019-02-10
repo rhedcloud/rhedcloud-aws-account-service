@@ -25,7 +25,6 @@ import java.util.Properties;
 import javax.jms.JMSException;
 import javax.mail.internet.AddressException;
 
-import org.apache.commons.text.WordUtils;
 // Log4j
 import org.apache.log4j.Category;
 
