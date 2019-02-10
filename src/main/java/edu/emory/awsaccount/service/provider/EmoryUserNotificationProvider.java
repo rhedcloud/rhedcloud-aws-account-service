@@ -540,11 +540,11 @@ implements UserNotificationProvider {
 			"notifications, visit the VPCP console and click on your name in the upper right hand " +
 			"corner to update your user profile.\n\n";
 		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Calendar cal = notification.getCreateDatetime().toCalendar();
-		String formattedCreateDatetime = dateFormat.format(cal);
+//		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//		Calendar cal = notification.getCreateDatetime().toCalendar();
+//		String formattedCreateDatetime = dateFormat.format(cal);
 		
-		messageBody = messageBody + " Notification Datetime: " + formattedCreateDatetime + "\n";
+//		messageBody = messageBody + " Notification Datetime: " + formattedCreateDatetime + "\n";
 		messageBody = messageBody + "   User Notification ID: " + notification.getAccountNotificationId() + "\n";
 		messageBody = messageBody + "Account Notification ID: " + notification.getAccountNotificationId() + "\n";
 		messageBody = messageBody + "           Reference ID: " + notification.getReferenceId() + "\n";
