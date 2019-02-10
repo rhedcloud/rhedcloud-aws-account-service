@@ -601,9 +601,10 @@ implements UserNotificationProvider {
 		String accountName = null;
 		String accountId = null;
 		String accountOwner = null;
+		AccountNotification accountNotification = null;
 		
 		if (notification.getAccountNotificationId() != null) {
-			AccountNotification accountNotification = 
+			accountNotification = 
 				accountNotificationQuery(notification.getAccountNotificationId());
 			com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account account = 
 				accountQuery(accountNotification.getAccountId());
@@ -619,8 +620,6 @@ implements UserNotificationProvider {
 		java.util.Date date = cal.getTime();
 		String formattedCreateDatetime = dateFormat.format(date);
 		
-		
-		
 		messageBody = messageBody + "Notification Datetime: " + formattedCreateDatetime + "\n";
 		if (accountId != null) {
 			messageBody = messageBody + "Account: " + accountName + " (" + accountId + ")\n";
@@ -629,8 +628,21 @@ implements UserNotificationProvider {
 		messageBody = messageBody + "Type: " + notification.getType() + "\n";
 		messageBody = messageBody + "Subject: " + notification.getSubject() + "\n\n";
 		messageBody = messageBody + notification.getText() + "\n\n";
+		
+		messageBody = messageBody + "User Notification ID: " + 
+				notification.getUserNotificationId() + "\n";
+		
+		if (notification.getReferenceId() != null) {
+			messageBody = messageBody + "Reference ID: " + 
+				notification.getReferenceId() + "\n";
+		}
+		
+		if (accountNotification != null) {
+			messageBody = messageBody + "Account Notification ID: " + 
+				notification.getAccountNotificationId() + "\n";
+		}
 	
-		messageBody = messageBody + getEmailClosing();
+		messageBody = messageBody + "\n" + getEmailClosing();
 		return messageBody;
 	}
 	
