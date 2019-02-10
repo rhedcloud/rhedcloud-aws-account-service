@@ -546,15 +546,16 @@ implements UserNotificationProvider {
 		java.util.Date date = cal.getTime();
 		String formattedCreateDatetime = dateFormat.format(date);
 		
-		messageBody = messageBody + " Notification Datetime: " + formattedCreateDatetime + "\n";
-		messageBody = messageBody + "   User Notification ID: " + notification.getAccountNotificationId() + "\n";
-		messageBody = messageBody + "Account Notification ID: " + notification.getAccountNotificationId() + "\n";
-		messageBody = messageBody + "           Reference ID: " + notification.getReferenceId() + "\n";
-		messageBody = messageBody + "    	            Type: " + notification.getType() + "\n";
-		messageBody = messageBody + "                Subject: " + notification.getSubject() + "\n\n";
-		String body = WordUtils.wrap(notification.getText(), 40);
-		messageBody = messageBody + "                   Body: " + body + "\n\n";
-		String closing = WordUtils.wrap("For more details, please log into the VPCP console for the Dev account series at https://dev.aws.emory.edu.", 40);
+		String accountName = "AWS Dev Whatever";
+		String accountId = "999999999999";
+		
+		messageBody = messageBody + "Notification Datetime: " + formattedCreateDatetime + "\n";
+		messageBody = messageBody + "Account: " + accountName + " (" + accountId + ").";
+		messageBody = messageBody + "Type: " + notification.getType() + "\n";
+		messageBody = messageBody + "Subject: " + notification.getSubject() + "\n\n";
+		messageBody = messageBody + "Body: " + notification.getText() + "\n\n";
+	
+		String closing = "For more details, please log into the VPCP console for the Dev account series at https://dev.aws.emory.edu.";
 		messageBody = messageBody + closing;
 		return messageBody;
 	}
