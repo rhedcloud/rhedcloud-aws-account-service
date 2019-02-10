@@ -353,7 +353,6 @@ implements UserNotificationProvider {
 		}
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
-		logger.info(LOGTAG + "Not yet implement. No additional notifications will be sent.");
 		
 		// Get the AccountUser object for the user.
 		// Get a configured AccountUser and query spec from AppConfig
@@ -441,19 +440,25 @@ implements UserNotificationProvider {
 				ms.setRecipientList(accountUser.getEmailAddress().getEmail());
 			}
 			catch (AddressException ae) {
-				
+				String errMsg = "An error occurred setting addresses on " +
+					"the e-mail message. The exception is: " + ae.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, ae);
 			}
+			
 			ms.setSubject("AWS at Emory Dev Notification: " + notification.getSubject());
 			ms.setMessageBody(buildEmailMessageBody(notification, accountUser));
 			long startTime = System.currentTimeMillis();
 			logger.info(LOGTAG + "Sending e-mail message...");
 			boolean sentMessage = ms.sendMessage();
-			long endTime = System.currentTimeMillis() - startTime;
+			long time = System.currentTimeMillis() - startTime;
 			if (sentMessage == true) {
-				logger.info(LOGTAG + "Sent e-mail");
+				logger.info(LOGTAG + "Sent e-mail in " + time + " ms.");
 			}
 			else {
-				
+				String errMsg = "Failed to send e-mail.";
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg);
 			}
 		}
 		else {
