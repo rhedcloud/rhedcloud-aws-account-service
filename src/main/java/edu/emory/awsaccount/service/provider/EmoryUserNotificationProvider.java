@@ -25,6 +25,7 @@ import java.util.Properties;
 import javax.jms.JMSException;
 import javax.mail.internet.AddressException;
 
+import org.apache.commons.text.WordUtils;
 // Log4j
 import org.apache.log4j.Category;
 
@@ -387,7 +388,7 @@ implements UserNotificationProvider {
 				dp.getFullName() + ")");
 			MailService ms = getMailService();
 			try {
-				ms.setFromAddress("AwsAccountService@emory.edu");
+				ms.setFromAddress("do_not_reply@emory.edu");
 				ms.setRecipientList(dp.getEmail().getEmailAddress());
 			}
 			catch (AddressException ae) {
@@ -540,19 +541,21 @@ implements UserNotificationProvider {
 			"notifications, visit the VPCP console and click on your name in the upper right hand " +
 			"corner to update your user profile.\n\n";
 		
-//		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//		Calendar cal = notification.getCreateDatetime().toCalendar();
-//		String formattedCreateDatetime = dateFormat.format(cal);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = notification.getCreateDatetime().toCalendar();
+		java.util.Date date = cal.getTime();
+		String formattedCreateDatetime = dateFormat.format(date);
 		
-//		messageBody = messageBody + " Notification Datetime: " + formattedCreateDatetime + "\n";
+		messageBody = messageBody + " Notification Datetime: " + formattedCreateDatetime + "\n";
 		messageBody = messageBody + "   User Notification ID: " + notification.getAccountNotificationId() + "\n";
 		messageBody = messageBody + "Account Notification ID: " + notification.getAccountNotificationId() + "\n";
 		messageBody = messageBody + "           Reference ID: " + notification.getReferenceId() + "\n";
 		messageBody = messageBody + "    	            Type: " + notification.getType() + "\n";
 		messageBody = messageBody + "                Subject: " + notification.getSubject() + "\n\n";
-		messageBody = messageBody + notification.getText() + "\n\n";
-		messageBody = messageBody + "For more details, please log into the VPCP console for the Dev account series at https://dev.aws.emory.edu.";
-		
+		String body = WordUtils.wrap(notification.getText(), 40);
+		messageBody = messageBody + "                   Body: " + body + "\n\n";
+		String closing = WordUtils.wrap("For more details, please log into the VPCP console for the Dev account series at https://dev.aws.emory.edu.", 40);
+		messageBody = messageBody + closing;
 		return messageBody;
 	}
 	
