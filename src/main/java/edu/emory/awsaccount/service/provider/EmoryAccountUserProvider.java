@@ -303,16 +303,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	Iterator userIdIterator = userIds.iterator();
     	while (userIdIterator.hasNext()) {
     		String userId = (String)userIdIterator.next();
-    		try {
-    			AccountUser au = (AccountUser)accountUserMap.get(userId);
-    			accountUserList.add(au);
-    		}
-    		catch (ProviderException pe) {
-    			String errMsg = "An error occurred retrieving an AccountUser." +
-    				" The exception is: " + pe.getMessage();
-    			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
-    		}
-    		
+			AccountUser au = (AccountUser)accountUserMap.get(userId);
+			accountUserList.add(au);   		
     	}
     	
 		return accountUserList;
