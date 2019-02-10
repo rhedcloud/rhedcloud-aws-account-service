@@ -108,7 +108,7 @@ implements UserNotificationProvider {
 		MailServiceConfig msConfig = new MailServiceConfig();
 		try {
 			msConfig = (MailServiceConfig)aConfig
-					.getObject("UserNotificationMailSerivce");
+					.getObject("UserNotificationMailService");
 			setMailService(msConfig.getMailService());
 		} 
 		catch (EnterpriseConfigurationObjectException eoce) {
