@@ -89,6 +89,8 @@ implements UserNotificationProvider {
 	private HashMap<String, List> m_userIdLists = new HashMap<String, List>();
 	private String LOGTAG = "[EmoryUserNotificationProvider] ";
 	private List<String> m_requiredEmailNotificationTypeList = null;
+	private String m_accountSeries = null;
+	private String m_emailFromAddress = null;
 	
 	/**
 	 * @see UserNotificationProvider.java
@@ -151,6 +153,16 @@ implements UserNotificationProvider {
 		logger.info(LOGTAG + "Required e-mail notification type list " +
 			"has " + requiredEmailNotificationTypeList.size() + " types.");
 		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
+		
+		// Set the accountSeries
+		String accountSeries = props.getProperty("acountSeries");
+		setAccountSeries(accountSeries);
+		logger.info(LOGTAG + "accountSeries is: " + getAccountSeries());
+		
+		// Set the emailFromAddress
+		String emailFromAddress = props.getProperty("emailFromAddress");
+		setEmailFromAddress(emailFromAddress);
+		logger.info(LOGTAG + "emailFromAddress is: " + getEmailFromAddress());
 	
 		// This provider needs to send messages to the AWS account service
 		// to create UserNotifications.
@@ -390,7 +402,7 @@ implements UserNotificationProvider {
 				dp.getFullName() + ")");
 			MailService ms = getMailService();
 			try {
-				ms.setFromAddress("do_not_reply@emory.edu");
+				ms.setFromAddress(getEmailFromAddress());
 				ms.setRecipientList(dp.getEmail().getEmailAddress());
 			}
 			catch (AddressException ae) {
@@ -400,7 +412,8 @@ implements UserNotificationProvider {
 				throw new ProviderException(errMsg, ae);
 			}
 			
-			ms.setSubject("AWS at Emory Dev Notification: " + notification.getSubject());
+			ms.setSubject("AWS at Emory " + getAccountSeries() + 
+				" Notification: " + notification.getSubject());
 			ms.setMessageBody(buildEmailMessageBody(notification, dp));
 			long startTime = System.currentTimeMillis();
 			logger.info(LOGTAG + "Sending e-mail message...");
@@ -451,6 +464,22 @@ implements UserNotificationProvider {
 	
 	private void setUserIdList (String accountId, List userIdList) {
 		m_userIdLists.put(accountId, userIdList);
+	}
+	
+	private void setAccountSeries(String accountSeries) {
+		m_accountSeries = accountSeries;
+	}
+	
+	private String getAccountSeries () {
+		return m_accountSeries;
+	}
+	
+	private void setEmailFromAddress(String emailFromAddress) {
+		m_emailFromAddress = emailFromAddress;
+	}
+	
+	private String getEmailFromAddress () {
+		return m_emailFromAddress;
 	}
 	
 	private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp)
