@@ -259,10 +259,34 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	while(centralAdminRoleAssignmentListIterator.hasNext()) {
     		RoleAssignment ra = (RoleAssignment)centralAdminRoleAssignmentListIterator.next();
     		String userId = getUserIdFromRoleAssignment(ra);
-    		DirectoryPerson dp = directoryPersonQuery(userId);
-    		UserProfile up = userProfileQuery(userId);
+    		
+    		DirectoryPerson dp = null;
+    		try {
+    			dp = directoryPersonQuery(userId);
+    		}
+    		catch (ProviderException pe) {
+    			String errMsg = "An error occurred retrieving DirectoryPerson " +
+    				"to build AccountUser. The exception is: " + pe.getMessage();
+    			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
+    			continue;
+    		}
+    		
+    		UserProfile up = null;
+    		try {
+    			up = userProfileQuery(userId);
+    			
+    		}
+    		catch (ProviderException pe) {
+    			String errMsg = "An error occurred retrieving UserProfile " +
+    				"to build AccountUser. The exception is: " + pe.getMessage();
+    			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
+    			continue;
+    		}
+    		
+    		// Build the AccountUser from the DirectoryPerson and the UserProfile
     		AccountUser au = buildAccountUser(accountId, dp, up, CENTRAL_ADMINISTRATOR_ROLE);
-    		// If the AccountUser alread exists in the map,
+    		
+    		// If the AccountUser already exists in the map,
     		// add the auditor role to the list of roles
     		if (accountUserMap.get(userId) != null) {
     			AccountUser user = (AccountUser)accountUserMap.get(userId);
@@ -279,8 +303,16 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	Iterator userIdIterator = userIds.iterator();
     	while (userIdIterator.hasNext()) {
     		String userId = (String)userIdIterator.next();
-    		AccountUser au = (AccountUser)accountUserMap.get(userId);
-    		accountUserList.add(au);
+    		try {
+    			AccountUser au = (AccountUser)accountUserMap.get(userId);
+    			accountUserList.add(au);
+    		}
+    		catch (ProviderException pe) {
+    			String errMsg = "An error occurred retrieving an AccountUser." +
+    				" The exception is: " + pe.getMessage();
+    			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
+    		}
+    		
     	}
     	
 		return accountUserList;
