@@ -105,11 +105,11 @@ implements UserNotificationProvider {
 		}
 		
 		// Get a mail service from AppConfig.
-		MailServiceConfig msConfig = new MailServiceConfig();
+		MailService ms = new MailService();
 		try {
-			msConfig = (MailServiceConfig)aConfig
-					.getObject("UserNotificationMailService");
-			setMailService(msConfig.getMailService());
+			ms = (MailService)aConfig
+				.getObject("UserNotificationMailService");
+			setMailService(ms);
 		} 
 		catch (EnterpriseConfigurationObjectException eoce) {
 			String errMsg = "Error retrieving a PropertyConfig object from "
