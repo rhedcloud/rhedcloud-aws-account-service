@@ -91,6 +91,8 @@ implements UserNotificationProvider {
 	private List<String> m_requiredEmailNotificationTypeList = null;
 	private String m_accountSeries = null;
 	private String m_emailFromAddress = null;
+	private String m_emailOpening = null;
+	private String m_emailClosing = null;
 	
 	/**
 	 * @see UserNotificationProvider.java
@@ -155,9 +157,19 @@ implements UserNotificationProvider {
 		setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
 		
 		// Set the accountSeries
-		String accountSeries = props.getProperty("acountSeries");
+		String accountSeries = props.getProperty("accountSeries");
 		setAccountSeries(accountSeries);
 		logger.info(LOGTAG + "accountSeries is: " + getAccountSeries());
+		
+		// Set the emailOpening
+		String emailOpening = props.getProperty("emailOpening");
+		setEmailOpening(emailOpening);
+		logger.info(LOGTAG + "emailOpening is: " + getEmailOpening());
+				
+		// Set the e-mailClosing
+		String emailClosing = props.getProperty("emailClosing");
+		setEmailClosing(emailClosing);
+		logger.info(LOGTAG + "emailClosing is: " + getEmailClosing());
 		
 		// Set the emailFromAddress
 		String emailFromAddress = props.getProperty("emailFromAddress");
@@ -482,6 +494,22 @@ implements UserNotificationProvider {
 		return m_emailFromAddress;
 	}
 	
+	private void setEmailOpening(String emailOpening) {
+		m_emailOpening = emailOpening;
+	}
+	
+	private String getEmailOpening () {
+		return m_emailOpening;
+	}
+	
+	private void setEmailClosing(String emailClosing) {
+		m_emailClosing = emailClosing;
+	}
+	
+	private String getEmailClosing() {
+		return m_emailClosing;
+	}
+	
 	private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp)
 		throws ProviderException {
 		
@@ -568,10 +596,7 @@ implements UserNotificationProvider {
 		throws ProviderException {
 		
 		String messageBody = "Dear " + dp.getFullName() + ", \n\n";
-		messageBody = messageBody + "You are receiving this e-mail, because you opted into " +
-			"e-mail notifications in the AWS at Emory VPCP Console. To discontinue these e-mail " +
-			"notifications, visit the VPCP console and click on your name in the upper right hand " +
-			"corner to update your user profile.\n\n";
+		messageBody = messageBody + getEmailOpening() + "\n\n";
 		
 		String accountName = null;
 		String accountId = null;
@@ -603,10 +628,9 @@ implements UserNotificationProvider {
 		}
 		messageBody = messageBody + "Type: " + notification.getType() + "\n";
 		messageBody = messageBody + "Subject: " + notification.getSubject() + "\n\n";
-		messageBody = messageBody + "Body: " + notification.getText() + "\n\n";
+		messageBody = messageBody + notification.getText() + "\n\n";
 	
-		String closing = "For more details, please log into the VPCP console for the Dev account series at https://dev.aws.emory.edu.";
-		messageBody = messageBody + closing;
+		messageBody = messageBody + getEmailClosing();
 		return messageBody;
 	}
 	
