@@ -414,7 +414,7 @@ implements UserNotificationProvider {
 		}
 		else {
 			logger.info(LOGTAG + "Will not send e-mail for user " +
-				dp.getKey() + "(" +
+				dp.getKey() + " (" +
 				dp.getFullName() + ").");
 		}
 		
@@ -462,7 +462,7 @@ implements UserNotificationProvider {
 		if (isEmailRequired(notification)) {
 			logger.info(LOGTAG + "An e-mail notification is required for " +
 				"all notifications of type " + notification.getType() + ". " +
-				"Sending e-mail notification to user " + dp.getKey() + "(" +
+				"Sending e-mail notification to user " + dp.getKey() + " (" +
 				dp.getFullName() + "). Sending e-mail.");
 			return true;
 		}
@@ -472,8 +472,9 @@ implements UserNotificationProvider {
 			// notification methods were requested.
 			if (sendUserNotificationEmails(dp.getKey()) == true) {
 				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
-						"true for user " + dp.getKey() + "(" +
-						dp.getFullName() + "). Sending e-mail.");
+						"true for user " + dp.getKey() + " (" +
+						dp.getFullName() + "). Should send e-mail.");
+				sendEmailNotification = true;
 			}
 			else {
 				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
