@@ -265,7 +265,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     			dp = directoryPersonQuery(userId);
     		}
     		catch (ProviderException pe) {
-    			String errMsg = "An error occurred retrieving DirectoryPerson " +
+    			String errMsg = "NO_DIRECTORY_PERSON:"
+    				+ " An error occurred retrieving DirectoryPerson " +
     				"to build AccountUser. The exception is: " + pe.getMessage();
     			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
     			continue;
@@ -277,7 +278,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     			
     		}
     		catch (ProviderException pe) {
-    			String errMsg = "An error occurred retrieving UserProfile " +
+    			String errMsg = "NO_USER_PROFILE: " +
+    				" An error occurred retrieving UserProfile " +
     				"to build AccountUser. The exception is: " + pe.getMessage();
     			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
     			continue;
