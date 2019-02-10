@@ -186,18 +186,19 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	String LOGTAG = "[EmoryAccountUserProvider.query(AccountUserQuerySpecification querySpec)] ";
 
-        // If the AccountId in the querySpec is null, query for all accounts.
-        if (querySpec.getAccountId() == null || querySpec.getAccountId().equals("")) {
-            logger.info(LOGTAG + "The AccountId is null. Querying for all " +
-            	"users of all accounts.");
-            List<AccountUser> accountUserList = query("1");
-            return accountUserList;
-        }
-        // Otherwise, query for a specific account.
-        else {
-        	logger.info(LOGTAG + "The accountId is not null. Querying for the specific account: " + querySpec.getAccountId());
-        	List<AccountUser> accountUserList = query(querySpec.getAccountId());
+        // If the AccountId is not null, handle it.
+        if (querySpec.getAccountId() != null) {
+        	logger.info(LOGTAG + "The accountId is not null. " +
+        		"Querying for the specific account: " + 
+        		querySpec.getAccountId());
+        	List<AccountUser> accountUserList = 
+        		query(querySpec.getAccountId());
         	return accountUserList;
+        }
+        else {
+        	String errMsg = "QuerySpec not supported. AccountId is null.";
+        	logger.error(LOGTAG + errMsg);
+        	throw new ProviderException(errMsg);
         }
     }
     

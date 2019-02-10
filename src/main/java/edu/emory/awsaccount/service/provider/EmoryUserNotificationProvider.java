@@ -55,14 +55,18 @@ import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
+import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 
+import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 
 /**
@@ -78,6 +82,7 @@ implements UserNotificationProvider {
 	private Category logger = OpenEaiObject.logger;
 	private AppConfig m_appConfig;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
+	private ProducerPool m_directoryServiceProducerPool = null;
 	private HashMap<String, List> m_userIdLists = new HashMap<String, List>();
 	private String LOGTAG = "[EmoryUserNotificationProvider] ";
 	private List<String> m_requiredEmailNotificationTypeList = null;
@@ -151,6 +156,23 @@ implements UserNotificationProvider {
 			p2p1 = (ProducerPool)getAppConfig()
 				.getObject("AwsAccountServiceProducerPool");
 			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		// This provider needs to send messages to the DirectoryService
+		// to look up individual people.
+		ProducerPool p2p2 = null;
+		try {
+			p2p2 = (ProducerPool)getAppConfig()
+				.getObject("DirectoryServiceProducerPool");
+			setDirectoryServiceProducerPool(p2p2);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			// An error occurred retrieving an object from AppConfig. Log it and
@@ -354,90 +376,19 @@ implements UserNotificationProvider {
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
 		
-		// Get the AccountUser object for the user.
-		// Get a configured AccountUser and query spec from AppConfig
-    	AccountUser accountUser = new AccountUser();
-    	AccountUserQuerySpecification querySpec = new AccountUserQuerySpecification();
-		try {
-			accountUser = (AccountUser)m_appConfig
-					.getObjectByType(accountUser.getClass().getName());
-			querySpec = (AccountUserQuerySpecification)m_appConfig
-				.getObjectByType(querySpec.getClass().getName());
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, ecoe);
-		}
-		
-		// Set the values of the querySpec.
-		try {
-			querySpec.setUserId(userId);
-		}
-		catch (EnterpriseFieldException efe) {
-			String errMsg = "An error occurred setting the values of the " +
-				"query specification object. The exception is: " + 
-				efe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, efe);
-		}
-    	
-    	// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use " +
-				"in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, jmse);
-		}
-		// Query for the AccountUser for this notification.
-		List accountUserList = null;
-		try {
-			long startTime = System.currentTimeMillis();
-			accountUserList = accountUser.query(querySpec, rs);
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for AccountUser for UserId " +
-				userId + " in " + time + " ms. Returned " + 
-				accountUserList.size() + " user(s).");
-		}
-		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the " +
-					"AccountUser object The exception is: " + 
-					eoqe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg + eoqe);
-		}
-		// In any case, release the producer back to the pool.
-		finally {
-			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
-    	}
-		
-		// Get the AccountUser
-		AccountUser notificationAccountUser = null;
-		if (accountUserList.size() == 1) {
-			notificationAccountUser = (AccountUser)accountUserList.get(0);
-		}
-		else {
-			String errMsg = "An unexpected number of AccountUser objects " +
-				"was returned. Expected 1, got " + accountUserList.size();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg);
-		}
+		// Get the directory person for the user.
+		DirectoryPerson dp = directoryPersonQuery(notification.getUserId());
 		
 		// If sendEmail is true, send the user an e-mail notification.
 		// Otherwise, log that no e-mail is required.
-		if (sendEmailNotification(notification, accountUser)) {
+		if (sendEmailNotification(notification, dp)) {
 			logger.info(LOGTAG + "Sending e-mail for user " +
-				notificationAccountUser.getUserId() + "(" +
-				notificationAccountUser.getFullName() + ")");
+				dp.getKey() + "(" +
+				dp.getFullName() + ")");
 			MailService ms = getMailService();
 			try {
 				ms.setFromAddress("AwsAccountService@emory.edu");
-				ms.setRecipientList(accountUser.getEmailAddress().getEmail());
+				ms.setRecipientList(dp.getEmail().getEmailAddress());
 			}
 			catch (AddressException ae) {
 				String errMsg = "An error occurred setting addresses on " +
@@ -447,7 +398,7 @@ implements UserNotificationProvider {
 			}
 			
 			ms.setSubject("AWS at Emory Dev Notification: " + notification.getSubject());
-			ms.setMessageBody(buildEmailMessageBody(notification, accountUser));
+			ms.setMessageBody(buildEmailMessageBody(notification, dp));
 			long startTime = System.currentTimeMillis();
 			logger.info(LOGTAG + "Sending e-mail message...");
 			boolean sentMessage = ms.sendMessage();
@@ -463,8 +414,8 @@ implements UserNotificationProvider {
 		}
 		else {
 			logger.info(LOGTAG + "Will not send e-mail for user " +
-				notificationAccountUser.getUserId() + "(" +
-				notificationAccountUser.getFullName() + ").");
+				dp.getKey() + "(" +
+				dp.getFullName() + ").");
 		}
 		
 		return;
@@ -482,6 +433,14 @@ implements UserNotificationProvider {
 		return m_awsAccountServiceProducerPool;
 	}
 	
+	private void setDirectoryServiceProducerPool(ProducerPool pool) {
+		m_directoryServiceProducerPool = pool;
+	}
+	
+	private ProducerPool getDirectoryServiceProducerPool() {
+		return m_directoryServiceProducerPool;
+	}
+	
 	private List getUserIdList(String accountId) {
 		List userIdList = m_userIdLists.get(accountId);
 		return userIdList;
@@ -491,7 +450,8 @@ implements UserNotificationProvider {
 		m_userIdLists.put(accountId, userIdList);
 	}
 	
-	private boolean sendEmailNotification(UserNotification notification, AccountUser user) {
+	private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp)
+		throws ProviderException {
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
 		boolean sendEmailNotification = false;
@@ -502,23 +462,23 @@ implements UserNotificationProvider {
 		if (isEmailRequired(notification)) {
 			logger.info(LOGTAG + "An e-mail notification is required for " +
 				"all notifications of type " + notification.getType() + ". " +
-				"Sending e-mail notification to user " + user.getUserId() + "(" +
-				user.getFullName() + "). Sending e-mail.");
+				"Sending e-mail notification to user " + dp.getKey() + "(" +
+				dp.getFullName() + "). Sending e-mail.");
 			return true;
 		}
 		else {
 			// If they have a property called sendUserNotificationEmails with a
 			// value of true, send them an e-mail. Otherwise log that no additional
 			// notification methods were requested.
-			if (sendUserNotificationEmails(user) == true) {
+			if (sendUserNotificationEmails(dp.getKey()) == true) {
 				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
-						"true for user " + user.getUserId() + "(" +
-						user.getFullName() + "). Sending e-mail.");
+						"true for user " + dp.getKey() + "(" +
+						dp.getFullName() + "). Sending e-mail.");
 			}
 			else {
 				logger.info(LOGTAG + "sendUserNotificationEmails property is " +
-					"false for user " + user.getUserId() + "(" +
-					user.getFullName() + "). Will not send " +
+					"false for user " + dp.getKey() + "(" +
+					dp.getFullName() + "). Will not send " +
 					"e-mail.");
 			}
 		}
@@ -552,10 +512,12 @@ implements UserNotificationProvider {
 		return m_requiredEmailNotificationTypeList;
 	}
 	
-	private boolean sendUserNotificationEmails(AccountUser user) {
+	private boolean sendUserNotificationEmails(String userId)
+		throws ProviderException {
 		boolean sendUserNotificationEmails = false;
 		
-		List props = user.getProperty();
+		UserProfile up = userProfileQuery(userId);
+		List props = up.getProperty();
 		ListIterator li = props.listIterator();
 		while (li.hasNext()) {
 			Property prop = (Property)li.next();
@@ -569,9 +531,9 @@ implements UserNotificationProvider {
 		return sendUserNotificationEmails;
 	}
 	
-	private String buildEmailMessageBody(UserNotification notification, AccountUser user) {
+	private String buildEmailMessageBody(UserNotification notification, DirectoryPerson dp) {
 		
-		String messageBody = "Dear " + user.getFullName() + ", \n\n";
+		String messageBody = "Dear " + dp.getFullName() + ", \n\n";
 		messageBody = messageBody + "You are receiving this e-mail, because you opted into " +
 			"e-mail notifications in the AWS at Emory VPCP Console. To discontinue these e-mail " +
 			"notifications, visit the VPCP console and click on your name in the upper right hand " +
@@ -592,5 +554,161 @@ implements UserNotificationProvider {
 		
 		return messageBody;
 	}
-
+	
+	private DirectoryPerson directoryPersonQuery(String userId) 
+		throws ProviderException {
+		
+    	// Query the DirectoryService service for the user's
+	    // DirectoryPerson object.
+	
+    	// Get a configured DirectoryPerson and
+	    // DirectoryPersonQuerySpecification from AppConfig
+		DirectoryPerson directoryPerson = new DirectoryPerson();
+    	DirectoryPersonQuerySpecification querySpec = new DirectoryPersonQuerySpecification();
+		try {
+			directoryPerson = (DirectoryPerson)m_appConfig
+				.getObjectByType(directoryPerson.getClass().getName());
+			querySpec = (DirectoryPersonQuerySpecification)m_appConfig
+				.getObjectByType(querySpec.getClass().getName());
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, ecoe);
+		}
+		
+		// Set the values of the querySpec.
+		try {
+			querySpec.setKey(userId);
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"query specification object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+    	
+    	// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getDirectoryServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Query for the DirectoryPerson.
+		List directoryPersonList = null;
+		try {
+			long startTime = System.currentTimeMillis();
+			directoryPersonList = directoryPerson.query(querySpec, rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Queried for DirectoryPerson for " +
+				"userId " + userId + " in " + time + " ms. Returned " + 
+				directoryPersonList.size() + " user(s) in the role.");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the " +
+					"RoleAssignment objects The exception is: " + 
+					eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoqe);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getDirectoryServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+    	}
+		
+		if (directoryPersonList.size() == 0) {
+			String errMsg = "Inappropriate number of DirectoryPerson " +
+				"results. Expected 1 got " + directoryPersonList.size() +
+				".";
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}
+		
+		DirectoryPerson dp = (DirectoryPerson)directoryPersonList.get(0);
+		return dp;
+	}	
+	
+	private UserProfile userProfileQuery(String userId) 
+		throws ProviderException {
+		
+    	// Query the AwsAccountService service for the user's
+	    // UserProfile object.
+	
+    	// Get a configured UserProfile and
+	    // UserProfileQuerySpecification from AppConfig
+		UserProfile userProfile = new UserProfile();
+    	UserProfileQuerySpecification querySpec = new UserProfileQuerySpecification();
+		try {
+			userProfile = (UserProfile)m_appConfig
+				.getObjectByType(userProfile.getClass().getName());
+			querySpec = (UserProfileQuerySpecification)m_appConfig
+				.getObjectByType(querySpec.getClass().getName());
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, ecoe);
+		}
+		
+		// Set the values of the querySpec.
+		try {
+			querySpec.setUserId(userId);
+		}
+		catch (EnterpriseFieldException efe) {
+			String errMsg = "An error occurred setting the values of the " +
+				"query specification object. The exception is: " + 
+				efe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, efe);
+		}
+    	
+    	// Get a RequestService to use for this transaction.
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a request service to use " +
+				"in this transaction. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, jmse);
+		}
+		// Query for the UserProfile.
+		List userProfileList = null;
+		try {
+			long startTime = System.currentTimeMillis();
+			userProfileList = userProfile.query(querySpec, rs);
+			long time = System.currentTimeMillis() - startTime;
+			logger.info(LOGTAG + "Queried for the UserProfile for " +
+				"userId " + userId + " in " + time + " ms. Returned " + 
+				userProfileList.size() + " user profile(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the " +
+					"RoleAssignment objects The exception is: " + 
+					eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoqe);
+		}
+		// In any case, release the producer back to the pool.
+		finally {
+			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+    	}
+		
+		if (userProfileList.size() == 0) {
+			return null;
+		}
+		else {
+			UserProfile up = (UserProfile)userProfileList.get(0);
+			return up;
+		}
+	}	
 }
