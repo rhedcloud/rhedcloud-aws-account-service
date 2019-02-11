@@ -194,7 +194,20 @@ implements UserNotificationProvider {
 					"AppConfig. The exception is: " + ecoe.getMessage();
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
-		}	
+		}
+		
+		// Get a mail service from AppConfig.
+		MailService ms = null;
+		try {
+			ms = (MailService)getAppConfig().getObject("UserNotificationMailService");
+			setMailService(ms);
+		} 
+		catch (EnterpriseConfigurationObjectException eoce) {
+			String errMsg = "Error retrieving a PropertyConfig object from "
+					+ "AppConfig: The exception is: " + eoce.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, eoce);
+		}
 		
 		logger.info(LOGTAG + pConfig.getProperties().toString());
 
@@ -374,7 +387,7 @@ implements UserNotificationProvider {
 		return uNotification;
 	}
 	
-	public void processAdditionalNotifications(UserNotification notification) 
+	public synchronized void processAdditionalNotifications(UserNotification notification) 
 		throws ProviderException {
 		
 		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
@@ -412,19 +425,7 @@ implements UserNotificationProvider {
 				dp.getKey() + "(" +
 				dp.getFullName() + ")");
 			
-			// Get a mail service from AppConfig.
-			MailService ms = null;
-			try {
-				ms = (MailService)getAppConfig().getObject("UserNotificationMailService");
-			} 
-			catch (EnterpriseConfigurationObjectException eoce) {
-				String errMsg = "Error retrieving a PropertyConfig object from "
-						+ "AppConfig: The exception is: " + eoce.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, eoce);
-			}
-			
-			
+			MailService ms = getMailService();
 			try {
 				ms.setFromAddress(getEmailFromAddress());
 				ms.setRecipientList(dp.getEmail().getEmailAddress());
