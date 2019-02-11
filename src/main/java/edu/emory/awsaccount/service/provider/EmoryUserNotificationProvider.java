@@ -116,20 +116,6 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg, eoce);
 		}
 		
-		// Get a mail service from AppConfig.
-		MailService ms = new MailService();
-		try {
-			ms = (MailService)aConfig
-				.getObject("UserNotificationMailService");
-			setMailService(ms);
-		} 
-		catch (EnterpriseConfigurationObjectException eoce) {
-			String errMsg = "Error retrieving a PropertyConfig object from "
-					+ "AppConfig: The exception is: " + eoce.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, eoce);
-		}
-		
 		// Verify that required e-mail types are set.	
 		Properties props = getProperties();
 		String requiredEmailNotificationTypes = 
@@ -391,6 +377,8 @@ implements UserNotificationProvider {
 	public void processAdditionalNotifications(UserNotification notification) 
 		throws ProviderException {
 		
+		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
+		
 		String userId = null;
 		if (notification != null) {
 			userId = notification.getUserId();
@@ -401,10 +389,21 @@ implements UserNotificationProvider {
 			throw new ProviderException(errMsg);
 		}
 		
-		String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
-		
 		// Get the directory person for the user.
 		DirectoryPerson dp = directoryPersonQuery(notification.getUserId());
+		
+		try {
+			String userNotificationString = notification.toXmlString();
+			logger.info(LOGTAG + "UserNotification in is: " + userNotificationString);
+			String directoryPersonString = dp.toXmlString();
+			logger.info(LOGTAG + "DirectoryPerson is: " + directoryPersonString);
+		}
+		catch (XmlEnterpriseObjectException xeoe) {
+			String errMsg = "An error occurred serializing and object to XML. " +
+				"The exception is: " + xeoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, xeoe);
+		}
 		
 		// If sendEmail is true, send the user an e-mail notification.
 		// Otherwise, log that no e-mail is required.
@@ -412,7 +411,20 @@ implements UserNotificationProvider {
 			logger.info(LOGTAG + "Sending e-mail for user " +
 				dp.getKey() + "(" +
 				dp.getFullName() + ")");
-			MailService ms = getMailService();
+			
+			// Get a mail service from AppConfig.
+			MailService ms = null;
+			try {
+				ms = (MailService)getAppConfig().getObject("UserNotificationMailService");
+			} 
+			catch (EnterpriseConfigurationObjectException eoce) {
+				String errMsg = "Error retrieving a PropertyConfig object from "
+						+ "AppConfig: The exception is: " + eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
+			}
+			
+			
 			try {
 				ms.setFromAddress(getEmailFromAddress());
 				ms.setRecipientList(dp.getEmail().getEmailAddress());
@@ -594,6 +606,20 @@ implements UserNotificationProvider {
 	
 	private String buildEmailMessageBody(UserNotification notification, DirectoryPerson dp)
 		throws ProviderException {
+		String LOGTAG = "[EmoryUserNotificationProvider.buildEmailMessageBody] " ;
+		
+		try {
+			String userNotificationString = notification.toXmlString();
+			logger.info(LOGTAG + "UserNotification is: " + userNotificationString);
+			String directoryPersonString = dp.toXmlString();
+			logger.info(LOGTAG + "DirectoryPerson is: " + directoryPersonString);
+		}
+		catch (XmlEnterpriseObjectException xeoe) {
+			String errMsg = "An error occurred serializing and object to XML. " +
+				"The exception is: " + xeoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, xeoe);
+		}
 		
 		String messageBody = "Dear " + dp.getFullName() + ", \n\n";
 		messageBody = messageBody + getEmailOpening() + "\n\n";
