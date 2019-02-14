@@ -69,6 +69,7 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
     private String m_userDnTemplate = null;
     private String m_roleDn = null;
     private Properties m_props = null;
+    private boolean m_whiteListOverride = false;
 
     /**
      * @see AccountProvisioningAuthorizationProvider.java
@@ -97,6 +98,12 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
         // Set the value of the roleDn
         String roleDn = getProperties().getProperty("roleDn", null);
         setRoleDn(roleDn);
+        
+        // Set the value of whiteListOverride
+        String sWhiteListOverride = getProperties().getProperty("whiteListOverride", "false");
+        boolean whiteListOverride = Boolean.parseBoolean(sWhiteListOverride);
+        setWhiteListOverride(whiteListOverride);
+        logger.info(LOGTAG + "whiteListOverride is: " + getWhiteListOverride());
         
 		// This provider needs to send messages to the IdentityService
 		// to query for FullPerson.
@@ -300,7 +307,33 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 	            logger.error(LOGTAG + errMsg);
 	            throw new ProviderException(errMsg, efe);
 	        }
-
+	        // Add the AccountProvisioningAuthorization to a list.
+	        List<AccountProvisioningAuthorization> authList = 
+	        	new ArrayList<AccountProvisioningAuthorization>();
+	        authList.add(auth);
+	        return authList;
+		}
+		
+		// If whiteListOverride is true, return not authorized.
+		if (getWhiteListOverride() == true) {
+			
+			// 
+			try {
+	            auth.setUserId(querySpec.getUserId());
+	            auth.setIsAuthorized("false");
+	            String authDescription = "User is not in the role that allows "
+	            	+ "provisioning, and the provisioning role override is set "
+	            	+ " to true. Only users in the provisioning role may " 
+	            	+ "provision accounts and VPCs. User was not evaluated " +
+	            	"for person status.";			
+	            auth.setAuthorizedUserDescription(authDescription);
+	        } 
+			 catch (EnterpriseFieldException efe) {
+	            String errMsg = "An error occurred seting field values. " + 
+	            	"The exception is: " + efe.getMessage();
+	            logger.error(LOGTAG + errMsg);
+	            throw new ProviderException(errMsg, efe);
+	        }
 	        // Add the AccountProvisioningAuthorization to a list.
 	        List<AccountProvisioningAuthorization> authList = 
 	        	new ArrayList<AccountProvisioningAuthorization>();
@@ -517,6 +550,14 @@ public class EmoryAccountProvisioningAuthorizationProvider extends OpenEaiObject
 		}
 		
 		return isUserInRole;
+	}
+	
+	private void setWhiteListOverride(boolean whiteListOverride) {
+		m_whiteListOverride = whiteListOverride;
+	}
+	
+	private boolean getWhiteListOverride() {
+		return m_whiteListOverride;
 	}
 
 }
