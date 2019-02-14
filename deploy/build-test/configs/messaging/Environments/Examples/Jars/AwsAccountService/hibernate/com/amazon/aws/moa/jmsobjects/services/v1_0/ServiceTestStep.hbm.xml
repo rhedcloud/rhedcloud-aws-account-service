@@ -10,6 +10,6 @@
 </id>
 <property name="ServiceTestId" column="SERVICE_TEST_ID"/>
 <property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
-<property name="Description" column="DESCRIPTION"/>
+<property name="Description" column="DESCRIPTION" length="40000"/>
 </class>
 </hibernate-mapping>
