@@ -173,7 +173,8 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 		
 		// Move the account to the admin organizational unit.
 		logger.info(LOGTAG + "Moving the account " + accountId + 
-			"from the " + getSourceParentId() + " to the admin org unit.");
+			" from the " + getSourceParentId() + " to the admin org unit "
+			+ getDestinationParentId());
 		
 		// Build the request.
 		MoveAccountRequest request = new MoveAccountRequest();
