@@ -174,7 +174,7 @@ implements StackProvider {
 		DescribeStacksResult result = null;
 		try {
 			AmazonCloudFormationClient client = 
-				buildCloudFormationClient(querySpec.getAccountId(), querySpec.getRegion());
+				buildCloudFormationClient(querySpec.getAccountId(), querySpec.getRegion(), getRoleArnPattern());
 			result = client.describeStacks(request);
 		}
 		catch (Exception e) {
@@ -285,7 +285,13 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		CreateStackResult result = null;
 		try{
-			AmazonCloudFormationClient client = buildCloudFormationClient(req.getAccountId(), req.getRegion());
+			String roleArnPattern = getRoleArnPattern();
+			if (req.getCredentials() != null) {
+				roleArnPattern = req.getCredentials().getSecretKey();
+			}
+			logger.info(LOGTAG + "roleArnPattern to assume for Stack is: " + roleArnPattern);
+			AmazonCloudFormationClient client = 
+			buildCloudFormationClient(req.getAccountId(), req.getRegion(), roleArnPattern);
 			result = client.createStack(csr);
 			// If the request does not want an immediate response,
 			// wait for completion
@@ -367,7 +373,8 @@ implements StackProvider {
 		long startTime = System.currentTimeMillis();
 		DeleteStackResult result = null;
 		try {
-			AmazonCloudFormationClient client = buildCloudFormationClient(accountId, region);
+			
+			AmazonCloudFormationClient client = buildCloudFormationClient(accountId, region, getRoleArnPattern());
 			result = client.deleteStack(dsr);
 			// If the request does not want an immediate response,
 			// wait for completion
@@ -408,12 +415,13 @@ implements StackProvider {
      * account with the correct role
      * 
      */
-    private AmazonCloudFormationClient buildCloudFormationClient(String accountId, String region) {
+    private AmazonCloudFormationClient buildCloudFormationClient(String accountId, 
+    	String region, String roleArnPattern) {
     	// Build the roleArn of the role to assume from the base ARN and 
         // the account number in the query spec.
         logger.info(LOGTAG + "The account targeted by this request is: " + accountId);
         logger.info(LOGTAG + "The region targeted by this request is: " + region);
-        logger.info(LOGTAG + "The roleArnPattern is: " + getRoleArnPattern());
+        logger.info(LOGTAG + "The roleArnPattern is: " + roleArnPattern);
         String roleArn = getRoleArnPattern().replace("ACCOUNT_NUMBER", accountId);
         logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn); 
         		
