@@ -155,58 +155,41 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 			getDestinationParentId());
 		addResultProperty("complianceClass", complianceClass);
 		addResultProperty("destinationParentId", getDestinationParentId());
+			
+		// Build the request.
+		MoveAccountRequest request = new MoveAccountRequest();
+		request.setAccountId(newAccountId);
+		request.setDestinationParentId(getDestinationParentId());
+		request.setSourceParentId(getSourceParentId());
 		
-		// If allocatedNewAccount is true and the newAccountId is not null,
-		// move the account to the destination organizational unit.
-		if (allocatedNewAccount == true && newAccountId != null) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
-				"is " + newAccountId + ". Moving the account to the admin org unit.");
-			
-			// Build the request.
-			MoveAccountRequest request = new MoveAccountRequest();
-			request.setAccountId(newAccountId);
-			request.setDestinationParentId(getDestinationParentId());
-			request.setSourceParentId(getSourceParentId());
-			
-			// Send the request.
-			try {
-				logger.info(LOGTAG + "Sending the move account request...");
-				long moveStartTime = System.currentTimeMillis();
-				MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
-				long moveTime = System.currentTimeMillis() - moveStartTime;
-				logger.info(LOGTAG + "received response to move account request in " +
-					moveTime + " ms.");
-				accountMoved = true;
-			}
-			catch (Exception e) {
-				String errMsg = "An error occurred moving the account. " +
-					"The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
-			
-			addResultProperty("sourceParentId", getSourceParentId());	
-			addResultProperty("destinationParentId", getDestinationParentId());
-			addResultProperty("movedAccount", Boolean.toString(accountMoved));
-			
-			if 	(accountMoved) {
-				logger.info(LOGTAG + "Successfully moved account " +
-					newAccountId + "to org unit " + getDestinationParentId());
-				
-			}
-			else {
-				logger.info(LOGTAG + "Account was not moved.");
-			}
+		// Send the request.
+		try {
+			logger.info(LOGTAG + "Sending the move account request...");
+			long moveStartTime = System.currentTimeMillis();
+			MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
+			long moveTime = System.currentTimeMillis() - moveStartTime;
+			logger.info(LOGTAG + "received response to move account request in " +
+				moveTime + " ms.");
+			accountMoved = true;
 		}
-				
-		// If allocatedNewAccount is false, log it and
-		// add result props.
+		catch (Exception e) {
+			String errMsg = "An error occurred moving the account. " +
+				"The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+		
+		addResultProperty("sourceParentId", getSourceParentId());	
+		addResultProperty("destinationParentId", getDestinationParentId());
+		addResultProperty("movedAccount", Boolean.toString(accountMoved));
+		
+		if 	(accountMoved) {
+			logger.info(LOGTAG + "Successfully moved account " +
+				newAccountId + "to org unit " + getDestinationParentId());
+			
+		}
 		else {
-			logger.info(LOGTAG + "allocateNewAccount is false. " +
-				"no need to move an account.");
-			addResultProperty("allocatedNewAccount", 
-				Boolean.toString(allocatedNewAccount));
-			addResultProperty("newAccountId", "not applicable");
+			logger.info(LOGTAG + "Account was not moved.");
 		}
 		
 		// Update the step result.
