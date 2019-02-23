@@ -118,29 +118,23 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 		// Get the allocatedNewAccount property from the
 		// GENERATE_NEW_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step1 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-		boolean allocatedNewAccount = false;
-		String accountId = null;
-		if (step1 != null) {
-			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
-			String newAccountId = getResultProperty(step1, "newAccountId");
-			if (newAccountId.equalsIgnoreCase("not applicable")) {
-				accountId = getResultProperty(step1, "accountId");
-			}
-			else {
-				accountId = newAccountId;
-			}
-			
-			addResultProperty("accountId", accountId);
-			logger.info(LOGTAG + "Property accountId from preceding " +
-				"step is: " + accountId);
+
+		String accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", 
+				"newAccountId");
+		if (accountId.equalsIgnoreCase("not applicable")) {
+			accountId = getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", 
+				"accountId");
 		}
-		else {
-			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. " +
-				"Can't continue.";
+		
+		if (accountId.equalsIgnoreCase("not applicable")) {
+			String errMsg = "Cannot determine accountId. Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
+		
+		addResultProperty("accountId", accountId);
+		logger.info(LOGTAG + "Property accountId from preceding " +
+			"step is: " + accountId);
 		
 		// Determine the compliance class of the account.
 		String complianceClass = getVirtualPrivateCloudProvisioning()
@@ -156,7 +150,6 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 			complianceClass + ". Setting destinationParentId to: " +
 			getDestinationParentId());
 		addResultProperty("complianceClass", complianceClass);
-		addResultProperty("destinationParentId", getDestinationParentId());
 			
 		// Build the request.
 		MoveAccountRequest request = new MoveAccountRequest();
@@ -196,10 +189,7 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 		
 		// Update the step result.
 		String stepResult = FAILURE_RESULT;
-		if (accountMoved == true && allocatedNewAccount == true) {
-			stepResult = SUCCESS_RESULT;
-		}
-		if (allocatedNewAccount == false) {
+		if (accountMoved == true) {
 			stepResult = SUCCESS_RESULT;
 		}
 		

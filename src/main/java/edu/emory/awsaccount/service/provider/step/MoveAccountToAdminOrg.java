@@ -153,7 +153,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}
 		else {
-			addResultProperty("toMoveAccountId", accountId);
+			addResultProperty("accountId", accountId);
 		}
 		
 		// Determine the sourceParentId.
