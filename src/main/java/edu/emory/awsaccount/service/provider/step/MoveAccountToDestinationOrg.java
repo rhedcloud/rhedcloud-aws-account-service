@@ -120,18 +120,20 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		ProvisioningStep step1 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
 		boolean allocatedNewAccount = false;
-		String newAccountId = null;
+		String accountId = null;
 		if (step1 != null) {
 			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
-			String sAllocatedNewAccount = getResultProperty(step1, "allocatedNewAccount");
-			allocatedNewAccount = Boolean.parseBoolean(sAllocatedNewAccount);
-			addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
-			logger.info(LOGTAG + "Property allocatedNewAccount from preceding " +
-				"step is: " + allocatedNewAccount);
-			newAccountId = getResultProperty(step1, "newAccountId");
-			addResultProperty("newAccountId", newAccountId);
-			logger.info(LOGTAG + "Property newAccountId from preceding " +
-				"step is: " + newAccountId);
+			String newAccountId = getResultProperty(step1, "newAccountId");
+			if (newAccountId.equalsIgnoreCase("not applicable")) {
+				accountId = getResultProperty(step1, "accountId");
+			}
+			else {
+				accountId = newAccountId;
+			}
+			
+			addResultProperty("accountId", accountId);
+			logger.info(LOGTAG + "Property accountId from preceding " +
+				"step is: " + accountId);
 		}
 		else {
 			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. " +
@@ -158,7 +160,7 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 			
 		// Build the request.
 		MoveAccountRequest request = new MoveAccountRequest();
-		request.setAccountId(newAccountId);
+		request.setAccountId(accountId);
 		request.setDestinationParentId(getDestinationParentId());
 		request.setSourceParentId(getSourceParentId());
 		
@@ -185,7 +187,7 @@ public class MoveAccountToDestinationOrg extends AbstractStep implements Step {
 		
 		if 	(accountMoved) {
 			logger.info(LOGTAG + "Successfully moved account " +
-				newAccountId + "to org unit " + getDestinationParentId());
+				accountId + "to org unit " + getDestinationParentId());
 			
 		}
 		else {
