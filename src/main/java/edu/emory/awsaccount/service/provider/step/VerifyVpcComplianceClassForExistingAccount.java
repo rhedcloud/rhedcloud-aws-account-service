@@ -44,7 +44,7 @@ import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecifica
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 22 February 2019
  **/
-public class VerifyVpcTypeForExistingAccount extends AbstractStep implements Step {
+public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep implements Step {
 	
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private int m_requestTimeoutInterval = 10000;
@@ -190,9 +190,15 @@ public class VerifyVpcTypeForExistingAccount extends AbstractStep implements Ste
 			
 			if (results.size() == 1) {
 				Account accountResult = (Account)results.get(0);
-				String complianceClass = accountResult.getComplianceClass();
+				String accountComplianceClass = accountResult.getComplianceClass();
+				logger.info(LOGTAG + "accountComplianceClass is: " + accountComplianceClass);
+				addResultProperty("accountComplianceClass", accountComplianceClass);
 			    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
-				if (complianceClass.equalsIgnoreCase(vpcp.getVirtualPrivateCloudRequisition().getComplianceClass())) {
+			    String vpcComplianceClass = vpcp.getVirtualPrivateCloudRequisition()
+			    	.getComplianceClass();
+				logger.info(LOGTAG + "vpcComplianceClass is: " + vpcComplianceClass);
+			    addResultProperty("vpcComplianceClass", vpcComplianceClass);
+			    if (vpcComplianceClass.equalsIgnoreCase(accountComplianceClass)) {
 					isValid = true;
 					logger.info(LOGTAG + "isValid is true");
 					addResultProperty("isValid", Boolean.toString(isValid));
@@ -209,7 +215,6 @@ public class VerifyVpcTypeForExistingAccount extends AbstractStep implements Ste
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg);
 			}
-			
 		}
 		// If allocateNewAccount is true, no evaluation is necessary.
 		else {
