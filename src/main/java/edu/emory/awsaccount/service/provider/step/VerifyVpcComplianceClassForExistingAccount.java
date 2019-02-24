@@ -100,7 +100,7 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		String sAllocateNewAccount = 
-			getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "allocateNewACcount");
+			getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
 				
 		// If allocateNewAccount is perform the evaluation.
