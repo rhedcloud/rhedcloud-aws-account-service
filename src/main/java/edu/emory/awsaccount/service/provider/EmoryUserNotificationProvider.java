@@ -207,6 +207,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     @Override
     public List<String> getUserIdsForAccount(String accountId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.getUserIdsForAccount] ";
+    	
         // If the AccountId is null, throw an exception.
         if (accountId == null || accountId.equals("")) {
             String errMsg = "The accountId is null.";
@@ -278,6 +280,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     @Override
     public UserNotification generate(String userId, AccountNotification aNotification) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.generate] ";
+    	
         // Get a configured UserNotification object from AppConfig
         UserNotification uNotification = new UserNotification();
         try {
@@ -368,7 +372,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         // If sendEmail is true, send the user an e-mail notification.
         // Otherwise, log that no e-mail is required.
         if (sendEmailNotification(notification, dp)) {
-            logger.info(LOGTAG + "Sending e-mail for user " + dp.getKey() + "(" + dp.getFullName() + ")");
+            logger.info(LOGTAG + "Sending e-mail for user " + dp.getKey() + " (" + dp.getFullName() + ")");
 
             MailService ms = getMailService();
             try {
@@ -596,6 +600,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private DirectoryPerson directoryPersonQuery(String userId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.directoryPersonQuery] ";
+    	
         // Query the DirectoryService service for the user's
         // DirectoryPerson object.
 
@@ -662,6 +668,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private UserProfile userProfileQuery(String userId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.userProfileQuery] ";
+    	
         // Query the AwsAccountService service for the user's
         // UserProfile object.
 
@@ -726,7 +734,9 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account accountQuery(String accountId) throws ProviderException {
 
-        // Query the AwsAccountService service for the account object.
+    	String LOGTAG = "[EmoryUserNotificationProvider.accountQuery] ";
+    	
+    	// Query the AwsAccountService service for the account object.
 
         // Get a configured Account and
         // AccountQuerySpecification from AppConfig
@@ -790,6 +800,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private AccountNotification accountNotificationQuery(String accountNotificationId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.accountNotificationQuery] ";
+    	
         // Query the AwsAccountService service for the account
         // notificationobject.
 
