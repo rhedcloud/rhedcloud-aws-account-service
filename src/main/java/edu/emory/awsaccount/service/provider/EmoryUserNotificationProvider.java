@@ -93,6 +93,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     private String m_emailOpening = null;
     private String m_emailClosing = null;
     private AccountUser accountUser;
+    private int m_requestTimeoutIntervalInMillis = 10000;
 
     /**
      * @see UserNotificationProvider.java
@@ -113,6 +114,13 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, eoce);
         }
+        
+        String requestTimeoutInterval = getProperties()
+			.getProperty("requestTimeoutIntervalInMillis", "10000");
+		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			getRequestTimeoutIntervalInMillis());
 
         // Verify that required e-mail types are set.
         Properties props = getProperties();
@@ -228,7 +236,12 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         // Get a RequestService to use for this transaction.
         RequestService rs = null;
         try {
-            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        	PointToPointProducer p2p = 
+				(PointToPointProducer)getAwsAccountServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
+            
         } catch (JMSException jmse) {
             String errMsg = "An error occurred getting a request service to use " + "in this transaction. The exception is: "
                     + jmse.getMessage();
@@ -863,5 +876,13 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             return an;
         }
     }
+    
+	private void setRequestTimeoutIntervalInMillis(int time) {
+		m_requestTimeoutIntervalInMillis = time;
+	}
+	
+	private int getRequestTimeoutIntervalInMillis() {
+		return m_requestTimeoutIntervalInMillis;
+	}
 
 }
