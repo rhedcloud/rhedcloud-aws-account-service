@@ -65,6 +65,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     private String m_adminRoleDnTemplate = null;
     private String m_auditorRoleDnTemplate = null;
     private String m_centralAdminRoleDnTemplate = null;
+    private int m_requestTimeoutIntervalInMillis = 10000;
     private final static String ADMINISTRATOR_ROLE = "RHEDcloudAdministratorRole";
     private final static String AUDITOR_ROLE = "RHEDcloudAuditorRole";
     private final static String CENTRAL_ADMINISTRATOR_ROLE = "RHEDcloudCentralAdministratorRole";
@@ -116,6 +117,13 @@ public class EmoryAccountUserProvider extends OpenEaiObject
         	throw new ProviderException(errMsg);
         }
         setCentralAdminRoleDnTemplate(centralAdminRoleDnTemplate);
+        
+        String requestTimeoutInterval = getProperties()
+			.getProperty("requestTimeoutIntervalInMillis", "10000");
+		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			getRequestTimeoutIntervalInMillis());
         		
 		// This provider needs to send messages to the AWS account service
 		// to query for UserProfiles.
@@ -212,6 +220,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	// Retrieve all role assignments for users in the
     	// RHEDcloudAdministrator role.
+    	logger.info(LOGTAG + "Querying for admin role assignments...");
     	List<RoleAssignment> adminRoleAssignments = 
     		roleAssignmentQuery(getAdminRoleDn(accountId));
     	
@@ -227,7 +236,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	}
     	
     	// Retrieve all role assignments for users in the
-    	// RHEDcloudAuditor role.	
+    	// RHEDcloudAuditor role.
+    	logger.info(LOGTAG + "Querying for auditor role assignments...");
     	List<RoleAssignment> auditorRoleAssignments = 
     		roleAssignmentQuery(getAuditorRoleDn(accountId));
     	
@@ -252,6 +262,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	// Retrieve all role assignments for users in the
     	// RHEDcloudCentralAdministrator role.
+    	logger.info(LOGTAG + "Querying for central admin role assignments...");
     	List<RoleAssignment> centralAdminRoleAssignments = roleAssignmentQuery(getCentralAdminRoleDn(accountId));
 		    	
     	ListIterator centralAdminRoleAssignmentListIterator =
@@ -423,6 +434,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 	private List<RoleAssignment> roleAssignmentQuery(String roleDn) 
 		throws ProviderException {
 		
+		String LOGTAG = "[EmoryAccountUserProvider.roleAssignmentQuery] ";
+		
     	// Query the IDM service for all users in the named role
     	// Get a configured AccountUser, RoleAssignment, and 
     	// RoleAssignmentQuerySpecification from AppConfig
@@ -461,7 +474,11 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getIdmServiceProducerPool().getExclusiveProducer();
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getIdmServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use " +
@@ -532,7 +549,11 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getDirectoryServiceProducerPool().getExclusiveProducer();
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getDirectoryServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;		
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use " +
@@ -612,7 +633,11 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getAwsAccountServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;	
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use " +
@@ -694,6 +719,14 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		
 		return au;
 		
+	}
+	
+	private void setRequestTimeoutIntervalInMillis(int time) {
+		m_requestTimeoutIntervalInMillis = time;
+	}
+	
+	private int getRequestTimeoutIntervalInMillis() {
+		return m_requestTimeoutIntervalInMillis;
 	}
 	
 }
