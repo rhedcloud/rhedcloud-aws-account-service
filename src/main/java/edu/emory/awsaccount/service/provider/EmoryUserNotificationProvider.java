@@ -358,7 +358,10 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     public synchronized void processAdditionalNotifications(UserNotification notification) throws ProviderException {
 
         String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
-
+        
+        logger.info(LOGTAG + "Processing additional notifications for " +
+            	"UserNotification: " + notification.getUserNotificationId());
+        
         String userId = null;
         if (notification != null) {
             userId = notification.getUserId();
@@ -369,7 +372,11 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         }
 
         // Get the directory person for the user.
+        logger.info(LOGTAG + "Querying for DirectoryPerson for user " 
+        	+ notification.getUserId());
         DirectoryPerson dp = directoryPersonQuery(notification.getUserId());
+        
+        logger.info(LOGTAG + "Got DirectoryPerson for user " + dp.getFullName());
 
         try {
             String userNotificationString = notification.toXmlString();
@@ -478,7 +485,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         return m_emailClosing;
     }
 
-    private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp) throws ProviderException {
+    private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp) 
+    	throws ProviderException {
 
         String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
         boolean sendEmailNotification = false;
@@ -487,21 +495,26 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         // return true. Otherwise, determine if the user prefers to
         // receive e-mail notifications.
         if (isEmailRequired(notification)) {
-            logger.info(LOGTAG + "An e-mail notification is required for " + "all notifications of type " + notification.getType() + ". "
-                    + "Sending e-mail notification to user " + dp.getKey() + " (" + dp.getFullName() + "). Sending e-mail.");
+            logger.info(LOGTAG + "An e-mail notification is required for " +
+            		"all notifications of type " + notification.getType() + ". "
+                    + "Sending e-mail notification to user " + dp.getKey() +
+                    " (" + dp.getFullName() + ").");
             return true;
-        } else {
+        } 
+        else {
             // If they have a property called sendUserNotificationEmails with a
             // value of true, send them an e-mail. Otherwise log that no
-            // additional
-            // notification methods were requested.
+            // additional notification methods were requested.
             if (sendUserNotificationEmails(dp.getKey()) == true) {
-                logger.info(LOGTAG + "sendUserNotificationEmails property is " + "true for user " + dp.getKey() + " (" + dp.getFullName()
-                        + "). Should send e-mail.");
+                logger.info(LOGTAG + "sendUserNotificationEmails property is " 
+                	+ "true for user " + dp.getKey() + " (" + dp.getFullName()
+                    + "). Should send e-mail.");
                 sendEmailNotification = true;
-            } else {
-                logger.info(LOGTAG + "sendUserNotificationEmails property is " + "false for user " + dp.getKey() + "(" + dp.getFullName()
-                        + "). Will not send " + "e-mail.");
+            } 
+            else {
+                logger.info(LOGTAG + "sendUserNotificationEmails property is " +
+                "false for user " + dp.getKey() + "(" + dp.getFullName()
+                + "). Will not send " + "e-mail.");
             }
         }
 
