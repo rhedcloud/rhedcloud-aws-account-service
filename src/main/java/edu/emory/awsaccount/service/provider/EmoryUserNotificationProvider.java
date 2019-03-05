@@ -579,7 +579,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         }
 
         String messageBody = "Dear " + dp.getFullName() + ", \n\n";
-        messageBody = messageBody + getEmailOpening() + "\n\n";
+        messageBody = messageBody + getEmailOpening().replaceAll("\\s+", " ") + "\n\n";
 
         String accountName = null;
         String accountId = null;
@@ -620,7 +620,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             messageBody = messageBody + "Account Notification ID: " + notification.getAccountNotificationId() + "\n";
         }
 
-        messageBody = messageBody + "\n" + getEmailClosing();
+        messageBody = messageBody + "\n" + getEmailClosing().replaceAll("\\s+", " ");
         return messageBody;
     }
 
