@@ -81,7 +81,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-/**		
+		
 		String notificationTemplate = getProperties()
 			.getProperty("notificationTemplate", null);
 		setNotificationTemplate(notificationTemplate);
@@ -89,7 +89,6 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			getNotificationTemplate());
 		
 		logger.info(LOGTAG + "Initialization complete.");
-**/		
 	}
 	
 	protected List<Property> run() throws StepException {
@@ -322,12 +321,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	private String getNotificationText(VirtualPrivateCloudRequisition req) 
 		throws StepException {
 		
-		String text = "";
-		
-		text = text + "Your recent request for a Virtual Private Cloud in the AWS@Emory Service has been provisioned successfully. \n\n";
-		text = text + "To log into your account and for detailed instructions visit https://dev.aws.emory.edu. ";
-		text = text + "Please note that your new site-to-site VPN connection between Emory and AWS may take some time to initialize. You can check the status of your site-to-site VPN connection by logging into the VPCP Console at https://dev.vpcp.emory.edu and checking the status of your VPN connection on the VPC tab.\n\n";
-		text = text + "The details of your request are: \n\n";
+		String text = getNotificationTemplate().replaceAll("\\s+", " ");
 		
 		String request = "";
 		try {
