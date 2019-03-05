@@ -93,6 +93,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     private String m_emailOpening = null;
     private String m_emailClosing = null;
     private AccountUser accountUser;
+    private int m_requestTimeoutIntervalInMillis = 10000;
 
     /**
      * @see UserNotificationProvider.java
@@ -113,6 +114,13 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, eoce);
         }
+        
+        String requestTimeoutInterval = getProperties()
+			.getProperty("requestTimeoutIntervalInMillis", "10000");
+		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			getRequestTimeoutIntervalInMillis());
 
         // Verify that required e-mail types are set.
         Properties props = getProperties();
@@ -207,6 +215,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     @Override
     public List<String> getUserIdsForAccount(String accountId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.getUserIdsForAccount] ";
+    	
         // If the AccountId is null, throw an exception.
         if (accountId == null || accountId.equals("")) {
             String errMsg = "The accountId is null.";
@@ -226,7 +236,12 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         // Get a RequestService to use for this transaction.
         RequestService rs = null;
         try {
-            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        	PointToPointProducer p2p = 
+				(PointToPointProducer)getAwsAccountServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
+            
         } catch (JMSException jmse) {
             String errMsg = "An error occurred getting a request service to use " + "in this transaction. The exception is: "
                     + jmse.getMessage();
@@ -278,6 +293,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     @Override
     public UserNotification generate(String userId, AccountNotification aNotification) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.generate] ";
+    	
         // Get a configured UserNotification object from AppConfig
         UserNotification uNotification = new UserNotification();
         try {
@@ -341,7 +358,10 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     public synchronized void processAdditionalNotifications(UserNotification notification) throws ProviderException {
 
         String LOGTAG = "[EmoryUserNotificationProvider.processAdditionalNotifications] ";
-
+        
+        logger.info(LOGTAG + "Processing additional notifications for " +
+            	"UserNotification: " + notification.getUserNotificationId());
+        
         String userId = null;
         if (notification != null) {
             userId = notification.getUserId();
@@ -352,7 +372,11 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         }
 
         // Get the directory person for the user.
+        logger.info(LOGTAG + "Querying for DirectoryPerson for user " 
+        	+ notification.getUserId());
         DirectoryPerson dp = directoryPersonQuery(notification.getUserId());
+        
+        logger.info(LOGTAG + "Got DirectoryPerson for user " + dp.getFullName());
 
         try {
             String userNotificationString = notification.toXmlString();
@@ -368,7 +392,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         // If sendEmail is true, send the user an e-mail notification.
         // Otherwise, log that no e-mail is required.
         if (sendEmailNotification(notification, dp)) {
-            logger.info(LOGTAG + "Sending e-mail for user " + dp.getKey() + "(" + dp.getFullName() + ")");
+            logger.info(LOGTAG + "Sending e-mail for user " + dp.getKey() + " (" + dp.getFullName() + ")");
 
             MailService ms = getMailService();
             try {
@@ -461,7 +485,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         return m_emailClosing;
     }
 
-    private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp) throws ProviderException {
+    private boolean sendEmailNotification(UserNotification notification, DirectoryPerson dp) 
+    	throws ProviderException {
 
         String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
         boolean sendEmailNotification = false;
@@ -470,21 +495,26 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         // return true. Otherwise, determine if the user prefers to
         // receive e-mail notifications.
         if (isEmailRequired(notification)) {
-            logger.info(LOGTAG + "An e-mail notification is required for " + "all notifications of type " + notification.getType() + ". "
-                    + "Sending e-mail notification to user " + dp.getKey() + " (" + dp.getFullName() + "). Sending e-mail.");
+            logger.info(LOGTAG + "An e-mail notification is required for " +
+            		"all notifications of type " + notification.getType() + ". "
+                    + "Sending e-mail notification to user " + dp.getKey() +
+                    " (" + dp.getFullName() + ").");
             return true;
-        } else {
+        } 
+        else {
             // If they have a property called sendUserNotificationEmails with a
             // value of true, send them an e-mail. Otherwise log that no
-            // additional
-            // notification methods were requested.
+            // additional notification methods were requested.
             if (sendUserNotificationEmails(dp.getKey()) == true) {
-                logger.info(LOGTAG + "sendUserNotificationEmails property is " + "true for user " + dp.getKey() + " (" + dp.getFullName()
-                        + "). Should send e-mail.");
+                logger.info(LOGTAG + "sendUserNotificationEmails property is " 
+                	+ "true for user " + dp.getKey() + " (" + dp.getFullName()
+                    + "). Should send e-mail.");
                 sendEmailNotification = true;
-            } else {
-                logger.info(LOGTAG + "sendUserNotificationEmails property is " + "false for user " + dp.getKey() + "(" + dp.getFullName()
-                        + "). Will not send " + "e-mail.");
+            } 
+            else {
+                logger.info(LOGTAG + "sendUserNotificationEmails property is " +
+                "false for user " + dp.getKey() + "(" + dp.getFullName()
+                + "). Will not send " + "e-mail.");
             }
         }
 
@@ -596,6 +626,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private DirectoryPerson directoryPersonQuery(String userId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.directoryPersonQuery] ";
+    	
         // Query the DirectoryService service for the user's
         // DirectoryPerson object.
 
@@ -662,6 +694,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private UserProfile userProfileQuery(String userId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.userProfileQuery] ";
+    	
         // Query the AwsAccountService service for the user's
         // UserProfile object.
 
@@ -726,7 +760,9 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account accountQuery(String accountId) throws ProviderException {
 
-        // Query the AwsAccountService service for the account object.
+    	String LOGTAG = "[EmoryUserNotificationProvider.accountQuery] ";
+    	
+    	// Query the AwsAccountService service for the account object.
 
         // Get a configured Account and
         // AccountQuerySpecification from AppConfig
@@ -790,6 +826,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
 
     private AccountNotification accountNotificationQuery(String accountNotificationId) throws ProviderException {
 
+    	String LOGTAG = "[EmoryUserNotificationProvider.accountNotificationQuery] ";
+    	
         // Query the AwsAccountService service for the account
         // notificationobject.
 
@@ -851,5 +889,13 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             return an;
         }
     }
+    
+	private void setRequestTimeoutIntervalInMillis(int time) {
+		m_requestTimeoutIntervalInMillis = time;
+	}
+	
+	private int getRequestTimeoutIntervalInMillis() {
+		return m_requestTimeoutIntervalInMillis;
+	}
 
 }

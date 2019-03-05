@@ -31,6 +31,7 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
+import com.amazon.aws.moa.objects.resources.v1_0.Credentials;
 import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
@@ -54,6 +55,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 	private String m_cloudFormationTemplateUrl = null;
 	private String m_cloudFormationTemplateBodyUrl = null;
 	private String m_stackName = null;
+	private String m_roleArnPattern = null;
 	private int m_requestTimeoutInterval = 10000;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private final static String TEMPLATE_BODY_ENCODING = "UTF-8";
@@ -97,6 +99,12 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			.getProperty("stackName", null);
 		setStackName(stackName);
 		logger.info(LOGTAG + "stackName is: " + getStackName());
+		
+		// roleArnPattern to assume a role to perform stack operations
+		String roleArnPattern = getProperties()
+			.getProperty("roleArnPattern", null);
+		setRoleArnPattern(roleArnPattern);
+		logger.info(LOGTAG + "roleArnPattern is: " + getRoleArnPattern());
 		
 		// This step needs to send messages to the AWS account service
 		// to create stacks.
@@ -366,6 +374,13 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		    	req.setStackName(getStackName() + "-" + vpcSequenceNumber);
 		    	addResultProperty("accountId", req.getAccountId());
 		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
+		    	
+		    	// Credential, presently used to pass the roleArnPattern to
+		    	// assume a role to create the stack.
+		    	Credentials creds = req.newCredentials();
+		    	creds.setAccessKeyId("roleArnPattern");
+		    	creds.setSecretKey(getRoleArnPattern());
+		    	req.setCredentials(creds);
 		    	
 		    	// Description
 		    	req.setDescription("RHEDcloud AWS CloudFormation template for type 1 vpc-level structures and policies");
@@ -723,6 +738,21 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 
 	private String getStackName() {
 		return m_stackName;
+	}
+	
+	private void setRoleArnPattern (String pattern) 
+		throws StepException {
+	
+		if (pattern == null) {
+			String errMsg = "roleArnPattern " +
+				"property is null. Can't continue.";
+			throw new StepException(errMsg);
+		}
+		m_roleArnPattern = pattern;
+	}
+
+	private String getRoleArnPattern() {
+		return m_roleArnPattern;
 	}
 	
 	private String getCloudFormationTemplateBody() throws StepException{
