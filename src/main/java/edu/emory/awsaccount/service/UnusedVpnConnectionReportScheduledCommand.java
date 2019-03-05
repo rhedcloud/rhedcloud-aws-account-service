@@ -38,16 +38,13 @@ import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
-import com.google.common.collect.Sets;
 import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
 import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 
-import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.VpnConnectionQuerySpecification;
 
 /**
  * This command interrogate
