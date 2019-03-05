@@ -33,7 +33,6 @@
                 <ServiceId>1001</ServiceId>
                 <Status>complete</Status>
                 <SecurityRisk>
-                    <SecurityRiskId>1111</SecurityRiskId>
                     <ServiceId>1001</ServiceId>
                     <SequenceNumber>1</SequenceNumber>
                     <ServiceRiskName>EC2 Instances Easily Compromised</ServiceRiskName>
@@ -53,7 +52,6 @@
                     </AssessmentDatetime>
                 </SecurityRisk>
                 <SecurityRisk>
-                    <SecurityRiskId>1112</SecurityRiskId>
                     <ServiceId>1001</ServiceId>
                     <SequenceNumber>2</SequenceNumber>
                     <ServiceRiskName>End Users Unaware of Best Security Practices</ServiceRiskName>
@@ -73,12 +71,10 @@
                         <Timezone>6:00-GMT</Timezone>
                     </AssessmentDatetime>
                     <Countermeasure>
-                        <SecurityRiskId>1112</SecurityRiskId>
                         <Status>Complete</Status>
                         <Description>Test</Description>
                     </Countermeasure>
                     <Countermeasure>
-                        <SecurityRiskId>1112</SecurityRiskId>
                         <Status>Complete</Status>
                         <Description>Test2</Description>
                     </Countermeasure>

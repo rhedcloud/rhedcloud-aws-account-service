@@ -53,7 +53,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Annotation (Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
-<!-- not sure CountermeasureId needed -->
+<!-- TODO both CountermeasureId and SecurityRiskId can be removed -->
 <!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
