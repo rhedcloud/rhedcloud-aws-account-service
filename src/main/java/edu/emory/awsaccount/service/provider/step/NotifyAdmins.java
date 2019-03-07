@@ -333,7 +333,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			logger.error(getStepTag() + errMsg);
 			throw new StepException(errMsg, xeoe);
 		}
-		text = text + request;
+		text = text + "\n\nThe details of the request are:\n\n" + request;
 				
 		return text;
 	}
