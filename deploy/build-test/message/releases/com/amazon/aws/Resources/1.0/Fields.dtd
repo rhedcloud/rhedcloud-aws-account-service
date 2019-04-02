@@ -54,6 +54,7 @@
 <!ELEMENT CombinedServiceName %STRDOM;>
 <!ELEMENT ComplianceClass %STRDOM;>
 <!ELEMENT ConsoleCategory %STRDOM;>
+<!ELEMENT ControlType %STRDOM;>
 <!ELEMENT CostBeforeTax %STRDOM;>
 <!ELEMENT CreateDatetime %DATETIME;>
 <!ELEMENT CreateUser %STRDOM;>
@@ -68,6 +69,8 @@
 <!ELEMENT EndDate %DATE;>
 <!ELEMENT FinancialAccountNumber %STRDOM;>
 <!ELEMENT FullName %STRDOM;>
+<!ELEMENT ImplementationType %STRDOM;>
+<!ELEMENT InstanceId %STRDOM;>
 <!ELEMENT InvoiceDatetime %DATETIME;>
 <!ELEMENT InvoiceId %STRDOM;>
 <!ELEMENT IsAuthorized %STRDOM;>
