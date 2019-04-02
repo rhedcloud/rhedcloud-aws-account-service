@@ -16,7 +16,7 @@
 <key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
 <one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk"/>
 </bag>
-
+<!--
 <bag name="ServiceControl" table="SRVC_SCRTY_SSSSMNT_SRVC_CNTRL">
 <key column="SERVICE_SECURITY_ASSESSMENT_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.ServiceControl">
@@ -43,7 +43,7 @@
 <property name="AssessmentDatetime" type="OpenEaiDatetime" column="ASSESSMENT_DATETIME"/>
 </composite-element>
 </bag>
-
+-->
 <component name="ServiceTestPlan" class="com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan">
 
 <property name="ServiceId" column="SERVICE_TEST_PLAN_SERVICE_ID"/>
