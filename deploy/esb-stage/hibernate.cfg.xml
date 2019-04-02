@@ -37,6 +37,7 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/Service.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceSecurityAssessment.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/SecurityRisk.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceControl.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTestRequirement.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTest.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTestStep.hbm.xml"/>

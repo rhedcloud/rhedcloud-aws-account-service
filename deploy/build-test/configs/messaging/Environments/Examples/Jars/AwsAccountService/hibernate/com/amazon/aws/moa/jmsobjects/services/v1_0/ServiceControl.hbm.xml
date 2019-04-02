@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.objects.resources.v1_0">
-<class name="SecurityRisk" table="SECURITY_RISK">
+<class name="ServiceControl" table="SERVICE_CONTROL">
 
-<id name="SecurityRiskId" column="SECURITY_RISK_ID" type="OpenEaiLong">
+<id name="ServiceControlId" column="SERVICE_CONTROL_ID" type="OpenEaiLong">
 <generator class="OpenEaiSequence">
 <param name="sequence">H_SECURITY_RISK_SEQ</param>
 </generator>
 </id>
 <property name="ServiceId" column="SERVICE_ID"/>
 <property name="SequenceNumber" column="SEQUENCE_NUMBER"/>
-<property name="ServiceRiskName" column="SERVICE_RISK_NAME"/>
-<property name="RiskLevel" column="RISK_LEVEL"/>
+<property name="ServiceControlName" column="SERVICE_CONTROL_NAME"/>
+<property name="ControlType" column="CONTROL_TYPE"/>
+<property name="ImplementationType" column="IMPLEMENTATION_TYPE"/>
+<bag name="DocumentationUrl" table="DOCUMENTATION_URL">
+<key column="SERVICE_CONTROL_ID" unique="false"/>
+<element type="string" column="DocumentationUrl"/>
+</bag>
 <property name="Description" column="DESCRIPTION" length="2500"/>
 <property name="AssessorId" column="ASSESSOR_ID"/>
 <property name="AssessmentDatetime" type="OpenEaiDatetime" column="ASSESSMENT_DATETIME"/>
-
-<bag name="ServiceControl" cascade="all">
-<key column="SECURITY_RISK_ID"/>
-<one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.ServiceControl"/>
-</bag>
+<property name="Verifier" column="VERIFIER"/>
+<property name="VerificationDatetime" type="OpenEaiDatetime" column="VERIFICATION_DATETIME"/>
 </class>
 </hibernate-mapping>
