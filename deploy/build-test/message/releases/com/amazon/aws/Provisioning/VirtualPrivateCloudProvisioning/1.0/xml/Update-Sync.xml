@@ -3,7 +3,7 @@
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
 <!DOCTYPE com.amazon.aws.Provisioning.VirtualPrivateCloudProvisioning.Update SYSTEM "../dtd/Update-Sync.dtd">
 <com.amazon.aws.Provisioning.VirtualPrivateCloudProvisioning.Update>
-	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloud" messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloudProvisioning" messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
 		<Sender>
 			<MessageId>
 				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
