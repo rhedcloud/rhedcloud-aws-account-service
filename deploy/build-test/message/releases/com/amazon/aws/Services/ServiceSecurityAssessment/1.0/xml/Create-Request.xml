@@ -33,7 +33,6 @@
             <ServiceId>1</ServiceId>
             <Status>complete</Status>
             <SecurityRisk>
-                <SecurityRiskId>1</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>1</SequenceNumber>
                 <ServiceRiskName>EC2 Instances Easily Compromised</ServiceRiskName>
@@ -157,7 +156,6 @@
 
             </SecurityRisk>
             <SecurityRisk>
-                <SecurityRiskId>2</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>2</SequenceNumber>
                 <ServiceRiskName>End Users Unaware of Best Security Practices</ServiceRiskName>
@@ -178,7 +176,6 @@
                 </AssessmentDatetime>
             </SecurityRisk>
             <SecurityRisk>
-                <SecurityRiskId>3</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>3</SequenceNumber>
                 <ServiceRiskName>Malicious AMIs</ServiceRiskName>
@@ -198,7 +195,6 @@
                 </AssessmentDatetime>
             </SecurityRisk>
             <SecurityRisk>
-                <SecurityRiskId>4</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>4</SequenceNumber>
                 <ServiceRiskName>Unencrypted EC2 Instances</ServiceRiskName>
@@ -221,18 +217,14 @@
               <ServiceTestPlan>
                 <ServiceId>1</ServiceId>
                 <ServiceTestRequirement>
-                    <ServiceTestRequirementId>1</ServiceTestRequirementId>
                     <SequenceNumber>1</SequenceNumber>
                     <Description>Users should be to launch, reboot, stop, re-size, and restart ec2
                         instances in the public and private subnets</Description>
                     <ServiceTest>
-                        <ServiceTestId>1</ServiceTestId>
                         <SequenceNumber>1</SequenceNumber>
                         <Description>User should be able to launch an ec2 instance into the public
                             and private subnets</Description>
                         <ServiceTestStep>
-                            <ServiceTestStepId>1</ServiceTestStepId>
-                            <ServiceTestId>1</ServiceTestId>
                             <SequenceNumber>1</SequenceNumber>
                             <Description>Create a test user, session, and ec2 client</Description>
                         </ServiceTestStep>

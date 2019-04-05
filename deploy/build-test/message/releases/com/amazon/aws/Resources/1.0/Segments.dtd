@@ -88,7 +88,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT ServiceTest (ServiceTestId?, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpectedResult)>
 <!ELEMENT ServiceTestPlan (ServiceId, ServiceTestRequirement*)>
 <!ELEMENT ServiceTestRequirement (ServiceTestRequirementId?, SequenceNumber, Description, ServiceTest*)>
-<!ELEMENT ServiceTestStep (ServiceTestStepId?, ServiceTestId, SequenceNumber, Description)>
+<!ELEMENT ServiceTestStep (ServiceTestStepId?, SequenceNumber, Description)>
 <!ELEMENT Stack (StackId, StackName, Description?, StackParameter*, Tag*, Output*, CreateDatetime, Capability*, NotificationOptions?, StackStatus, DisableRollback, StackPolicy?)>
 <!ELEMENT StackParameter (Key, Value)>
 <!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, Region?, StackId?, StackName?)>
