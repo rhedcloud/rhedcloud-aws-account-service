@@ -230,7 +230,6 @@
                             and private subnets</Description>
                         <ServiceTestStep>
                             <ServiceTestStepId>1</ServiceTestStepId>
-                            <ServiceTestId>1</ServiceTestId>
                             <SequenceNumber>1</SequenceNumber>
                             <Description>Create a test user, session, and ec2 client</Description>
                         </ServiceTestStep>
