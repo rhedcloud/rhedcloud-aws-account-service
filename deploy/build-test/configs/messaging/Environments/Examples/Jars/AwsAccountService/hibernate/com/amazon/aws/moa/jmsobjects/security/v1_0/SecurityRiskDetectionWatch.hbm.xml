@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.security.v1_0">
+<class name="SecurityRiskDetectionWatch" table="SECURITY_RISK_DETECTION_WATCH">
+<id name="SecurityRiskDetectionWatchId" column="SCRTY_RSK_DTCTN_WTCH_D" type="OpenEaiLong">
+<generator class="OpenEaiSequence">
+<param name="sequence">H_SCRTY_RSK_DTCTN_WTCH_D_SEQ</param>
+</generator>
+</id>
+<property name="ScheduleInterval" column="SCHEDULE_INTERVAL" type="OpenEaiInt"/>
+<property name="DetectionPerMinute" column="DETECTION_PER_MINUTE" />
+<property name="DegradedBoundary" column="DEGRADED_BOUNDARY"/>
+<property name="UnacceptableBoundary" column="UNACCEPTABLE_BOUNDARY"/>
+<property name="Assessment" column="ASSESSMENT"/>
+<property name="InstanceId" column="INSTANCE_ID"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>

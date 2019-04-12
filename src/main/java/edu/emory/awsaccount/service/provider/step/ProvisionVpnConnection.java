@@ -20,6 +20,7 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
@@ -53,6 +54,7 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	private String m_remoteVpnIpAddressForTesting = null;
 	private String m_presharedKeyTemplateForTesting = null;
 	private String m_vpnConnectionProfileId = null;
+	private int m_requestTimeoutIntervalInMillis = 600000;
 	
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -92,6 +94,13 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 		setPresharedKeyTemplateForTesting(presharedKeyTemplateForTesting);
 		logger.info(LOGTAG + "presharedKeyTemplateForTesting is: " + 
 				getPresharedKeyTemplateForTesting());
+		
+		String requestTimeoutInterval = getProperties()
+			.getProperty("requestTimeoutIntervalInMillis", "600000");
+		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			getRequestTimeoutIntervalInMillis());
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
@@ -178,8 +187,11 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getNetworkOpsServiceProducerPool()
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
 				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a producer " +
@@ -296,8 +308,11 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 			// Get a producer from the pool
 			rs = null;
 			try {
-				rs = (RequestService)getNetworkOpsServiceProducerPool()
+				PointToPointProducer p2p = 
+					(PointToPointProducer)getNetworkOpsServiceProducerPool()
 					.getExclusiveProducer();
+				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+				rs = (RequestService)p2p;
 			}
 			catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
@@ -521,6 +536,14 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	
 	private String getActualRemoteVpnIpAddress() {
 		return null;
+	}
+	
+	private void setRequestTimeoutIntervalInMillis(int time) {
+		m_requestTimeoutIntervalInMillis = time;
+	}
+	
+	private int getRequestTimeoutIntervalInMillis() {
+		return m_requestTimeoutIntervalInMillis;
 	}
 	
 }

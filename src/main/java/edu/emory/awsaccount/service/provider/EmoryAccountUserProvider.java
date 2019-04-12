@@ -65,6 +65,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     private String m_adminRoleDnTemplate = null;
     private String m_auditorRoleDnTemplate = null;
     private String m_centralAdminRoleDnTemplate = null;
+    private int m_requestTimeoutIntervalInMillis = 10000;
     private final static String ADMINISTRATOR_ROLE = "RHEDcloudAdministratorRole";
     private final static String AUDITOR_ROLE = "RHEDcloudAuditorRole";
     private final static String CENTRAL_ADMINISTRATOR_ROLE = "RHEDcloudCentralAdministratorRole";
@@ -116,6 +117,13 @@ public class EmoryAccountUserProvider extends OpenEaiObject
         	throw new ProviderException(errMsg);
         }
         setCentralAdminRoleDnTemplate(centralAdminRoleDnTemplate);
+        
+        String requestTimeoutInterval = getProperties()
+			.getProperty("requestTimeoutIntervalInMillis", "10000");
+		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			getRequestTimeoutIntervalInMillis());
         		
 		// This provider needs to send messages to the AWS account service
 		// to query for UserProfiles.
@@ -186,18 +194,19 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	String LOGTAG = "[EmoryAccountUserProvider.query(AccountUserQuerySpecification querySpec)] ";
 
-        // If the AccountId in the querySpec is null, query for all accounts.
-        if (querySpec.getAccountId() == null || querySpec.getAccountId().equals("")) {
-            logger.info(LOGTAG + "The AccountId is null. Querying for all " +
-            	"users of all accounts.");
-            List<AccountUser> accountUserList = query("1");
-            return accountUserList;
-        }
-        // Otherwise, query for a specific account.
-        else {
-        	logger.info(LOGTAG + "The accountId is not null. Querying for the specific account: " + querySpec.getAccountId());
-        	List<AccountUser> accountUserList = query(querySpec.getAccountId());
+        // If the AccountId is not null, handle it.
+        if (querySpec.getAccountId() != null) {
+        	logger.info(LOGTAG + "The accountId is not null. " +
+        		"Querying for the specific account: " + 
+        		querySpec.getAccountId());
+        	List<AccountUser> accountUserList = 
+        		query(querySpec.getAccountId());
         	return accountUserList;
+        }
+        else {
+        	String errMsg = "QuerySpec not supported. AccountId is null.";
+        	logger.error(LOGTAG + errMsg);
+        	throw new ProviderException(errMsg);
         }
     }
     
@@ -211,6 +220,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	// Retrieve all role assignments for users in the
     	// RHEDcloudAdministrator role.
+    	logger.info(LOGTAG + "Querying for admin role assignments...");
     	List<RoleAssignment> adminRoleAssignments = 
     		roleAssignmentQuery(getAdminRoleDn(accountId));
     	
@@ -226,7 +236,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	}
     	
     	// Retrieve all role assignments for users in the
-    	// RHEDcloudAuditor role.	
+    	// RHEDcloudAuditor role.
+    	logger.info(LOGTAG + "Querying for auditor role assignments...");
     	List<RoleAssignment> auditorRoleAssignments = 
     		roleAssignmentQuery(getAuditorRoleDn(accountId));
     	
@@ -251,6 +262,7 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	
     	// Retrieve all role assignments for users in the
     	// RHEDcloudCentralAdministrator role.
+    	logger.info(LOGTAG + "Querying for central admin role assignments...");
     	List<RoleAssignment> centralAdminRoleAssignments = roleAssignmentQuery(getCentralAdminRoleDn(accountId));
 		    	
     	ListIterator centralAdminRoleAssignmentListIterator =
@@ -258,10 +270,36 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	while(centralAdminRoleAssignmentListIterator.hasNext()) {
     		RoleAssignment ra = (RoleAssignment)centralAdminRoleAssignmentListIterator.next();
     		String userId = getUserIdFromRoleAssignment(ra);
-    		DirectoryPerson dp = directoryPersonQuery(userId);
-    		UserProfile up = userProfileQuery(userId);
+    		
+    		DirectoryPerson dp = null;
+    		try {
+    			dp = directoryPersonQuery(userId);
+    		}
+    		catch (ProviderException pe) {
+    			String errMsg = "NO_DIRECTORY_PERSON:"
+    				+ " An error occurred retrieving DirectoryPerson " +
+    				"to build AccountUser. The exception is: " + pe.getMessage();
+    			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
+    			continue;
+    		}
+    		
+    		UserProfile up = null;
+    		try {
+    			up = userProfileQuery(userId);
+    			
+    		}
+    		catch (ProviderException pe) {
+    			String errMsg = "NO_USER_PROFILE: " +
+    				" An error occurred retrieving UserProfile " +
+    				"to build AccountUser. The exception is: " + pe.getMessage();
+    			logger.error(LOGTAG + errMsg + ". Skipping user and continuing.");
+    			continue;
+    		}
+    		
+    		// Build the AccountUser from the DirectoryPerson and the UserProfile
     		AccountUser au = buildAccountUser(accountId, dp, up, CENTRAL_ADMINISTRATOR_ROLE);
-    		// If the AccountUser alread exists in the map,
+    		
+    		// If the AccountUser already exists in the map,
     		// add the auditor role to the list of roles
     		if (accountUserMap.get(userId) != null) {
     			AccountUser user = (AccountUser)accountUserMap.get(userId);
@@ -278,8 +316,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	Iterator userIdIterator = userIds.iterator();
     	while (userIdIterator.hasNext()) {
     		String userId = (String)userIdIterator.next();
-    		AccountUser au = (AccountUser)accountUserMap.get(userId);
-    		accountUserList.add(au);
+			AccountUser au = (AccountUser)accountUserMap.get(userId);
+			accountUserList.add(au);   		
     	}
     	
 		return accountUserList;
@@ -396,6 +434,8 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 	private List<RoleAssignment> roleAssignmentQuery(String roleDn) 
 		throws ProviderException {
 		
+		String LOGTAG = "[EmoryAccountUserProvider.roleAssignmentQuery] ";
+		
     	// Query the IDM service for all users in the named role
     	// Get a configured AccountUser, RoleAssignment, and 
     	// RoleAssignmentQuerySpecification from AppConfig
@@ -434,7 +474,11 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getIdmServiceProducerPool().getExclusiveProducer();
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getIdmServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use " +
@@ -505,7 +549,11 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getDirectoryServiceProducerPool().getExclusiveProducer();
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getDirectoryServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;		
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use " +
@@ -585,7 +633,11 @@ public class EmoryAccountUserProvider extends OpenEaiObject
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getAwsAccountServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;	
 		}
 		catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use " +
@@ -667,6 +719,14 @@ public class EmoryAccountUserProvider extends OpenEaiObject
 		
 		return au;
 		
+	}
+	
+	private void setRequestTimeoutIntervalInMillis(int time) {
+		m_requestTimeoutIntervalInMillis = time;
+	}
+	
+	private int getRequestTimeoutIntervalInMillis() {
+		return m_requestTimeoutIntervalInMillis;
 	}
 	
 }
