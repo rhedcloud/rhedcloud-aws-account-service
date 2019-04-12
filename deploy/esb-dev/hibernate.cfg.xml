@@ -21,7 +21,6 @@
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
 <property name="hibernate.show_sql">true</property>
-<property name="hibernate.show_sql">true</property>
 <property name="hibernate.hbm2ddl.auto">validate</property>
 <mapping resource="OpenEai.hbm.xml"/>
 <mapping resource="DbLock.hbm.xml"/>
@@ -47,5 +46,7 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/TermsOfUseAgreement.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserProfile.hbm.xml"/>
+
+<mapping resource="com/amazon/aws/moa/jmsobjects/security/v1_0/SecurityRiskDetectionWatch.hbm.xml"/>
 </session-factory>
 </hibernate-configuration>
