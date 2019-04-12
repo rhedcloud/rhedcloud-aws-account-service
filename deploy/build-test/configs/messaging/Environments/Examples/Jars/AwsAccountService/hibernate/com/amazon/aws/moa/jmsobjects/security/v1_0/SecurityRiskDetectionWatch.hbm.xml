@@ -4,7 +4,7 @@
 <class name="SecurityRiskDetectionWatch" table="SECURITY_RISK_DETECTION_WATCH">
 <id name="SecurityRiskDetectionWatchId" column="SCRTY_RSK_DTCTN_WTCH_D" type="OpenEaiLong">
 <generator class="OpenEaiSequence">
-<param name="sequence">H_SECURITY_RISK_DETECTION__SEQ</param>
+<param name="sequence">H_SCRTY_RSK_DTCTN_WTCH_D_SEQ</param>
 </generator>
 </id>
 <property name="ScheduleInterval" column="SCHEDULE_INTERVAL" type="OpenEaiInt"/>
