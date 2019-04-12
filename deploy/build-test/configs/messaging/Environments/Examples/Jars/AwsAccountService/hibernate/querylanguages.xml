@@ -149,7 +149,12 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 	</querylanguage>
 	<querylanguage>
 		<AccountNotificationQuerySpecification>
-			<QueryLanguage max="200" type="hql" name="byAccountId" value="from AccountNotification where AccountId=:AccountId order by CreateDatetime desc">
+			<QueryLanguage max="200" type="hql" name="maxByAccountId" value="from AccountNotification where AccountId=:AccountId order by CreateDatetime desc">
+				<Parameter name="AccountId"/>
+			</QueryLanguage>
+		</AccountNotificationQuerySpecification>
+		<AccountNotificationQuerySpecification>
+			<QueryLanguage type="hql" name="allByAccountId" value="from AccountNotification where AccountId=:AccountId order by CreateDatetime desc">
 				<Parameter name="AccountId"/>
 			</QueryLanguage>
 		</AccountNotificationQuerySpecification>
