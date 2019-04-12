@@ -53,8 +53,10 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Annotation (Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
-<!-- not sure CountermeasureId needed -->
+<!-- TODO both CountermeasureId and SecurityRiskId can be removed -->
+<!--
 <!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
+-->
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
 <!ELEMENT EmailAddress (Type, Email)>
@@ -67,24 +69,26 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT SamlProvider (AccountId,Arn?, Name?, SamlMetadataDocument?)>
 <!ELEMENT SamlProviderRequisition (AccountId, Name, SamlMetadataDocument)>
 <!ELEMENT SamlProviderQuerySpecification (AccountId?,Arn?)>
-<!ELEMENT SecurityRisk (SecurityRiskId?, ServiceId, SequenceNumber, ServiceRiskName, RiskLevel, Description, AssessorId, AssessmentDatetime, Countermeasure*)>
-<!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT SecurityRisk (SecurityRiskId?, ServiceId, SequenceNumber, ServiceRiskName, RiskLevel, Description, AssessorId, AssessmentDatetime, ServiceControl*)>
+<!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*, InstanceId?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT SecurityRiskDetectionQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskDetectionId?, AccountId?, SecurityRiskDetector?, SecurityRiskRemediator?, DetectedSecurityRisk*)>
 <!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?)>
 <!ELEMENT SensitiveDataTypeAuthorization (IsAuthorized, AuthorizedSensitiveDataTypeDescription, UnauthorizedReason*)>
 <!ELEMENT SensitiveDataTypeAuthorizationQuerySpecification (SensitiveDataType*)>
 
 <!ELEMENT Service (ServiceId?, AwsServiceCode, AwsServiceName, AlternateServiceName?, CombinedServiceName?, AwsStatus, SiteStatus, AwsServiceLandingPageUrl?, SiteServiceLandingPageUrl?, Description?, Category*, ConsoleCategory*, AwsHipaaEligible?, SiteHipaaEligible?, Tag*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT ServiceControl (ServiceId?, ServiceControlId, SequenceNumber, ServiceControlName, Description, AssessorId, AssessmentDatetime, Verifier?, VerificationDatetime?)>
+<!ELEMENT ServiceControl (ServiceControlId?, ServiceId?, SequenceNumber, ServiceControlName, ControlType, ImplementationType, DocumentationUrl*, Description, AssessorId, AssessmentDatetime, Verifier?, VerificationDatetime?)>
+<!--
 <!ELEMENT ServiceGuideline (ServiceId?, SequenceNumber, ServiceGuidelineName, Description, AssessorId, AssessmentDatetime)>
+-->
 <!ELEMENT ServiceQuerySpecification (Comparison*, QueryLanguage?, ServiceId?, AwsServiceCode?, AwsServiceName?, AwsStatus?, SiteStatus?, Category*, ConsoleCategory*, AwsHipaaEligible?, SiteHipaaEligible?, Tag*)>
 
-<!ELEMENT ServiceSecurityAssessment (ServiceSecurityAssessmentId?, ServiceId+, Status, SecurityRisk*, ServiceControl*, ServiceGuideline*, ServiceTestPlan?)>
+<!ELEMENT ServiceSecurityAssessment (ServiceSecurityAssessmentId?, ServiceId+, Status, SecurityRisk*, ServiceTestPlan?)>
 <!ELEMENT ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, ServiceSecurityAssessmentId?, ServiceId?)>
 <!ELEMENT ServiceTest (ServiceTestId?, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpectedResult)>
 <!ELEMENT ServiceTestPlan (ServiceId, ServiceTestRequirement*)>
 <!ELEMENT ServiceTestRequirement (ServiceTestRequirementId?, SequenceNumber, Description, ServiceTest*)>
-<!ELEMENT ServiceTestStep (ServiceTestStepId?, ServiceTestId, SequenceNumber, Description)>
+<!ELEMENT ServiceTestStep (ServiceTestStepId?, SequenceNumber, Description)>
 <!ELEMENT Stack (StackId, StackName, Description?, StackParameter*, Tag*, Output*, CreateDatetime, Capability*, NotificationOptions?, StackStatus, DisableRollback, StackPolicy?)>
 <!ELEMENT StackParameter (Key, Value)>
 <!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, Region?, StackId?, StackName?)>

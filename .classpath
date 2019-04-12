@@ -32,5 +32,50 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/dynamo/commons-lang3-3.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jackson-annotations-2.6.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jackson-core-2.6.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jackson-databind-2.6.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jackson-dataformat-cbor-2.6.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/antlr-runtime-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/Apache-HttpComponents-HttpClient-4.5.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/Apache-HttpComponents-HttpCore-4.4.x.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/aws-java-sdk-core-1.11.477.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/aws-java-sdk-dynamodb-1.11.477.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/ion-java-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-ajp-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-annotations-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-client-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-continuation-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-deploy-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-http-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-io-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-jmx-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-jndi-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-overlay-deployer-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-plus-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-policy-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-rewrite-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-security-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-server-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-servlet-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-servlets-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-start.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-util-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-webapp-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-websocket-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/jetty-xml-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/JMESPathJava-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/joda-time-2.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/log4j-api-2.8.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/log4j-core-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/osgi.core-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/servlet-api-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/spdy-core-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/spdy-jetty-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/spdy-jetty-http-8.1.12.v20130726.jar"/>
+	<classpathentry kind="lib" path="lib/dynamo/sqlite4java.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -33,7 +33,6 @@
             <ServiceId>1</ServiceId>
             <Status>complete</Status>
             <SecurityRisk>
-                <SecurityRiskId>1</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>1</SequenceNumber>
                 <ServiceRiskName>EC2 Instances Easily Compromised</ServiceRiskName>
@@ -51,9 +50,112 @@
                     <SubSecond>842</SubSecond>
                     <Timezone>6:00-GMT</Timezone>
                 </AssessmentDatetime>
+               <ServiceControl>
+                <ServiceId>1</ServiceId>
+                <SequenceNumber>1</SequenceNumber>
+                <ServiceControlName>Require Type 1 VPC</ServiceControlName>
+                   <ControlType>TBD</ControlType>
+                   <ImplementationType>TBD</ImplementationType>
+                   <Description>In the case of a type 1, all ingress and egress is controlled through
+                    the Emory network and existing security controls and practices are
+                    used.</Description>
+                <AssessorId>P1203020</AssessorId>
+                <AssessmentDatetime>
+                    <Year>2018</Year>
+                    <Month>7</Month>
+                    <Day>1</Day>
+                    <Hour>13</Hour>
+                    <Minute>47</Minute>
+                    <Second>30</Second>
+                    <SubSecond>842</SubSecond>
+                    <Timezone>6:00-GMT</Timezone>
+                </AssessmentDatetime>
+            </ServiceControl>
+            <ServiceControl>
+                <ServiceId>1</ServiceId>
+                <SequenceNumber>2</SequenceNumber>
+                <ServiceControlName>Require Type 2 VPC</ServiceControlName>
+                <ControlType>TBD</ControlType>
+                <ImplementationType>TBD</ImplementationType>
+                 <Description>In the case of a type 2 VPC, LITS has implemented and manages a
+                    firewall between the AWS internet gateway and customer-managed subnets in their
+                    VPCs.</Description>
+               <AssessorId>P1203020</AssessorId>
+                <AssessmentDatetime>
+                    <Year>2018</Year>
+                    <Month>7</Month>
+                    <Day>1</Day>
+                    <Hour>13</Hour>
+                    <Minute>47</Minute>
+                    <Second>30</Second>
+                    <SubSecond>842</SubSecond>
+                    <Timezone>6:00-GMT</Timezone>
+                </AssessmentDatetime>
+            </ServiceControl>
+            <ServiceControl>
+                <ServiceId>1</ServiceId>
+                <SequenceNumber>3</SequenceNumber>
+                <ServiceControlName>Require Emory SSL VPN for Type 1 VPC</ServiceControlName>
+                <ControlType>TBD</ControlType>
+                <ImplementationType>TBD</ImplementationType>
+                <Description>All administrators of EC2 instances must use the Emory SSL VPN to
+                    connect to the Emory network and then access EC2 instances in their type 1
+                    VPCs.</Description>
+                <AssessorId>P1203020</AssessorId>
+                <AssessmentDatetime>
+                    <Year>2018</Year>
+                    <Month>7</Month>
+                    <Day>1</Day>
+                    <Hour>13</Hour>
+                    <Minute>47</Minute>
+                    <Second>30</Second>
+                    <SubSecond>842</SubSecond>
+                    <Timezone>6:00-GMT</Timezone>
+                </AssessmentDatetime>
+            </ServiceControl>
+            <ServiceControl>
+                <ServiceId>1</ServiceId>
+                <SequenceNumber>4</SequenceNumber>
+                <ServiceControlName>Require Emory SSL VPN for Type 2 VPC</ServiceControlName>
+                <ControlType>TBD</ControlType>
+                <ImplementationType>TBD</ImplementationType>
+                 <Description>The Emory SSL VPN is also the preferred access method for type 2
+                    VPCs.</Description>
+               <AssessorId>P1203020</AssessorId>
+                <AssessmentDatetime>
+                    <Year>2018</Year>
+                    <Month>7</Month>
+                    <Day>1</Day>
+                    <Hour>13</Hour>
+                    <Minute>47</Minute>
+                    <Second>30</Second>
+                    <SubSecond>842</SubSecond>
+                    <Timezone>6:00-GMT</Timezone>
+                </AssessmentDatetime>
+            </ServiceControl>
+            <ServiceControl>
+                <ServiceId>1</ServiceId>
+                <SequenceNumber>5</SequenceNumber>
+                <ServiceControlName>Implement Specific VPC Restrictions</ServiceControlName>
+                <ControlType>TBD</ControlType>
+                <ImplementationType>TBD</ImplementationType>
+                 <Description>Detailed restrictions and administration procedures are available in
+                    the Virtual Private Cloud risk assessment.</Description>
+               <AssessorId>P1203020</AssessorId>
+                <AssessmentDatetime>
+                    <Year>2018</Year>
+                    <Month>7</Month>
+                    <Day>1</Day>
+                    <Hour>13</Hour>
+                    <Minute>47</Minute>
+                    <Second>30</Second>
+                    <SubSecond>842</SubSecond>
+                    <Timezone>6:00-GMT</Timezone>
+                </AssessmentDatetime>
+            </ServiceControl>
+
             </SecurityRisk>
             <SecurityRisk>
-                <SecurityRiskId>2</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>2</SequenceNumber>
                 <ServiceRiskName>End Users Unaware of Best Security Practices</ServiceRiskName>
@@ -74,7 +176,6 @@
                 </AssessmentDatetime>
             </SecurityRisk>
             <SecurityRisk>
-                <SecurityRiskId>3</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>3</SequenceNumber>
                 <ServiceRiskName>Malicious AMIs</ServiceRiskName>
@@ -94,7 +195,6 @@
                 </AssessmentDatetime>
             </SecurityRisk>
             <SecurityRisk>
-                <SecurityRiskId>4</SecurityRiskId>
                 <ServiceId>1</ServiceId>
                 <SequenceNumber>4</SequenceNumber>
                 <ServiceRiskName>Unencrypted EC2 Instances</ServiceRiskName>
@@ -114,236 +214,17 @@
                     <Timezone>6:00-GMT</Timezone>
                 </AssessmentDatetime>
             </SecurityRisk>
-            <ServiceControl>
-                <ServiceId>1</ServiceId>
-                <ServiceControlId>1</ServiceControlId>
-                <SequenceNumber>1</SequenceNumber>
-                <ServiceControlName>Require Type 1 VPC</ServiceControlName>
-                <Description>In the case of a type 1, all ingress and egress is controlled through
-                    the Emory network and existing security controls and practices are
-                    used.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceControl>
-            <ServiceControl>
-                <ServiceId>1</ServiceId>
-                <ServiceControlId>2</ServiceControlId>
-                <SequenceNumber>2</SequenceNumber>
-                <ServiceControlName>Require Type 2 VPC</ServiceControlName>
-                <Description>In the case of a type 2 VPC, LITS has implemented and manages a
-                    firewall between the AWS internet gateway and customer-managed subnets in their
-                    VPCs.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceControl>
-            <ServiceControl>
-                <ServiceId>1</ServiceId>
-                <ServiceControlId>3</ServiceControlId>
-                <SequenceNumber>3</SequenceNumber>
-                <ServiceControlName>Require Emory SSL VPN for Type 1 VPC</ServiceControlName>
-                <Description>All administrators of EC2 instances must use the Emory SSL VPN to
-                    connect to the Emory network and then access EC2 instances in their type 1
-                    VPCs.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceControl>
-            <ServiceControl>
-                <ServiceId>1</ServiceId>
-                <ServiceControlId>4</ServiceControlId>
-                <SequenceNumber>4</SequenceNumber>
-                <ServiceControlName>Require Emory SSL VPN for Type 2 VPC</ServiceControlName>
-                <Description>The Emory SSL VPN is also the preferred access method for type 2
-                    VPCs.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceControl>
-            <ServiceControl>
-                <ServiceId>1</ServiceId>
-                <ServiceControlId>5</ServiceControlId>
-                <SequenceNumber>5</SequenceNumber>
-                <ServiceControlName>Implement Specific VPC Restrictions</ServiceControlName>
-                <Description>Detailed restrictions and administration procedures are available in
-                    the Virtual Private Cloud risk assessment.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceControl>
-            <ServiceGuideline>
-                <ServiceId>1</ServiceId>
-                <SequenceNumber>1</SequenceNumber>
-                <ServiceGuidelineName>See AWS HIPAA Requirements</ServiceGuidelineName>
-                <Description>Read documentation from AWS regarding latest HIPAA requirements at
-                    https://d0.awsstatic.com/whitepapers/compliance/AWS_HIPAA_Compliance_Whitepaper.pdf</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceGuideline>
-            <ServiceGuideline>
-                <ServiceId>1</ServiceId>
-                <SequenceNumber>2</SequenceNumber>
-                <ServiceGuidelineName>HIPAA Requires Encryption at Rest</ServiceGuidelineName>
-                <Description>For HIPAA use cases encryption of data at rest using file-level or full
-                    disk encryption is required.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceGuideline>
-            <ServiceGuideline>
-                <ServiceId>1</ServiceId>
-                <SequenceNumber>3</SequenceNumber>
-                <ServiceGuidelineName>HIPAA Requires Encryption in Transit</ServiceGuidelineName>
-                <Description>For HIPAA use cases network traffic containing PHI must encrypt data in
-                    transit. </Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceGuideline>
-            <ServiceGuideline>
-                <ServiceId>1</ServiceId>
-                <SequenceNumber>4</SequenceNumber>
-                <ServiceGuidelineName>Use Industry-Standard Transport Encryption with External
-                    Sources</ServiceGuidelineName>
-                <Description>For traffic between external sources (such as the Internet or a
-                    traditional IT environment) and Amazon EC2, customers should use
-                    industry-standard transport encryption mechanisms such as TLS or IPsec virtual
-                    private networks (VPNs), consistent with the guidance from HHS at
-                    https://www.hhs.gov/hipaa/for-professionals/breach-notification/guidance/index.html.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceGuideline>
-            <ServiceGuideline>
-                <ServiceId>1</ServiceId>
-                <SequenceNumber>5</SequenceNumber>
-                <ServiceGuidelineName>Use Industry-Standard Transport Encryption with Internal
-                    Sources</ServiceGuidelineName>
-                <Description>Internal to an Amazon Virtual Private Cloud (VPC) for data traveling
-                    between Amazon EC2 instances, network traffic containing PHI must also be
-                    encrypted; most applications support TLS or other protocols providing in transit
-                    encryption that can be configured to be consistent with guidance from HHS at
-                    https://www.hhs.gov/hipaa/for-professionals/breach-notification/guidance/index.html.</Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceGuideline>
-            <ServiceGuideline>
-                <ServiceId>1</ServiceId>
-                <SequenceNumber>6</SequenceNumber>
-                <ServiceGuidelineName>Use Alternate Encryption When Necessary</ServiceGuidelineName>
-                <Description>For applications and protocols that do not support encryption, sessions
-                    transmitting PHI can be sent through encrypted tunnels using IPsec or similar
-                    implementations between instances. </Description>
-                <AssessorId>P1203020</AssessorId>
-                <AssessmentDatetime>
-                    <Year>2018</Year>
-                    <Month>7</Month>
-                    <Day>1</Day>
-                    <Hour>13</Hour>
-                    <Minute>47</Minute>
-                    <Second>30</Second>
-                    <SubSecond>842</SubSecond>
-                    <Timezone>6:00-GMT</Timezone>
-                </AssessmentDatetime>
-            </ServiceGuideline>
-            <ServiceTestPlan>
+              <ServiceTestPlan>
                 <ServiceId>1</ServiceId>
                 <ServiceTestRequirement>
-                    <ServiceTestRequirementId>1</ServiceTestRequirementId>
                     <SequenceNumber>1</SequenceNumber>
                     <Description>Users should be to launch, reboot, stop, re-size, and restart ec2
                         instances in the public and private subnets</Description>
                     <ServiceTest>
-                        <ServiceTestId>1</ServiceTestId>
                         <SequenceNumber>1</SequenceNumber>
                         <Description>User should be able to launch an ec2 instance into the public
                             and private subnets</Description>
                         <ServiceTestStep>
-                            <ServiceTestStepId>1</ServiceTestStepId>
-                            <ServiceTestId>1</ServiceTestId>
                             <SequenceNumber>1</SequenceNumber>
                             <Description>Create a test user, session, and ec2 client</Description>
                         </ServiceTestStep>
