@@ -9,7 +9,7 @@
 </id>
 <property name="ScheduleInterval" column="SCHEDULE_INTERVAL" type="OpenEaiInt"/>
 <property name="DetectionPerMinute" column="DETECTION_PER_MINUTE" />
-<property name="DegradedBoundary" column="DEGRADED_BOUNDARY"/>
+<property name="DegradedBoundary" column="DEGRADED_BOUNDARY" />
 <property name="UnacceptableBoundary" column="UNACCEPTABLE_BOUNDARY"/>
 <property name="Assessment" column="ASSESSMENT"/>
 <property name="InstanceId" column="INSTANCE_ID"/>
