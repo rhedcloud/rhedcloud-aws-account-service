@@ -158,6 +158,20 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 				<Parameter name="AccountId"/>
 			</QueryLanguage>
 		</AccountNotificationQuerySpecification>
+				<AccountNotificationQuerySpecification>
+			<QueryLanguage type="hql" name="findAccountNotificationsBetweenDatetimes" value="from AccountNotification where ( CreateDatetime between to_date(:StartCreateDatetime,'YYYY-MM-DD HH24:MI:SS') and to_date(:EndCreateDatetime,'YYYY-MM-DD HH24:MI:SS') ) order by CreateDatetime desc">
+				<Parameter name="StartCreateDatetime"/>
+				<Parameter name="EndCreateDatetime"/>
+			</QueryLanguage>
+		</AccountNotificationQuerySpecification>	
+		<AccountNotificationQuerySpecification>
+			<QueryLanguage type="named" name="findAccountNotificationsByAnnotationText">
+				<Parameter name="AnnotationText"/>
+				<Parameter name="StartCreateDatetime"/>
+				<Parameter name="EndCreateDatetime"/>
+			</QueryLanguage>
+		</AccountNotificationQuerySpecification>	
+		
 		<!-- Get all AccountNotifications created between start and end dates -->
 		<AccountNotificationQuerySpecification>
 			<QueryLanguage type="hql" name="findAccountNotificationsBetweenDates" value="from AccountNotification where CreateDatetime between to_date(:startDate,'YYYY-MM-DD HH24:MI:SS') and to_date(:endDate,'YYYY-MM-DD HH24:MI:SS') order by CreateDatetime desc">

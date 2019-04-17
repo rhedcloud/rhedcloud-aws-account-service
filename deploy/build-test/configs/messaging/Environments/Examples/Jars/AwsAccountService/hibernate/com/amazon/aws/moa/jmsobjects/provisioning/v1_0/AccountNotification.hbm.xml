@@ -28,4 +28,12 @@
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
 <property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
 </class>
+
+
+<sql-query name="findAccountNotificationsByAnnotationText">
+<return alias="AccountNotification" class="AccountNotification"/>
+<![CDATA[
+		select * from ACCOUNT_NOTIFICATION a join ACCOUNT_NOTIF_ANNOTATION n on a.account_notification_id = n.account_notification_id   where  a.create_datetime between to_date(:StartCreateDatetime,'YYYY-MM-DD HH24:MI:SS') and to_date(:EndCreateDatetime,'YYYY-MM-DD HH24:MI:SS') and n.text like :AnnotationText
+        ]]>
+</sql-query>
 </hibernate-mapping>
