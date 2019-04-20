@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.security.v1_0">
+<class name="SecurityRiskDetection" table="SECURITY_RISK_DETECTION">
+<id name="SecurityRiskDetectionId" column="SECURITY_RISK_DETECTION_ID">
+<generator class="assigned"/>
+</id>
+<property name="AccountId" column="ACCOUNT_ID"/>
+<property name="SecurityRiskDetector" column="SECURITY_RISK_DETECTOR"/>
+<property name="SecurityRiskRemediator" column="SECURITY_RISK_REMEDIATOR"/>
+<bag name="DetectedSecurityRisk" table="SCRTY_RSK_DTCTN_DTCTD_SCRTY_RS">
+<key column="SECURITY_RISK_DETECTION_ID"/>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.DetectedSecurityRisk">
+<property name="Type" column="TYPE_"/>
+<property name="AmazonResourceName" column="AMAZON_RESOURCE_NAME"/>
+<nested-composite-element class="com.amazon.aws.moa.objects.resources.v1_0.RemediationResult" name="RemediationResult">
+<property name="Status" column="STATUS"/>
+<property name="Description" column="DESCRIPTION"/>
+<!--because DetectedSecurityRisk has no key, many-to-many cannot be mapped for Error
+<property name="Error" column="ERROR_"/>
+-->
+</nested-composite-element>
+</composite-element>
+</bag>
+<property name="InstanceId" column="INSTANCE_ID"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>
