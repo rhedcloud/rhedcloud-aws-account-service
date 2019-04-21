@@ -121,6 +121,14 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</ServiceQuerySpecification>
 	</querylanguage>
 	<querylanguage>
+		<SecurityRiskDetectionQuerySpecification>
+			<QueryLanguage type="hql" name="findSecurityRiskDetectionsBetweenDatetimes" value="from SecurityRiskDetection where CreateDatetime between to_date(:StartCreateDatetime,'YYYY-MM-DD HH24:MI:SS') and to_date(:EndCreateDatetime,'YYYY-MM-DD HH24:MI:SS')  order by CreateDatetime desc">
+				<Parameter name="StartCreateDatetime"/>
+				<Parameter name="EndCreateDatetime"/>
+			</QueryLanguage>
+		</SecurityRiskDetectionQuerySpecification>	
+	</querylanguage>
+	<querylanguage>
 		<TermsOfUseQuerySpecification>
 			<QueryLanguage type="hql" name="inEffectTermsOfUse" value="from TermsOfUse where EffectiveDate &lt;= to_date(:currentDate, 'YYYY-MM-DD') and (ExpirationDate=null or ExpirationDate &gt;= to_date(:currentDate, 'YYYY-MM-DD')) ">
 				<Parameter name="currentDate"/>
