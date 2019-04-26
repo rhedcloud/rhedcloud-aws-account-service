@@ -463,12 +463,12 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
         if (msgAction.equalsIgnoreCase("Create")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
             	"AccountNotification.Create-Request message.");
-            Element eVpcp = inDoc.getRootElement().getChild("DataArea")
+            Element eNotification = inDoc.getRootElement().getChild("DataArea")
             	.getChild("NewData").getChild("AccountNotification");
 
             // Verify that the AccountNotification element is not null. If it is
             // null, reply with an error.
-            if (eVpcp == null) {
+            if (eNotification == null) {
                 String errType = "application";
                 String errCode = "OpenEAI-1015";
                 String errDesc = "Invalid element found in the Create-Request "
@@ -496,12 +496,12 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             // Now build a virtual private cloud provisioning object from the element in the
             // message.
             try {
-                notification.buildObjectFromInput(eVpcp);
+                notification.buildObjectFromInput(eNotification);
                 if (eTestId != null) { 
                 	testId.buildObjectFromInput(eTestId);
                 	notification.setTestId(testId);
+                	logger.info(LOGTAG + "TestId is: " + notification.getTestId().toString());
                 }
-                logger.info(LOGTAG + "TestId is: " + notification.getTestId().toString());
             } 
             catch (EnterpriseLayoutException ele) {
                 // There was an error building the delete object from the
