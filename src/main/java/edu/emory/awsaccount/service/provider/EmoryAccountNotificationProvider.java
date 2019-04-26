@@ -163,11 +163,11 @@ implements AccountNotificationProvider {
 			.getProperty("suppressNotifications", "true")));
 		logger.info(LOGTAG + "suppressNotifications property is: " + getSuppressNotifications());
 		
-		// Set the supressionInterval property.
+		// Set the suppressionInterval property.
 		String sInterval = getProperties()
-			.getProperty("supressionIntervalInMillis", "3600000");
+			.getProperty("suppressionIntervalInMillis", "3600000");
 		setSuppressionIntervalInMillis(Integer.parseInt(sInterval));
-		logger.info(LOGTAG + "supressionIntervalInMillis is: " +
+		logger.info(LOGTAG + "suppressionIntervalInMillis is: " +
 			getSuppressionIntervalInMillis());
 		
 		// Set the requestTimeoutInterval property.
@@ -272,9 +272,12 @@ implements AccountNotificationProvider {
 		throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
 		
+		logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
+		
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
+			logger.info(LOGTAG + "Getting an exclusive producer for the AWS Account Service...");
 			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
 		}
 		catch (JMSException jmse) {
@@ -288,6 +291,7 @@ implements AccountNotificationProvider {
 		// the last suppressionInterval milliseconds.
 		
 		// Get a configured AccountNotificationQuerySpecification to use.
+		logger.info(LOGTAG + "Getting a configured query spec from AppConfig...");
 		AccountNotificationQuerySpecification querySpec = 
 				new AccountNotificationQuerySpecification();
 		try {
@@ -302,6 +306,7 @@ implements AccountNotificationProvider {
 		}
 		
 		// Get the annotation text 
+		logger.info(LOGTAG + "Getting the annotation text...");
 		List<Annotation> aList = aNotification.getAnnotation();
 		ListIterator li = aList.listIterator();
 		String annotationText = null;
@@ -314,11 +319,12 @@ implements AccountNotificationProvider {
 			}
 		}
 		
+		logger.info(LOGTAG + "Setting the values of the query spec...");
 		long endTime = System.currentTimeMillis();
 		long startTime = endTime - getSuppressionIntervalInMillis();
-		querySpec.setStartCreateDatetime(new Datetime("StartCreate", startTime));
-		querySpec.setEndCreateDatetime(new Datetime("EndCreate", endTime));
 		try {
+			querySpec.setStartCreateDatetime(new Datetime("StartCreate", startTime));
+			querySpec.setEndCreateDatetime(new Datetime("EndCreate", endTime));
 			querySpec.setAnnotationText(annotationText);
 		}
 		catch (EnterpriseFieldException efe) {
@@ -329,7 +335,22 @@ implements AccountNotificationProvider {
 			throw new ProviderException();
 		}
 		
+		// Convert the query spec to an XML string.
+		try {
+			String xmlQuerySpec = querySpec.toXmlString();
+			logger.info(LOGTAG + "The query spec is: " + xmlQuerySpec);
+		}
+		catch (XmlEnterpriseObjectException xeoe) {
+			String errMsg = "An error occurred serializing the query " +
+				"spec to an XML string. The exception is: " + 
+				xeoe.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException();
+		}
+		
 		// Query for any notifications during the suppression interval
+		logger.info(LOGTAG + "Querying any notifications during the " +
+			"suppression interval");
 		long queryStartTime = System.currentTimeMillis();
 		List<AccountNotification> results = query(querySpec);
 		long queryTime = System.currentTimeMillis() - queryStartTime;
@@ -340,7 +361,7 @@ implements AccountNotificationProvider {
 		boolean suppressNotification = false;
 		if (results.size() > 0) {
 			logger.info(LOGTAG + "There are AccountNotifications in the " +
-				"supression interval, setting suppressNotification to true.");
+				"suppression interval, setting suppressNotification to true.");
 			suppressNotification = true;
 		}
 		
@@ -369,7 +390,7 @@ implements AccountNotificationProvider {
 			try {
 				long createStartTime = System.currentTimeMillis();
 				aNotification.create(rs);
-				long time = System.currentTimeMillis() - startTime;
+				long time = System.currentTimeMillis() - createStartTime;
 				logger.info(LOGTAG + "Created AccountNotification " +
 					"object in " + time + " ms.");
 			}
@@ -386,6 +407,8 @@ implements AccountNotificationProvider {
 					.releaseProducer((PointToPointProducer)rs);
 			}
 		}
+		
+		return;
 	}
 
 	/**
