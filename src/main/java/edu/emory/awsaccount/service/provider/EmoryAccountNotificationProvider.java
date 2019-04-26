@@ -192,24 +192,7 @@ implements AccountNotificationProvider {
 					"AppConfig. The exception is: " + ecoe.getMessage();
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
-		}
-		
-		// This provider needs to send messages to the ServiceNow service
-		// to initialize provisioning transactions.
-		ProducerPool p2p2 = null;
-		try {
-			p2p2 = (ProducerPool)getAppConfig()
-				.getObject("ServiceNowServiceProducerPool");
-			setServiceNowServiceProducerPool(p2p2);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new ProviderException(errMsg);
-		}				
+		}	
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
