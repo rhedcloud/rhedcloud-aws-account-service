@@ -168,17 +168,6 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
-
-        // Get a SyncService to use to publish sync messages.
-        try {
-            ProducerPool pool = (ProducerPool) getAppConfig().getObject("SyncPublisher");
-            setProducerPool(pool);
-        } catch (EnterpriseConfigurationObjectException eoce) {
-            String errMsg = "Error retrieving a ProducerPool object " + "from AppConfig. The exception is: "
-                    + eoce.getMessage();
-            logger.fatal(LOGTAG + errMsg);
-            throw new InstantiationException(errMsg);
-        }
       
         // Verify that we have all required objects in the AppConfig.
         // Get a configured AccountNotification from AppConfig.
