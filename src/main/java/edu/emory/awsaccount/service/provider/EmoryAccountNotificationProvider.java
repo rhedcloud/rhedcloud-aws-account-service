@@ -211,6 +211,8 @@ implements AccountNotificationProvider {
 			String LOGTAG = "[EmoryAccountNotificationProvider.query] ";
 			logger.info(LOGTAG + "Querying for AccountNotification.");
 		
+			logger.info(LOGTAG + "Getting a configured AccountNotification object " +
+				"from AppConfig...");
 			// Get a configured AccountNotification object to use.
 			AccountNotification aNotification = new AccountNotification();
 			try {
@@ -224,6 +226,8 @@ implements AccountNotificationProvider {
 				throw new ProviderException();
 			}
 
+			logger.info(LOGTAG + "Getting a producer to use in " +
+					"this transaction...");
 			// Get a RequestService to use for this transaction.
 			RequestService rs = null;
 			try {
@@ -257,8 +261,7 @@ implements AccountNotificationProvider {
 			}
 			// In any case, release the producer back to the pool.
 			finally {
-				getAwsAccountServiceProducerPool()
-					.releaseProducer((PointToPointProducer)rs);
+				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 			}
 			
 			// Return the results
@@ -273,19 +276,6 @@ implements AccountNotificationProvider {
 		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
 		
 		logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
-		
-		// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		try {
-			logger.info(LOGTAG + "Getting an exclusive producer for the AWS Account Service...");
-			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use " +
-				"in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, jmse);
-		}
 		
 		// TODO: query to determine if a notification has already been created in
 		// the last suppressionInterval milliseconds.
@@ -386,7 +376,19 @@ implements AccountNotificationProvider {
 				"AccountNotification: " + notification);
 		}
 		// Otherwise, create the AccountNotification
-		else {
+		else {	
+			// Get a RequestService to use for this transaction.
+			RequestService rs = null;
+			try {
+				logger.info(LOGTAG + "Getting an exclusive producer for the AWS Account Service...");
+				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
+			}
+			catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a request service to use " +
+					"in this transaction. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, jmse);
+			}
 			try {
 				long createStartTime = System.currentTimeMillis();
 				aNotification.create(rs);
@@ -407,7 +409,6 @@ implements AccountNotificationProvider {
 					.releaseProducer((PointToPointProducer)rs);
 			}
 		}
-		
 		return;
 	}
 
