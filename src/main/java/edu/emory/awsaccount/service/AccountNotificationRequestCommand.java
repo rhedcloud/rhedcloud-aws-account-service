@@ -288,6 +288,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
         
         // Validate the format of the AuthUserId. If the format is invalid,
         // respond with an error.
+/**    	
         if (validateAuthUserId(authUserId) == false) {
             String errType = "application";
             String errCode = "AwsAccountService-1001";
@@ -306,6 +307,8 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
 
         // Get the EPPN from from AuthUserId.
         String eppn = getEppnFromAuthUserId(authUserId);
+        
+**/
         
         // Get the TestId from AppConfig
         TestId testId = new TestId();
