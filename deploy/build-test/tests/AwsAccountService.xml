@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Deployment SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/Deployment.dtd">
+        <Deployment baseURI="none" status="deployed" type="development" name="edu.emory.AwsAccountService">
+<Application id="edu.emory.AwsAccountService">
+<FullName>edu.emory.AwsAccountService</FullName>
+<Description>edu.emory.AwsAccountService.  Example service, which simply return a sample message</Description>
+<Configuration initializeUsingThreads="false">
+<LoggerConfigs>
+<LoggerConfig name="ServiceLoggerConfig">
+<ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
+<Property>
+<PropertyName>log4j.rootCategory</PropertyName>
+<PropertyValue>INFO, A1</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1</PropertyName>
+<PropertyValue>org.apache.log4j.FileAppender</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.File</PropertyName>
+<PropertyValue>logs/AwsAccountService.log</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.layout</PropertyName>
+<PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
+</Property>
+<Property>
+<PropertyName>log4j.appender.A1.layout.ConversionPattern</PropertyName>
+<PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m-%C{1}.%M%L%n</PropertyValue>
+</Property>
+</LoggerConfig>
+</LoggerConfigs>
+<ConsumerConfigs startOnInitialization="true">
+<ConnectionFactoryName>cn=AwsAccountServiceConsumerQCF</ConnectionFactoryName>
+<InitialContextFactory>com.sonicsw.jndi.mfcontext.MFContextFactory</InitialContextFactory>
+<ProviderURL>tcp://intsonicdev1.cc.emory.edu:2506</ProviderURL>
+<SecurityPrincipal>AwsAccountService</SecurityPrincipal>
+<SecurityCredentials>AwsAccountService22</SecurityCredentials>
+<ConfigClass>org.openeai.config.ConsumerConfig</ConfigClass>
+<GenericResponse validate="false">
+<DocumentURI>message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</DocumentURI>
+</GenericResponse>
+<ThreadPoolConfig name="ConsumerThreadPool" minThreads="0" maxThreads="30" maxIdleTime="1" checkBeforeProcessing="true">
+<ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
+<ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
+</ThreadPoolConfig>
+
+<ConsumerConfig transacted="false" startOnInitialization="true" name="PubSubConsumer">
+<ConnectionFactoryName>cn=AwsAccountServiceConsumerTCF</ConnectionFactoryName>
+<DestinationName>cn=AwsAccountServiceTopic</DestinationName>
+<Commands writeToFile="false" outboundXmlValidation="false" inboundXmlValidation="false">
+<Command writeToFile="false" type="syncMessage" outboundXmlValidation="false" isDefault="true" isAbsolute="true" inboundXmlValidation="false">
+<CommandName>RdbmsSyncCommand</CommandName>
+<CommandClass>com.openii.openeai.toolkit.rdbms.HibernateRdbmsSyncCommand</CommandClass>
+<Configuration initializeUsingThreads="false">
+<ProducerConfigs>
+<ProducerConfig transacted="false" tempQueuePoolSize="5" startOnInitialization="true" name="SyncErrorPublisher" deliveryMode="PERSISTENT">
+<DestinationName>cn=LoggingServiceErrorTopic</DestinationName>
+<ObjectClass>org.openeai.jms.producer.PubSubProducer</ObjectClass>
+<DefaultCommandName>EnterpriseSyncErrorLogger</DefaultCommandName>
+<ConnectionFactoryName>cn=AwsAccountServiceProducerTCF</ConnectionFactoryName>
+<InitialContextFactory>com.sonicsw.jndi.mfcontext.MFContextFactory</InitialContextFactory>
+<ProviderURL>tcp://intsonicdev1.cc.emory.edu:2506</ProviderURL>
+<SecurityPrincipal>AwsAccountService</SecurityPrincipal>
+<SecurityCredentials>AwsAccountService22</SecurityCredentials>
+<ProducerIdURL>localhost</ProducerIdURL>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<LoggingProducer transacted="false" tempQueuePoolSize="5" startOnInitialization="true" name="LoggingProducer" deliveryMode="PERSISTENT">
+<ConnectionFactoryName>cn=AwsAccountServiceProducerTCF</ConnectionFactoryName>
+<DestinationName>cn=LoggingServiceTopic</DestinationName>
+<InitialContextFactory>com.sonicsw.jndi.mfcontext.MFContextFactory</InitialContextFactory>
+<ProviderURL>tcp://intsonicdev1.cc.emory.edu:2506</ProviderURL>
+<ProducerIdURL>localhost</ProducerIdURL>
+<ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+<ObjectClass>org.openeai.jms.producer.PubSubProducer</ObjectClass>
+<SecurityPrincipal>AwsAccountService</SecurityPrincipal>
+<SecurityCredentials>AwsAccountService22</SecurityCredentials>
+</LoggingProducer>
+</ProducerConfig>
+</ProducerConfigs>
+<MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>edu.emory.AwsAccountService</UserId>
+</Authentication>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" name="TestId" deferInitialization="false">
+<SenderAppId>org.any-openeai-enterprise.EnterpriseGreetingService</SenderAppId>
+<Authentication>
+<UserId>egs</UserId>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>org.openeai.moa.objects.testsuite.TestId</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="true" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/openeai/Resources/1.0/ControlAreaEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetection.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>SecurityRiskDetection</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Security/1.0/SecurityRiskDetectionEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionWatch.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName>SecurityRiskDetectionWatch</CommandName>
+<PrimedXmlDocuments>
+<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+</PrimedXmlDocuments>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetectionWatch</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Security/1.0/SecurityRiskDetectionWatchEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionRequisition.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionRequisition</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionRequisitionEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+<MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionWatchQuerySpecification.v1_0">
+<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<Authentication>
+<UserId>testsuite@emory.edu/10.40.48.112</UserId>
+<Signature>unknown</Signature>
+</Authentication>
+<CommandName/>
+<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionWatchQuerySpecification</ObjectClass>
+<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionWatchQuerySpecificationEO.xml"/>
+<LayoutManager>
+<InputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</InputLayout>
+<OutputLayout type="xml">
+<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+</OutputLayout>
+</LayoutManager>
+</MessageObjectConfig>
+</MessageObjectConfigs>
+<!--
+<DbConnectionPoolConfigs>
+<DbConnectionPoolConfig name="HibernateDbPool" dbPoolSize="2" dbPoolMaxSize="0" dbDriverName="oracle.jdbc.driver.OracleDriver" dbConnectUserId="arch-test" dbConnectString="jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/SHRDBQA,cn=OracleContext,dc=emory,dc=edu" dbConnectPassword="Gwang222">
+<ConfigClass>org.openeai.config.DbConnectionPoolConfig</ConfigClass>
+<ObjectClass>org.openeai.dbpool.EnterpriseConnectionPool</ObjectClass>
+</DbConnectionPoolConfig>
+</DbConnectionPoolConfigs>
+-->
+<PropertyConfigs>
+<PropertyConfig refresh="false" name="GeneralProperties">
+<ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+<Property>
+<PropertyName>GenericResponseDocumentUri</PropertyName>
+<PropertyValue>./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PropertyValue>
+</Property>
+
+
+
+
+
+<Property>
+<PropertyName>verbose</PropertyName>
+<PropertyValue>true</PropertyValue>
+</Property>
+</PropertyConfig>
+
+
+
+</PropertyConfigs>
+</Configuration>
+</Command>
+</Commands>
+<ObjectClass>org.openeai.jms.consumer.PubSubConsumer</ObjectClass>
+<InitialContextFactory>com.sonicsw.jndi.mfcontext.MFContextFactory</InitialContextFactory>
+<ProviderURL>tcp://intsonicdev1.cc.emory.edu:2506</ProviderURL>
+<SecurityPrincipal>AwsAccountService</SecurityPrincipal>
+<SecurityCredentials>AwsAccountService22</SecurityCredentials>
+<ConfigClass>org.openeai.config.ConsumerConfig</ConfigClass>
+<GenericResponse validate="false">
+<DocumentURI>message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</DocumentURI>
+</GenericResponse>
+<ThreadPoolConfig name="ConsumerThreadPool" minThreads="0" maxThreads="30" maxIdleTime="1" checkBeforeProcessing="true">
+<ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
+<ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
+</ThreadPoolConfig>
+</ConsumerConfig>
+</ConsumerConfigs>
+</Configuration>
+</Application>
+</Deployment>
