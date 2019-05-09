@@ -1,105 +1,102 @@
-/*******************************************************************************
-  $Source: /cvs/repositories/openii2/openii2/projects/Toolkit-3.0/java/source/com/openii/openeai/toolkit/rdbms/AccountSyncCommand.java,v $
-  $Revision: 1.16 $
- *******************************************************************************/
-
-/**********************************************************************
- Copyright (C) 2007 The Board of Trustees of the University of Illinois and Open Integration Incorporated
- */
 
 package edu.emory.awsaccount.service;
 
-//import com.openii.openeai.commands.MessageMetaData;
-//import com.openii.openeai.commands.OpeniiSyncCommand;
-//import com.openii.openeai.toolkit.ReleaseTag;
-//import com.openii.openeai.toolkit.rdbms.persistence.PersistenceException;
-//import com.openii.openeai.toolkit.rdbms.persistence.PersistenceHelper;
-//import com.openii.openeai.toolkit.rdbms.persistence.hibernate.HibernateMoaPersistenceHelper;
-//import com.openii.openeai.toolkit.rdbms.persistence.hibernate.HibernatePersistenceHelper;
-//import com.openii.openeai.toolkit.rdbms.persistence.hibernate.MoaInstantiator;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.log4j.Category;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.openeai.afa.ScheduledCommandException;
-import org.openeai.config.AppConfig;
+import org.jdom.Document;
+import org.jdom.Element;
 import org.openeai.config.CommandConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
-import org.openeai.config.LoggerConfig;
-import org.openeai.jms.consumer.commands.*;
+import org.openeai.jms.consumer.commands.CommandException;
+import org.openeai.jms.consumer.commands.SyncCommand;
+import org.openeai.jms.consumer.commands.SyncCommandImpl;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.jms.producer.PubSubProducer;
-
-import javax.jms.*;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.jdom.*;
-import org.jdom.output.XMLOutputter;
-import org.openeai.moa.objects.testsuite.TestId;
-import org.openeai.transport.RequestService;
-import org.openeai.xml.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-
-import org.openeai.dbpool.EnterpriseConnectionPool;
-import org.openeai.dbpool.EnterprisePooledConnection;
-import org.openeai.moa.ActionableEnterpriseObject;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObject;
-import org.xml.sax.SAXException;
+import org.openeai.moa.objects.testsuite.TestId;
+import org.openeai.transport.RequestService;
+import org.openeai.xml.XmlDocumentReader;
+import org.openeai.xml.XmlDocumentReaderException;
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
-import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
+import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
+import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
+
+/**
+ * For each Account Create-Sync, Delete-Sync or meaningful Update-Sync, this
+ * command will query all Account message and create a .csv file. It also query
+ * DirectoryService for name and email address of owner, createUser, and
+ * lastUpdateUser and added to the csv file.
+ * 
+ * @author gwang28
+ *
+ */
 public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
     private static Logger logger = Logger.getLogger(AccountSyncCommand.class);
     private static String LOGTAG = "[AccountSyncCommand] ";
     protected static int requestTimeoutIntervalMilli = -1;
     protected ProducerPool awsAccountServiceRequestProducerPool;
+    protected ProducerPool directoryServiceProducerPool;
     private boolean _verbose;
     protected ProducerPool _producerPool = null;
     private static final String GENERAL_PROPERTIES = "GeneralProperties";
+    SimpleDateFormat format = null;
+    private File tempDir = null;
+    private UploadToS3 uploadToS3;
+    private boolean cleanTempDir = true;
+    // TODO: cleanTempDir
+    CacheLoader<String, DirectoryPerson> loader = new CacheLoader<String, DirectoryPerson>() {
+        @Override
+        public DirectoryPerson load(String key) {
+            if (key == null || key.length() == 0)
+                return null;
+            return queryDirectoryPerson(key);
+        }
+    };
+    LoadingCache<String, DirectoryPerson> directoryPersonCache = CacheBuilder.newBuilder().build(loader);
+
     public AccountSyncCommand(CommandConfig cConfig) throws InstantiationException, EnterpriseConfigurationObjectException {
         super(cConfig);
-
+        logger.info("AccountSyncCommand, initializing... ");
         try {
             setProperties(getAppConfig().getProperties(GENERAL_PROPERTIES));
+            awsAccountServiceRequestProducerPool = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
+            directoryServiceProducerPool = (ProducerPool) getAppConfig().getObject("DirectoryServiceProducerPool");
+            _verbose = new Boolean(getProperties().getProperty("verbose", "true")).booleanValue();
+            cleanTempDir = new Boolean(getProperties().getProperty("cleanTempDir", "true")).booleanValue();
+            format = new SimpleDateFormat(getProperties().getProperty("simpleDateFormat", "yyyy-MM-dd-HH.mm.ss"));
+            tempDir = new File("temp");
+            tempDir.mkdir();
+            uploadToS3 = new UploadToS3(getProperties());
         } catch (Exception e) {
-            String msg = "Could not locate the '" + GENERAL_PROPERTIES + "' Property Category.  This command is not configured properly.";
-            throw new InstantiationException(msg);
+            throw new InstantiationException(LOGTAG + e.getMessage());
         }
-
-        Properties generalProps = null;
-        try {
-            generalProps = getAppConfig().getProperties("GeneralProperties");
-        } catch (EnterpriseConfigurationObjectException e) {
-            logger.error(e);
-        }
-        if (generalProps == null) {
-            generalProps = getProperties();
-        }
-
         try {
             _producerPool = (ProducerPool) getAppConfig().getObject("SyncPublisher");
 
@@ -107,12 +104,6 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             logger.warn("No 'SyncPublisher' PubSubProducer found in AppConfig.  "
                     + "Processing will continue but Sync Messages will not be published " + "when changes are made via this Command.");
         }
-        awsAccountServiceRequestProducerPool = (ProducerPool) getAppConfig().getObject("AwsAccountServiceRequestProducer");
-        // look for an object specific verbose setting and if not found,
-        // use the verbose setting from the global GeneralProperties.
-        _verbose = new Boolean(generalProps.getProperty("verbose", getProperties().getProperty("verbose", "true"))).booleanValue();
-
-        // MoaInstantiator.setAppConfig(getAppConfig());
         logger.info(ReleaseTag.getReleaseInfo());
         logger.info("AccountSyncCommand, initialized successfully.");
     }
@@ -121,22 +112,16 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         logger.info("[AccountSyncCommand] - execution complete...");
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T getObjectByType(Class<T> t) {
-        T moaIn;
-        try {
-            moaIn = (T) getAppConfig().getObjectByType(t.getName());
-        } catch (EnterpriseConfigurationObjectException e) {
-            logger.fatal(e);
-            throw new RuntimeException(e);
-        }
-        return moaIn;
-    }
-
     @Override
     public void execute(int messageNumber, Message aMessage) throws CommandException {
         logger.info(LOGTAG + "execution begins...");
         Document inDoc = null;
+        TextMessage textMessage = (TextMessage) aMessage;
+        try {
+            inDoc = new XmlDocumentReader().initializeDocument(new StringReader(textMessage.getText()), false);
+        } catch (XmlDocumentReaderException | JMSException e1) {
+            logger.error(e1);
+        }
         Element controleArea = getControlArea(inDoc.getRootElement());
         String msgAction = controleArea.getAttribute("messageAction").getValue();
         Element dataArea = inDoc.getRootElement().getChild("DataArea");
@@ -171,8 +156,6 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
                 }
             }
         }
-
-        // get the object from AppConfig...
         Account account = null;
         Account accountBaseline = null;
 
@@ -187,8 +170,6 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
                 accountBaseline = (Account) retrieveAndBuildObject("Baseline", msgObject, msgObjectName, baseLineData.getChild(msgObject));
             } catch (Exception e) {
                 logger.error(e);
-                publishSyncError(inDoc, controleArea,
-                        "Exception occurred retrieving and building the '" + msgObject + "' object from AppConfig.", e);
                 return;
             }
         }
@@ -203,32 +184,129 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
                 return;
             }
         }
-        // TODO
-        // Query for all Account objects in the AWS Account Service
-        // Query the DirectoryService for the full name and email address of the
-        // AccountOwner, CreateUser, and LastUpdateUser)
-        // Serialize the appropriate Account object fields and DirectoryPerson
-        // fields to the prescribed CSV or Excel format
-        // Write the file to the file system*
-        // Transmit the file
-        // PROD.yyyy-mm-dd-hh-mm-ss.csv
-        // STAGE.yyyy-mm-dd-hh-mm-ss.csv
-        // TEST.yyyy-mm-dd-hh-mm-ss.csv
-        // DEV.yyyy-mm-dd-hh-mm-ss.csv
+
+        try {
+            List<Account> accounts = queryAllAccounts();
+            List<AccountCsv> accountCsvs = new ArrayList<>();
+            for (Account a : accounts) {
+                AccountCsv accountCsv = accountToAccountCsv(a);
+                accountCsvs.add(accountCsv);
+            }
+
+            List<String[]> dataLines = new ArrayList<>();
+            dataLines.add(toStrings(TITLE.values()));
+            for (AccountCsv accountCsv : accountCsvs) {
+                dataLines.add(toStrings(accountCsv));
+            }
+            toCsvFileAndUploadToS3(dataLines);
+            logger.info(LOGTAG + "accounts.size=" + accounts.size());
+            logger.info(LOGTAG + "accountCsvs.size=" + accountCsvs.size());
+        } catch (EnterpriseConfigurationObjectException | EnterpriseObjectQueryException | EnterpriseFieldException | IOException e) {
+            logger.error(LOGTAG, e);
+        }
     }
+    private String[] toStrings(Object[] objects) {
+        String[] ss = new String[objects.length];
+        for (int i = 0; i < objects.length; i++)
+            ss[i] = objects[i].toString();
+        return ss;
+    }
+    private String[] toStrings(AccountCsv a) {
+        return new String[] { a.account.getAccountId(), a.account.getAccountName(), a.account.getComplianceClass(),
+                a.account.getPasswordLocation(), a.account.getAccountOwnerId(), a.account.getFinancialAccountNumber(),
+                a.account.getCreateUser(), format.format(a.account.getCreateDatetime().toCalendar().getTime()),
+                a.account.getLastUpdateUser() == null ? "" : a.account.getLastUpdateUser(),
+                a.account.getLastUpdateDatetime() == null ? "" : format.format(a.account.getLastUpdateDatetime().toCalendar().getTime()),
+                a.OwnerEmail, a.CreateUserEmail, a.UpdateUserEmail };
+    }
+
+    private void toCsvFileAndUploadToS3(List<String[]> dataLines) throws IOException {
+        FileUtils.cleanDirectory(tempDir);
+        String fileName = getDeployEnv() + "." + format.format(new Date()) + ".csv";
+        logger.info("fileName=" + fileName);
+        File csvOutputFile = new File(tempDir + "/" + fileName);
+        try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+            dataLines.stream().map(this::convertToCSV).forEach(pw::println);
+            pw.close();
+        }
+        uploadToS3.execute(fileName, csvOutputFile.getAbsolutePath());
+    }
+    public String convertToCSV(String[] data) {
+        return Stream.of(data).collect(Collectors.joining(","));
+    }
+
+    public static String getDeployEnv() {
+        // docUriBase.dev=https://dev-config.app.emory.edu/
+        // docUriBase.qa=https://qa-config.app.emory.edu/
+        // docUriBase.stage=https://staging-config.app.emory.edu/
+        // docUriBase.prod=https://config.app.emory.edu
+        String docUriBase = System.getProperty("docUriBase").trim();
+        if (docUriBase != null && docUriBase.length() > 0) {
+            if (docUriBase.startsWith("https://dev"))
+                return "DEV";
+            if (docUriBase.startsWith("https://qa"))
+                return "TEST";
+            if (docUriBase.startsWith("https://staging"))
+                return "STAGE";
+            if (docUriBase.startsWith("https://config"))
+                return "PROD";
+        }
+        return "LOCAL";
+    }
+    private AccountCsv accountToAccountCsv(Account a) {
+        logger.debug(LOGTAG + "account=" + a.getAccountName());
+        AccountCsv acountCsv = new AccountCsv();
+        acountCsv.account = a;
+
+        try {
+            acountCsv.OwnerEmail = toEmail(directoryPersonCache.get(a.getAccountOwnerId()));
+            acountCsv.CreateUserEmail = toEmail(directoryPersonCache.get(a.getCreateUser()));
+            if (a.getLastUpdateUser() != null)
+                acountCsv.UpdateUserEmail = toEmail(directoryPersonCache.get(a.getLastUpdateUser()));
+        } catch (ExecutionException e) {
+            logger.error(LOGTAG, e);
+        }
+
+        return acountCsv;
+    }
+
+    private String toEmail(DirectoryPerson person) {
+        if (person == null)
+            return "";
+        return person.getFullName() + " <" + person.getEmail().getEmailAddress() + ">";
+    }
+
     protected List<Account> queryAllAccounts()
             throws EnterpriseConfigurationObjectException, EnterpriseObjectQueryException, EnterpriseFieldException {
-        Account srd = (Account) getAppConfig().getObjectByType(Account.class.getName());
-        AccountQuerySpecification securityRiskDetectionQuerySpecification = (AccountQuerySpecification) getAppConfig()
+        Account account = (Account) getAppConfig().getObjectByType(Account.class.getName());
+        AccountQuerySpecification accountQuerySpecification = (AccountQuerySpecification) getAppConfig()
                 .getObjectByType(AccountQuerySpecification.class.getName());
         MessageProducer messageProducer = getRequestServiceMessageProducer(awsAccountServiceRequestProducerPool);
         List<Account> accounts = new ArrayList<>();
         try {
-            accounts = srd.query(securityRiskDetectionQuerySpecification, (RequestService) messageProducer);
+            accounts = account.query(accountQuerySpecification, (RequestService) messageProducer);
         } finally {
             awsAccountServiceRequestProducerPool.releaseProducer(messageProducer);
         }
         return accounts;
+    }
+
+    protected DirectoryPerson queryDirectoryPerson(String key) {
+        MessageProducer messageProducer = null;
+        List<DirectoryPerson> accounts = null;
+        try {
+            DirectoryPerson diretoryPerson = (DirectoryPerson) getAppConfig().getObjectByType(DirectoryPerson.class.getName());
+            DirectoryPersonQuerySpecification diretoryPersonQuerySpecification = (DirectoryPersonQuerySpecification) getAppConfig()
+                    .getObjectByType(DirectoryPersonQuerySpecification.class.getName());
+            diretoryPersonQuerySpecification.setKey(key);
+            messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
+            accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+        } catch (Throwable e) {
+            logger.error(LOGTAG, e);
+        } finally {
+            directoryServiceProducerPool.releaseProducer(messageProducer);
+        }
+        return accounts.get(0);
     }
 
     protected MessageProducer getRequestServiceMessageProducer(ProducerPool producerPool) {
@@ -249,27 +327,10 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         return producer;
     }
 
-    private void publishSyncError(Document inDoc, Element controleArea, String errMessage, Throwable e) {
-        logger.fatal(errMessage);
-        ArrayList errors = logErrors("MSG-1001", errMessage, inDoc);
-        publishSyncError(controleArea, errors, e);
-        logExecutionComplete();
-    }
-
-    private void rollback(java.sql.Connection conn) {
-        logger.info("Rolling back transaction because of some error...");
-        try {
-            if (conn != null) {
-                conn.rollback();
-            }
-        } catch (Exception e1) {
-        }
-    }
-
     private XmlEnterpriseObject retrieveAndBuildObject(String comment, String msgObject, String msgObjectName, Element eData)
             throws CommandException {
         XmlEnterpriseObject xeo = null;
-        logger.info("msgObject=" + msgObject + ", msgObjectName=" + msgObjectName);
+        logger.debug("msgObject=" + msgObject + ", msgObjectName=" + msgObjectName);
 
         try {
             xeo = (XmlEnterpriseObject) getAppConfig().getObject(msgObjectName);
@@ -287,17 +348,13 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             }
         }
 
-        logger.info("buildObjectFromInput()...");
+        logger.debug("buildObjectFromInput()...");
         try {
             xeo.buildObjectFromInput(eData);
             if (comment != null) {
-                if (_verbose) {
-                    logger.info(comment + " Object is: " + xeo.toXmlString());
-                }
+                logger.debug(comment + " Object is: " + xeo.toXmlString());
             } else {
-                if (_verbose) {
-                    logger.info("Object is: " + xeo.toXmlString());
-                }
+                logger.debug("Object is: " + xeo.toXmlString());
             }
         } catch (Throwable e) {
             logger.error(e);
@@ -321,4 +378,16 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         errors.add(buildError("application", errNumber, errMessage));
         return errors;
     }
+}
+
+class AccountCsv {
+    Account account;
+    // format: Leo Notenboom <leo@somerandomservice.com>
+    String OwnerEmail = "";
+    String CreateUserEmail = "";
+    String UpdateUserEmail = "";
+}
+
+enum TITLE {
+    ACCOUNT_ID, ACCOUNT_NAME, COMPLIANCE_CLASS, PASSWORD_LOCATION, ACCOUNT_OWNER_ID, FINANCIAL_ACCOUNT_NUMBER, CREATE_USER, CREATE_DATETIME, LAST_UPDATE_USER, LAST_UPDATE_DATETIME, OWNER_EMAIL, CREATE_USER_EMAIL, UPDATE_USER_EMAIL
 }
