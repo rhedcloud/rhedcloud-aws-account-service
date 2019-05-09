@@ -1,7 +1,7 @@
 ####build and start service locally 
 ####  uncomment ./gen-webservice awsaccount to generate ws
 git pull
-#mvn package
+mvn package
 
 mkdir -p target/deploy/lib
 cp deploy/build-test/tests/AwsAccountService.xml target/deploy

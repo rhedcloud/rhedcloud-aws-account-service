@@ -77,5 +77,6 @@
 	<classpathentry kind="lib" path="lib/dynamo/spdy-jetty-8.1.12.v20130726.jar"/>
 	<classpathentry kind="lib" path="lib/dynamo/spdy-jetty-http-8.1.12.v20130726.jar"/>
 	<classpathentry kind="lib" path="lib/dynamo/sqlite4java.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

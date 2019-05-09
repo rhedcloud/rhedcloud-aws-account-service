@@ -21,8 +21,39 @@
      <target>1.8</target>
     </configuration>
    </plugin>
+   <!--not yet working-->
+   <!--
+  <plugin>  
+   <groupId>org.codehaus.mojo</groupId>  
+   <artifactId>exec-maven-plugin</artifactId>  
+   <version>1.1.1</version>  
+   <executions>  
+    <execution>  
+     <phase>test</phase>  
+     <goals>  
+      <goal>java</goal>  
+     </goals>  
+     <configuration>  
+      <mainClass>org.openeai.afa.GenericAppRunner</mainClass>  
+      <arguments>  
+       <workingDirectory>target/deploy</workingDirectory>
+       <argument>arg0</argument>  
+       <argument>arg1</argument>  
+      </arguments>  
+      <systemProperties>
+            <systemProperty>
+              <key>myproperty</key>
+              <value>myvalue</value>
+            </systemProperty>
+      </systemProperties>
+     </configuration>  
+    </execution>  
+   </executions>  
+  </plugin>
+-->  
   </plugins>
  </build>
+ 
  <!-- <distributionManagement> <snapshotRepository> <id>m2.n2nservices.com</id> <name>m2.n2nservices.com-snapshots</name> <url>https://m2.n2nservices.com/artifactory/libs-snapshot-local</url> 
   </snapshotRepository> </distributionManagement> -->
 
@@ -164,10 +195,26 @@
    <systemPath>${project.basedir}/lib/xstream-1.4.10.jar</systemPath>
   </dependency>
 
+  <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>guava-18.0.jar</artifactId>
+   <version>18.0</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/guava-18.0.jar</systemPath>
+  </dependency>
+    <dependency>
+   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <artifactId>junit-4.10.jar</artifactId>
+   <version>4.10</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/junit-4.10.jar</systemPath>
+  </dependency>
   <!-- added for compile/package goal -->
   <!-- <dependency> <groupId>org.apache</groupId> <artifactId>commons-logging</artifactId> <version>1.1.1</version> <scope>system</scope> <systemPath>${project.basedir}/src/main/resources/commons-logging-1.1.1.jar</systemPath> 
    </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> <version>3.1.2-RELEASE</version> <scope>system</scope> 
    <systemPath>${project.basedir}/src/main/resources/spring-context-3.1.2.RELEASE.jar</systemPath> </dependency> -->
  </dependencies>
+
+
 
 </project>
