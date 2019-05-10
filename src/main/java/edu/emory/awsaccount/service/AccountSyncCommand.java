@@ -66,7 +66,7 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
     private boolean _verbose;
     protected ProducerPool _producerPool = null;
     private static final String GENERAL_PROPERTIES = "GeneralProperties";
-    SimpleDateFormat format = null;
+    private SimpleDateFormat simpleDateFormat = null;
     private File tempDir = null;
     private UploadToS3 uploadToS3;
     // private boolean cleanTempDir = true;
@@ -107,7 +107,7 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             // cleanTempDir = new
             // Boolean(getProperties().getProperty("cleanTempDir",
             // "true")).booleanValue();
-            format = new SimpleDateFormat(getProperties().getProperty("simpleDateFormat", "yyyy-MM-dd-HH.mm.ss"));
+            simpleDateFormat = new SimpleDateFormat(getProperties().getProperty("simpleDateFormat", "yyyy-MM-dd-HH.mm.ss"));
             tempDir = new File("temp");
             tempDir.mkdir();
             uploadToS3 = new UploadToS3(getProperties());
@@ -230,7 +230,7 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
 
     private void toCsvFileAndUploadToS3(List<String[]> dataLines) throws IOException {
         FileUtils.cleanDirectory(tempDir);
-        String fileName = getDeployEnv() + "." + format.format(new Date()) + ".csv";
+        String fileName = getDeployEnv() + "." + simpleDateFormat.format(new Date()) + ".csv";
         logger.info("fileName=" + fileName);
         File csvOutputFile = new File(tempDir + "/" + fileName);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
@@ -367,7 +367,7 @@ class AccountCsvRow {
     }
 
     private Account account;
-    // email format: Leo Notenboom <leo@somerandomservice.com>
+    // email simpleDateFormat: Leo Notenboom <leo@somerandomservice.com>
     private String OwnerName = "";
     private String OwnerEmail = "";
     private String CreateUserName = "";
@@ -376,12 +376,15 @@ class AccountCsvRow {
     private String UpdateUserEmail = "";
 
     public String[] toStrings() {
-        return new String[] { "=\"" + account.getAccountId() + "\"", account.getAccountName(), account.getComplianceClass(),
-                account.getPasswordLocation(), account.getAccountOwnerId(), account.getFinancialAccountNumber(), account.getCreateUser(),
-                format.format(account.getCreateDatetime().toCalendar().getTime()),
+        return new String[] { disableNumberFormatting(account.getAccountId()), account.getAccountName(), account.getComplianceClass(),
+                account.getPasswordLocation(), account.getAccountOwnerId(), disableNumberFormatting(account.getFinancialAccountNumber()),
+                account.getCreateUser(), format.format(account.getCreateDatetime().toCalendar().getTime()),
                 account.getLastUpdateUser() == null ? "" : account.getLastUpdateUser(),
                 account.getLastUpdateDatetime() == null ? "" : format.format(account.getLastUpdateDatetime().toCalendar().getTime()),
                 OwnerName, OwnerEmail, CreateUserName, CreateUserEmail, UpdateUserName, UpdateUserEmail };
+    }
+    private static String disableNumberFormatting(String s) {
+        return "=\"" + s + "\"";
     }
 }
 

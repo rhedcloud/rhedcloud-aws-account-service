@@ -243,7 +243,7 @@
 <PropertyValue>true</PropertyValue>
 </Property><Property>
 <PropertyName>simpleDateFormat</PropertyName>
-<PropertyValue>yyyy-MM-dd-HH.mm.ss</PropertyValue>
+<PropertyValue>yyyy-MM-dd HH.mm.ss</PropertyValue>
 </Property><Property>
 <PropertyName>bucketName</PropertyName>
 <PropertyValue>edu.emory.awsbilling.accountmetadata</PropertyValue>
