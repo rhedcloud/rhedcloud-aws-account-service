@@ -69,16 +69,31 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
     SimpleDateFormat format = null;
     private File tempDir = null;
     private UploadToS3 uploadToS3;
-    private boolean cleanTempDir = true;
-    // TODO: cleanTempDir
+    // private boolean cleanTempDir = true;
+
     CacheLoader<String, DirectoryPerson> loader = new CacheLoader<String, DirectoryPerson>() {
         @Override
         public DirectoryPerson load(String key) {
             if (key == null || key.length() == 0)
                 return null;
-            return queryDirectoryPerson(key);
+            MessageProducer messageProducer = null;
+            List<DirectoryPerson> accounts = null;
+            try {
+                DirectoryPerson diretoryPerson = (DirectoryPerson) getAppConfig().getObjectByType(DirectoryPerson.class.getName());
+                DirectoryPersonQuerySpecification diretoryPersonQuerySpecification = (DirectoryPersonQuerySpecification) getAppConfig()
+                        .getObjectByType(DirectoryPersonQuerySpecification.class.getName());
+                diretoryPersonQuerySpecification.setKey(key);
+                messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
+                accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+            } catch (Throwable e) {
+                logger.error(LOGTAG, e);
+            } finally {
+                directoryServiceProducerPool.releaseProducer(messageProducer);
+            }
+            return accounts.get(0);
         }
     };
+
     LoadingCache<String, DirectoryPerson> directoryPersonCache = CacheBuilder.newBuilder().build(loader);
 
     public AccountSyncCommand(CommandConfig cConfig) throws InstantiationException, EnterpriseConfigurationObjectException {
@@ -89,7 +104,9 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             awsAccountServiceRequestProducerPool = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
             directoryServiceProducerPool = (ProducerPool) getAppConfig().getObject("DirectoryServiceProducerPool");
             _verbose = new Boolean(getProperties().getProperty("verbose", "true")).booleanValue();
-            cleanTempDir = new Boolean(getProperties().getProperty("cleanTempDir", "true")).booleanValue();
+            // cleanTempDir = new
+            // Boolean(getProperties().getProperty("cleanTempDir",
+            // "true")).booleanValue();
             format = new SimpleDateFormat(getProperties().getProperty("simpleDateFormat", "yyyy-MM-dd-HH.mm.ss"));
             tempDir = new File("temp");
             tempDir.mkdir();
@@ -106,10 +123,6 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         }
         logger.info(ReleaseTag.getReleaseInfo());
         logger.info("AccountSyncCommand, initialized successfully.");
-    }
-
-    private void logExecutionComplete() {
-        logger.info("[AccountSyncCommand] - execution complete...");
     }
 
     @Override
@@ -187,37 +200,32 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
 
         try {
             List<Account> accounts = queryAllAccounts();
-            List<AccountCsv> accountCsvs = new ArrayList<>();
-            for (Account a : accounts) {
-                AccountCsv accountCsv = accountToAccountCsv(a);
-                accountCsvs.add(accountCsv);
-            }
-
-            List<String[]> dataLines = new ArrayList<>();
-            dataLines.add(toStrings(TITLE.values()));
-            for (AccountCsv accountCsv : accountCsvs) {
-                dataLines.add(toStrings(accountCsv));
-            }
-            toCsvFileAndUploadToS3(dataLines);
             logger.info(LOGTAG + "accounts.size=" + accounts.size());
+            List<AccountCsvRow> accountCsvs = accountsToAccountCsvs(accounts);
             logger.info(LOGTAG + "accountCsvs.size=" + accountCsvs.size());
+            List<String[]> dataLines = accountCsvsToDatalines(accountCsvs);
+            toCsvFileAndUploadToS3(dataLines);
         } catch (EnterpriseConfigurationObjectException | EnterpriseObjectQueryException | EnterpriseFieldException | IOException e) {
             logger.error(LOGTAG, e);
         }
     }
-    private String[] toStrings(Object[] objects) {
-        String[] ss = new String[objects.length];
-        for (int i = 0; i < objects.length; i++)
-            ss[i] = objects[i].toString();
-        return ss;
+
+    private List<String[]> accountCsvsToDatalines(List<AccountCsvRow> accountCsvs) {
+        List<String[]> dataLines = new ArrayList<>();
+        dataLines.add(TITLE.toStrings());
+        for (AccountCsvRow accountCsv : accountCsvs) {
+            dataLines.add(accountCsv.toStrings());
+        }
+        return dataLines;
     }
-    private String[] toStrings(AccountCsv a) {
-        return new String[] { a.account.getAccountId(), a.account.getAccountName(), a.account.getComplianceClass(),
-                a.account.getPasswordLocation(), a.account.getAccountOwnerId(), a.account.getFinancialAccountNumber(),
-                a.account.getCreateUser(), format.format(a.account.getCreateDatetime().toCalendar().getTime()),
-                a.account.getLastUpdateUser() == null ? "" : a.account.getLastUpdateUser(),
-                a.account.getLastUpdateDatetime() == null ? "" : format.format(a.account.getLastUpdateDatetime().toCalendar().getTime()),
-                a.OwnerEmail, a.CreateUserEmail, a.UpdateUserEmail };
+
+    private List<AccountCsvRow> accountsToAccountCsvs(List<Account> accounts) {
+        List<AccountCsvRow> accountCsvs = new ArrayList<>();
+        for (Account a : accounts) {
+            AccountCsvRow accountCsv = AccountCsvRow.fromAccount(a, directoryPersonCache);
+            accountCsvs.add(accountCsv);
+        }
+        return accountCsvs;
     }
 
     private void toCsvFileAndUploadToS3(List<String[]> dataLines) throws IOException {
@@ -253,30 +261,8 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         }
         return "LOCAL";
     }
-    private AccountCsv accountToAccountCsv(Account a) {
-        logger.debug(LOGTAG + "account=" + a.getAccountName());
-        AccountCsv acountCsv = new AccountCsv();
-        acountCsv.account = a;
 
-        try {
-            acountCsv.OwnerEmail = toEmail(directoryPersonCache.get(a.getAccountOwnerId()));
-            acountCsv.CreateUserEmail = toEmail(directoryPersonCache.get(a.getCreateUser()));
-            if (a.getLastUpdateUser() != null)
-                acountCsv.UpdateUserEmail = toEmail(directoryPersonCache.get(a.getLastUpdateUser()));
-        } catch (ExecutionException e) {
-            logger.error(LOGTAG, e);
-        }
-
-        return acountCsv;
-    }
-
-    private String toEmail(DirectoryPerson person) {
-        if (person == null)
-            return "";
-        return person.getFullName() + " <" + person.getEmail().getEmailAddress() + ">";
-    }
-
-    protected List<Account> queryAllAccounts()
+    private List<Account> queryAllAccounts()
             throws EnterpriseConfigurationObjectException, EnterpriseObjectQueryException, EnterpriseFieldException {
         Account account = (Account) getAppConfig().getObjectByType(Account.class.getName());
         AccountQuerySpecification accountQuerySpecification = (AccountQuerySpecification) getAppConfig()
@@ -289,24 +275,6 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             awsAccountServiceRequestProducerPool.releaseProducer(messageProducer);
         }
         return accounts;
-    }
-
-    protected DirectoryPerson queryDirectoryPerson(String key) {
-        MessageProducer messageProducer = null;
-        List<DirectoryPerson> accounts = null;
-        try {
-            DirectoryPerson diretoryPerson = (DirectoryPerson) getAppConfig().getObjectByType(DirectoryPerson.class.getName());
-            DirectoryPersonQuerySpecification diretoryPersonQuerySpecification = (DirectoryPersonQuerySpecification) getAppConfig()
-                    .getObjectByType(DirectoryPersonQuerySpecification.class.getName());
-            diretoryPersonQuerySpecification.setKey(key);
-            messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
-            accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
-        } catch (Throwable e) {
-            logger.error(LOGTAG, e);
-        } finally {
-            directoryServiceProducerPool.releaseProducer(messageProducer);
-        }
-        return accounts.get(0);
     }
 
     protected MessageProducer getRequestServiceMessageProducer(ProducerPool producerPool) {
@@ -362,32 +330,67 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         }
         return xeo;
     }
-
-    private final ArrayList logErrors(String errNumber, String errMessage, Throwable e, Document inDoc) {
-        logger.fatal(errMessage, e);
-        logger.fatal("Message sent in is: \n" + getMessageBody(inDoc));
-        ArrayList errors = new ArrayList();
-        errors.add(buildError("application", errNumber, errMessage));
-        return errors;
-    }
-
-    private final ArrayList logErrors(String errNumber, String errMessage, Document inDoc) {
-        logger.fatal(errMessage);
-        logger.fatal("Message sent in is: \n" + getMessageBody(inDoc));
-        ArrayList errors = new ArrayList();
-        errors.add(buildError("application", errNumber, errMessage));
-        return errors;
-    }
 }
 
-class AccountCsv {
-    Account account;
-    // format: Leo Notenboom <leo@somerandomservice.com>
-    String OwnerEmail = "";
-    String CreateUserEmail = "";
-    String UpdateUserEmail = "";
+class AccountCsvRow {
+    private static Logger logger = Logger.getLogger(AccountCsvRow.class);
+    private static String LOGTAG = "[AccountCsvRow] ";
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public static AccountCsvRow fromAccount(Account a, LoadingCache<String, DirectoryPerson> directoryPersonCache) {
+        logger.debug(LOGTAG + "account=" + a.getAccountName());
+        AccountCsvRow acountCsv = new AccountCsvRow();
+        acountCsv.account = a;
+        try {
+            acountCsv.OwnerName = toName(directoryPersonCache.get(a.getAccountOwnerId()));
+            acountCsv.OwnerEmail = toEmail(directoryPersonCache.get(a.getAccountOwnerId()));
+            acountCsv.CreateUserName = toName(directoryPersonCache.get(a.getCreateUser()));
+            acountCsv.CreateUserEmail = toEmail(directoryPersonCache.get(a.getCreateUser()));
+            if (a.getLastUpdateUser() != null) {
+                acountCsv.UpdateUserName = toName(directoryPersonCache.get(a.getLastUpdateUser()));
+                acountCsv.UpdateUserEmail = toEmail(directoryPersonCache.get(a.getLastUpdateUser()));
+            }
+        } catch (ExecutionException e) {
+            logger.error(LOGTAG, e);
+        }
+        return acountCsv;
+    }
+    private static String toName(DirectoryPerson person) {
+        if (person == null)
+            return "";
+        return person.getFullName();
+    }
+    private static String toEmail(DirectoryPerson person) {
+        if (person == null)
+            return "";
+        return person.getFullName() + " <" + person.getEmail().getEmailAddress() + ">";
+    }
+
+    private Account account;
+    // email format: Leo Notenboom <leo@somerandomservice.com>
+    private String OwnerName = "";
+    private String OwnerEmail = "";
+    private String CreateUserName = "";
+    private String CreateUserEmail = "";
+    private String UpdateUserName = "";
+    private String UpdateUserEmail = "";
+
+    public String[] toStrings() {
+        return new String[] { account.getAccountId(), account.getAccountName(), account.getComplianceClass(), account.getPasswordLocation(),
+                account.getAccountOwnerId(), account.getFinancialAccountNumber(), account.getCreateUser(),
+                format.format(account.getCreateDatetime().toCalendar().getTime()),
+                account.getLastUpdateUser() == null ? "" : account.getLastUpdateUser(),
+                account.getLastUpdateDatetime() == null ? "" : format.format(account.getLastUpdateDatetime().toCalendar().getTime()),
+                OwnerName, OwnerEmail, CreateUserName, CreateUserEmail, UpdateUserName, UpdateUserEmail };
+    }
 }
 
 enum TITLE {
-    ACCOUNT_ID, ACCOUNT_NAME, COMPLIANCE_CLASS, PASSWORD_LOCATION, ACCOUNT_OWNER_ID, FINANCIAL_ACCOUNT_NUMBER, CREATE_USER, CREATE_DATETIME, LAST_UPDATE_USER, LAST_UPDATE_DATETIME, OWNER_EMAIL, CREATE_USER_EMAIL, UPDATE_USER_EMAIL
+    ACCOUNT_ID, ACCOUNT_NAME, COMPLIANCE_CLASS, PASSWORD_LOCATION, ACCOUNT_OWNER_ID, FINANCIAL_ACCOUNT_NUMBER, CREATE_USER, CREATE_DATETIME, LAST_UPDATE_USER, LAST_UPDATE_DATETIME, OWNER_NAME, OWNER_EMAIL, CREATE_USER_NAME, CREATE_USER_EMAIL, UPDATE_USER_NAME, UPDATE_USER_EMAIL;
+    public static String[] toStrings() {
+        String[] ss = new String[values().length];
+        for (int i = 0; i < values().length; i++)
+            ss[i] = values()[i].toString();
+        return ss;
+    }
 }
