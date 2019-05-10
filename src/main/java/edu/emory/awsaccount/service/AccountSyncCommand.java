@@ -363,7 +363,7 @@ class AccountCsvRow {
     private static String toEmail(DirectoryPerson person) {
         if (person == null)
             return "";
-        return person.getFullName() + " <" + person.getEmail().getEmailAddress() + ">";
+        return person.getEmail().getEmailAddress();
     }
 
     private Account account;
@@ -376,8 +376,8 @@ class AccountCsvRow {
     private String UpdateUserEmail = "";
 
     public String[] toStrings() {
-        return new String[] { account.getAccountId(), account.getAccountName(), account.getComplianceClass(), account.getPasswordLocation(),
-                account.getAccountOwnerId(), account.getFinancialAccountNumber(), account.getCreateUser(),
+        return new String[] { "=\"" + account.getAccountId() + "\"", account.getAccountName(), account.getComplianceClass(),
+                account.getPasswordLocation(), account.getAccountOwnerId(), account.getFinancialAccountNumber(), account.getCreateUser(),
                 format.format(account.getCreateDatetime().toCalendar().getTime()),
                 account.getLastUpdateUser() == null ? "" : account.getLastUpdateUser(),
                 account.getLastUpdateDatetime() == null ? "" : format.format(account.getLastUpdateDatetime().toCalendar().getTime()),
