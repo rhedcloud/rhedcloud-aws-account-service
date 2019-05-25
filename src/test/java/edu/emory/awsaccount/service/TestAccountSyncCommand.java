@@ -1,13 +1,14 @@
 package edu.emory.awsaccount.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+//import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.Test;
 
 class TestAccountSyncCommand {
 
-    @BeforeEach
+    // @BeforeEach
     void setUp() throws Exception {
     }
 

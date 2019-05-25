@@ -1,13 +1,12 @@
 package edu.emory.awsaccount.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+//import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 class S3HelperTest {
 
-    @BeforeEach
+    // @BeforeEach
     void setUp() throws Exception {
     }
 
