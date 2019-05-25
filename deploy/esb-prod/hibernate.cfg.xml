@@ -2,9 +2,11 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 <session-factory>
+<!-- no longer updated
 <property name="connection.url">jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/GENPRD,cn=OracleContext,dc=emory,dc=edu</property>
 <property name="connection.username">awsaccount</property>
 <property name="connection.password">***REMOVED***</property>
+-->
 <property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
 <property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
 <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>

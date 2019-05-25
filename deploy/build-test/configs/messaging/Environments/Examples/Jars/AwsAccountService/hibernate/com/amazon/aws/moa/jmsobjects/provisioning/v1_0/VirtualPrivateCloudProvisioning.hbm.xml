@@ -16,7 +16,7 @@
 <!--TODO: automation-->
 <bag name="CustomerAdminUserId" table="VRTL_PRVT_CLD_PRVSNNG_CSTDMND_" >
 <key column="PROVISIONING_ID" unique="false"/>
-<element type="string" column="CUSTOMER_ADMIN_USER_ID" />
+<element type="string" column="CUSTOMER_ADMIN_USER_ID" not-null="true"/>
 </bag>
 
 <property name="Type" column="TYPE_"/>
