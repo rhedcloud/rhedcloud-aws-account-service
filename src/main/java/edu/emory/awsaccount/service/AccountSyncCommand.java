@@ -67,8 +67,8 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
     protected ProducerPool _producerPool = null;
     private static final String GENERAL_PROPERTIES = "GeneralProperties";
     private SimpleDateFormat simpleDateFormat = null;
-    private File tempDir = null;
-    private UploadToS3 uploadToS3;
+    private File tempDir = new File("temp");
+    private S3Helper uploadToS3;
     // private boolean cleanTempDir = true;
 
     CacheLoader<String, DirectoryPerson> loader = new CacheLoader<String, DirectoryPerson>() {
@@ -77,19 +77,30 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             if (key == null || key.length() == 0)
                 return null;
             MessageProducer messageProducer = null;
-            List<DirectoryPerson> accounts = null;
+            List<DirectoryPerson> accounts = new ArrayList<>();
             try {
                 DirectoryPerson diretoryPerson = (DirectoryPerson) getAppConfig().getObjectByType(DirectoryPerson.class.getName());
                 DirectoryPersonQuerySpecification diretoryPersonQuerySpecification = (DirectoryPersonQuerySpecification) getAppConfig()
                         .getObjectByType(DirectoryPersonQuerySpecification.class.getName());
                 diretoryPersonQuerySpecification.setKey(key);
                 messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
-                accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+                try {
+                    accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+                } catch (Exception e) {
+                    if (accounts == null || accounts.isEmpty()) {
+                        diretoryPersonQuerySpecification.setKey(null);
+                        diretoryPersonQuerySpecification.setSearchString(key);
+                        messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
+                        accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+                    }
+                }
             } catch (Throwable e) {
                 logger.error(LOGTAG, e);
             } finally {
                 directoryServiceProducerPool.releaseProducer(messageProducer);
             }
+            if (accounts == null || accounts.size() == 0)
+                return null;
             return accounts.get(0);
         }
     };
@@ -108,9 +119,9 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             // Boolean(getProperties().getProperty("cleanTempDir",
             // "true")).booleanValue();
             simpleDateFormat = new SimpleDateFormat(getProperties().getProperty("simpleDateFormat", "yyyy-MM-dd-HH.mm.ss"));
-            tempDir = new File("temp");
+
             tempDir.mkdir();
-            uploadToS3 = new UploadToS3(getProperties());
+            uploadToS3 = new S3Helper(getProperties());
         } catch (Exception e) {
             throw new InstantiationException(LOGTAG + e.getMessage());
         }
@@ -171,7 +182,10 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         }
         Account account = null;
         Account accountBaseline = null;
-
+        String senderAppId = controleArea.getChild("Sender").getChild("MessageId").getChild("SenderAppId").getValue();
+        Element eAuthUserId = controleArea.getChild("Sender").getChild("Authentication").getChild("AuthUserId");
+        String authUserId = eAuthUserId.getValue();
+        String authUser = parseAuthUser(authUserId);
         try {
             account = (Account) retrieveAndBuildObject("New/DeleteData", msgObject, msgObjectName, objectElement);
         } catch (Throwable e) {
@@ -198,16 +212,41 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
             }
         }
 
+        if (msgAction.equals("Delete")) {
+            List<String[]> deletedAccountDataLines = uploadToS3.readDeletedAccounts();
+            deletedAccountDataLines.add(AccountCsvRow.fromAccount(account, directoryPersonCache, authUser).toStrings());
+            // TODO exclusive write???
+            try {
+                uploadToS3.writeDeletedAccounts(deletedAccountDataLines);
+            } catch (IOException e) {
+                logger.error(LOGTAG, e);
+            }
+        }
+        List<String[]> deletedAccountDataLines = uploadToS3.readDeletedAccounts();
+        logger.info("deletedAccountDataLines.size()=" + deletedAccountDataLines.size());
         try {
             List<Account> accounts = queryAllAccounts();
             logger.info(LOGTAG + "accounts.size=" + accounts.size());
             List<AccountCsvRow> accountCsvs = accountsToAccountCsvs(accounts);
             logger.info(LOGTAG + "accountCsvs.size=" + accountCsvs.size());
             List<String[]> dataLines = accountCsvsToDatalines(accountCsvs);
-            toCsvFileAndUploadToS3(dataLines);
+            dataLines.addAll(deletedAccountDataLines);
+            String fileName = getDeployEnv() + "." + simpleDateFormat.format(new Date()) + ".csv";
+            uploadToS3.toCsvFileAndUploadToS3(dataLines, fileName);
         } catch (EnterpriseConfigurationObjectException | EnterpriseObjectQueryException | EnterpriseFieldException | IOException e) {
             logger.error(LOGTAG, e);
         }
+    }
+
+    protected static String parseAuthUser(String authUserId) {
+        String authUser = "";
+        if (authUserId != null) {
+            authUser = authUserId;
+            if (authUserId.contains("/")) {
+                authUser = authUserId.substring(0, authUserId.indexOf("/"));
+            }
+        }
+        return authUser;
     }
 
     private List<String[]> accountCsvsToDatalines(List<AccountCsvRow> accountCsvs) {
@@ -228,20 +267,22 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
         return accountCsvs;
     }
 
-    private void toCsvFileAndUploadToS3(List<String[]> dataLines) throws IOException {
-        FileUtils.cleanDirectory(tempDir);
-        String fileName = getDeployEnv() + "." + simpleDateFormat.format(new Date()) + ".csv";
-        logger.info("fileName=" + fileName);
-        File csvOutputFile = new File(tempDir + "/" + fileName);
-        try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-            dataLines.stream().map(this::convertToCSV).forEach(pw::println);
-            pw.close();
-        }
-        uploadToS3.execute(fileName, csvOutputFile.getAbsolutePath());
-    }
-    public String convertToCSV(String[] data) {
-        return Stream.of(data).collect(Collectors.joining(","));
-    }
+    // public void toCsvFileAndUploadToS3(List<String[]> dataLines) throws
+    // IOException {
+    // FileUtils.cleanDirectory(tempDir);
+    // String fileName = getDeployEnv() + "." + simpleDateFormat.format(new
+    // Date()) + ".csv";
+    // logger.info("fileName=" + fileName);
+    // File csvOutputFile = new File(tempDir + "/" + fileName);
+    // try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+    // dataLines.stream().map(AccountSyncCommand::convertToCSV).forEach(pw::println);
+    // pw.close();
+    // }
+    // uploadToS3.execute(fileName, csvOutputFile.getAbsolutePath());
+    // }
+    // public static String convertToCSV(String[] data) {
+    // return Stream.of(data).collect(Collectors.joining(","));
+    // }
 
     public static String getDeployEnv() {
         // docUriBase.dev=https://dev-config.app.emory.edu/
@@ -355,6 +396,22 @@ class AccountCsvRow {
         }
         return acountCsv;
     }
+
+    public static AccountCsvRow fromAccount(Account a, LoadingCache<String, DirectoryPerson> directoryPersonCache, String deleteUserId) {
+        AccountCsvRow accountCsvRow = fromAccount(a, directoryPersonCache);
+        accountCsvRow.DeleteUserId = deleteUserId;
+        try {
+            DirectoryPerson deletePerson = directoryPersonCache.get(deleteUserId);
+            if (deletePerson != null) {
+                accountCsvRow.DeleteUserName = deletePerson.getFullName();
+                accountCsvRow.DeleteUserEmail = deletePerson.getEmail() == null ? "" : deletePerson.getEmail().getEmailAddress();
+            }
+        } catch (ExecutionException e) {
+            logger.error(LOGTAG, e);
+        }
+        accountCsvRow.DeleteDatetime = format.format(new Date());
+        return accountCsvRow;
+    }
     private static String toName(DirectoryPerson person) {
         if (person == null)
             return "";
@@ -374,6 +431,10 @@ class AccountCsvRow {
     private String CreateUserEmail = "";
     private String UpdateUserName = "";
     private String UpdateUserEmail = "";
+    private String DeleteUserId = "";
+    private String DeleteUserName = "";
+    private String DeleteUserEmail = "";
+    private String DeleteDatetime = "";
 
     public String[] toStrings() {
         return new String[] { disableNumberFormatting(account.getAccountId()), account.getAccountName(), account.getComplianceClass(),
@@ -381,7 +442,8 @@ class AccountCsvRow {
                 account.getCreateUser(), format.format(account.getCreateDatetime().toCalendar().getTime()),
                 account.getLastUpdateUser() == null ? "" : account.getLastUpdateUser(),
                 account.getLastUpdateDatetime() == null ? "" : format.format(account.getLastUpdateDatetime().toCalendar().getTime()),
-                OwnerName, OwnerEmail, CreateUserName, CreateUserEmail, UpdateUserName, UpdateUserEmail };
+                OwnerName, OwnerEmail, CreateUserName, CreateUserEmail, UpdateUserName, UpdateUserEmail, DeleteUserId, DeleteUserName,
+                DeleteUserEmail, DeleteDatetime };
     }
     private static String disableNumberFormatting(String s) {
         return "=\"" + s + "\"";
@@ -389,7 +451,7 @@ class AccountCsvRow {
 }
 
 enum TITLE {
-    ACCOUNT_ID, ACCOUNT_NAME, COMPLIANCE_CLASS, PASSWORD_LOCATION, ACCOUNT_OWNER_ID, FINANCIAL_ACCOUNT_NUMBER, CREATE_USER, CREATE_DATETIME, LAST_UPDATE_USER, LAST_UPDATE_DATETIME, OWNER_NAME, OWNER_EMAIL, CREATE_USER_NAME, CREATE_USER_EMAIL, UPDATE_USER_NAME, UPDATE_USER_EMAIL;
+    ACCOUNT_ID, ACCOUNT_NAME, COMPLIANCE_CLASS, PASSWORD_LOCATION, ACCOUNT_OWNER_ID, FINANCIAL_ACCOUNT_NUMBER, CREATE_USER, CREATE_DATETIME, LAST_UPDATE_USER, LAST_UPDATE_DATETIME, OWNER_NAME, OWNER_EMAIL, CREATE_USER_NAME, CREATE_USER_EMAIL, UPDATE_USER_NAME, UPDATE_USER_EMAIL, DELETE_USER_ID, DELETE_USER_NAME, DELETE_USER_EMAIL, DELETE_DATETIME;
     public static String[] toStrings() {
         String[] ss = new String[values().length];
         for (int i = 0; i < values().length; i++)
