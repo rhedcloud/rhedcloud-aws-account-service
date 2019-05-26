@@ -57,9 +57,9 @@ import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
  * @author gwang28
  *
  */
-public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
-    private static Logger logger = Logger.getLogger(AccountSyncCommand.class);
-    private static String LOGTAG = "[AccountSyncCommand] ";
+public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncCommand {
+    private static Logger logger = Logger.getLogger(AccountCsvSyncCommand.class);
+    private static String LOGTAG = "[AccountCsvSyncCommand] ";
     protected static int requestTimeoutIntervalMilli = -1;
     protected ProducerPool awsAccountServiceRequestProducerPool;
     protected ProducerPool directoryServiceProducerPool;
@@ -107,9 +107,9 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
 
     LoadingCache<String, DirectoryPerson> directoryPersonCache = CacheBuilder.newBuilder().build(loader);
 
-    public AccountSyncCommand(CommandConfig cConfig) throws InstantiationException, EnterpriseConfigurationObjectException {
+    public AccountCsvSyncCommand(CommandConfig cConfig) throws InstantiationException, EnterpriseConfigurationObjectException {
         super(cConfig);
-        logger.info("AccountSyncCommand, initializing... ");
+        logger.info("AccountCsvSyncCommand, initializing... ");
         try {
             setProperties(getAppConfig().getProperties(GENERAL_PROPERTIES));
             awsAccountServiceRequestProducerPool = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
@@ -133,7 +133,7 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
                     + "Processing will continue but Sync Messages will not be published " + "when changes are made via this Command.");
         }
         logger.info(ReleaseTag.getReleaseInfo());
-        logger.info("AccountSyncCommand, initialized successfully.");
+        logger.info("AccountCsvSyncCommand, initialized successfully.");
     }
 
     @Override
@@ -275,7 +275,7 @@ public class AccountSyncCommand extends SyncCommandImpl implements SyncCommand {
     // logger.info("fileName=" + fileName);
     // File csvOutputFile = new File(tempDir + "/" + fileName);
     // try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-    // dataLines.stream().map(AccountSyncCommand::convertToCSV).forEach(pw::println);
+    // dataLines.stream().map(AccountCsvSyncCommand::convertToCSV).forEach(pw::println);
     // pw.close();
     // }
     // uploadToS3.execute(fileName, csvOutputFile.getAbsolutePath());
@@ -405,6 +405,7 @@ class AccountCsvRow {
             if (deletePerson != null) {
                 accountCsvRow.DeleteUserName = deletePerson.getFullName();
                 accountCsvRow.DeleteUserEmail = deletePerson.getEmail() == null ? "" : deletePerson.getEmail().getEmailAddress();
+                accountCsvRow.DeleteUserId = deletePerson.getKey();
             }
         } catch (ExecutionException e) {
             logger.error(LOGTAG, e);

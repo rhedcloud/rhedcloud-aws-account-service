@@ -50,8 +50,8 @@
 <DestinationName>cn=AwsAccountServiceTopic</DestinationName>
 <Commands writeToFile="false" outboundXmlValidation="false" inboundXmlValidation="false">
 <Command writeToFile="false" type="syncMessage" outboundXmlValidation="false" isDefault="true" isAbsolute="true" inboundXmlValidation="false">
-<CommandName>AccountSyncCommand</CommandName>
-<CommandClass>edu.emory.awsaccount.service.AccountSyncCommand</CommandClass>
+<CommandName>AccountCsvSyncCommand</CommandName>
+<CommandClass>edu.emory.awsaccount.service.AccountCsvSyncCommand</CommandClass>
 <Configuration initializeUsingThreads="false">
 <ProducerConfigs>
 <ProducerConfig transacted="false" tempQueuePoolSize="5" startOnInitialization="true" name="SyncErrorPublisher" deliveryMode="PERSISTENT">
