@@ -11,7 +11,7 @@
 <property name="Region" column="REGION"/>
 <property name="Type" column="TYPE_"/>
 <property name="Purpose" column="PURPOSE"/>
-<bag name="Property" table="VIRTUAL_PRIVATE_CLOUD_PROPERTY">
+<bag name="Property" table="VIRTUAL_PRIVATE_CLOUD_PROPERTY" batch-size="50">
 <key column="VPC_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
 <property name="Key" column="KEY_"/>

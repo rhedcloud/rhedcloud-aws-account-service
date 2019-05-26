@@ -8,14 +8,14 @@
 <property name="AccountName" column="ACCOUNT_NAME"/>
 <property name="ComplianceClass" column="COMPLIANCE_CLASS"/>
 <property name="PasswordLocation" column="PASSWORD_LOCATION"/>
-<bag name="EmailAddress" table="ACCOUNT_EMAIL_ADDRESS">
+<bag name="EmailAddress" table="ACCOUNT_EMAIL_ADDRESS" batch-size="50">
 <key column="ACCOUNT_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.EmailAddress">
 <property name="Type" column="TYPE_"/>
 <property name="Email" column="EMAIL"/>
 </composite-element>
 </bag>
-<bag name="Property" table="ACCOUNT_PROPERTY">
+<bag name="Property" table="ACCOUNT_PROPERTY" batch-size="50">
 <key column="ACCOUNT_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
 <property name="Key" column="KEY_"/>
