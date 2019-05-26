@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-class TestAccountSyncCommand {
+class AccountCvsSyncCommandTest {
 
     // @BeforeEach
     void setUp() throws Exception {
@@ -14,7 +14,7 @@ class TestAccountSyncCommand {
 
     @Test
     void test() {
-        assertEquals("gwang28@emory.edu", AccountSyncCommand.parseAuthUser("gwang28@emory.edu/10.110.32.14"));
+        assertEquals("gwang28@emory.edu", AccountCsvSyncCommand.parseAuthUser("gwang28@emory.edu/10.110.32.14"));
     }
 
 }
