@@ -83,7 +83,10 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
                 DirectoryPerson diretoryPerson = (DirectoryPerson) getAppConfig().getObjectByType(DirectoryPerson.class.getName());
                 DirectoryPersonQuerySpecification diretoryPersonQuerySpecification = (DirectoryPersonQuerySpecification) getAppConfig()
                         .getObjectByType(DirectoryPersonQuerySpecification.class.getName());
-                diretoryPersonQuerySpecification.setKey(key);
+                if (key.startsWith("P"))
+                    diretoryPersonQuerySpecification.setKey(key);
+                else
+                    diretoryPersonQuerySpecification.setSearchString(key);
                 messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
                 try {
                     accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
