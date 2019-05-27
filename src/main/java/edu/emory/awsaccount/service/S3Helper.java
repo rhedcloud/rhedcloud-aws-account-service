@@ -24,6 +24,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -78,7 +79,8 @@ public class S3Helper {
                 line = br.readLine();
             }
             br.close();
-
+        } catch (AmazonS3Exception a) {
+            LOG.error(a);
         } catch (Throwable e) {
             LOG.error(e);
         }
