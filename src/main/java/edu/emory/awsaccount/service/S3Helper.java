@@ -36,7 +36,6 @@ public class S3Helper {
     private String bucketName = "edu.emory.awsbilling.accountmetadata";
     private String accessKeyId = "***REMOVED***";
     private String secretKey = "***REMOVED***";
-    private String deletedAccountsFileName = "DeletedAccounts.csv";
     private File tempDir = new File("temp");
 
     public S3Helper(Properties properties) {
@@ -64,7 +63,7 @@ public class S3Helper {
         new S3Helper(null).uploadToS3("MobileAppReviewApprovalStat2.jpg", "MobileAppReviewApprovalStat2.jpg");
     }
     private String accountStr = " <Account><AccountId>436693799073</AccountId><AccountName>Emory Dev 309</AccountName><ComplianceClass>Standard</ComplianceClass><PasswordLocation>AWS default</PasswordLocation><EmailAddress><Type>primary</Type><Email>aws-dev-309@emory.edu</Email></EmailAddress><EmailAddress><Type>operations</Type><Email>aws-dev-309@emory.edu</Email></EmailAddress><Property><Key>srdExempt</Key><Value>true</Value></Property><AccountOwnerId>P0934572</AccountOwnerId><FinancialAccountNumber>1521000000</FinancialAccountNumber><CreateUser>P0934572</CreateUser><CreateDatetime><Year>2019</Year><Month>2</Month><Day>13</Day><Hour>14</Hour><Minute>43</Minute><Second>47</Second><SubSecond>24</SubSecond><Timezone>America/New_York</Timezone></CreateDatetime><LastUpdateUser>P4883103</LastUpdateUser><LastUpdateDatetime><Year>2019</Year><Month>2</Month><Day>19</Day><Hour>14</Hour><Minute>49</Minute><Second>55</Second><SubSecond>80</SubSecond><Timezone>America/New_York</Timezone></LastUpdateDatetime></Account>";
-    public List<String[]> readDeletedAccounts() {
+    public List<String[]> readDeletedAccounts(String deletedAccountsFileName) {
         List<String[]> dataLines = new ArrayList<>();
         try {
             AmazonS3 amazonS3 = getS3();
@@ -91,8 +90,8 @@ public class S3Helper {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
         return amazonS3;
     }
-    public void writeDeletedAccounts(List<String[]> deletedAccountDataLines) throws IOException {
-        toCsvFileAndUploadToS3(deletedAccountDataLines, deletedAccountsFileName);
+    public void writeDeletedAccounts(List<String[]> deletedAccountDataLines, String deletedAccountsFileNameFull) throws IOException {
+        toCsvFileAndUploadToS3(deletedAccountDataLines, deletedAccountsFileNameFull);
     }
     public void toCsvFileAndUploadToS3(List<String[]> dataLines, String fileName) throws IOException {
         FileUtils.cleanDirectory(tempDir);

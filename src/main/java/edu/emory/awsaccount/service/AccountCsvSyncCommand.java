@@ -68,7 +68,8 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
     private static final String GENERAL_PROPERTIES = "GeneralProperties";
     private SimpleDateFormat simpleDateFormat = null;
     private File tempDir = new File("temp");
-    private S3Helper uploadToS3;
+    protected static String deletedAccountsFileName = "DeletedAccounts.csv";
+    private S3Helper s3Helper;
     // private boolean cleanTempDir = true;
 
     CacheLoader<String, DirectoryPerson> loader = new CacheLoader<String, DirectoryPerson>() {
@@ -121,7 +122,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             simpleDateFormat = new SimpleDateFormat(getProperties().getProperty("simpleDateFormat", "yyyy-MM-dd-HH.mm.ss"));
 
             tempDir.mkdir();
-            uploadToS3 = new S3Helper(getProperties());
+            s3Helper = new S3Helper(getProperties());
         } catch (Exception e) {
             throw new InstantiationException(LOGTAG + e.getMessage());
         }
@@ -213,16 +214,16 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
         }
 
         if (msgAction.equals("Delete")) {
-            List<String[]> deletedAccountDataLines = uploadToS3.readDeletedAccounts();
+            List<String[]> deletedAccountDataLines = s3Helper.readDeletedAccounts(getDeletedAccountsFileNameFull());
             deletedAccountDataLines.add(AccountCsvRow.fromAccount(account, directoryPersonCache, authUser).toStrings());
             // TODO exclusive write???
             try {
-                uploadToS3.writeDeletedAccounts(deletedAccountDataLines);
+                s3Helper.writeDeletedAccounts(deletedAccountDataLines, getDeletedAccountsFileNameFull());
             } catch (IOException e) {
                 logger.error(LOGTAG, e);
             }
         }
-        List<String[]> deletedAccountDataLines = uploadToS3.readDeletedAccounts();
+        List<String[]> deletedAccountDataLines = s3Helper.readDeletedAccounts(getDeletedAccountsFileNameFull());
         logger.info("deletedAccountDataLines.size()=" + deletedAccountDataLines.size());
         try {
             List<Account> accounts = queryAllAccounts();
@@ -232,10 +233,14 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             List<String[]> dataLines = accountCsvsToDatalines(accountCsvs);
             dataLines.addAll(deletedAccountDataLines);
             String fileName = getDeployEnv() + "." + simpleDateFormat.format(new Date()) + ".csv";
-            uploadToS3.toCsvFileAndUploadToS3(dataLines, fileName);
+            s3Helper.toCsvFileAndUploadToS3(dataLines, fileName);
         } catch (EnterpriseConfigurationObjectException | EnterpriseObjectQueryException | EnterpriseFieldException | IOException e) {
             logger.error(LOGTAG, e);
         }
+    }
+
+    private String getDeletedAccountsFileNameFull() {
+        return getDeployEnv() + "-" + deletedAccountsFileName;
     }
 
     protected static String parseAuthUser(String authUserId) {
@@ -278,7 +283,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
     // dataLines.stream().map(AccountCsvSyncCommand::convertToCSV).forEach(pw::println);
     // pw.close();
     // }
-    // uploadToS3.execute(fileName, csvOutputFile.getAbsolutePath());
+    // s3Helper.execute(fileName, csvOutputFile.getAbsolutePath());
     // }
     // public static String convertToCSV(String[] data) {
     // return Stream.of(data).collect(Collectors.joining(","));
