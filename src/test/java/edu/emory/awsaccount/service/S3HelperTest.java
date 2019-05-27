@@ -13,7 +13,7 @@ class S3HelperTest {
     @Test
     void testRead() {
         S3Helper helper = new S3Helper(null);
-        helper.readDeletedAccounts();
+        helper.readDeletedAccounts("DEV-" + AccountCsvSyncCommand.deletedAccountsFileName);
     }
 
     @Test
