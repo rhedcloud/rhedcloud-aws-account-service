@@ -308,7 +308,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             if (docUriBase.startsWith("https://config"))
                 return "PROD";
         }
-        return "LOCAL";
+        return "PROD";
     }
 
     private List<Account> queryAllAccounts()
