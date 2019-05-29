@@ -297,8 +297,9 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
         // docUriBase.qa=https://qa-config.app.emory.edu/
         // docUriBase.stage=https://staging-config.app.emory.edu/
         // docUriBase.prod=https://config.app.emory.edu
-        String docUriBase = System.getProperty("docUriBase").trim();
+        String docUriBase = System.getProperty("docUriBase");
         if (docUriBase != null && docUriBase.length() > 0) {
+            docUriBase = docUriBase.trim();
             if (docUriBase.startsWith("https://dev"))
                 return "DEV";
             if (docUriBase.startsWith("https://qa"))
