@@ -144,6 +144,11 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 			<QueryLanguage type="hql" name="allVpcps" value="from VirtualPrivateCloudProvisioning order by CreateDatetime desc">
 			</QueryLanguage>
 		</VirtualPrivateCloudProvisioningQuerySpecification>
+		
+		<VirtualPrivateCloudProvisioningQuerySpecification>
+			<QueryLanguage type="named" name="pendingWithin30mins">
+			</QueryLanguage>
+		</VirtualPrivateCloudProvisioningQuerySpecification>
 	</querylanguage>
 	<querylanguage>
 		<VpnConnectionProvisioningQuerySpecification>

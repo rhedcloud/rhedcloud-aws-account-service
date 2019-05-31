@@ -44,4 +44,11 @@
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
 <property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
 </class>
+
+<sql-query name="pendingWithin30mins">
+<return alias="VirtualPrivateCloudProvisioning" class="VirtualPrivateCloudProvisioning"/>
+<![CDATA[
+		select * from vrtl_prvt_cld_prvsnng where extract (day from (sysdate-create_datetime)*24*60) < 30 and status = 'pending'
+        ]]>
+</sql-query>
 </hibernate-mapping>
