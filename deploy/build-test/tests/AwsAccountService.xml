@@ -12,6 +12,10 @@
 <PropertyName>log4j.rootCategory</PropertyName>
 <PropertyValue>INFO, A1</PropertyValue>
 </Property>
+  <Property>
+<PropertyName>log4j.logger.com.openii.openeai.toolkit.rdbms.persistence.hibernate.HibernateMoaPersistenceHelper</PropertyName>
+<PropertyValue>DEBUG, A1</PropertyValue>
+</Property>
 <Property>
 <PropertyName>log4j.appender.A1</PropertyName>
 <PropertyValue>org.apache.log4j.FileAppender</PropertyValue>
@@ -44,7 +48,7 @@
 <ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
 <ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
 </ThreadPoolConfig>
-
+<!--
 <ConsumerConfig transacted="false" startOnInitialization="true" name="PubSubConsumer">
 <ConnectionFactoryName>cn=AwsAccountServiceConsumerTCF</ConnectionFactoryName>
 <DestinationName>cn=AwsAccountServiceTopic</DestinationName>
@@ -277,7 +281,7 @@
 </ThreadPoolConfig><DbConnectionPoolConfig dbConnectPassword="***REMOVED***" dbConnectString="jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/SHRDBDEV,cn=OracleContext,dc=emory,dc=edu" dbConnectUserId="awsaccount" dbDriverName="oracle.jdbc.driver.OracleDriver" dbPoolSize="1" name="MessageBalancer"/>
 </ConsumerConfig>
 
-
+-->
         <ConsumerConfig name="P2PConsumer1" startOnInitialization="true" transacted="false">
           <ConnectionFactoryName>cn=AwsAccountServiceConsumerQCF</ConnectionFactoryName>
           <DestinationName>cn=TestMoaServiceQueue</DestinationName>

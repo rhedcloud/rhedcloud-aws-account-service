@@ -14,7 +14,7 @@
 <property name="AccountOwnerUserId" column="ACCOUNT_OWNER_USER_ID"/>
 <property name="FinancialAccountNumber" column="FINANCIAL_ACCOUNT_NUMBER"/>
 <!--TODO: automation-->
-<bag name="CustomerAdminUserId" table="VRTL_PRVT_CLD_PRVSNNG_CSTDMND_" fetch="subselect">
+<bag name="CustomerAdminUserId" table="VRTL_PRVT_CLD_PRVSNNG_CSTDMND_" fetch="subselect" >
 <key column="PROVISIONING_ID" unique="false"/>
 <element type="string" column="CUSTOMER_ADMIN_USER_ID" not-null="true"/>
 </bag>
@@ -34,7 +34,7 @@
 <property name="ActualTime" column="ACTUAL_TIME"/>
 <property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
 
-<bag name="ProvisioningStep" cascade="all" fetch="subselect">
+<bag name="ProvisioningStep" cascade="all"  >
 <key column="PROVISIONING_ID"/>
 <one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep"/>
 </bag>
