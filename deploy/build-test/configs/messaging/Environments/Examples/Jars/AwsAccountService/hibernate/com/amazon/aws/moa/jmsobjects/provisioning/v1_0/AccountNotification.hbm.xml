@@ -11,7 +11,7 @@
 <property name="Type" column="TYPE_"/>
 <property name="Priority" column="PRIORITY"/>
 <property name="Subject" column="SUBJECT"/>
-<property name="Text" length="2000" column="TEXT"/>
+<property name="Text" length="4000" column="TEXT"/>
 <property name="ReferenceId" column="REFERENCE_ID"/>
 <bag name="Annotation" table="ACCOUNT_NOTIF_ANNOTATION" batch-size="50">
 <key column="ACCOUNT_NOTIFICATION_ID"/>

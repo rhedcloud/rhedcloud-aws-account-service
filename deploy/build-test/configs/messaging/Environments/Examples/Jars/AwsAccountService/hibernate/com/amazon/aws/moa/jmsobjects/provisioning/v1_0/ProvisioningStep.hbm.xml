@@ -16,7 +16,7 @@
 <property name="ActualTime" column="ACTUAL_TIME"/>
 <property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
 
-<bag name="Property" table="PRVSNNG_STP_PRPT">
+<bag name="Property" table="PRVSNNG_STP_PRPT" batch-size="50">
 <key column="PROVISIONING_STEP_ID"></key>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
 <property name="Key" column="KEY_"/>

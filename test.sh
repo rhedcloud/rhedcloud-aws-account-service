@@ -16,5 +16,5 @@ cp target/*.jar target/deploy/lib
 echo java
 cd target/deploy
 pwd
-java -cp "lib/*:configs/messaging/Environments/Examples/Jars/AwsAccountService/*:configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate" -DdocUriBase=https://dev-config.app.emory.edu/ org.openeai.afa.GenericAppRunner service.properties 
+java -Xms1000m -Xmx4000m -cp "lib/*:configs/messaging/Environments/Examples/Jars/AwsAccountService/*:configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate" -DdocUriBase=https://dev-config.app.emory.edu/ org.openeai.afa.GenericAppRunner service.properties 
 cd ../..
