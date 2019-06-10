@@ -20,9 +20,6 @@
 
 
       -->
-      <property name = "hibernate.cache.provider_class">
-         org.hibernate.cache.EhCacheProvider
-      </property>
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
 <property name="hibernate.show_sql">true</property>
