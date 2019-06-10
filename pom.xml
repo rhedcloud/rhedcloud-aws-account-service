@@ -141,10 +141,10 @@
 
   <dependency>
    <groupId>edu.emory.awsaccount.servicet</groupId>
-   <artifactId>log4j-1.2.15</artifactId>
-   <version>1.2.15</version>
+   <artifactId>log4j-1.2.16</artifactId>
+   <version>1.2.16</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/log4j-1.2.15.jar</systemPath>
+   <systemPath>${project.basedir}/lib/log4j-1.2.16.jar</systemPath>
   </dependency>
 
   <dependency>
