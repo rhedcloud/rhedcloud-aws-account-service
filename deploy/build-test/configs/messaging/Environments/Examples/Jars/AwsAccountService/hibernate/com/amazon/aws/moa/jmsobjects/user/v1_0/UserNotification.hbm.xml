@@ -12,7 +12,7 @@
 <property name="Type" column="TYPE_"/>
 <property name="Priority" column="PRIORITY"/>
 <property name="Subject" column="SUBJECT"/>
-<property name="Text" column="TEXT" length="2500"/>
+<property name="Text" column="TEXT" type="materialized_clob"/>
 <property name="ReferenceId" column="REFERENCE_ID" />
 <property name="Read" column="READ_"/>
 <property name="ReadDatetime" type="OpenEaiDatetime" column="READ_DATETIME"/>
