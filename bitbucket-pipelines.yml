@@ -104,10 +104,13 @@ pipelines:
         # Create the axis2.war file for STAGE, almost the same as TEST except .aar
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - ../../../../processEnv.sh
-        # For PROD, we are deploying to Emory On-Premise.  No axis2 here
+        # Create the axis2.war file for PROD
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
-        - cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
-        - cp $BUILD_HOME/lib/aws-moa*.jar .
+        - ../../../../processEnv.sh
+        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
+        # Not sure what George is doing here---maybe copying files to hand to the integration team?
+        #- cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
+        #- cp $BUILD_HOME/lib/aws-moa*.jar .
 
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
