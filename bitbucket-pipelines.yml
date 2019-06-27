@@ -116,7 +116,11 @@ pipelines:
         - ls deploy/build-test/libs/Axis2/axis2.war
 
         artifacts:
-        - deploy/**     # preserve the deploy artifacts for the next step
+        - deploy/build-test/**     # preserve the deploy artifacts for the next step
+        - deploy/esb-dev/**     # preserve the deploy artifacts for the next step
+        - deploy/esb-test/**     # preserve the deploy artifacts for the next step
+        - deploy/esb-stage/**     # preserve the deploy artifacts for the next step
+        - deploy/esb-prod/**     # preserve the deploy artifacts for the next step
         - openeai-servicegen/target/**   # un-comment to make the servicegen facade code available for download
 
      - step:
@@ -131,10 +135,6 @@ pipelines:
         - cp -R message  apache-tomcat-8.0.50/bin
         #- cp -R eos  apache-tomcat-8.0.50/bin
         - cd ../..
-        - ls deploy
-        - pwd
-        - ls deploy/esb-test/libs/Axis2/axis2.war
-        - ls deploy/build-test/libs/Axis2/axis2.war
         - jar tf deploy/build-test/libs/Axis2/axis2.war
         - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
         - cd deploy/build-test/apache-tomcat-8.0.50/bin
