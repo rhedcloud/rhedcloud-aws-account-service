@@ -110,6 +110,9 @@ pipelines:
         # Not sure what George is doing here---maybe copying files to hand to the integration team?
         - cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
         - cp $BUILD_HOME/lib/aws-moa*.jar .
+        - pwd
+        - ls deploy/esb-test/libs/Axis2/axis2.war
+        - ls deploy/build-test/libs/Axis2/axis2.war
 
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
@@ -129,6 +132,7 @@ pipelines:
         - cd ../..
         - ls deploy
         - pwd
+        - ls deploy/esb-test/libs/Axis2/axis2.war
         - ls deploy/build-test/libs/Axis2/axis2.war
         - jar tf deploy/build-test/libs/Axis2/axis2.war
         - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
