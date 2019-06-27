@@ -128,6 +128,8 @@ pipelines:
         #- cp -R eos  apache-tomcat-8.0.50/bin
         - cd ../..
         - ls deploy
+        - pwd
+        - ls deploy/build-test/libs/Axis2/axis2.war
         - jar tf deploy/build-test/libs/Axis2/axis2.war
         - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
         - cd deploy/build-test/apache-tomcat-8.0.50/bin
