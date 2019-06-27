@@ -108,8 +108,8 @@ pipelines:
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - ../../../../processEnv.sh
         # Not sure what George is doing here---maybe copying files to hand to the integration team?
-        #- cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
-        #- cp $BUILD_HOME/lib/aws-moa*.jar .
+        - cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
+        - cp $BUILD_HOME/lib/aws-moa*.jar .
 
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step

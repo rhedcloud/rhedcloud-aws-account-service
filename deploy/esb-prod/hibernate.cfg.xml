@@ -2,24 +2,15 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 <session-factory>
-<!-- no longer updated
-<property name="connection.url">jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/GENPRD,cn=OracleContext,dc=emory,dc=edu</property>
-<property name="connection.username">awsaccount</property>
-<property name="connection.password">***REMOVED***</property>
--->
+
+    <property name="connection.url">jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/ESBDBP,cn=OracleContext,dc=emory,dc=edu</property>
+    <property name="connection.username">awsaccount</property>
+    <property name="connection.password">***REMOVED***</property>
+
 <property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
 <property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
 <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
-<!--
-<property name="hibernate.c3p0.acquire_increment">1</property>
-<property name="hibernate.c3p0.idle_test_period">60</property>
-<property name="hibernate.c3p0.min_size">1</property>
-<property name="hibernate.c3p0.max_size">2</property>
-<property name="hibernate.c3p0.max_statements">50</property>
-<property name="hibernate.c3p0.timeout">0</property>
-<property name="hibernate.c3p0.acquireRetryAttempts">1</property>
-<property name="hibernate.c3p0.acquireRetryDelay">250</property>
--->
+
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
 <property name="hibernate.show_sql">false</property>
