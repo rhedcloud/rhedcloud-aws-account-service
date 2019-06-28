@@ -116,7 +116,7 @@ pipelines:
         - ls deploy/build-test/libs/Axis2/axis2.war
 
         artifacts:
-        - deploy/build-test/**     # preserve the deploy artifacts for the next step
+        - deploy/build-test/**     # we have to preserve the artifacts separately get to over the 1G size limit
         - deploy/esb-dev/**     # preserve the deploy artifacts for the next step
         - deploy/esb-test/**     # preserve the deploy artifacts for the next step
         - deploy/esb-stage/**     # preserve the deploy artifacts for the next step
