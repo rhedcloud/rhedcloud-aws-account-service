@@ -148,7 +148,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
         try {
             inDoc = new XmlDocumentReader().initializeDocument(new StringReader(textMessage.getText()), false);
         } catch (XmlDocumentReaderException | JMSException e1) {
-            logger.error(e1);
+            logger.error(LOGTAG + e1);
         }
         Element controleArea = getControlArea(inDoc.getRootElement());
         String msgAction = controleArea.getAttribute("messageAction").getValue();
@@ -179,7 +179,8 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
                     }
                 } catch (Exception e) {
                     if (_verbose) {
-                        logger.info("Found a TestId Element in the message consumed but " + "can't build a TestId object.  Continuing.");
+                        logger.info(LOGTAG + "Found a TestId Element in the message consumed but "
+                                + "can't build a TestId object.  Continuing.");
                     }
                 }
             }
