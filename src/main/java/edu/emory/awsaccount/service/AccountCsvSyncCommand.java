@@ -113,7 +113,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
 
     public AccountCsvSyncCommand(CommandConfig cConfig) throws InstantiationException, EnterpriseConfigurationObjectException {
         super(cConfig);
-        logger.info("AccountCsvSyncCommand, initializing... ");
+        logger.info(LOGTAG + "AccountCsvSyncCommand, initializing... ");
         try {
             setProperties(getAppConfig().getProperties(GENERAL_PROPERTIES));
             awsAccountServiceRequestProducerPool = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
@@ -136,8 +136,8 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             logger.warn("No 'SyncPublisher' PubSubProducer found in AppConfig.  "
                     + "Processing will continue but Sync Messages will not be published " + "when changes are made via this Command.");
         }
-        logger.info(ReleaseTag.getReleaseInfo());
-        logger.info("AccountCsvSyncCommand, initialized successfully.");
+        logger.info(LOGTAG + ReleaseTag.getReleaseInfo());
+        logger.info(LOGTAG + "AccountCsvSyncCommand, initialized successfully.");
     }
 
     @Override
@@ -160,7 +160,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
         String msgObject = controleArea.getAttribute("messageObject").getValue();
         String msgObjectName = msgObject + ".v" + controleArea.getAttribute("messageRelease").getValue().replace(".", "_");
         Element objectElement = (newData == null) ? deleteData.getChild(msgObject) : newData.getChild(msgObject);
-        logger.info("msgObjectName=" + msgObjectName + ",msgAction=" + msgAction);
+        logger.info(LOGTAG + "msgObjectName=" + msgObjectName + ",msgAction=" + msgAction);
         if (!msgObject.equals(Account.class.getSimpleName())) {
             logger.info(LOGTAG + "this command only cares about Account Sync objecct. We are done here.");
             return;
@@ -227,7 +227,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             }
         }
         List<String[]> deletedAccountDataLines = s3Helper.readDeletedAccounts(getDeletedAccountsFileNameFull());
-        logger.info("deletedAccountDataLines.size()=" + deletedAccountDataLines.size());
+        logger.info(LOGTAG + "deletedAccountDataLines.size()=" + deletedAccountDataLines.size());
         try {
             List<Account> accounts = queryAllAccounts();
             logger.info(LOGTAG + "accounts.size=" + accounts.size());
