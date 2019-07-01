@@ -6,62 +6,62 @@
 <Description>edu.emory.AwsAccountService.  Example service, which simply return a sample message</Description>
 <Configuration initializeUsingThreads="false">
 <LoggerConfigs>
-<LoggerConfig name="ServiceLoggerConfig">
-   <ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
-        <Property>
+   <LoggerConfig name="ServiceLoggerConfig">
+          <ConfigClass>org.openeai.config.LoggerConfig</ConfigClass>
+          <Property>
             <PropertyName>log4j.rootCategory</PropertyName>
-            <PropertyValue>INFO, A1, A2</PropertyValue>
+            <PropertyValue>INFO, A1</PropertyValue>
           </Property>
-            <Property>
+          <Property>
             <PropertyName>log4j.appender.A1</PropertyName>
-            <PropertyValue>org.apache.log4j.rolling.RollingFileAppender</PropertyValue>
-          </Property>    
-         <Property>
+            <PropertyValue>org.apache.log4j.DailyRollingFileAppender</PropertyValue>
+          </Property>
+          <Property>
+            <PropertyName>log4j.appender.A1.File</PropertyName>
+            <PropertyValue>logs/AwsAccountService.log</PropertyValue>
+          </Property>
+          <Property>
+            <PropertyName>log4j.appender.A1.DatePattern</PropertyName>
+            <PropertyValue>'.'yyyy-MM-dd</PropertyValue>
+          </Property>
+          <Property>
             <PropertyName>log4j.appender.A1.layout</PropertyName>
             <PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
           </Property>
-            <Property>
+          <Property>
             <PropertyName>log4j.appender.A1.layout.ConversionPattern</PropertyName>
             <PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m-%C{1}.%M%L%n</PropertyValue>
-          </Property> 
-         <Property>
-            <PropertyName>log4j.appender.A1.rollingPolicy</PropertyName>
-            <PropertyValue>org.apache.log4j.rolling.TimeBasedRollingPolicy</PropertyValue>
-          </Property>  
-          <Property>       
-            <PropertyName>log4j.appender.A1.rollingPolicy.fileNamePattern</PropertyName>
-            <PropertyValue>logs/AwsAccountService-%d{yyyy-MM-dd}.log</PropertyValue>
           </Property>
-  
+
           <Property>
-            <PropertyName>log4j.additivity.com.openii.openeai.toolkit.rdbms</PropertyName>
-            <PropertyValue>false</PropertyValue>
-          </Property> 
-          <Property>
-            <PropertyName>log4j.logger.openii.openeai.rdbms</PropertyName>
+            <PropertyName>log4j.logger.com.openii.openeai.toolkit.rdbms</PropertyName>
             <PropertyValue>INFO, A2</PropertyValue>
           </Property>
           <Property>
+            <PropertyName>log4j.additivity.com.openii.openeai.toolkit.rdbms</PropertyName>
+            <PropertyValue>false</PropertyValue>
+          </Property>
+          <Property>
             <PropertyName>log4j.appender.A2</PropertyName>
-            <PropertyValue>org.apache.log4j.rolling.RollingFileAppender</PropertyValue>
-          </Property>         
-         <Property>
+            <PropertyValue>org.apache.log4j.DailyRollingFileAppender</PropertyValue>
+          </Property>
+          <Property>
+            <PropertyName>log4j.appender.A2.File</PropertyName>
+            <PropertyValue>logs/Rdbms.log</PropertyValue>
+          </Property>
+          <Property>
+            <PropertyName>log4j.appender.A2.DatePattern</PropertyName>
+            <PropertyValue>'.'yyyy-MM-dd</PropertyValue>
+          </Property>
+          <Property>
             <PropertyName>log4j.appender.A2.layout</PropertyName>
             <PropertyValue>org.apache.log4j.PatternLayout</PropertyValue>
-          </Property> 
-            <Property>
+          </Property>
+          <Property>
             <PropertyName>log4j.appender.A2.layout.ConversionPattern</PropertyName>
             <PropertyValue>%-4d{ISO8601} %-5p [%t] %3x - %m-%C{1}.%M%L%n</PropertyValue>
-          </Property> 
-         <Property>
-            <PropertyName>log4j.appender.A2.rollingPolicy</PropertyName>
-            <PropertyValue>org.apache.log4j.rolling.TimeBasedRollingPolicy</PropertyValue>
-          </Property>  
-          <Property>       
-            <PropertyName>log4j.appender.A2.rollingPolicy.fileNamePattern</PropertyName>
-            <PropertyValue>logs/Rdbms-%d{yyyy-MM-dd}.log</PropertyValue>
           </Property>
-</LoggerConfig>
+        </LoggerConfig>
 </LoggerConfigs>
 <ConsumerConfigs startOnInitialization="true">
 <ConnectionFactoryName>cn=AwsAccountServiceConsumerQCF</ConnectionFactoryName>
@@ -77,7 +77,7 @@
 <ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
 <ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
 </ThreadPoolConfig>
-<!--
+
 <ConsumerConfig transacted="false" startOnInitialization="true" name="PubSubConsumer">
 <ConnectionFactoryName>cn=AwsAccountServiceConsumerTCF</ConnectionFactoryName>
 <DestinationName>cn=AwsAccountServiceTopic</DestinationName>
@@ -310,7 +310,6 @@
 </ThreadPoolConfig><DbConnectionPoolConfig dbConnectPassword="***REMOVED***" dbConnectString="jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/SHRDBDEV,cn=OracleContext,dc=emory,dc=edu" dbConnectUserId="awsaccount" dbDriverName="oracle.jdbc.driver.OracleDriver" dbPoolSize="1" name="MessageBalancer"/>
 </ConsumerConfig>
 
--->
         <ConsumerConfig name="P2PConsumer1" startOnInitialization="true" transacted="false">
           <ConnectionFactoryName>cn=AwsAccountServiceConsumerQCF</ConnectionFactoryName>
           <DestinationName>cn=TestMoaServiceQueue</DestinationName>
