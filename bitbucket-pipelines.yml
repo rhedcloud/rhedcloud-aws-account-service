@@ -154,23 +154,23 @@ pipelines:
      - step:
         name: Upload build products
         script:
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - ls -la
         - zip -r emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
         - ls -l emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
         # file too large to upload to bitbucket
-        #- emory-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
-        - emory-aws-pipeline-scripts/upload_artifact_s3.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip itarch-bitbucket-downloads /emory-aws-account-service/
+        #- rhedcloud-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
+        - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip itarch-bitbucket-downloads /emory-aws-account-service/
         - ls target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
-        - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
-        - emory-aws-pipeline-scripts/upload_artifact_s3.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar itarch-bitbucket-downloads /emory-aws-account-service/
+        - rhedcloud-aws-pipeline-scripts/upload_artifact.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
+        - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh target/emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar itarch-bitbucket-downloads /emory-aws-account-service/
 
      - step:
         name: Deploy to dev
         script:
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
-        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
+        - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
         #- sleep 30
         #- export WS_URL=https://emory-awsaccount-service-dev/services/AwsAccountService
         #- wget ${WS_URL}?wsdl
@@ -182,24 +182,24 @@ pipelines:
         deployment: test
         trigger: manual
         script:
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-test/libs/Axis2/axis2.war
-        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
+        - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py TEST
 
      - step:
         name: Deploy to staging
         deployment: staging
         trigger: manual
         script:
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-stage/libs/Axis2/axis2.war
-        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
+        - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py STAGE
 
      - step:
         name: Deploy to production
         deployment: production
         trigger: manual
         script:
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-prod/libs/Axis2/axis2.war
-        - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
+        - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py PROD
