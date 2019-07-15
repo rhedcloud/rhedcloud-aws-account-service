@@ -49,7 +49,5 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserProfile.hbm.xml"/>
 
-<mapping resource="com/amazon/aws/moa/jmsobjects/security/v1_0/SecurityRiskDetectionWatch.hbm.xml"/>
-<mapping resource="com/amazon/aws/moa/jmsobjects/security/v1_0/SecurityRiskDetection.hbm.xml"/>
 </session-factory>
 </hibernate-configuration>
