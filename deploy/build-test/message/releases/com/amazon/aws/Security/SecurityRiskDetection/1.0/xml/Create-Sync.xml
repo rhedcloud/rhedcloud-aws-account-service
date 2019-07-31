@@ -31,6 +31,10 @@
 				<AccountId>727542611512</AccountId>
 				<SecurityRiskDetector>S3PublicBucketDetector</SecurityRiskDetector>
 				<SecurityRiskRemediator>S3PublicBucketRemediator</SecurityRiskRemediator>
+				<DetectionResult>
+					<Type>S3PublicBucket</Type>
+					<Status>Detection Success</Status>
+				</DetectionResult>
 				<DetectedSecurityRisk>
 					<Type>S3PublicBucket</Type>
 					<AmazonResourceName>arn:aws:s3:::serviceforge-videos</AmazonResourceName>

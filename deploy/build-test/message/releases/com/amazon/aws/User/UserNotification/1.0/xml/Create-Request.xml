@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE com.amazon.aws.User.UserNotification.Create SYSTEM "../dtd/Create-Request.dtd">
 <com.amazon.aws.User.UserNotification.Create>
-	<ControlAreaRequest messageCategory="com.amazon.aws.User" messageObject="UserNotification"
-		messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
-		<Sender>
-			<MessageId>
-				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
-				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
-				<MessageSeq>1024</MessageSeq>
-			</MessageId>
-			<Authentication>
-				<AuthUserId>TestSuiteApp</AuthUserId>
-			</Authentication>
-		</Sender>
-		<Datetime>
-			<Year>2018</Year>
-			<Month>6</Month>
-			<Day>17</Day>
-			<Hour>13</Hour>
-			<Minute>47</Minute>
-			<Second>30</Second>
-			<SubSecond>842</SubSecond>
-			<Timezone>6:00-GMT</Timezone>
-		</Datetime>
-		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
-			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
-	</ControlAreaRequest>
-	<DataArea>
-		<NewData>
-			<UserNotification>
-				<AccountNotificationId>132</AccountNotificationId>
-				<UserId>swheat</UserId>
-				<Read>false</Read>
-				<CreateUser>SrdService</CreateUser>
-				<CreateDatetime>
-					<Year>2018</Year>
-					<Month>6</Month>
-					<Day>17</Day>
-					<Hour>13</Hour>
-					<Minute>48</Minute>
-					<Second>2</Second>
-					<SubSecond>842</SubSecond>
-					<Timezone>6:00-GMT</Timezone>
-				</CreateDatetime>
-			</UserNotification>
-		</NewData>
-	</DataArea>
+  <ControlAreaRequest messageCategory="com.amazon.aws.User" messageObject="UserNotification" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Request">
+    <Sender>
+      <MessageId>
+        <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+        <ProducerId>7bc45b2b-4e77-4fb9-b2db-3af0443ac282</ProducerId>
+        <MessageSeq>325</MessageSeq>
+      </MessageId>
+      <Authentication>
+        <AuthUserId>AwsAccountService</AuthUserId>
+      </Authentication>
+    </Sender>
+    <Datetime>
+      <Year>2019</Year>
+      <Month>6</Month>
+      <Day>10</Day>
+      <Hour>11</Hour>
+      <Minute>17</Minute>
+      <Second>7</Second>
+      <SubSecond>603</SubSecond>
+      <Timezone>America/New_York</Timezone>
+    </Datetime>
+    <ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic" messageAction="Response" messageRelease="1.0" messageType="Reply" />
+  </ControlAreaRequest>
+  <DataArea>
+    <NewData>
+      <UserNotification>
+        <AccountNotificationId>60057</AccountNotificationId>
+        <UserId>P2571364</UserId>
+        <Type>SRD</Type>
+        <Priority>High</Priority>
+        <Subject>Remediation failed for an unregistered VPC</Subject>
+        <Text>The Amazon Resource Name (ARN) is arn:aws:ec2:us-east-2:322033138405:vpc/vpc-010598e83db563d37.  The remediation failed.  Unable to delete VPC arn:aws:ec2:us-east-2:322033138405:vpc/vpc-010598e83db563d37. With dependencies  -- unable to delete route table: {Associations: [{Main: true,RouteTableAssociationId: rtbassoc-0448019046879c385,RouteTableId: rtb-05f3472daeb757ecb,}],PropagatingVgws: [],RouteTableId: rtb-05f3472daeb757ecb,Routes: [{DestinationCidrBlock: 10.65.100.0/23,GatewayId: local,Origin: CreateRouteTable,State: active,}],Tags: [],VpcId: vpc-010598e83db563d37,OwnerId: 322033138405}. AWS Error: You are not authorized to perform this operation. Encoded authorization failure message: Ul6iFBtQ2ioS3bVbgnmIrbHb6G7z5NNCHgyHdESiMLxjbd7TP9B8HyTC3f3YRc1f2WOI6ZMdIw66pD8zTXnOhpgAHg14bO6KlkW9dcs36X15XYp2NC5SUE9UdoVoB-sJ291Rl9tNA5sFC0EBkelVnrpPaI19k1EGyixjC5fPBiDpnCe5QmlnpN3k397XSBduvzvOlouQ4qDqDUknQLRMCk_hqms49j6Keyjza32rrp0L6SkededkLJ8Qlw6oteyNAyjOERfzniFpS1QaX4QopxeiL_jdrgtx4QhMIaShRVzcBzvgF24EPaVmILqGsgBZ7CR8U11LPky9Hk0gfBTMQlAhroGBJHAttGmsEZyijg5mSttBJu-IGT1h50nW4Py3_pRmjyNOBccwp8ZkGU6IXmOGoIp1LVgiozwI1n1ujBE-Lee-5_1tCenqoJQJ9s4sMeuEJ3STqrCeukp-XdmuctF1ifO3uSrgluO--kHOv3YdJwPngtUKj7c6qs7Ti9Q4x1ut6pAWhv7fZl3Y8TtW5e6yuYcrkSNznGEKNbEWdldlpbiZcd9pu7sWrxTV0HClDA9ovjwMOf8neIxgnJiJQCnQAyAa_r4ELlg-29Cu4qD8TrDAfNX9jdCJKOWQYcgZYoRrIhMLlHGRGdcyXbL3XE-SxW8sy8NVccSQoRTI4DCERKpKmzTxIFze91d2nMpgsUEtNciy84v_n6dCJaAPdidhB0Lb6XQMhMbmpDAIbdO__xsWd5mjkJ_z_8rBZiJB0j1awCdWw_Mvx1b3c15GCqZPUek6kqmZjY-ed8vND6hVMt542MR0BbyEHTfVbbylwI0g9sqalSAJ-yc_dAEOmAvPRrEbFnMwQEJ-b2HQFlMT-nuoaaoz_Y-e0j1bodxEuxAXLsoPg8_WFgO2TifMhr9aAvxXzoKWEFnOCmfcPu1BDMR9muxAwlMsgqCIdI2EWCf14FkHwDlozmE07B54022EFJFo5gHHkvUweukSrW45mFZdlxlFlYsdlgcJ30GKrkKufL3cU8w4JdSUwdxFqNyY5hRp-z4_g2PVYI_OWpgrUWQGw1HF6fx86jRaPIeomcmZYq7p98-omSmKf-g1HqGW_ytkGCISz584GyuQJU4zLw6KCqZol2tzzamSdis9rpcgYDaun7jR0BsIFqExMCuG_1nIhuoNFdDuorFRqFBE18Jz0EMobYhhm3jBCPx2CCovlLgEpmBOZUr9nl-Cb6eivKnmzl1CESOljuHWebO4gwcm8tRvq5zVeJm3g7r_pFko_dQ91O9miO89zL1qnmrPpl-woMR4OhNJjzrrdBLtGPGYJ4YS4HVtUPeU94c93khTCA6Io6KP0llLlFdsIegpS-UB0upXkyveFB2mh5Ry4SDABwUmEni2GqvFidBSDRBQLjHIWiki5TWDx8iJdpCEgfMx-8ilUsOW4nBylbnodJljczjtaBwnME6iwZWMvEUxSJJoEUBRNtsPzXLBavFopXOMhKY627JwVZJsP9AYV3bpO5XK5wKxBXzuncxMYEjG28mx0D6cVEJkxge0omhD8v0KJdHdhbjVWZcMJ7FX4j4z0YkT6zlHtsF_gTdwKWM0S7iXFLMloQVkGQH_VSX9RcBBLxFNMpgL8382NxwYF-t4PEF3iH-C76yjSi44-mDC0ycH5D_X1jocNfhkaexNxtUrUwthhPT65i4EAu7Pk95_qcwPa3Z7CrR5mKcv8qx8LPGhzNAB6eaOEcq9FRZ-paWtTPTvA4MCfVyeYStcko8lo5d8m1UnhyKegE_L6XpToP4F1E6Ej2DOOIcjpuFQ4hUhitmjnHqLtY87Lth8vt825a0Nl9krdKrRNtRoAUTrBLwtPMb076Z_OWmwwBRVdctUZWQ5GSeoxE-JMd7A_QVFn2_6fxS4NhZt7hf6CXaRV4Vt0LweC4VPdXKbOUZb0qJ0vlh1_LQw43T9iYJ1mUcxilGVg6BEehHN7S2E2y7FEzHcP16FUyLbTg0GDXp8Fp4_bkJcxzsRMRM7tToSh72L5rA-UiP0Oan8hb9BxfdefJ4j-bVxo8v_-KaaBr4A1XK_-YalaQvWZDraNCqXy7qsVxYzpFxgMMs78erdj0nreBL6xGISTEhvuzoNOFxEdmpVHFJIIzEd18ogKlz3zqp2xkOzWFu-wrORhBydAkM5MqtCs0gJAHgdvasXuOQQI26EzfkYnUfg4MB0qnyXLTWNGsHKmj_KO74vfpcEPO0280C1HhinkthgxMWdsC_Uxj5CF58yj__M9I2VOmJZYB-23wK-k0ez5bc-kVMIr1eHDydya30zzAvnObMeT23B79n-U3QMf0f0ZFPXQHyeo_UNGxpakIoN3LLQUM6qlCHdDwlTON5PGaRSkXiShoFubvQeW45ThZQppe4x3YggDKvSt6x2_uW8UH0DPOZZRSOg2zFL_aG2ehwDz6adPF6g6spGTDZ4N0DmBgYij4JtJTRDCY7iWPpJ-rJpcPlLCFTx8UXnblX8WFe820ZdGwtDsxoeI4BXS3Fa5ifdlDHWoixmOsZ0P900jxp-m5WQH0-lnZPkIOs2b9k17TCCMGaS3rczpMDbaZVSzms3YzshyLYAHFylzTN9WMMkHUCGacZq9hICt2SFWok5ll8HZQU2prjYMDEXc-0ZXLDAXbj7vkoG7DORYxpCiCAtGT8U9KLVpjYe0BGsBdN4aLJKTO5OprSooTQ_2GbbcLmqvU7WQOp-AFStjEdar11tmS8pAOhVSpafQmaBwSVrONNJ6SN64Nev2Tk6NUEL8HzARmp_KsYAzFpmWV9dEa8J7_jMk-dsyFep0urwtOee757UdS4JBfe1LzcG_6BGUnFOOKH190M_wRgSC-MlpUtSVKS4Popn3WrkNofeSGv5jFRXiSvXzXsilH_WzRrBbQ6LL7RiE_204Dx3XOqux93dQQ6sheKjf4bCZKmnybQqLjE2pz1FZXt6o0RsBqc_wlAUKL5lNMDv22anAQBuvn3Gyp8n8SfV9dpBrJ2btVxMu5evAKE86_MFg-hNY07L0scmLHah9U50VRlPwZ8_qDoWDNI7O06Y5PR9vpeAkma2NC-Vr9YSjbDBkKK4jqSH6o2B-M7ZeKlAG14jCpEo3eGn8lz7XD_0EWw-dVl5hLTkuKUhHMZSXh-ZoClLEZO6zb2FKnQw39cu6V7eDrNxkzLOJvZQgPShj23bni1LxYcLawGPCJ2dK38UKmeQ_Mnrue4cWwLV-7i4mgpwLIxPQNkx0vdcJfvZKcXHF0ya4e_8cdONYfmiOSGo3SbtDkD3YFKcTOJc5qM81LzBIrVX3V8MFNeiPHC6BKM62Ho6vmTnAGV3tX1SSRMGBpvGwhQeQK3PUypKD2NzGdQpg4PJC-1XFEGZnPiM48sv_L4BEeYT5SLXLmlH9bluKeiQETSr3EBV6KJ5lf01 (Service: AmazonEC2; Status Code: 403; Error Code: UnauthorizedOperation; Request ID: 826fe6b6-81da-4fd0-a2a8-61fc47b2b52f) -- account 322033138405 region us-east-2 vpcId vpc-010598e83db563d37. The exception is: The vpc 'vpc-010598e83db563d37' has dependencies and cannot be deleted. (Service: AmazonEC2; Status Code: 400; Error Code: DependencyViolation; Request ID: 15d60e5d-c0a2-4036-ba42-ec8023128061)</Text>
+        <ReferenceId>33801093</ReferenceId>
+        <Read>false</Read>
+        <CreateUser>sampleData</CreateUser>
+        <CreateDatetime>
+          <Year>2019</Year>
+          <Month>6</Month>
+          <Day>10</Day>
+          <Hour>11</Hour>
+          <Minute>17</Minute>
+          <Second>7</Second>
+          <SubSecond>601</SubSecond>
+          <Timezone>America/New_York</Timezone>
+        </CreateDatetime>
+      </UserNotification>
+    </NewData>
+  </DataArea>
 </com.amazon.aws.User.UserNotification.Create>
+

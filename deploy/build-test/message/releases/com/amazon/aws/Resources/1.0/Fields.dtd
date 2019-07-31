@@ -32,6 +32,7 @@
 <!ELEMENT AgreedDatetime %DATETIME;>
 <!ELEMENT AlternateServiceName %STRDOM;>
 <!ELEMENT AmazonResourceName %STRDOM;>
+<!ELEMENT AnnotationText %STRDOM;>
 <!ELEMENT AnticipatedTime %STRDOM;>
 <!ELEMENT Arn %STRDOM;>
 <!ELEMENT AssessmentDatetime %DATETIME;>
@@ -62,6 +63,7 @@
 <!ELEMENT CurrencyCode %STRDOM;>
 <!ELEMENT CustomerAdminUserId %STRDOM;>
 <!ELEMENT Description %STRDOM;>
+<!ELEMENT DetectorName %STRDOM;>
 <!ELEMENT DisableRollback %STRDOM;>
 <!ELEMENT EffectiveDate %DATE;>
 <!ELEMENT Email %STRDOM;>
@@ -81,6 +83,7 @@
 <!ELEMENT LastUpdateUser %STRDOM;>
 <!ELEMENT LinkedAccountId %STRDOM;>
 <!ELEMENT LinkedAccountName %STRDOM;>
+<!ELEMENT MetricName %STRDOM;>
 <!ELEMENT Name %STRDOM;>
 <!ELEMENT NetId %STRDOM;>
 <!ELEMENT NotificationArn %STRDOM;>
@@ -146,6 +149,8 @@
 <!ELEMENT StackPolicyBody %STRDOM;>
 <!ELEMENT StackPolicyUrl %STRDOM;>
 <!ELEMENT StackStatus %STRDOM;>
+<!ELEMENT StartCreateDatetime %DATETIME;>
+<!ELEMENT EndCreateDatetime %DATETIME;>
 <!ELEMENT StartDate %DATE;>
 <!ELEMENT Status %STRDOM;>
 <!ELEMENT StepId %STRDOM;>
@@ -173,3 +178,8 @@
 <!ELEMENT Value %STRDOM;>
 <!ELEMENT VpcId %STRDOM;> 
 <!ELEMENT VpnConnectionProfileId %STRDOM;>
+<!ELEMENT ScheduleInterval %STRDOM;>
+<!ELEMENT DetectionPerMinute %STRDOM;> 
+<!ELEMENT DegradedBoundary %STRDOM;> 
+<!ELEMENT UnacceptableBoundary %STRDOM;> 
+<!ELEMENT Assessment %STRDOM;> 

@@ -589,31 +589,6 @@
 <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
 </OutputLayout>
 </LayoutManager>
-</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetection.v1_0">
-<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
-<Authentication>
-<UserId>testsuite@emory.edu/10.40.48.112</UserId>
-<Signature>unknown</Signature>
-</Authentication>
-<CommandName/>
-<PrimedXmlDocuments>
-<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-</PrimedXmlDocuments>
-<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
-<ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection</ObjectClass>
-<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Security/1.0/SecurityRiskDetectionEO.xml"/>
-<LayoutManager>
-<InputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</InputLayout>
-<OutputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</OutputLayout>
-</LayoutManager>
 </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="Service.v1_0">
 <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
 <Authentication>
@@ -857,42 +832,6 @@
 <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
 <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.StackRequisition</ObjectClass>
 <EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/StackRequisitionEO.xml"/>
-<LayoutManager>
-<InputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</InputLayout>
-<OutputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</OutputLayout>
-</LayoutManager>
-</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionQuerySpecification.v1_0">
-<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
-<Authentication>
-<UserId>testsuite@emory.edu/10.40.48.112</UserId>
-<Signature>unknown</Signature>
-</Authentication>
-<CommandName/>
-<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
-<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification</ObjectClass>
-<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionQuerySpecificationEO.xml"/>
-<LayoutManager>
-<InputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</InputLayout>
-<OutputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</OutputLayout>
-</LayoutManager>
-</MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionRequisition.v1_0">
-<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
-<Authentication>
-<UserId>testsuite@emory.edu/10.40.48.112</UserId>
-<Signature>unknown</Signature>
-</Authentication>
-<CommandName/>
-<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
-<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionRequisition</ObjectClass>
-<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionRequisitionEO.xml"/>
 <LayoutManager>
 <InputLayout type="xml">
 <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>

@@ -70,9 +70,9 @@
   <dependency>
    <groupId>edu.emory.awsaccount.servicet</groupId>
    <artifactId>aws-moa</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
+   <version>master-117</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/aws-moa-master-111.jar</systemPath>
+   <systemPath>${project.basedir}/lib/aws-moa-master-117.jar</systemPath>
   </dependency>
 
   <dependency>

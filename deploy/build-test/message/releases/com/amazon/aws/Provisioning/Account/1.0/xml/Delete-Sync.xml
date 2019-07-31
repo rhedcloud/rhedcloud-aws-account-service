@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
 <!DOCTYPE com.amazon.aws.Provisioning.Account.Delete SYSTEM "../dtd/Delete-Sync.dtd">
@@ -11,7 +11,7 @@
 				<MessageSeq>1024</MessageSeq>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>nutrientdbservice</AuthUserId>
+				<AuthUserId>gwang28@emory.edu/192.168.1.1</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>
@@ -49,9 +49,9 @@
 					<Type>security</Type>
 					<Email>aws-security@emory.edu</Email>
 				</EmailAddress>
-				<AccountOwnerId>swheat</AccountOwnerId>
+				<AccountOwnerId>P0934572</AccountOwnerId>
 				<FinancialAccountNumber>0000001536</FinancialAccountNumber>
-				<CreateUser>swheat</CreateUser>
+				<CreateUser>P0934572</CreateUser>
 				<CreateDatetime>
 					<Year>2016</Year>
 					<Month>2</Month>
