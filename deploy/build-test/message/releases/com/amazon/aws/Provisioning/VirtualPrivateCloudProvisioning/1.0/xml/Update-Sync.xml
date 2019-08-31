@@ -34,6 +34,7 @@
 					<AccountOwnerUserId>swheat</AccountOwnerUserId>
 					<FinancialAccountNumber>0000001536</FinancialAccountNumber>
 					<CustomerAdminUserId>swheat</CustomerAdminUserId>
+					<Region>us-east-1</Region>
 					<Type>1</Type>
 					<ComplianceClass>none</ComplianceClass>
 					<Purpose>test</Purpose>
@@ -489,6 +490,7 @@
 					<AccountOwnerUserId>swheat</AccountOwnerUserId>
 					<FinancialAccountNumber>0000001536</FinancialAccountNumber>
 					<CustomerAdminUserId>swheat</CustomerAdminUserId>
+					<Region>us-east-1</Region>
 					<Type>1</Type>
 					<ComplianceClass>none</ComplianceClass>
 					<Purpose>test</Purpose>

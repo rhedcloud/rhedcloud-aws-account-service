@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
 <!DOCTYPE org.openeai.CoreMessaging.Scalar.Query SYSTEM "../dtd/Query-Request.dtd">
 <org.openeai.CoreMessaging.Scalar.Query>
@@ -30,8 +30,8 @@
 	</ControlAreaRequest>
 	<DataArea>
 		<ScalarQuerySpecification>
-			<QueryLanguage type="named" value="findRowCountByNutrNo">
-				<Parameter name="NutrNo" value="203"/>
+			<QueryLanguage type="sql" name="findRowCountById">
+				<Parameter name="Id" value="1"/>
 			</QueryLanguage>
 		</ScalarQuerySpecification>
 	</DataArea>

@@ -1163,56 +1163,6 @@
                       </OutputLayout>
                     </LayoutManager>
                   </MessageObjectConfig>
-                  
-                                    <MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionWatch.v1_0">
-<SenderAppId>edu.emory.TestMoaService</SenderAppId>
-<Authentication>
-<UserId>testsuite@emory.edu/10.40.48.112</UserId>
-<Signature>unknown</Signature>
-</Authentication>
-<CommandName/>
-<PrimedXmlDocuments>
-<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
-</PrimedXmlDocuments>
-<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
-<ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetectionWatch</ObjectClass>
-<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Security/1.0/SecurityRiskDetectionWatchEO.xml"/>
-<LayoutManager>
-<InputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</InputLayout>
-<OutputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</OutputLayout>
-</LayoutManager>
-</MessageObjectConfig>
-                  <MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="SecurityRiskDetectionWatchQuerySpecification.v1_0">
-<SenderAppId>edu.emory.TestMoaService</SenderAppId>
-<Authentication>
-<UserId>testsuite@emory.edu/10.40.48.112</UserId>
-<Signature>unknown</Signature>
-</Authentication>
-<CommandName/>
-<ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
-<ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionWatchQuerySpecification</ObjectClass>
-<EnterpriseObjectDocument ignoreValidation="false" ignoreMissingFields="false" docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/SecurityRiskDetectionWatchQuerySpecificationEO.xml"/>
-<LayoutManager>
-<InputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</InputLayout>
-<OutputLayout type="xml">
-<ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
-</OutputLayout>
-</LayoutManager>
-</MessageObjectConfig>
                 </MessageObjectConfigs>
                 <PropertyConfigs>
                   <ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>

@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
-<!--	$Revision: 4038 $
-		$Date: 2015-09-10 16:37:25 -0400 (Thu, 10 Sep 2015) $
+<!--	$Revision: 3865 $
+		$Date: 2013-07-19 08:55:33 -0400 (Fri, 19 Jul 2013) $
 		$Source$
  -->
 <!-- This file is part of the OpenEAI Application Foundation or
@@ -107,7 +108,6 @@
 <!ELEMENT Year %STRDOM;>
 
 <!--	Value added 7/17/2013 for */Scalar/Value-->
-<!--	Value changed to ScalarValue 10/29/2013 for */Scalar/ScalarValue-->
 <!ELEMENT ScalarValue %STRDOM;>
 <!-- added to ScalarList 8/20/2015 to produce report -->
 <!ELEMENT ScalarListValue %STRDOM;>
