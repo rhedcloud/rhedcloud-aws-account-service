@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
-<!--	$Revision: 597 $
-		$Date: 2003-01-16 15:40:28 -0500 (Thu, 16 Jan 2003) $
-		$Source$
+<!--	$Revision: 1.2 $
+		$Date: 2003/01/16 20:40:28 $
+		$Source: /cvs/repositories/openii3/project/message/releases/org/openeai/CoreMessaging/Sync/1.0/dtd/Error-Sync.dtd,v $
  -->
 <!-- This file is part of the OpenEAI Application Foundation or
 		OpenEAI Message Object API created by Tod Jackson
