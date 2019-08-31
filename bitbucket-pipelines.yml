@@ -63,9 +63,6 @@ pipelines:
         - export BUILD_HOME=`pwd`
         - echo version $VERSION_NUMBER build $BITBUCKET_BUILD_NUMBER
         - cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties/awsaccount.properties # copy the servicegen properties to where servicegen needs them
-          #- cp deploy/build-test/servicegen-configs/build.custom.properties openeai-servicegen/build.custom.properties # copy the servicegen properties to where servicegen needs them
-          #- cp deploy/build-test/servicegen-configs/build.default.properties openeai-servicegen/build.default.properties # copy the servicegen properties to where servicegen needs them
-          #- cp deploy/build-test/servicegen-configs/build.webservice.xml openeai-servicegen/build.webservice.xml # copy the servicegen properties to where servicegen needs them
         - cd openeai-servicegen                                                           # change working directory to servicegen home
         - ./gen-webservice awsaccount                                                       # generate the web service facade
         - cat target/awsaccount/emory-awsaccount-webservice/resources/services.xml
@@ -82,11 +79,29 @@ pipelines:
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-stage.aar $BUILD_HOME/deploy/esb-stage/libs/Axis2/emory-awsaccount-webservice-1.0.aar
         - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
+
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
+        - cp -R rhedcloud-ebextensions/.ebextensions .
+        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/elastic-beanstalk.config
+        - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+          
+
+        ##prepare .ebextensions
+        - cd $BUILD_HOME
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
+        - cp -R rhedcloud-ebextensions/.ebextensions .
+        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+        - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+        #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
+        - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - ls -laR $BUILD_HOME/.ebextensions
+
+
         # Create the htpasswd file for beanstalk.
-        - htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
+        #- htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
         # Use sed to replace the LDAP info in the apache config
-        - sed -i 's/WS_LDAP_BIND_PASSWORD/'"$WS_LDAP_BIND_PASSWORD"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - sed -i 's/WS_LDAP_BIND_DN/'"$WS_LDAP_BIND_DN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        #- sed -i 's/WS_LDAP_BIND_PASSWORD/'"$WS_LDAP_BIND_PASSWORD"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        #- sed -i 's/WS_LDAP_BIND_DN/'"$WS_LDAP_BIND_DN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - ls -laR $BUILD_HOME/.ebextensions
         - cp $BUILD_HOME/lib/openeai-core-5.0.4.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         - cp $BUILD_HOME/lib/aws-moa*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
