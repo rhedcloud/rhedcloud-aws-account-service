@@ -80,12 +80,6 @@ pipelines:
         - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
 
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
-        - cp -R rhedcloud-ebextensions/.ebextensions .
-        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/elastic-beanstalk.config
-        - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
-          
-
         ##prepare .ebextensions
         - cd $BUILD_HOME
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
