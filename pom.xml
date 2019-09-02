@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
  <modelVersion>4.0.0</modelVersion>
- <groupId>edu.emory.awsaccount.service</groupId>
- <artifactId>emory-awsaccount-service</artifactId>
+ <groupId>org.rhedcloud.awsaccount.service</groupId>
+ <artifactId>rhedcloud-awsaccount-service</artifactId>
  <version>${env.BITBUCKET_BRANCH}-${env.BITBUCKET_BUILD_NUMBER}</version>
  <name>emory-aws-account-service</name>
  <description>Emory AWS Account Service jar</description>
@@ -60,7 +60,7 @@
  <dependencies>
   <!-- <dependency> <groupId>com.amazonaws</groupId> <artifactId>aws-java-sdk</artifactId> <version>1.11.123</version> </dependency> -->
   <dependency>
-   <groupId>edu.emory.awsaccount.service</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>aws-java-sdk-1.11.470</artifactId>
    <version>1.11.123</version>
    <scope>system</scope>
@@ -68,7 +68,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>aws-moa</artifactId>
    <version>master-117</version>
    <scope>system</scope>
@@ -76,7 +76,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>emory-moa-1.2</artifactId>
    <version>1.2</version>
    <scope>system</scope>
@@ -84,7 +84,7 @@
   </dependency>
   
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>servicenow-moa</artifactId>
    <version>1</version>
    <scope>system</scope>
@@ -92,7 +92,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>commons-io-2.5</artifactId>
    <version>2.5</version>
    <scope>system</scope>
@@ -100,7 +100,7 @@
   </dependency>
   
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>commons-net-3.6</artifactId>
    <version>3.6</version>
    <scope>system</scope>
@@ -108,7 +108,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>commons-validator-1.4.0</artifactId>
    <version>1.4.0</version>
    <scope>system</scope>
@@ -116,7 +116,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>httpclient-4.5.3</artifactId>
    <version>4.5.3</version>
    <scope>system</scope>
@@ -124,7 +124,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>jdom</artifactId>
    <version>1</version>
    <scope>system</scope>
@@ -132,7 +132,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>jms-1.1</artifactId>
    <version>1.1</version>
    <scope>system</scope>
@@ -140,7 +140,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>log4j-1.2.15</artifactId>
    <version>1.2.15</version>
    <scope>system</scope>
@@ -148,7 +148,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>mysql-connector-java-5.1.30</artifactId>
    <version>5.1.30</version>
    <scope>system</scope>
@@ -156,7 +156,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>openeai-core</artifactId>
    <version>5.0.4</version>
    <scope>system</scope>
@@ -164,7 +164,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>openeai-utils</artifactId>
    <version>1</version>
    <scope>system</scope>
@@ -172,7 +172,7 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>xpp3-1.1.4c</artifactId>
    <version>1.1.4c</version>
    <scope>system</scope>
@@ -188,7 +188,7 @@
    </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>xstream-1.4.10</artifactId>
    <version>1.4.10</version>
    <scope>system</scope>
@@ -196,14 +196,14 @@
   </dependency>
 
   <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>guava-18.0.jar</artifactId>
    <version>18.0</version>
    <scope>system</scope>
    <systemPath>${project.basedir}/lib/guava-18.0.jar</systemPath>
   </dependency>
     <dependency>
-   <groupId>edu.emory.awsaccount.servicet</groupId>
+   <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>junit-4.10.jar</artifactId>
    <version>4.10</version>
    <scope>system</scope>
