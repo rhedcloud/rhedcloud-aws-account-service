@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Deployment SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/Deployment.dtd">
-        <Deployment baseURI="none" status="deployed" type="development" name="edu.emory.AwsAccountService">
-<Application id="edu.emory.AwsAccountService">
-<FullName>edu.emory.AwsAccountService</FullName>
-<Description>edu.emory.AwsAccountService.  Example service, which simply return a sample message</Description>
+        <Deployment baseURI="none" status="deployed" type="development" name="org.rhedcloud.AwsAccountService">
+<Application id="org.rhedcloud.AwsAccountService">
+<FullName>org.rhedcloud.AwsAccountService</FullName>
+<Description>org.rhedcloud.AwsAccountService.  Example service, which simply return a sample message</Description>
 <Configuration initializeUsingThreads="false">
 <LoggerConfigs>
    <LoggerConfig name="ServiceLoggerConfig">
@@ -135,9 +135,9 @@
                   </ProducerConfig>
 </ProducerConfigs>
 <MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
-<SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+<SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
 <Authentication>
-<UserId>edu.emory.AwsAccountService</UserId>
+<UserId>org.rhedcloud.AwsAccountService</UserId>
 </Authentication>
 <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
 <LayoutManager>
@@ -171,9 +171,9 @@
 
 
 <MessageObjectConfig deferInitialization="false" name="DirectoryPersonQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
-                      <UserId>edu.emory.AwsAccountService</UserId>
+                      <UserId>org.rhedcloud.AwsAccountService</UserId>
                     </Authentication>
                     <CommandName>DirectoryPersonQuerySpecification</CommandName>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
@@ -188,9 +188,9 @@
                       </OutputLayout>
                     </LayoutManager>
                   </MessageObjectConfig><MessageObjectConfig deferInitialization="false" name="DirectoryPerson.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
-                      <UserId>edu.emory.AwsAccountService</UserId>
+                      <UserId>org.rhedcloud.AwsAccountService</UserId>
                     </Authentication>
                     <CommandName>DirectoryPersonRequest</CommandName>
                     <PrimedXmlDocuments>
@@ -208,7 +208,7 @@
                       </OutputLayout>
                     </LayoutManager>
                   </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="Account.v1_0">
-          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
           <Authentication>
             <UserId>testsuite@emory.edu/10.40.48.112</UserId>
             <Signature>unknown</Signature>
@@ -237,7 +237,7 @@
             </OutputLayout>
           </LayoutManager>
         </MessageObjectConfig><MessageObjectConfig xmlDocumentValidation="false" translationType="application" deferInitialization="false" name="AccountQuerySpecification.v1_0">
-          <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+          <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
           <Authentication>
             <UserId>testsuite@emory.edu/10.40.48.112</UserId>
             <Signature>unknown</Signature>
@@ -380,7 +380,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="Account.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -410,7 +410,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountAlias.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -438,7 +438,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountNotification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -468,7 +468,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountOrganizationMembership.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -496,7 +496,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountProvisioningAuthorization.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -520,7 +520,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="SamlProvider.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -548,7 +548,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="SensitiveDataTypeAuthorization.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -572,7 +572,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="VirtualPrivateCloud.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -602,7 +602,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="VirtualPrivateCloudProvisioning.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -633,7 +633,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -652,7 +652,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountAliasQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -671,7 +671,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountNotificationQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -690,7 +690,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountOrganizationMembershipQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -709,7 +709,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="AccountProvisioningAuthorizationQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -728,7 +728,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="SamlProviderQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -747,7 +747,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="SensitiveDataTypeAuthorizationQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -766,7 +766,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="VirtualPrivateCloudQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -785,7 +785,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="VirtualPrivateCloudProvisioningQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -804,7 +804,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="VirtualPrivateCloudRequisition.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -823,7 +823,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="Bill.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -853,7 +853,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="BillQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -872,7 +872,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="Service.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -902,7 +902,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="ServiceSecurityAssessment.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -932,7 +932,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="ServiceQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -951,7 +951,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="ServiceSecurityAssessmentQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -970,7 +970,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="TermsOfUse.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1000,7 +1000,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="TermsOfUseAgreement.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1028,7 +1028,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="UserNotification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1058,7 +1058,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="UserProfile.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1088,7 +1088,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="TermsOfUseQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1107,7 +1107,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="TermsOfUseAgreementQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1126,7 +1126,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="UserNotificationQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
@@ -1145,7 +1145,7 @@
                     </LayoutManager>
                   </MessageObjectConfig>
                   <MessageObjectConfig deferInitialization="false" name="UserProfileQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
-                    <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                    <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
                     <Authentication>
                       <UserId>testsuite@emory.edu/10.40.48.112</UserId>
                       <Signature>unknown</Signature>
