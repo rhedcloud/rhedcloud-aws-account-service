@@ -5,14 +5,14 @@ mkdir -p WEB-INF/lib
 mkdir -p WEB-INF/classes
 mkdir -p WEB-INF/modules
 mkdir -p WEB-INF/conf
-cp emory-awsaccount-webservice-1.0.aar WEB-INF/services
+cp rhedcloud-awsaccount-webservice-1.0.aar WEB-INF/services
 cp ../../../build-test/libs/AwsAccountService/* WEB-INF/lib
 cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes      
 cp ../../hibernate.cfg.xml WEB-INF/classes
 cp ../../../build-test/libs/Axis2/openeai-authorization-module.mar WEB-INF/modules
 cp ../../../build-test/libs/Axis2/axis2.xml WEB-INF/conf
 cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib
-jar uf axis2.war WEB-INF/services/emory-awsaccount-webservice-1.0.aar
+jar uf axis2.war WEB-INF/services/rhedcloud-awsaccount-webservice-1.0.aar
 jar uf axis2.war WEB-INF/lib/*
 jar uf axis2.war WEB-INF/classes
 jar uf axis2.war WEB-INF/modules
