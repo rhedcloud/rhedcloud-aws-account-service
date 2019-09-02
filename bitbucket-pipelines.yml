@@ -65,7 +65,7 @@ pipelines:
         - cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties/awsaccount.properties # copy the servicegen properties to where servicegen needs them
         - cd openeai-servicegen                                                           # change working directory to servicegen home
         - ./gen-webservice awsaccount                                                       # generate the web service facade
-        - cat target/awsaccount/emory-awsaccount-webservice/resources/services.xml
+        #- cat target/awsaccount/emory-awsaccount-webservice/resources/services.xml
         - export TARGET_DIR=target/awsaccount/emory-awsaccount-webservice/build/lib
         - ls -la $TARGET_DIR
         - mkdir -p $BUILD_HOME/deploy/build-test/libs/Axis2
