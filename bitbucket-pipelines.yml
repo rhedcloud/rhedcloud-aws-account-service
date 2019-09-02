@@ -81,14 +81,14 @@ pipelines:
         - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
 
         ##prepare .ebextensions for going to rhedcloud
-        - cd $BUILD_HOME
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
-        - cp -R rhedcloud-ebextensions/.ebextensions .
-        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
-        - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
-        #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
-        - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - ls -laR $BUILD_HOME/.ebextensions
+        #        - cd $BUILD_HOME
+        #        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
+        #        - cp -R rhedcloud-ebextensions/.ebextensions .
+        #        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+        #        - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+        #        #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
+        #        - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        #        - ls -laR $BUILD_HOME/.ebextensions
 
         ##prepare .ebextensions for going to emory
         - cd $BUILD_HOME
