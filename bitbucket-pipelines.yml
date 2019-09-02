@@ -80,7 +80,7 @@ pipelines:
         - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp $TARGET_DIR/emory-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/emory-awsaccount-webservice-1.0.aar
 
-        ##prepare .ebextensions
+        ##prepare .ebextensions for going to rhedcloud
         - cd $BUILD_HOME
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
         - cp -R rhedcloud-ebextensions/.ebextensions .
@@ -90,6 +90,15 @@ pipelines:
         - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - ls -laR $BUILD_HOME/.ebextensions
 
+        ##prepare .ebextensions for going to emory
+        - cd $BUILD_HOME
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-ebextensions.git 
+        - cp -R emory-ebextensions/.ebextensions .
+        #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
+        - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - sed -i 's/WS_LDAP_BIND_PASSWORD/'"$WS_LDAP_BIND_PASSWORD"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - sed -i 's/WS_LDAP_BIND_DN/'"$WS_LDAP_BIND_DN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - ls -laR $BUILD_HOME/.ebextensions
 
         # Create the htpasswd file for beanstalk.
         #- htpasswd -b -c $BUILD_HOME/.ebextensions/httpd/htpasswd $WS_USERNAME $WS_PASSWORD
