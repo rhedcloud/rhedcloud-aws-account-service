@@ -69,6 +69,8 @@ pipelines:
         - export TARGET_DIR=target/awsaccount/rhedcloud-awsaccount-webservice/build/lib
         - ls -la $TARGET_DIR
         - mkdir -p $BUILD_HOME/deploy/build-test/libs/Axis2
+        - cp target/emailvalidation/rhedcloud-emailvalidation-webservice/wsdl/moas.wsdl $BUILD_HOME/deploy/build-test/libs/Axis2
+
         - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-localhost.aar $BUILD_HOME/deploy/build-test/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
         - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar
         - mkdir -p $BUILD_HOME/deploy/esb-dev/libs/Axis2
@@ -111,7 +113,7 @@ pipelines:
         - cp $BUILD_HOME/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         # Create the axis2.war file for build environment
         - cd $BUILD_HOME/deploy/build-test/libs/Axis2
-        - ../../../../processEnv.sh
+        - ../../../../processEnv.sh  #be careful that this will not stop the pipeline when there is errors
           
         # Create the axis2.war file for DEV
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
@@ -119,15 +121,12 @@ pipelines:
         # Create the axis2.war file for TEST
         - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
         - ../../../../processEnv.sh
-        # Create the axis2.war file for STAGE, almost the same as TEST except .aar
+        # Create the axis2.war file for STAGE
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - ../../../../processEnv.sh
         # Create the axis2.war file for PROD
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - ../../../../processEnv.sh
-        # Not sure what George is doing here---maybe copying files to hand to the integration team?
-        #- cp $BUILD_HOME/deploy/build-test/libs/AwsAccountService/emory-awsaccount-webservice-1.0-wsdl-classes.jar .
-        #- cp $BUILD_HOME/lib/aws-moa*.jar .
         - cd ../../../..
         - pwd
         - ls deploy/esb-test/libs/Axis2/axis2.war
@@ -135,11 +134,11 @@ pipelines:
 
         artifacts:
         - deploy/build-test/**     # we have to preserve the artifacts separately get to over the 1G size limit
-        - deploy/esb-dev/**     # preserve the deploy artifacts for the next step
-        - deploy/esb-test/**     # preserve the deploy artifacts for the next step
-        - deploy/esb-stage/**     # preserve the deploy artifacts for the next step
-        - deploy/esb-prod/**     # preserve the deploy artifacts for the next step
-        - openeai-servicegen/target/**   # un-comment to make the servicegen facade code available for download
+        - deploy/esb-dev/**   
+        - deploy/esb-test/**  
+        - deploy/esb-stage/** 
+        - deploy/esb-prod/** 
+        - openeai-servicegen/target/**  
 
      - step:
         name: Deploy and test the facade locally
@@ -178,9 +177,9 @@ pipelines:
         - ls -l rhedcloud-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
         # file too large to upload to bitbucket
         #- rhedcloud-aws-pipeline-scripts/upload_artifact.sh emory-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
-        - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh rhedcloud-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip itarch-bitbucket-downloads /rhedcloud-aws-account-service/
         #- ls target/rhedcloud-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
         - rhedcloud-aws-pipeline-scripts/upload_artifact.sh target/rhedcloud-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar
+        - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh rhedcloud-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip itarch-bitbucket-downloads /rhedcloud-aws-account-service/
         - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh target/rhedcloud-awsaccount-service-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.jar itarch-bitbucket-downloads /rhedcloud-aws-account-service/
 
      - step:
