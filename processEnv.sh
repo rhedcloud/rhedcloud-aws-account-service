@@ -18,5 +18,4 @@ jar uf axis2.war WEB-INF/conf
 zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
 jar tf axis2.war
 ls axis2.war
-rm -Rf WEB-INF
 
