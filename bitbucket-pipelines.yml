@@ -117,6 +117,8 @@ pipelines:
           
         # Create the axis2.war file for DEV
         - cd ../../../../
+        - pwd
+        - ls deploy/build-test/libs/Axis2/WEB-INF/classes
         - sed 's/CONNECTION_URL/'"$CONNECTION_URL_DEV"'/g' < deploy/build-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml > deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - sed -i 's/CONNECTION_USERNAME/'"$CONNECTION_USERNAME_DEV"'/g'  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - sed -i 's/CONNECTION_PASSWORD/'"$CONNECTION_PASSWORD_DEV"'/g'  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
