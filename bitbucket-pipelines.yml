@@ -116,23 +116,24 @@ pipelines:
         - ../../../../processEnv.sh  #be careful that this will not stop the pipeline when there is errors
           
         # Create the axis2.war file for DEV
-        - sed -i 's/CONNECTION_URL_DEV/'"$CONNECTION_URL_DEV"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
-        - sed -i 's/CONNECTION_PASSWORD_DEV/'"$CONNECTION_PASSWORD_DEV"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed 's/CONNECTION_URL/'"$CONNECTION_URL_DEV"'/g' < deploy/build-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml > deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
+        - sed 's/CONNECTION_USERNAME/'"$CONNECTION_USERNAME_DEV"'/g' < deploy/build-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml > deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
+        - sed 's/CONNECTION_PASSWORD/'"$CONNECTION_PASSWORD_DEV"'/g' < deploy/build-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml > deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
         - ../../../../processEnv.sh
         # Create the axis2.war file for TEST
-        - sed -i 's/CONNECTION_URL_TEST/'"$CONNECTION_URL_TEST"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
-        - sed -i 's/CONNECTION_PASSWORD_TEST/'"$CONNECTION_PASSWORD_TEST"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed -i 's/CONNECTION_URL/'"$CONNECTION_URL_TEST"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed -i 's/CONNECTION_PASSWORD/'"$CONNECTION_PASSWORD_TEST"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
         - ../../../../processEnv.sh
         # Create the axis2.war file for STAGE
-        - sed -i 's/CONNECTION_URL_STAGE/'"$CONNECTION_URL_STAGE"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
-        - sed -i 's/CONNECTION_PASSWORD_STAGE/'"$CONNECTION_PASSWORD_STAGE"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed -i 's/CONNECTION_URL/'"$CONNECTION_URL_STAGE"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed -i 's/CONNECTION_PASSWORD/'"$CONNECTION_PASSWORD_STAGE"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - ../../../../processEnv.sh
         # Create the axis2.war file for PROD
-        - sed -i 's/CONNECTION_URL_PROD/'"$CONNECTION_URL_PROD"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
-        - sed -i 's/CONNECTION_PASSWORD_PROD/'"$CONNECTION_PASSWORD_PROD"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed -i 's/CONNECTION_URL/'"$CONNECTION_URL_PROD"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
+        - sed -i 's/CONNECTION_PASSWORD/'"$CONNECTION_PASSWORD_PROD"'/g' $BUILD_HOME/deploy/esb-dev/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - ../../../../processEnv.sh
         - cd ../../../..
