@@ -131,8 +131,8 @@ pipelines:
         # Create the axis2.war file for STAGE
         # Create the axis2.war file for PROD
         - pwd
-        - ls deploy/esb-test/libs/Axis2/axis2.war
-        - ls deploy/build-test/libs/Axis2/axis2.war
+        #- ls deploy/esb-test/libs/Axis2/axis2.war
+        #- ls deploy/build-test/libs/Axis2/axis2.war
 
         artifacts:
         - deploy/build-test/**     # we have to preserve the artifacts separately get to over the 1G size limit
