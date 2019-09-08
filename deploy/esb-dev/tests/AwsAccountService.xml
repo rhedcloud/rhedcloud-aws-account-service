@@ -182,15 +182,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account</ObjectClass>
@@ -212,13 +212,13 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias</ObjectClass>
@@ -240,15 +240,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification</ObjectClass>
@@ -270,13 +270,13 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountOrganizationMembership</ObjectClass>
@@ -298,9 +298,9 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization</ObjectClass>
@@ -322,13 +322,13 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SamlProvider</ObjectClass>
@@ -350,9 +350,9 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SensitiveDataTypeAuthorization</ObjectClass>
@@ -374,15 +374,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud</ObjectClass>
@@ -404,16 +404,16 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="generate">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning</ObjectClass>
@@ -625,15 +625,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill</ObjectClass>
@@ -674,15 +674,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Services/Service/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Services/Service/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.Service</ObjectClass>
@@ -704,15 +704,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment</ObjectClass>
@@ -772,15 +772,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUse</ObjectClass>
@@ -802,13 +802,13 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUseAgreement</ObjectClass>
@@ -830,15 +830,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification</ObjectClass>
@@ -860,15 +860,15 @@
                     </Authentication>
                     <CommandName/>
                     <PrimedXmlDocuments>
-                      <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-                      <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                      <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
                     </PrimedXmlDocuments>
                     <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
                     <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile</ObjectClass>
@@ -967,15 +967,15 @@
 </Authentication>
 <CommandName/>
 <PrimedXmlDocuments>
-<PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-<PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="create">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="query">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="update">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+<PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Security/SecurityRiskDetectionWatch/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
 </PrimedXmlDocuments>
 <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
 <ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetectionWatch</ObjectClass>
@@ -1016,7 +1016,7 @@
                     <ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
                     <Property>
                       <PropertyName>GenericResponseDocumentUri</PropertyName>
-                      <PropertyValue>./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PropertyValue>
+                      <PropertyValue>message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PropertyValue>
                     </Property>
                     <Property>
                       <PropertyName>publishSyncs</PropertyName>
@@ -1144,15 +1144,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/Account/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account</ObjectClass>
@@ -1174,13 +1174,13 @@
           </Authentication>
           <CommandName>AccountAliasRequest</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/AccountAlias/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountAlias</ObjectClass>
@@ -1202,15 +1202,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/AccountNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification</ObjectClass>
@@ -1232,13 +1232,13 @@
           </Authentication>
           <CommandName/>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/AccountOrganizationMembership/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountOrganizationMembership</ObjectClass>
@@ -1260,9 +1260,9 @@
           </Authentication>
           <CommandName/>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization</ObjectClass>
@@ -1284,13 +1284,13 @@
           </Authentication>
           <CommandName/>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/SamlProvider/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SamlProvider</ObjectClass>
@@ -1312,9 +1312,9 @@
           </Authentication>
           <CommandName/>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/SensitiveDataTypeAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.SensitiveDataTypeAuthorization</ObjectClass>
@@ -1336,15 +1336,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloud/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud</ObjectClass>
@@ -1366,16 +1366,16 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="generate">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning</ObjectClass>
@@ -1589,8 +1589,8 @@
           <PrimedXmlDocuments>
 
 
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Provisioning/AccountProvisioningAuthorization/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
 
 
 
@@ -1635,15 +1635,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Billing/Bill/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill</ObjectClass>
@@ -1665,13 +1665,13 @@
           </Authentication>
           <CommandName>StackRequest</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="response">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="generate">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/CloudFormation/Stack/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack</ObjectClass>
@@ -1693,11 +1693,11 @@
           </Authentication>
           <CommandName/>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="generate">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="response">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="generate">message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Generate-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Response-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Security/SecurityRiskDetection/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection</ObjectClass>
@@ -1719,15 +1719,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Services/Service/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Services/Service/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.Service</ObjectClass>
@@ -1749,15 +1749,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Services/ServiceSecurityAssessment/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment</ObjectClass>
@@ -1779,9 +1779,9 @@
           </Authentication>
           <CommandName/>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/AccountUser/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/AccountUser/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/AccountUser/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/AccountUser/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser</ObjectClass>
@@ -1803,15 +1803,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/TermsOfUse/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUse</ObjectClass>
@@ -1833,15 +1833,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/TermsOfUseAgreement/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUseAgreement</ObjectClass>
@@ -1863,15 +1863,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/UserNotification/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification</ObjectClass>
@@ -1893,15 +1893,15 @@
           </Authentication>
           <CommandName>RdbmsRequestCommand</CommandName>
           <PrimedXmlDocuments>
-            <PrimedXmlDocument type="response">./message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="create">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="query">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Query-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="provide">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="update">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="delete">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="createSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="updateSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
-            <PrimedXmlDocument type="deleteSync">./message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="create">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="query">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="update">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+            <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/User/UserProfile/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
           </PrimedXmlDocuments>
           <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
           <ObjectClass>com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile</ObjectClass>
