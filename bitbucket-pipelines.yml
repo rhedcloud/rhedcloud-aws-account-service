@@ -70,6 +70,7 @@ pipelines:
         - ls -la $TARGET_DIR
         - mkdir -p $BUILD_HOME/deploy/build-test/libs/Axis2
         - cp target/awsaccount/rhedcloud-awsaccount-webservice/wsdl/moas.wsdl $BUILD_HOME/deploy/build-test/libs/Axis2
+        - cp target/awsaccount/rhedcloud-awsaccount-webservice/resources/services.xml $BUILD_HOME/deploy/build-test/libs/Axis2
 
         - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-localhost.aar $BUILD_HOME/deploy/build-test/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
         - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar
