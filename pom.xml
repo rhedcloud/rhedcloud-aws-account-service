@@ -4,8 +4,8 @@
  <groupId>org.rhedcloud.awsaccount.service</groupId>
  <artifactId>rhedcloud-awsaccount-service</artifactId>
  <version>${env.BITBUCKET_BRANCH}-${env.BITBUCKET_BUILD_NUMBER}</version>
- <name>emory-aws-account-service</name>
- <description>Emory AWS Account Service jar</description>
+ <name>rhedcloud-aws-account-service</name>
+ <description>Rhedcloud AWS Account Service jar</description>
 
  <!-- <repositories> <repository> <id>central</id> <url>https://m2.n2nservices.com/artifactory/repo</url> <snapshots> <enabled>false</enabled> 
   </snapshots> </repository> <repository> <id>snapshots</id> <url>https://m2.n2nservices.com/artifactory/repo</url> <releases> <enabled>false</enabled> 
