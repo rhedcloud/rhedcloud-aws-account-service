@@ -65,7 +65,119 @@
           </Property>
 
         </LoggerConfig>
-      </LoggerConfigs>
+      </LoggerConfigs><ScheduledAppConfigs scheduleCheckInterval="180000" type="daemon">
+        <ConfigClass>org.openeai.config.ScheduledAppConfig</ConfigClass>
+        <ObjectClass>org.openeai.afa.ScheduledApp</ObjectClass>
+        <ThreadPoolConfig checkBeforeProcessing="false" maxIdleTime="1" maxThreads="30" minThreads="0" name="Standard">
+          <ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
+          <ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
+        </ThreadPoolConfig>
+        <ScheduledAppConfig name="AwsServiceDetectionApplication" scheduleCheckInterval="300000" type="daemon">
+          <Schedules isImmediate="false" runMechanism="Thread">
+            <ObjectClass>org.openeai.afa.Schedule</ObjectClass>
+            <Schedule name="AwsServiceDetectionSchedule" isImmediate="true">
+              <Commands inboundXmlValidation="false" outboundXmlValidation="false" writeToFile="false">
+                <Command type="scheduled" isDefault="false">
+                  <CommandName>AwsServiceDetectionScheduledCommand</CommandName>
+                  <CommandClass>edu.emory.awsaccount.service.AwsServiceDetectionScheduledCommand</CommandClass>
+                  <Configuration>
+                    <ProducerConfigs startOnInitialization="true">
+                      <ConnectionFactoryName>cn=AwsAccountServiceProducerQCF</ConnectionFactoryName>
+                      <InitialContextFactory>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactory>
+                      <ProviderURL>ssl://b-a4c98873-ebf6-4a53-9144-11ca245173e1-1.mq.us-east-1.amazonaws.com:61617</ProviderURL>
+                      <SecurityPrincipal>AwsAccountService</SecurityPrincipal>
+                      <SecurityCredentials>AwsAccountService22</SecurityCredentials>
+                      <ProducerIdURL>localhost</ProducerIdURL>
+                      <ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+                      <ProducerConfig name="AwsAccountServiceProducerPool" tempQueuePoolSize="5" numberOfProducers="5">
+                        <ConnectionFactoryName>cn=AwsAccountServiceProducerQCF</ConnectionFactoryName>
+                        <DestinationName>cn=AwsAccountServiceQueue</DestinationName>
+                        <ConfigClass>org.openeai.config.ProducerConfig</ConfigClass>
+                        <ObjectClass>org.openeai.jms.producer.PointToPointProducer</ObjectClass>
+                      </ProducerConfig>
+
+                    </ProducerConfigs>
+                    <MessageObjectConfigs xmlDocumentValidation="false" translationType="application">
+                      <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
+                      <Authentication>
+                        <UserId>AwsAccountService</UserId>
+                      </Authentication>
+                      <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+                      <MessageObjectConfig deferInitialization="false" name="Service.v1_0" translationType="application" xmlDocumentValidation="false">
+                        <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
+                        <Authentication>
+                          <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+                          <Signature>unknown</Signature>
+                        </Authentication>
+                        <CommandName/>
+                        <PrimedXmlDocuments>
+                          <PrimedXmlDocument type="response">message/releases/org/openeai/CoreMessaging/Generic/1.0/xml/Response-Reply.success1.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="create">message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Request.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="query">message/releases/com/amazon/aws/Services/Service/1.0/xml/Query-Request.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="provide">message/releases/com/amazon/aws/Services/Service/1.0/xml/Provide-Reply.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="update">message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Request.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="delete">message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Request.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="createSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Create-Sync.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="updateSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Update-Sync.xml</PrimedXmlDocument>
+                          <PrimedXmlDocument type="deleteSync">message/releases/com/amazon/aws/Services/Service/1.0/xml/Delete-Sync.xml</PrimedXmlDocument>
+                        </PrimedXmlDocuments>
+                        <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+                        <ObjectClass>com.amazon.aws.moa.jmsobjects.services.v1_0.Service</ObjectClass>
+                        <EnterpriseObjectDocument docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Services/1.0/ServiceEO.xml" ignoreMissingFields="false" ignoreValidation="false"/>
+                        <LayoutManager>
+                          <InputLayout type="xml">
+                            <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                          </InputLayout>
+                          <OutputLayout type="xml">
+                            <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                          </OutputLayout>
+                        </LayoutManager>
+                      </MessageObjectConfig>
+                      <MessageObjectConfig deferInitialization="false" name="ServiceQuerySpecification.v1_0" translationType="application" xmlDocumentValidation="false">
+                        <SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
+                        <Authentication>
+                          <UserId>testsuite@emory.edu/10.40.48.112</UserId>
+                          <Signature>unknown</Signature>
+                        </Authentication>
+                        <CommandName/>
+                        <ConfigClass>org.openeai.config.MessageObjectConfig</ConfigClass>
+                        <ObjectClass>com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification</ObjectClass>
+                        <EnterpriseObjectDocument docUri="configs/messaging/Environments/Examples/EnterpriseObjects/3.0/com/amazon/aws/Resources/1.0/ServiceQuerySpecificationEO.xml" ignoreMissingFields="false" ignoreValidation="false"/>
+                        <LayoutManager>
+                          <InputLayout type="xml">
+                            <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                          </InputLayout>
+                          <OutputLayout type="xml">
+                            <ObjectClass>org.openeai.layouts.XmlLayout</ObjectClass>
+                          </OutputLayout>
+                        </LayoutManager>
+                      </MessageObjectConfig>
+                    </MessageObjectConfigs>
+                    <PropertyConfigs>
+                      <ConfigClass>org.openeai.config.PropertyConfig</ConfigClass>
+                      <PropertyConfig name="GeneralProperties">
+                        <Property>
+                          <PropertyName>verbose</PropertyName>
+                          <PropertyValue>true</PropertyValue>
+                        </Property>
+                        <Property>
+                          <PropertyName>accessKeyId</PropertyName>
+                          <PropertyValue>AKIAQGW2L2KGWWG7PCWH</PropertyValue>
+                        </Property>
+                        <Property>
+                          <PropertyName>secretKey</PropertyName>
+                          <PropertyValue>TOmPouNw5UcRbEG0F+V4bZ/YVZSGUl9fO8npj9jG</PropertyValue>
+                        </Property>
+                      </PropertyConfig>
+                    </PropertyConfigs>
+                  </Configuration>
+                </Command>
+              </Commands>
+            </Schedule>
+          </Schedules>
+        </ScheduledAppConfig>
+
+      </ScheduledAppConfigs>
 
       <ProducerConfigs startOnInitialization="true">
         <ConnectionFactoryName>cn=AwsAccountServiceProducerQCF</ConnectionFactoryName>
