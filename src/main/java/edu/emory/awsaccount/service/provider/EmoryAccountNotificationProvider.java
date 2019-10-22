@@ -277,9 +277,6 @@ implements AccountNotificationProvider {
 		
 		logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
 		
-		// TODO: query to determine if a notification has already been created in
-		// the last suppressionInterval milliseconds.
-		
 		// Get a configured AccountNotificationQuerySpecification to use.
 		logger.info(LOGTAG + "Getting a configured query spec from AppConfig...");
 		AccountNotificationQuerySpecification querySpec = 
@@ -308,6 +305,8 @@ implements AccountNotificationProvider {
 				annotationText = annotation.getText();
 			}
 		}
+		
+		//TODO: acquire a lock named by the annotation text
 		
 		logger.info(LOGTAG + "Setting the values of the query spec...");
 		long endTime = System.currentTimeMillis();
