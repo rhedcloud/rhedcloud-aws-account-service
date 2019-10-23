@@ -168,7 +168,7 @@
    <artifactId>openeai-utils</artifactId>
    <version>1</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/openeai_utils.jar</systemPath>
+   <systemPath>${project.basedir}/lib/openeai-utils-1.0.14.jar</systemPath>
   </dependency>
 
   <dependency>
