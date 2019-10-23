@@ -305,13 +305,6 @@ implements AccountNotificationProvider {
 		throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
 		
-		if (getIgnoreRegexes().size() > 0) {
-			logger.info(LOGTAG + "Evaluating AccountNotification against a list " +
-				"of notifications to ignore...");
-		}
-		else {
-			logger.info(LOGTAG + "No regular expressions to test to ignore notifications.");;
-		}
 		if (ignoreNotification(aNotification) == true) {
 			String xmlString = null;
 			try {
