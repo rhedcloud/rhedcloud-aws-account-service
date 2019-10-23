@@ -909,13 +909,14 @@ implements AccountNotificationProvider {
 		String text = aNotification.getText();
 		logger.info(LOGTAG + "AccountNotification text is: " + text);
 		if (getIgnoreRegexes().size() > 0) {
-			logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() + " patterns " +
-				"to consider to drop notification.");
+			logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() + 
+				" patterns to consider to drop notification.");
 			ListIterator li = getIgnoreRegexes().listIterator();
 			while (li.hasNext()) {
 				String regex = (String)li.next();
 				Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(text);
+				logger.info(LOGTAG + "m.find");
 				if (m.find() == true) {
 					logger.info(LOGTAG + "Text matches pattern: " + regex);
 					return true;
