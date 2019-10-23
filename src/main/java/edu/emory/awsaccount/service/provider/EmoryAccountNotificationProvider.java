@@ -371,6 +371,9 @@ implements AccountNotificationProvider {
 					isLockSet = true;
 				}
 				catch (LockAlreadySetException lase) {
+					logger.info(LOGTAG + "Lock already set. SRD already being processed. Returning.");
+					return;
+					/**
 					String msg = "Lock " + lockName + " is already set. " +
 						"Sleeping for " + getLockSleepInterval() + " ms.";
 					logger.info(LOGTAG + msg);
@@ -383,6 +386,7 @@ implements AccountNotificationProvider {
 							"exception is: " + ie.getMessage();
 						logger.error(LOGTAG + errMsg);
 					}
+					**/
 				}
 				catch (LockException le) {
 					String errMsg = "An error occurred setting the " +
