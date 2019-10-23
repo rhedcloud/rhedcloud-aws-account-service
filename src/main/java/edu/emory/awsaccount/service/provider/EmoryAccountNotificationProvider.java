@@ -374,6 +374,15 @@ implements AccountNotificationProvider {
 					String msg = "Lock " + lockName + " is already set. " +
 						"Sleeping for " + getLockSleepInterval() + " ms.";
 					logger.info(LOGTAG + msg);
+					try {
+						Thread.sleep(getLockSleepInterval());
+					}
+					catch (InterruptedException ie) {
+						String errMsg = "An error occurred sleeping " +
+							"between lock acquisition attempts. The " +
+							"exception is: " + ie.getMessage();
+						logger.error(LOGTAG + errMsg);
+					}
 				}
 				catch (LockException le) {
 					String errMsg = "An error occurred setting the " +
