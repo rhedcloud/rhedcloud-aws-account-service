@@ -305,8 +305,13 @@ implements AccountNotificationProvider {
 		throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
 		
-		logger.info(LOGTAG + "Evaluating AccountNotification against a list " +
-			"of notifications to ignore...");
+		if (getIgnoreRegexes().size() > 0) {
+			logger.info(LOGTAG + "Evaluating AccountNotification against a list " +
+				"of notifications to ignore...");
+		}
+		else {
+			logger.info(LOGTAG + "No regular expressions to test to ignore notifications.");;
+		}
 		if (ignoreNotification(aNotification) == true) {
 			String xmlString = null;
 			try {
@@ -355,10 +360,12 @@ implements AccountNotificationProvider {
 		
 		// If there is a ReferenceId, acquire a lock.
 		String refId = aNotification.getReferenceId();
-		String lockName = "ReferenceId-" + refId;
+		String type = aNotification.getType();
+		String lockName = type + "-" + refId;
 		Lock lock = null;
 		Key key = null;
 		if (refId != null) {
+			logger.info(LOGTAG + "The ReferenceId is not null.");
 			lock = getAccountNotificationLock();
 			key = null;
 			boolean isLockSet = false;
@@ -368,6 +375,7 @@ implements AccountNotificationProvider {
 					key = lock.set(lockName);
 					logger.info(LOGTAG + "Set AccountNotificationLock for " +
 						"lockName: " + lockName);
+					isLockSet = true;
 				}
 				catch (LockAlreadySetException lase) {
 					String msg = "Lock " + lockName + " is already set. " +
@@ -382,6 +390,9 @@ implements AccountNotificationProvider {
 					throw new ProviderException(errMsg, le);
 				}
 			}
+		}
+		else {
+			logger.info(LOGTAG + "The ReferenceId is null.");
 		}
 		
 		logger.info(LOGTAG + "Setting the values of the query spec...");
@@ -400,6 +411,7 @@ implements AccountNotificationProvider {
 			if (lock != null) {
 				try {
 					lock.release(lockName, key);
+					logger.info(LOGTAG + "released lock: " + lockName);
 				}
 				catch (LockException le) {
 					String errMsg2 = "An error occurred releasing " +
@@ -424,6 +436,7 @@ implements AccountNotificationProvider {
 			if (lock != null) {
 				try {
 					lock.release(lockName, key);
+					logger.info(LOGTAG + "released lock: " + lockName);
 				}
 				catch (LockException le) {
 					String errMsg2 = "An error occurred releasing " +
@@ -474,6 +487,7 @@ implements AccountNotificationProvider {
 				if (lock != null) {
 					try {
 						lock.release(lockName, key);
+						logger.info(LOGTAG + "released lock: " + lockName);
 					}
 					catch (LockException le) {
 						String errMsg = "An error occurred releasing " +
@@ -496,6 +510,18 @@ implements AccountNotificationProvider {
 				String errMsg = "An error occurred getting a request service to use " +
 					"in this transaction. The exception is: " + jmse.getMessage();
 				logger.error(LOGTAG + errMsg);
+				if (lock != null) {
+					try {
+						lock.release(lockName, key);
+						logger.info(LOGTAG + "released lock: " + lockName);
+					}
+					catch (LockException le) {
+						String errMsg2 = "An error occurred releasing " +
+							"with name " + lockName + ". The exception is: " +
+							le.getMessage();
+						logger.error(LOGTAG + errMsg2);
+					}
+				}	
 				throw new ProviderException(errMsg, jmse);
 			}
 			try {
@@ -521,6 +547,7 @@ implements AccountNotificationProvider {
 				if (lock != null) {
 					try {
 						lock.release(lockName, key);
+						logger.info(LOGTAG + "released lock: " + lockName);
 					}
 					catch (LockException le) {
 						String errMsg = "An error occurred releasing " +
@@ -872,21 +899,28 @@ implements AccountNotificationProvider {
 		String LOGTAG = "[EmoryAccountNotificationProvider.ignoreNotification] ";
 		String text = aNotification.getText();
 		logger.info(LOGTAG + "AccountNotification text is: " + text);
-		ListIterator li = getIgnoreRegexes().listIterator();
-		while (li.hasNext()) {
-			String regex = (String)li.next();
-			Pattern p = Pattern.compile(regex);
-			Matcher m = p.matcher(text);
-			if (m.matches() == true) {
-				logger.info(LOGTAG + "Text matches pattern: " + regex);
-				return true;
+		if (getIgnoreRegexes().size() > 0) {
+			logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() + "patterns " +
+				"to consider to drop notification.");
+			ListIterator li = getIgnoreRegexes().listIterator();
+			while (li.hasNext()) {
+				String regex = (String)li.next();
+				Pattern p = Pattern.compile(regex);
+				Matcher m = p.matcher(text);
+				if (m.matches() == true) {
+					logger.info(LOGTAG + "Text matches pattern: " + regex);
+					return true;
+				}
+				else {
+					logger.info(LOGTAG + "Text does not match pattern " + regex);
+				}
 			}
-			else {
-				logger.info(LOGTAG + "Text does not match pattern " + regex);
-			}
+			return false;
 		}
-		return false;
-		
+		else {
+			logger.info(LOGTAG + "No regex patterns to consider to drop notification.");
+			return false;
+		}
 	}
 }		
 	
