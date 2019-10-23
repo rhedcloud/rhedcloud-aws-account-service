@@ -18,12 +18,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jms.JMSException;
 
@@ -114,20 +117,16 @@ implements AccountNotificationProvider {
 
 	private Category logger = OpenEaiObject.logger;
 	private AppConfig m_appConfig;
-	private String m_primedDocUrl = null;
 	private boolean m_verbose = false;
-	private Sequence m_provisioningIdSequence = null;
-	private Sequence m_accountSequence = null;
-	private String m_centralAdminRoleDn = null;
+	private Lock m_accountNotificationLock = null;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
-	private ProducerPool m_idmServiceProducerPool = null;
 	private ProducerPool m_serviceNowServiceProducerPool = null;
-	private ThreadPool m_threadPool = null;
-	private int m_threadPoolSleepInterval = 1000;
 	private String LOGTAG = "[EmoryAccountNotificationProvider] ";
 	private int m_requestTimeoutIntervalInMillis = 10000;
 	private int m_suppressionIntervalInMillis = 3600000;
+	private int m_lockSleepInterval = 1000;
 	private boolean m_suppressNotifications = true;
+	private ArrayList m_ignoreRegexes = new ArrayList();
 	
 	/**
 	 * @see AccountNotificationProvider.java
@@ -177,6 +176,21 @@ implements AccountNotificationProvider {
 		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
 			getRequestTimeoutIntervalInMillis());
 		
+		Enumeration<Object> keys = getProperties().keys();
+		ArrayList ignoreRegexes = new ArrayList();
+		while (keys.hasMoreElements()) {
+			String key = (String)keys.nextElement();
+			if (key.startsWith("ignoreRegex")) {
+				String value = getProperties().getProperty(key);
+				ignoreRegexes.add(value);
+			}
+		}
+		setIgnoreRegexes(ignoreRegexes);
+		if (getIgnoreRegexes().size() > 0) {
+		logger.info(LOGTAG + "There are " + ignoreRegexes.size() + 
+			" to ignore. They are: " + ignoreRegexes.toString());
+		}
+		
 		// This provider needs to send messages to the AWS account service
 		// to initialize provisioning transactions.
 		ProducerPool p2p1 = null;
@@ -184,6 +198,22 @@ implements AccountNotificationProvider {
 			p2p1 = (ProducerPool)getAppConfig()
 				.getObject("AwsAccountServiceProducerPool");
 			setAwsAccountServiceProducerPool(p2p1);
+		}
+		catch (EnterpriseConfigurationObjectException ecoe) {
+			// An error occurred retrieving an object from AppConfig. Log it and
+			// throw an exception.
+			String errMsg = "An error occurred retrieving an object from " +
+					"AppConfig. The exception is: " + ecoe.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new ProviderException(errMsg);
+		}	
+		
+		// This provider needs an AccountNotification lock.
+		Lock lock = null;
+		try {
+			lock = (Lock)getAppConfig()
+				.getObject("AccountNotificationLock");
+			setAccountNotificationLock(lock);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
 			// An error occurred retrieving an object from AppConfig. Log it and
@@ -275,6 +305,23 @@ implements AccountNotificationProvider {
 		throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
 		
+		logger.info(LOGTAG + "Evaluating AccountNotification against a list " +
+			"of notifications to ignore...");
+		if (ignoreNotification(aNotification) == true) {
+			String xmlString = null;
+			try {
+				xmlString = aNotification.toXmlString();
+			}
+			catch (XmlEnterpriseObjectException xeoe) {
+				String errMsg = "An error occurred serializing an object " +
+					"to XML. The exception is: " + xeoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, xeoe);
+			}
+			logger.info(LOGTAG + "Ignoring AccountNotification: " + xmlString);
+			return;
+		}
+		
 		logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
 		
 		// Get a configured AccountNotificationQuerySpecification to use.
@@ -289,7 +336,7 @@ implements AccountNotificationProvider {
 			String errMsg = "An error occurred getting an object from " +
 				"AppConfig. The exception is: " + ecoe.getMessage();
 			logger.error(LOGTAG + errMsg);
-			throw new ProviderException();
+			throw new ProviderException(errMsg, ecoe);
 		}
 		
 		// Get the annotation text 
@@ -306,7 +353,36 @@ implements AccountNotificationProvider {
 			}
 		}
 		
-		//TODO: acquire a lock named by the annotation text
+		// If there is a ReferenceId, acquire a lock.
+		String refId = aNotification.getReferenceId();
+		String lockName = "ReferenceId-" + refId;
+		Lock lock = null;
+		Key key = null;
+		if (refId != null) {
+			lock = getAccountNotificationLock();
+			key = null;
+			boolean isLockSet = false;
+			
+			while (isLockSet == false) {
+				try {
+					key = lock.set(lockName);
+					logger.info(LOGTAG + "Set AccountNotificationLock for " +
+						"lockName: " + lockName);
+				}
+				catch (LockAlreadySetException lase) {
+					String msg = "Lock " + lockName + " is already set. " +
+						"Sleeping for " + getLockSleepInterval() + " ms.";
+					logger.info(LOGTAG + msg);
+				}
+				catch (LockException le) {
+					String errMsg = "An error occurred setting the " +
+						"AccountNotificationLock. The exception is: " +
+						le.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new ProviderException(errMsg, le);
+				}
+			}
+		}
 		
 		logger.info(LOGTAG + "Setting the values of the query spec...");
 		long endTime = System.currentTimeMillis();
@@ -321,7 +397,18 @@ implements AccountNotificationProvider {
 				"on the query specification. The exception is: " + 
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
-			throw new ProviderException();
+			if (lock != null) {
+				try {
+					lock.release(lockName, key);
+				}
+				catch (LockException le) {
+					String errMsg2 = "An error occurred releasing " +
+						"with name " + lockName + ". The exception is: " +
+						le.getMessage();
+					logger.error(LOGTAG + errMsg2);
+				}
+			}	
+			throw new ProviderException(errMsg, efe);
 		}
 		
 		// Convert the query spec to an XML string.
@@ -334,7 +421,18 @@ implements AccountNotificationProvider {
 				"spec to an XML string. The exception is: " + 
 				xeoe.getMessage();
 			logger.error(LOGTAG + errMsg);
-			throw new ProviderException();
+			if (lock != null) {
+				try {
+					lock.release(lockName, key);
+				}
+				catch (LockException le) {
+					String errMsg2 = "An error occurred releasing " +
+						"with name " + lockName + ". The exception is: " +
+						le.getMessage();
+					logger.error(LOGTAG + errMsg2);
+				}
+			}	
+			throw new ProviderException(errMsg, xeoe);
 		}
 		
 		// Query for any notifications during the suppression interval
@@ -362,17 +460,29 @@ implements AccountNotificationProvider {
 			String notification = null;
 			try {
 				notification = aNotification.toXmlString();
+				logger.info(LOGTAG + "suppressNotification is true, will not create " +
+						"AccountNotification: " + notification);
 			}
 			catch (XmlEnterpriseObjectException xeoe) {
 				String errMsg = "An error occurred serializing an " +
 					"object to an XML string. The exception is: " + 
 					xeoe.getMessage();
 				logger.error(LOGTAG + errMsg);
-				throw new ProviderException();
+				throw new ProviderException(errMsg, xeoe);
 			}
-			
-			logger.info(LOGTAG + "suppressNotification is true, will not create " +
-				"AccountNotification: " + notification);
+			finally {
+				if (lock != null) {
+					try {
+						lock.release(lockName, key);
+					}
+					catch (LockException le) {
+						String errMsg = "An error occurred releasing " +
+							"with name " + lockName + ". The exception is: " +
+							le.getMessage();
+						logger.error(LOGTAG + errMsg);
+					}
+				}	
+			}
 		}
 		// Otherwise, create the AccountNotification
 		else {	
@@ -402,12 +512,26 @@ implements AccountNotificationProvider {
 					logger.error(LOGTAG + errMsg);
 					throw new ProviderException(errMsg, eoce);
 			}
-			// In any case, release the producer back to the pool.
+			// In any case, release the producer back to the pool and
+			// release the lock if set.
 			finally {
 				getAwsAccountServiceProducerPool()
 					.releaseProducer((PointToPointProducer)rs);
+		
+				if (lock != null) {
+					try {
+						lock.release(lockName, key);
+					}
+					catch (LockException le) {
+						String errMsg = "An error occurred releasing " +
+							"with name " + lockName + ". The exception is: " +
+							le.getMessage();
+						logger.error(LOGTAG + errMsg);
+					}
+				}	
 			}
 		}
+
 		return;
 	}
 
@@ -606,6 +730,26 @@ implements AccountNotificationProvider {
 		return m_suppressNotifications;
 	}
 	
+	private void setAccountNotificationLock(Lock lock) {
+		m_accountNotificationLock = lock;
+	}
+	
+	private Lock getAccountNotificationLock() {
+		return m_accountNotificationLock;
+	}
+	
+	private int getLockSleepInterval() {
+		return m_lockSleepInterval;
+	}
+	
+	private void setIgnoreRegexes(ArrayList list) {
+		m_ignoreRegexes = list;
+	}
+	
+	private ArrayList getIgnoreRegexes() {
+		return m_ignoreRegexes;
+	}
+	
 	public Incident generateIncident(IncidentRequisition req) 
 		throws ProviderException {
 		
@@ -722,6 +866,27 @@ implements AccountNotificationProvider {
 		finally {
 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
+	}
+	
+	private boolean ignoreNotification(AccountNotification aNotification) {
+		String LOGTAG = "[EmoryAccountNotificationProvider.ignoreNotification] ";
+		String text = aNotification.getText();
+		logger.info(LOGTAG + "AccountNotification text is: " + text);
+		ListIterator li = getIgnoreRegexes().listIterator();
+		while (li.hasNext()) {
+			String regex = (String)li.next();
+			Pattern p = Pattern.compile(regex);
+			Matcher m = p.matcher(text);
+			if (m.matches() == true) {
+				logger.info(LOGTAG + "Text matches pattern: " + regex);
+				return true;
+			}
+			else {
+				logger.info(LOGTAG + "Text does not match pattern " + regex);
+			}
+		}
+		return false;
+		
 	}
 }		
 	
