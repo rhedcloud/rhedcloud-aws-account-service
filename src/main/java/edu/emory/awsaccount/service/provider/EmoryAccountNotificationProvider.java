@@ -354,7 +354,10 @@ implements AccountNotificationProvider {
 		// If there is a ReferenceId, acquire a lock.
 		String refId = aNotification.getReferenceId();
 		String type = aNotification.getType();
-		String lockName = type + "-" + refId;
+		String lockName = type + "-" + refId + "-" + annotationText;
+		if (lockName.length() > 255) {
+			lockName = lockName.substring(0, 254);
+		}
 		Lock lock = null;
 		Key key = null;
 		if (refId != null) {
