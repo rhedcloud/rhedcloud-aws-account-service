@@ -1157,6 +1157,9 @@
                     <Property>
                       <PropertyName>createUsePersistCommand</PropertyName>
                       <PropertyValue>true</PropertyValue>
+                    </Property><Property>
+                      <PropertyName>verbose</PropertyName>
+                      <PropertyValue>false</PropertyValue>
                     </Property>
                   </PropertyConfig>
                   <PropertyConfig name="DbPoolMappings" refresh="false">

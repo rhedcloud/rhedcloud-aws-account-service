@@ -211,6 +211,8 @@ pipelines:
         script:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
+        - zipinfo deploy/esb-dev/libs/Axis2/axis2.war
+        - cat rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
         #- sleep 30
         #- export WS_URL=https://emory-awsaccount-service-dev/services/AwsAccountService
