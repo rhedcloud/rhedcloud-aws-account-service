@@ -92,6 +92,9 @@ pipelines:
         #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
         - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - sed -i 's/LDAP_URL/'"ldap:\/\/ldapprod1.vpc.rhedcloud.org:389\/ou=users,dc=rhedcloud,dc=org?uid?sub?(objectClass=*"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - sed -i 's/AuthLDAPBindDN/'"#AuthLDAPBindDN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - sed -i 's/AuthLDAPBindPassword/'"#AuthLDAPBindPassword"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+        - cat  $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - ls -laR $BUILD_HOME/.ebextensions
         - cp $BUILD_HOME/lib/openeai-core*jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
         - cp $BUILD_HOME/lib/openeai-utils*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
