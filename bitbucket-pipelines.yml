@@ -87,6 +87,8 @@ pipelines:
         - cd $BUILD_HOME
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
         - cp -R rhedcloud-ebextensions/.ebextensions .
+        ##failing here?
+        - rm .ebextensions/logarchival.config
         - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
         - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
         #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
