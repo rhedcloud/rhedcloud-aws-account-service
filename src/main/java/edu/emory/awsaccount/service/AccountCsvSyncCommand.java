@@ -19,6 +19,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import edu.emory.moa.objects.resources.v1_0.Email;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -71,7 +72,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
     protected static String deletedAccountsFileName = "DeletedAccounts.csv";
     private S3Helper s3Helper;
     // private boolean cleanTempDir = true;
-
+    DirectoryPerson PERSON_NOT_FOUND=new DirectoryPerson();
     CacheLoader<String, DirectoryPerson> loader = new CacheLoader<String, DirectoryPerson>() {
         @Override
         public DirectoryPerson load(String key) {
@@ -104,7 +105,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
                 directoryServiceProducerPool.releaseProducer(messageProducer);
             }
             if (accounts == null || accounts.size() == 0)
-                return null;
+                return PERSON_NOT_FOUND;
             return accounts.get(0);
         }
     };
@@ -126,6 +127,11 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
 
             tempDir.mkdir();
             s3Helper = new S3Helper(getProperties());
+
+            PERSON_NOT_FOUND.setFullName("Person, NotFound");
+            Email email=PERSON_NOT_FOUND.newEmail();
+            email.setEmailAddress("PersonNotFound@emory.edu");
+            PERSON_NOT_FOUND.setEmail(email);
         } catch (Exception e) {
             throw new InstantiationException(LOGTAG + e.getMessage());
         }
