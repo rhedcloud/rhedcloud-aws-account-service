@@ -96,7 +96,11 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
                         diretoryPersonQuerySpecification.setKey(null);
                         diretoryPersonQuerySpecification.setSearchString(key);
                         messageProducer = getRequestServiceMessageProducer(directoryServiceProducerPool);
-                        accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+                        try {
+                            accounts = diretoryPerson.query(diretoryPersonQuerySpecification, (RequestService) messageProducer);
+                        }catch (org.openeai.moa.EnterpriseObjectQueryException e2){
+                            logger.warn(LOGTAG+ e2.getMessage());
+                        }
                     }
                 }
             } catch (Throwable e) {
