@@ -90,7 +90,7 @@ pipelines:
         ##failing here?
         - rm .ebextensions/logarchival.config
         - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
-        - sed -i 's/myapp/'"awsaccount"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+        - sed -i 's/myapp/'"rc-awsaccount-dev"'/g' $BUILD_HOME/.ebextensions/99datadog.config
         #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
         - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
         - sed -i 's/LDAP_URL/'"ldap:\/\/ldapprod1.vpc.rhedcloud.org:389\/ou=users,dc=rhedcloud,dc=org?uid?sub?(objectClass=*)"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
