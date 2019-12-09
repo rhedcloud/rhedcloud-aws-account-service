@@ -113,6 +113,8 @@ pipelines:
         - cat deploy/build-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
         - cp deploy/build-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
+        - sed -i 's/oracle.jdbc.driver.OracleDriver/'"org.postgresql.Driver"'/g' deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
+        - sed -i 's/org.hibernate.dialect.Oracle10gDialect/'"org.hibernate.dialect.PostgreSQLDialect"'/g' deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - sed -i 's/CONNECTION_URL/'"$CONNECTION_URL_DEV"'/g' deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - sed -i 's/CONNECTION_USERNAME/'"$CONNECTION_USERNAME_DEV"'/g'  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - sed -i 's/CONNECTION_PASSWORD/'"$CONNECTION_PASSWORD_DEV"'/g'  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
