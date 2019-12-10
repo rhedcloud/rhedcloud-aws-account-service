@@ -17,6 +17,7 @@ jar uf axis2.war WEB-INF/classes
 jar uf axis2.war WEB-INF/modules
 jar uf axis2.war WEB-INF/conf
 zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
+zip -d axis2.war WEB-INF/lib/commons-io-1.4.jar  # conflicts with commons-io-2.5.jar from lib folder
 jar tf axis2.war
 ls axis2.war
 

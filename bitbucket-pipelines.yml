@@ -83,6 +83,9 @@ pipelines:
         - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
 
+        - echo ${BITBUCKET_BUILD_NUMBER} > $BUILD_HOME/deploy/BUILD_NUMBER.txt
+
+
         ##prepare .ebextensions for going to rhedcloud
         - cd $BUILD_HOME
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
