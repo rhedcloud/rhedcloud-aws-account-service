@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.openeai.moa.jmsobjects.coremessaging.v1_0">
+<class name="ProcessedMessage" table="T_PROCESSED_MESSAGE">
+<id name="ApplicationId" column="APPLICATION_ID">
+<generator class="assigned"/>
+</id>
+<property name="ProcessedMessagedId" column="PROCESSED_MESSAGE_ID"/>
+<property name="MsgSeries" column="MESSAGE_SERIES"/>
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDate" column="CREATE_DATE" type="OpenEaiDate"/>
+</class>
+</hibernate-mapping>
