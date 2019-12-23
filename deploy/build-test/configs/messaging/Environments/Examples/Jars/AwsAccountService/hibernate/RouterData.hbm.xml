@@ -6,13 +6,13 @@
 <generator class="assigned"/>
 </id>
 <property name="TargetAppId" column="TARGET_APP_ID"/>
-<property name="MessageId" column="MESSAGE_ID"/>
+<property name="MsgId" column="MESSAGE_ID"/>
 <property name="TargetMessageId" column="TARGET_MESSAGE_ID"/>
-<property name="MessageCategory" column="MESSAGE_CATEGORY"/>
-<property name="MessageObject" column="MESSAGE_OBJECT"/>
-<property name="MessageAction" column="MESSAGE_ACTION"/>
-<property name="MessageType" column="MESSAGE_TYPE"/>
-<property name="MessageRelease" column="MESSAGE_RELEASE"/>
+<property name="MsgCategory" column="MESSAGE_CATEGORY"/>
+<property name="MsgObject" column="MESSAGE_OBJECT"/>
+<property name="MsgAction" column="MESSAGE_ACTION"/>
+<property name="MsgType" column="MESSAGE_TYPE"/>
+<property name="MsgRelease" column="MESSAGE_RELEASE"/>
 <property name="CreateDate" column="CREATE_DATE" type="OpenEaiDate"/>
 <property name="CreateUser" column="CREATE_USER"/>
 </class>
