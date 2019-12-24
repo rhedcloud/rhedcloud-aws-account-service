@@ -158,9 +158,9 @@
   <dependency>
    <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>openeai-core</artifactId>
-   <version>5.0.27</version>
+   <version>5.0.29</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/openeai-core-5.0.27.jar</systemPath>
+   <systemPath>${project.basedir}/lib/openeai-core-5.0.29.jar</systemPath>
   </dependency>
 
   <dependency>
