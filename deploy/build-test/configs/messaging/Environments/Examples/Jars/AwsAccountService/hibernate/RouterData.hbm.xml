@@ -2,12 +2,12 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.openeai.moa.jmsobjects.coremessaging.v1_0">
 <class name="RouterData" table="T_ROUTER_DATA">
-<id name="SenderAppId" column="SENDER_APP_ID">
-<generator class="assigned"/>
-</id>
+<composite-id >
+<key-property name="SenderAppId" column="SENDER_APP_ID"/>
+<key-property name="MsgId" column="MESSAGE_ID"/>
+<key-property name="TargetMessageId" column="TARGET_MESSAGE_ID"/>
+</composite-id>
 <property name="TargetAppId" column="TARGET_APP_ID"/>
-<property name="MsgId" column="MESSAGE_ID"/>
-<property name="TargetMessageId" column="TARGET_MESSAGE_ID"/>
 <property name="MsgCategory" column="MESSAGE_CATEGORY"/>
 <property name="MsgObject" column="MESSAGE_OBJECT"/>
 <property name="MsgAction" column="MESSAGE_ACTION"/>
