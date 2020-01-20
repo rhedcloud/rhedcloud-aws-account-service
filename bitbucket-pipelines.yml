@@ -144,8 +144,9 @@ pipelines:
         - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - ls  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
-        - cp -r .ebextensions deploy/esb-dev/libs/Axis2
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
+        - cp -R $BUILD_HOME/.ebextensions .
+        - ls .ebextensions
         - sed -i 's/myapp/'"rc-awsaccount-dev"'/g' .ebextensions/99datadog.config
         - *create-axis2-war
 
@@ -154,8 +155,9 @@ pipelines:
         - pwd
         - mkdir -p deploy/esb-test/libs/Axis2/WEB-INF/classes
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - cp -r .ebextensions deploy/esb-dev/libs/Axis2
         - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
+        - cp -R $BUILD_HOME/.ebextensions .
+        - ls .ebextensions
         - sed -i 's/myapp/'"rc-awsaccount-test"'/g' .ebextensions/99datadog.config
         - *create-axis2-war
 
