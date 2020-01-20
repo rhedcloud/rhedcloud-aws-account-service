@@ -1,5 +1,5 @@
 unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
-jar uf axis2.war -C $BUILD_HOME .ebextensions
+jar uf axis2.war .ebextensions
 mkdir -p WEB-INF/services
 mkdir -p WEB-INF/lib
 mkdir -p WEB-INF/modules
