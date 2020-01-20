@@ -14,33 +14,30 @@ options:
   docker: true
 
 definitions:
-  steps:
-    # using yaml anchors
-    - step: &create-axis2-war
-      name: Create Axis2.war
-      script:
-        - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
-        - jar uf axis2.war  .ebextensions
-        - mkdir -p WEB-INF/services
-        - mkdir -p WEB-INF/lib
-        - mkdir -p WEB-INF/modules
-        - mkdir -p WEB-INF/conf
-        - cp rhedcloud-awsaccount-webservice-1.0.aar WEB-INF/services
-        - cp ../../../build-test/libs/AwsAccountService/*.jar WEB-INF/lib
-        - cp ../../../build-test/libs/AwsAccountService/jndi.properties WEB-INF/classes
-        - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes      
-        - cp ../../../build-test/libs/Axis2/openeai-authorization-module.mar WEB-INF/modules
-        - cp ../../../build-test/libs/Axis2/axis2.xml WEB-INF/conf
-        - cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib
-        - jar uf axis2.war WEB-INF/services/rhedcloud-awsaccount-webservice-1.0.aar
-        - jar uf axis2.war WEB-INF/lib/*
-        - jar uf axis2.war WEB-INF/classes
-        - jar uf axis2.war WEB-INF/modules
-        - jar uf axis2.war WEB-INF/conf
-        - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
-        - zip -d axis2.war WEB-INF/lib/commons-io-1.4.jar  # conflicts with commons-io-2.5.jar from lib folder
-        - jar tf axis2.war
-        - ls axis2.war
+  # using yaml anchors
+  script: &create-axis2-war
+    - unzip -o $BUILD_HOME/resources/axis2-1.5.2-war.zip axis2.war
+    - jar uf axis2.war  .ebextensions
+    - mkdir -p WEB-INF/services
+    - mkdir -p WEB-INF/lib
+    - mkdir -p WEB-INF/modules
+    - mkdir -p WEB-INF/conf
+    - cp rhedcloud-awsaccount-webservice-1.0.aar WEB-INF/services
+    - cp ../../../build-test/libs/AwsAccountService/*.jar WEB-INF/lib
+    - cp ../../../build-test/libs/AwsAccountService/jndi.properties WEB-INF/classes
+    - cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes      
+    - cp ../../../build-test/libs/Axis2/openeai-authorization-module.mar WEB-INF/modules
+    - cp ../../../build-test/libs/Axis2/axis2.xml WEB-INF/conf
+    - cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib
+    - jar uf axis2.war WEB-INF/services/rhedcloud-awsaccount-webservice-1.0.aar
+    - jar uf axis2.war WEB-INF/lib/*
+    - jar uf axis2.war WEB-INF/classes
+    - jar uf axis2.war WEB-INF/modules
+    - jar uf axis2.war WEB-INF/conf
+    - zip -d axis2.war WEB-INF/lib/httpcore-4.0.jar  # conflicts with httpcore-4.4.4.jar from lib folder
+    - zip -d axis2.war WEB-INF/lib/commons-io-1.4.jar  # conflicts with commons-io-2.5.jar from lib folder
+    - jar tf axis2.war
+    - ls axis2.war
 
 
 pipelines:
@@ -157,6 +154,7 @@ pipelines:
         - ls .ebextensions
         - sed -i 's/myapp/'"rc-awsaccount-dev"'/g' .ebextensions/99datadog.config
         - *create-axis2-war
+        - ls
 
         # Create the axis2.war file for TEST
         - cd $BUILD_HOME
@@ -179,6 +177,7 @@ pipelines:
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - ../../../../processEnv.sh
+        - ls
         # Create the axis2.war file for PROD
         - cd ../../../../
         - pwd
