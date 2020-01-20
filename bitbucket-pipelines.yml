@@ -168,6 +168,7 @@ pipelines:
         - ls .ebextensions
         - sed -i 's/myapp/'"rc-awsaccount-test"'/g' .ebextensions/99datadog.config
         - *create-axis2-war
+        - ls
 
         # Create the axis2.war file for STAGE
         - cd $BUILD_HOME
