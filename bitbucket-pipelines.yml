@@ -144,6 +144,7 @@ pipelines:
         - ls .ebextensions
         - sed -i 's/myapp/'"rc-awsaccount-local"'/g' .ebextensions/99datadog.config
         - *create-axis2-war
+        - ls 
           
         # Create the axis2.war file for DEV
         - cd $BUILD_HOME
