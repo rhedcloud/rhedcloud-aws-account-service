@@ -133,7 +133,7 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-test/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -145,7 +145,7 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-stage/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-stage/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -156,8 +156,8 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-prod/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - ls deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
