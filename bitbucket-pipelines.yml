@@ -122,7 +122,6 @@ pipelines:
         - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
         - cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes
         #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - cat  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -158,7 +157,6 @@ pipelines:
         - pwd
         - mkdir -p deploy/esb-prod/libs/Axis2/WEB-INF/classes
         #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - ls deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
