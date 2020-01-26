@@ -228,7 +228,7 @@ pipelines:
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd deploy/esb-dev/libs/Axis2
-        - zip uf axis2.war WEB-INF/classes/hibernate.cfg.xml
+        - zip -uf axis2.war WEB-INF/classes/hibernate.cfg.xml
         - cd ../../../..
         - pwd
         - zipinfo deploy/esb-dev/libs/Axis2/axis2.war
