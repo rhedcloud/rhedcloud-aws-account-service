@@ -120,8 +120,9 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - ls  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
+        - cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml WEB-INF/classes
+        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - cat  deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -224,7 +225,7 @@ pipelines:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes
+        - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd deploy/esb-dev/libs/Axis2
         - jar uf axis2.war WEB-INF/classes
         - cd ../../../..
