@@ -223,6 +223,12 @@ pipelines:
         script:
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes
+        - cd deploy/esb-dev/libs/Axis2
+        - jar uf axis2.war WEB-INF/classes
+        - cd ../../../..
+        - pwd
         - zipinfo deploy/esb-dev/libs/Axis2/axis2.war
         - cat rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
