@@ -134,7 +134,7 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-test/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -146,7 +146,7 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-stage/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-stage/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-stage/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -157,7 +157,7 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-prod/libs/Axis2/WEB-INF/classes
-        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - ls deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
@@ -222,17 +222,13 @@ pipelines:
      - step:
         name: Deploy to dev
         script:
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
-        - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
-        - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
-        - ls deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml
         - cd deploy/esb-dev/libs/Axis2
         - zip axis2.war WEB-INF/classes/hibernate.cfg.xml
-        - cat WEB-INF/classes/hibernate.cfg.xml
         - cd ../../../..
-        - pwd
         - zipinfo deploy/esb-dev/libs/Axis2/axis2.war
+        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
+        - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
         - cat rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
         #- sleep 30
@@ -246,6 +242,11 @@ pipelines:
         deployment: test
         trigger: manual
         script:
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - cd deploy/esb-test/libs/Axis2
+        - zip axis2.war WEB-INF/classes/hibernate.cfg.xml
+        - cd ../../../..
+        - zipinfo deploy/esb-test/libs/Axis2/axis2.war
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-test/libs/Axis2/axis2.war
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py TEST
@@ -255,6 +256,11 @@ pipelines:
         deployment: staging
         trigger: manual
         script:
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-stage/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - cd deploy/esb-stage/libs/Axis2
+        - zip axis2.war WEB-INF/classes/hibernate.cfg.xml
+        - cd ../../../..
+        - zipinfo deploy/esb-stage/libs/Axis2/axis2.war
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-stage/libs/Axis2/axis2.war
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py STAGE
@@ -264,6 +270,11 @@ pipelines:
         deployment: production
         trigger: manual
         script:
+        - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
+        - cd deploy/esb-prod/libs/Axis2
+        - zip axis2.war WEB-INF/classes/hibernate.cfg.xml
+        - cd ../../../..
+        - zipinfo deploy/esb-prod/libs/Axis2/axis2.war
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
         - export S3_UPLOAD_ARTIFACT=deploy/esb-prod/libs/Axis2/axis2.war
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py PROD
