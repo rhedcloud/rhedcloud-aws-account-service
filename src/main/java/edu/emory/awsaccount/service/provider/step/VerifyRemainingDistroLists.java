@@ -74,7 +74,9 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	private String m_notificationSubject = null;
 	private String m_notificationText = null;
 	private int m_requestTimeoutInterval = 10000;
-	
+
+	//backwrdCompatibility to emory
+	private String emailDistroListDomainName="@emory.edu";
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -231,7 +233,9 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 		setNotificationText(notificationText);
 		logger.info(LOGTAG + "notificationText is: " + 
 				getNotificationText());
-		
+
+		emailDistroListDomainName=getProperties().getProperty("emailDistroListDomainName", emailDistroListDomainName);
+		logger.info(LOGTAG + "emailDistroListDomainName is: " + emailDistroListDomainName);
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 	
@@ -304,7 +308,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 			
 			while(lastEmailAddressIsValid == true) {
 				String nextEmailAddress = getAccountSeriesPrefix() + "-" + 
-					++sequenceNumber + "@emory.edu";
+					++sequenceNumber + emailDistroListDomainName;
 				lastEmailAddressIsValid = isValid(nextEmailAddress);
 				logger.info(LOGTAG + "Distro list " + nextEmailAddress +
 					" isValid: " + lastEmailAddressIsValid);
@@ -781,7 +785,7 @@ public class VerifyRemainingDistroLists extends AbstractStep implements Step {
 	
 	private String getAccountEmailAddress() {
 		String emailAddress = getAccountSeriesPrefix() + "-" 
-			+ getAccountSequenceNumber() + "@emory.edu";
+			+ getAccountSequenceNumber() + emailDistroListDomainName;
 				
 		return emailAddress;
 	}
