@@ -59,7 +59,7 @@ public class AbstractAwsCrudProvider<M, Q> extends AbstractCrudProvider<M, Q> {
         super.init(aConfig);
         logger.info(LOGTAG + "Initializing...");
         // Get the AWS credentials the provider will use
-        getProperties().list(System.out);
+        //getProperties().list(System.out);
         String accessKeyId = getProperties().getProperty("accessKeyId");
         if (accessKeyId == null || accessKeyId.equals("")) {
             String errMsg = "No base accessKeyId property specified. Can't continue.";

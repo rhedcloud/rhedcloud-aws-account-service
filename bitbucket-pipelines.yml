@@ -121,7 +121,6 @@ pipelines:
         - pwd
         - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
         - cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes
-        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -133,7 +132,6 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-test/libs/Axis2/WEB-INF/classes
-        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-test.cfg.xml deploy/esb-test/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -145,18 +143,17 @@ pipelines:
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-stage/libs/Axis2/WEB-INF/classes
-        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-stage.cfg.xml deploy/esb-stage/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
         - sed -i 's/myapp/'"rc-awsaccount-stage"'/g' .ebextensions/99datadog.config
         - ../../../../processEnv.sh
         - ls
+
         # Create the axis2.war file for PROD
         - cd $BUILD_HOME
         - pwd
         - mkdir -p deploy/esb-prod/libs/Axis2/WEB-INF/classes
-        #- aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-prod.cfg.xml deploy/esb-prod/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
         - cp -R $BUILD_HOME/.ebextensions .
         - ls .ebextensions
@@ -164,8 +161,6 @@ pipelines:
         - ../../../../processEnv.sh
         - ls
         - pwd
-        #- ls deploy/esb-test/libs/Axis2/axis2.war
-        #- ls deploy/build-test/libs/Axis2/axis2.war
 
         artifacts:
         - deploy/build-test/**     # we have to preserve the artifacts separately get to over the 1G size limit
@@ -195,13 +190,6 @@ pipelines:
         - ./startup.sh
         - sleep 30
         - tail -1000  ../logs/catalina.out
-        #- wget http://localhost:8080/axis2/services/listServices
-        #- cat listServices
-        #- wget http://localhost:8080/axis2/services/AwsAccountService?wsdl
-        #- cat AwsAccountService?wsdl
-        # everything needs to run locally to test: activeMQ, database, sampleMessage and EOs
-        #- $BUILD_HOME/tests/post.curl.sh
-        #- cat ../logs/catalina.out
 
      - step:
         name: Upload build products
@@ -229,11 +217,6 @@ pipelines:
         - export S3_UPLOAD_ARTIFACT=deploy/esb-dev/libs/Axis2/axis2.war
         - cat rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py
         - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
-        #- sleep 30
-        #- export WS_URL=https://emory-awsaccount-service-dev/services/AwsAccountService
-        #- wget ${WS_URL}?wsdl
-        #- cat AwsAccountService?wsdl
-        #- deploy/build-test/tests/curl.post.sh ${WS_URL}
 
      - step:
         name: Deploy to test
