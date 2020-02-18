@@ -10,28 +10,22 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
-import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
-import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Properties;
 
 /**
@@ -101,11 +95,11 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 
 		SPEEDCHART speedchart = new SPEEDCHART();
 		SPEEDCHART_QUERY querySpec = new SPEEDCHART_QUERY();
+
 		try {
 			speedchart = (SPEEDCHART)getAppConfig().getObjectByType(speedchart.getClass().getName());
 			querySpec = (SPEEDCHART_QUERY)getAppConfig().getObjectByType(querySpec.getClass().getName());
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
+		} catch (EnterpriseConfigurationObjectException ecoe) {
 			String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, ecoe);
@@ -115,6 +109,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
+
 		try {
 			rs = (RequestService)getPeopleSoftServiceProducerPool().getExclusiveProducer();
 		}
@@ -123,6 +118,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, jmse);
 		}
+
 		// Query for the SPEEDCHART.
 		List<SPEEDCHART> speedchartList = null;
 		String stepResult = null;
@@ -167,14 +163,11 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 					speedchartList.size() + " stack(s).");
 
 
-		}
-		catch (EnterpriseObjectQueryException eoqe) {
+		} catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the Stack objects The exception is: " + eoqe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, eoqe);
-		}
-		// In any case, release the producer back to the pool.
-		finally {
+		} finally {
 			getPeopleSoftServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
 
@@ -228,8 +221,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
 		// Log completion time.
@@ -237,104 +229,28 @@ public class ValidateSpeedType extends AbstractStep implements Step {
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
 
-	private List<Stack> stackQuery(String accountId, String stackName) 
-		throws StepException {
-		
-		String LOGTAG = getStepTag() +
-			"[WaitForCloudFormationToBeReady.stackQuery] ";
-		
-    	// Query the AWS Account Service for a Stack.
-    	// Get a configured Stack object and 
-    	// StackQuerySpecification from AppConfig
-		Stack stack = new Stack();
-    	StackQuerySpecification querySpec = new StackQuerySpecification();
-		try {
-			stack = (Stack)getAppConfig()
-				.getObjectByType(stack.getClass().getName());
-			querySpec = (StackQuerySpecification)getAppConfig()
-				.getObjectByType(querySpec.getClass().getName());
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, ecoe);
-		}
-		
-		// Set the values of the querySpec.
-		try {
-			querySpec.setAccountId(accountId);
-			querySpec.setStackName(stackName);
-		}
-		catch (EnterpriseFieldException efe) {
-			String errMsg = "An error occurred setting the values of the " +
-				"query specification object. The exception is: " + 
-				efe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, efe);
-		}
-    	
-    	// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getPeopleSoftServiceProducerPool().getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use " +
-				"in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-		// Query for the Stack.
-		List<Stack> stacks = null;
-		try {
-			long startTime = System.currentTimeMillis();
-			stacks = stack.query(querySpec, rs);
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for stack for " +
-				"accountId " + accountId + " and stackName " + stackName +
-				"in " + time + " ms. Returned " + 
-				stacks.size() + " stack(s).");
-		}
-		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the " +
-					"Stack objects The exception is: " + 
-					eoqe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, eoqe);
-		}
-		// In any case, release the producer back to the pool.
-		finally {
-			getPeopleSoftServiceProducerPool().releaseProducer((PointToPointProducer)rs);
-    	}
-		
-		return stacks;
-	}
-	
-
-	
-	private void setPeopleSoftServiceProducerPool(ProducerPool pool) {
-		peopleSoftProducerPool = pool;
-	}
-	
 	private ProducerPool getPeopleSoftServiceProducerPool() {
 		return peopleSoftProducerPool;
 	}
 	
-	private void setStackName(String stackName) {
-		m_stackName = stackName;
+	private void setPeopleSoftServiceProducerPool(ProducerPool pool) {
+		peopleSoftProducerPool = pool;
 	}
 	
 	private String getStackName() {
 		return m_stackName;
 	}
 	
-	private void setMaxWaitTimeInMillis(long maxWaitTimeInMillis) {
-		m_maxWaitTimeInMillis = maxWaitTimeInMillis;
+	private void setStackName(String stackName) {
+		m_stackName = stackName;
 	}
 	
 	private Long getMaxWaitTimeInMillis() {
 		return m_maxWaitTimeInMillis;
+	}
+	
+	private void setMaxWaitTimeInMillis(long maxWaitTimeInMillis) {
+		m_maxWaitTimeInMillis = maxWaitTimeInMillis;
 	}
 	
 	private long getQueryTimeInMillis(long queryStartTime) {
