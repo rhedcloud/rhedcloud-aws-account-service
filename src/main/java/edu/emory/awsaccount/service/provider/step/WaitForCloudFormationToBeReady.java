@@ -118,7 +118,7 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is true, pulling accountId " +
 					"from GENERATE_NEW_ACCOUNT.");
-			ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCCOUNT");
+			ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
 			accountId = getResultProperty(step2, "accountId");
 		}
 		
