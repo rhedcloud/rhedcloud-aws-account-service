@@ -114,7 +114,7 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 			accountId = getResultProperty(step, "accountId");
 		}
 		// If allocateNewAccount is true, set the accountId to to be the
-		// accountId property value from the step GENERATE_NEW_ACCOUNT
+		// accountId property value from the step GENERATE_NEW_ACCOUNT.
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is true, pulling accountId " +
 					"from GENERATE_NEW_ACCOUNT.");
