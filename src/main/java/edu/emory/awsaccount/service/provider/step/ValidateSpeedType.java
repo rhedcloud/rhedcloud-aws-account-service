@@ -129,9 +129,10 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 			long time = System.currentTimeMillis() - startTime;
 
 			if (speedchartList != null) {
-				if (speedchartList.size() == 1) {
 
-					SPEEDCHART speedchart1 = speedchartList.get(0);
+				SPEEDCHART speedchart1 = speedchartList.get(0);
+
+				if (speedchartList.size() == 1) {
 
 					if (speedchart1.getVALID_CODE().equals("Y")) {
 						stepResult = SUCCESS_RESULT;
@@ -148,7 +149,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 				} else {
 					// Error
 					stepResult = FAILURE_RESULT;
-					addResultProperty("validateSpeedType", speedchart.getEU_VALIDITY_DESCR());
+					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
 				}
 			}
 
