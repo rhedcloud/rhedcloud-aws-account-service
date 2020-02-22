@@ -109,7 +109,8 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
-
+		
+		// Get a request service (producer) to use in this transaction
 		try {
 			rs = (RequestService)getPeopleSoftServiceProducerPool().getExclusiveProducer();
 		}
@@ -120,59 +121,67 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 		}
 
 		// Query for the SPEEDCHART.
-		List<SPEEDCHART> speedchartList = null;
+		List<SPEEDCHART> speedChartList = null;
 		String stepResult = null;
 
 		try {
 			startTime = System.currentTimeMillis();
-			speedchartList = speedchart.query(querySpec, rs);
+			speedChartList = speedchart.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
-
-			if (speedchartList != null) {
-
-				SPEEDCHART speedchart1 = speedchartList.get(0);
-
-				if (speedchartList.size() == 1) {
-
-					if (speedchart1.getVALID_CODE().equals("Y")) {
-						stepResult = SUCCESS_RESULT;
-						addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
-					} else if (speedchart1.getVALID_CODE().equals("N")) {
-						// invalid
-						stepResult = FAILURE_RESULT;
-						addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
-					} else {
-						stepResult = FAILURE_RESULT; // it will tell me if it's a warning
-						addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
-					}
-
-				} else {
-					// Error
-					stepResult = FAILURE_RESULT;
-					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
-				}
-			}
-
-
-
-			update(COMPLETED_STATUS, stepResult);
-
-
-			logger.info(LOGTAG + "Queried for stack for " +
-					"accountId " + virtualPrivateCloudRequisition.getFinancialAccountNumber() + " and stackName " + speedchartList +
-					"in " + time + " ms. Returned " +
-					speedchartList.size() + " stack(s).");
-
-
-		} catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the Stack objects The exception is: " + eoqe.getMessage();
+			logger.info(LOGTAG + "Queried for SPEEDCHART in " + time + " ms. Returned " +
+				speedChartList.size() + " results.");
+		} 
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the SPEEDCHART object. " +
+				"The exception is: " + eoqe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, eoqe);
-		} finally {
+		} 
+		finally {
+			// Release the producer back to the pool.
 			getPeopleSoftServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
+		
+		// If there is a result, evaluate it.
+		if (speedChartList != null && speedChartList.size() > 0) {
 
+			SPEEDCHART speedchart1 = speedChartList.get(0);
 
+			if (speedChartList.size() == 1) {
+
+				if (speedchart1.getVALID_CODE().equals("Y")) {
+					// I would log some shit here.
+					stepResult = SUCCESS_RESULT;
+					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+				} else if (speedchart1.getVALID_CODE().equals("N")) {
+					// I would log some shit here.
+					// invalid
+					stepResult = FAILURE_RESULT;
+					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+				} else {
+					// I would log some shit here.
+					stepResult = FAILURE_RESULT; // it will tell me if it's a warning
+					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+				}
+
+			} else {
+				// Error
+				stepResult = FAILURE_RESULT;
+				addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+			}
+		}
+		
+		// There is no result, so the SpeedType is invalid.
+		else {
+			logger.info(LOGTAG + "There is no result from the SPEEDCHART.Query-Request, the " +
+				"SPEEDCHART is invalid.");
+			stepResult = FAILURE_RESULT;
+			addResultProperty("validateSpeedType", "false");
+		}
+
+		logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " +
+			stepResult);
+		update(COMPLETED_STATUS, stepResult);
 
 		return getResultProperties();
 	}
