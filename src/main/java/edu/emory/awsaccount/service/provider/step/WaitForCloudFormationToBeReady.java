@@ -119,11 +119,12 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 			logger.info(LOGTAG + "allocateNewAccount is true, pulling accountId " +
 					"from GENERATE_NEW_ACCOUNT.");
 			ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-			accountId = getResultProperty(step2, "accountId");
+			accountId = getResultProperty(step2, "newAccountId");
 		}
 		
-		if (accountId != null || accountId.equals("") || accountId.equals("not available")) {
-			logger.info(LOGTAG + "AccountId is: " + accountId);
+		// If the accountId is not null, log it. If it is null, throw and exception.
+		if (accountId != null) {
+			logger.info(LOGTAG + "accountId is: " + accountId);
 			addResultProperty("accountId", accountId);
 		}
 		else {
