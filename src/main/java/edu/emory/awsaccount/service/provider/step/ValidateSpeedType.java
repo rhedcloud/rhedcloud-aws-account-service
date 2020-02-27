@@ -152,35 +152,29 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 				if (speedchart1.getVALID_CODE().equals("Y")) {
 					// I would log some shit here.
 					stepResult = SUCCESS_RESULT;
-					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+					addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 				} else if (speedchart1.getVALID_CODE().equals("N")) {
 					// I would log some shit here.
 					// invalid
 					stepResult = FAILURE_RESULT;
-					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+					addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 				} else {
 					// I would log some shit here.
 					stepResult = FAILURE_RESULT; // it will tell me if it's a warning
-					addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+					addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 				}
 
 			} else {
-				// Error
 				stepResult = FAILURE_RESULT;
-				addResultProperty("validateSpeedType", speedchart1.getEU_VALIDITY_DESCR());
+				addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 			}
-		}
-		
-		// There is no result, so the SpeedType is invalid.
-		else {
-			logger.info(LOGTAG + "There is no result from the SPEEDCHART.Query-Request, the " +
-				"SPEEDCHART is invalid.");
+		} else {  // There is no result, so the SpeedType is invalid.
+			logger.info(LOGTAG + "There is no result from the SPEEDCHART.Query-Request, the SPEEDCHART is invalid.");
 			stepResult = FAILURE_RESULT;
-			addResultProperty("validateSpeedType", "false");
+			addResultProperty("validationResult", "No such SPEEDCHART exist");
 		}
 
-		logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " +
-			stepResult);
+		logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " + stepResult);
 		update(COMPLETED_STATUS, stepResult);
 
 		return getResultProperties();
