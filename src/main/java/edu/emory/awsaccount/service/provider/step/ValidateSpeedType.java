@@ -139,27 +139,20 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 		if (speedChartList != null && speedChartList.size() > 0) {
 
 			SPEEDCHART speedchart1 = speedChartList.get(0);
+			addResultProperty("validationCode", speedchart1.getVALID_CODE());
+			addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 
 			if (speedChartList.size() == 1) {
-
 				if (speedchart1.getVALID_CODE().equals("Y")) {
-					// I would log some shit here.
 					stepResult = SUCCESS_RESULT;
-					addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 				} else if (speedchart1.getVALID_CODE().equals("N")) {
-					// I would log some shit here.
 					// invalid
 					stepResult = FAILURE_RESULT;
-					addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 				} else {
-					// I would log some shit here.
-					stepResult = FAILURE_RESULT; // it will tell me if it's a warning
-					addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
+					stepResult = SUCCESS_RESULT; // it will tell me if it's a warning
 				}
-
 			} else {
 				stepResult = FAILURE_RESULT;
-				addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
 			}
 		} else {  // There is no result, so the SpeedType is invalid.
 			logger.info(LOGTAG + "There is no result from the SPEEDCHART.Query-Request, the SPEEDCHART is invalid.");
@@ -168,6 +161,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 		}
 
 		addResultProperty("financialAccountNumber", virtualPrivateCloudRequisition.getFinancialAccountNumber());
+
 		logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " + stepResult);
 		update(COMPLETED_STATUS, stepResult);
 
