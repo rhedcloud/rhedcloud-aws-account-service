@@ -86,7 +86,6 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Begin running the step.");
 
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
 
 		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
 
@@ -113,8 +112,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 		// Get a request service (producer) to use in this transaction
 		try {
 			rs = (RequestService)getPeopleSoftServiceProducerPool().getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
+		} catch (JMSException jmse) {
 			String errMsg = "An error occurred getting a request service to use in this transaction. The exception is: " + jmse.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, jmse);
@@ -128,17 +126,12 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 			startTime = System.currentTimeMillis();
 			speedChartList = speedchart.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for SPEEDCHART in " + time + " ms. Returned " +
-				speedChartList.size() + " results.");
-		} 
-		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the SPEEDCHART object. " +
-				"The exception is: " + eoqe.getMessage();
+			logger.info(LOGTAG + "Queried for SPEEDCHART in " + time + " ms. Returned " + speedChartList.size() + " results.");
+		} catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the SPEEDCHART object. The exception is: " + eoqe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, eoqe);
-		} 
-		finally {
-			// Release the producer back to the pool.
+		} finally {
 			getPeopleSoftServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
 		
@@ -174,6 +167,7 @@ public class ValidateSpeedType extends AbstractStep implements Step {
 			addResultProperty("validationResult", "No such SPEEDCHART exist");
 		}
 
+		addResultProperty("financialAccountNumber", virtualPrivateCloudRequisition.getFinancialAccountNumber());
 		logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " + stepResult);
 		update(COMPLETED_STATUS, stepResult);
 
