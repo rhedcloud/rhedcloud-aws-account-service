@@ -26,6 +26,7 @@ import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
@@ -133,6 +134,12 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 			throw new StepException(errMsg);
 		}
 		
+		// Get the current region we are working in.
+		VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+		String region = vpcp.getVirtualPrivateCloudRequisition().getRegion();
+		logger.info(LOGTAG + "The region specified in the requisition is: " + region);
+		
+		
 		logger.info(LOGTAG + "Begin querying for a stack to see if " +
 			"CloudFormation is ready.");
 		long queryStartTime = System.currentTimeMillis();
@@ -140,7 +147,7 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 			   getQueryTimeInMillis(startTime) < getMaxWaitTimeInMillis()) {
 			
 			try {
-				List<Stack> stacks = stackQuery(accountId, getStackName());
+				List<Stack> stacks = stackQuery(accountId, getStackName(), region);
 				isCloudFormationReady = true;
 				logger.info(LOGTAG + "Stack query was successful. " +
 					"CloudFormation is ready.");
@@ -238,11 +245,14 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
 
-	private List<Stack> stackQuery(String accountId, String stackName) 
+	private List<Stack> stackQuery(String accountId, String stackName, String region) 
 		throws StepException {
 		
 		String LOGTAG = getStepTag() +
 			"[WaitForCloudFormationToBeReady.stackQuery] ";
+		
+		logger.info(LOGTAG + "Performing a Stack.Query for accountId " + 
+			accountId + " stackName " + " and region " + region + ".");
 		
     	// Query the AWS Account Service for a Stack.
     	// Get a configured Stack object and 
@@ -266,6 +276,7 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 		try {
 			querySpec.setAccountId(accountId);
 			querySpec.setStackName(stackName);
+			querySpec.setRegion(region);
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
@@ -299,7 +310,7 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the " +
-					"Stack objects The exception is: " + 
+					"Stack object. The exception is: " + 
 					eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, eoqe);
