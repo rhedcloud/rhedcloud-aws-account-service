@@ -95,7 +95,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 		// Get some properties from previous steps.
 		String accountId = 
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		if (accountId == null || accountId.equalsIgnoreCase("not available")) {
+		if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
 			accountId = getVirtualPrivateCloudProvisioning()
 				.getVirtualPrivateCloudRequisition()
 				.getAccountId();
