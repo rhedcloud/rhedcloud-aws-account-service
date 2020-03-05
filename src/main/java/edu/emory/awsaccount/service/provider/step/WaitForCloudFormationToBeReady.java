@@ -143,10 +143,13 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 		logger.info(LOGTAG + "Begin querying for a stack to see if " +
 			"CloudFormation is ready.");
 		long queryStartTime = System.currentTimeMillis();
+		int attempts = 0;
 		while (isCloudFormationReady == false && 
 			   getQueryTimeInMillis(startTime) < getMaxWaitTimeInMillis()) {
 			
 			try {
+				attempts++;
+				logger.info(LOGTAG + "Attempting stack query " + attempts + ".");
 				List<Stack> stacks = stackQuery(accountId, getStackName(), region);
 				isCloudFormationReady = true;
 				logger.info(LOGTAG + "Stack query was successful. " +
@@ -169,6 +172,10 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 			}
 		}
 
+		// Add result properties
+		addResultProperty("attempts", Integer.toString(attempts));
+		addResultProperty("isCloudFormationReady", Boolean.toString(isCloudFormationReady));
+		
 		// Determine the step result
 		String stepResult = null;
 		// If CloudFormation is ready, this is a success.
