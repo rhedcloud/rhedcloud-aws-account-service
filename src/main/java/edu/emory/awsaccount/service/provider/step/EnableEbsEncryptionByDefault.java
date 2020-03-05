@@ -13,6 +13,7 @@ package edu.emory.awsaccount.service.provider.step;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
@@ -48,6 +49,8 @@ import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeVpnConnectionsRequest;
 import com.amazonaws.services.ec2.model.DescribeVpnConnectionsResult;
+import com.amazonaws.services.ec2.model.EnableEbsEncryptionByDefaultRequest;
+import com.amazonaws.services.ec2.model.EnableEbsEncryptionByDefaultResult;
 import com.amazonaws.services.ec2.model.VpnConnection;
 import com.amazonaws.services.organizations.AWSOrganizationsClient;
 import com.amazonaws.services.organizations.AWSOrganizationsClientBuilder;
@@ -90,7 +93,8 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 	private String m_roleArnPattern = null;
 	private int m_roleAssumptionDurationSeconds = 0;
 	private AmazonEC2Client m_client = null;
-	private String LOGTAG = "[QueryForVpnConfiguration] ";
+	private List<String> m_regions = null;
+	private String LOGTAG = "[EnableEbsEncryptionByDefault] ";
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
@@ -98,7 +102,7 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 		
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
-		String LOGTAG = getStepTag() + "[QueryForVpnConfiguration.init] ";
+		String LOGTAG = getStepTag() + "[EnableEbsEncryptionByDefault.init] ";
 		
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
@@ -122,87 +126,138 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 			.getProperty("roleAssumptionDurationSeconds", null));
 		logger.info(LOGTAG + "roleAssumptionDurationSeconds is: " +
 			getRoleAssumptionDurationSeconds());
-	
+		
+		// Set the list of AWS regions
+		String regionString = getProperties().getProperty("regions", null);
+		logger.info(LOGTAG + "regions property is: " + regionString);
+		if (regionString == null) {
+			String errMsg = "No AWS regions provided in the properties. Can't continue.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
+		else {
+			List<String> regions = Arrays.asList(regionString.split("\\s*,\\s*"));
+			setRegions(regions);
+			logger.info(LOGTAG + "Regions list is: " + String.join(",", getRegions()));
+		}
 		
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 	
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[QueryForVpnConfiguration.run] ";
+		String LOGTAG = getStepTag() + "[EnableEbsEncryptionByDefault.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 		
-		boolean allocatedNewAccount = false;
-		String newAccountId = null;
+		boolean encryptionSet = false;
 		
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		
-		// Get some properties from previous steps.
-		String vpn1ConnectionId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn1ConnectionId");
-		addResultProperty("Vpn1ConnectionId", vpn1ConnectionId);
-		String vpn1InsideTunnelCidr1 = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn1InsideTunnelCidr1");
-		addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
-		String vpn2ConnectionId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
-		addResultProperty("Vpn2ConnectionId", vpn2ConnectionId);
-		String vpn2InsideTunnelCidr1 = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
-		addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
-		String accountId = 
-				getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "accountId");
-			addResultProperty("accountId", accountId);
-		String region = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "region");
-		addResultProperty("region", region);
+		// Get the allocateNewAccount property from the
+		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		ProvisioningStep step1 = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
+		boolean allocateNewAccount = false;
+		if (step1 != null) {
+			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
+			String sAllocateNewAccount = getResultProperty(step1, "allocateNewAccount");
+			allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
+			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
+			logger.info(LOGTAG + "Property allocateNewAccount from preceding " +
+				"step is: " + allocateNewAccount);
+		}
+		else {
+			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
+				"Cannot determine whether or not to authorize the new account " +
+				"requestor.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
 		
-		// Build the EC2 client.
-		AmazonEC2Client client = buildAmazonEC2Client(accountId, region);
-		setAmazonEC2Client(client);
+		// Get the newAccountId property from the GENERATE_NEW_ACCOUNT step.
+		logger.info(LOGTAG + "Getting properties from preceding steps...");
+		ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
+		String newAccountId = null;
+		if (step2 != null) {
+			logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
+			newAccountId = getResultProperty(step2, "newAccountId");
+			logger.info(LOGTAG + "Property newAccountId from preceding " +
+				"step is: " + newAccountId);
+			addResultProperty("newAccountId", newAccountId);
+		}
+		else {
+			String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
+				"determine whether or not to authorize the new account " +
+				"requestor.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}
 		
-		// Get the customer gateway configurations for the VPN connections
-		String vpn1CustomerGatewayConfig = getCustomerGatewayConfig(vpn1ConnectionId);
-		logger.info(LOGTAG + "vpn1CustomerGatewayConfig is: " + vpn1CustomerGatewayConfig);
-		
-		String vpn2CustomerGatewayConfig = getCustomerGatewayConfig(vpn2ConnectionId);
-		logger.info(LOGTAG + "vpn2CustomerGatewayConfig is: " + vpn2CustomerGatewayConfig);
-
-		// Get the remote ip address for the VPN connections
-		String vpn1RemoteIpAddress = getRemoteIpAddress(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn1RemoteIpAddress is: " + vpn1RemoteIpAddress);
-		addResultProperty("vpn1RemoteIpAddress", vpn1RemoteIpAddress);
-	
-		String vpn2RemoteIpAddress = getRemoteIpAddress(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn2RemoteIpAddress is: " + vpn2RemoteIpAddress);
-		addResultProperty("vpn2RemoteIpAddress", vpn2RemoteIpAddress);
-	
-		// Get the preshared key for the VPN connections
-		String vpn1PresharedKey = getPresharedKey(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn1PresharedKey is: " + vpn1PresharedKey);
-		addResultProperty("vpn1PresharedKey", vpn1PresharedKey);
-		
-		String vpn2PresharedKey = getPresharedKey(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn2PresharedKey is: " + vpn2PresharedKey);
-		addResultProperty("vpn2PresharedKey", vpn2PresharedKey);
+		// If allocateNewAccount is true and newAccountId is not null,
+		// set the EBS encryption by default for all configured regions.
+		if (allocateNewAccount && newAccountId != null) {
+			logger.info(LOGTAG + "allocateNewAccount is true and newAccountId is " + 
+				newAccountId + ". Setting EBS encryption by default.");
+			
+			List<String> regions = getRegions();
+			ListIterator li = regions.listIterator();
+			while (li.hasNext()) {
+				String region = (String)li.next();
+				logger.info(LOGTAG + "Setting EBS encryption by default for region: " + region);
+				
+				// Build the EC2 client.
+				AmazonEC2Client client = buildAmazonEC2Client(newAccountId, region);
+				
+				// Build the request.
+				EnableEbsEncryptionByDefaultRequest request = 
+					new EnableEbsEncryptionByDefaultRequest();
+				
+				EnableEbsEncryptionByDefaultResult result = null;
+				try {
+					logger.info(LOGTAG + "Sending the encryption by default request...");
+					long queryStartTime = System.currentTimeMillis();
+					result = getAmazonEC2Client().enableEbsEncryptionByDefault(request);
+					long queryTime = System.currentTimeMillis() - queryStartTime;
+					logger.info(LOGTAG + "received response to encryption by default " +
+						"request in queryTime ms.");
+				}
+				catch (Exception e) {
+					String errMsg = "An error occurred setting EBS encryption by . " +
+						"The exception is: " + e.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, e);
+				}
+			}
+			encryptionSet = true;
+		}
+		// If allocateNewAccount is false, log it and add result props.
+		else {
+			logger.info(LOGTAG + "allocateNewAccount is false. " +
+				"no need to set EBS encryption by default, because it " +
+				"already set at the time the account was created.");
+			addResultProperty("allocateNewAccount", 
+				Boolean.toString(allocateNewAccount));
+		}
 		
 		// Update the step.
-		update(COMPLETED_STATUS, SUCCESS_RESULT);
-		
+		if (allocateNewAccount == false || encryptionSet == true) {
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
+		}
+		else update(COMPLETED_STATUS, FAILURE_RESULT);
+    	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
     	
     	// Return the properties.
     	return getResultProperties();
-    	
 	}
 	
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[QueryForVpnConfiguration.simulate] ";
+			"[EnableEbsEncryptionByDefault.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -222,7 +277,7 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[QueryForVpnConfiguration.fail] ";
+			"[EnableEbsEncryptionByDefault.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -245,7 +300,7 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 		
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[QueryForVpnConfiguration.rollback] ";
+			"[EnableEbsEncryptionByDefault.rollback] ";
 		
 		logger.info(LOGTAG + "Rollback called, nothing to rollback.");
 		
@@ -254,10 +309,6 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
-	
-	private void setAmazonEC2Client(AmazonEC2Client client) {
-		m_client = client;
 	}
 	
 	private AmazonEC2Client getAmazonEC2Client() {
@@ -349,48 +400,7 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 		return m_roleAssumptionDurationSeconds;
 	}			
 	
-	private String getCustomerGatewayConfig(String vpnId) throws StepException {
-		String LOGTAG = getStepTag() + "[getCustomerGatewayConfig] ";
-		
-		// Build the request.
-		DescribeVpnConnectionsRequest request = new DescribeVpnConnectionsRequest();
-		List vpnConnectionIds = new ArrayList<String>();
-		vpnConnectionIds.add(vpnId);
-		request.setVpnConnectionIds(vpnConnectionIds);
-		
-		// Send the request.
-		DescribeVpnConnectionsResult result = null;
-		try {
-			logger.info(LOGTAG + "Sending the describe VPN connections request...");
-			long queryStartTime = System.currentTimeMillis();
-			result = getAmazonEC2Client().describeVpnConnections(request);
-			long queryTime = System.currentTimeMillis() - queryStartTime;
-			logger.info(LOGTAG + "received response to describe VPN connections " +
-				"request in queryTime ms.");
-		}
-		catch (Exception e) {
-			String errMsg = "An error occurred describing VPN connections. " +
-				"The exception is: " + e.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, e);
-		}
-		
-		List<VpnConnection> vpnConnections = result.getVpnConnections();
-		if (vpnConnections.size() == 1) {
-			VpnConnection vpn = (VpnConnection)vpnConnections.get(0);
-			return vpn.getCustomerGatewayConfiguration();
-			
-		}
-		else {
-			String errMsg = "Unexpected number of VpnConnections. " +
-				"Found " + vpnConnections.size() + " expected 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-	}
-	
-	   /**
+	/**
      * 
      * @param String, accountId
      * @param String, region
@@ -570,5 +580,13 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
     	
     	return isMatchingTunnel;
     	
+    }
+    
+    private void setRegions(List regions) {
+    	m_regions = regions;
+    }
+    
+    private List getRegions() {
+    	return m_regions;
     }
 }

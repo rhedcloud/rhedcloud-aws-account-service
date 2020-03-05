@@ -61,10 +61,10 @@
   <!-- <dependency> <groupId>com.amazonaws</groupId> <artifactId>aws-java-sdk</artifactId> <version>1.11.123</version> </dependency> -->
   <dependency>
    <groupId>org.rhedcloud.awsaccount.service</groupId>
-   <artifactId>aws-java-sdk-1.11.470</artifactId>
-   <version>1.11.123</version>
+   <artifactId>aws-java-sdk-1.11.737</artifactId>
+   <version>1.11.737</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/aws-java-sdk-1.11.470.jar</systemPath>
+   <systemPath>${project.basedir}/lib/aws-java-sdk-1.11.737.jar</systemPath>
   </dependency>
 
   <dependency>
