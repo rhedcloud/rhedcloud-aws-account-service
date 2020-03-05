@@ -73,7 +73,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         setSecretKey(secretKey);
         logger.info(LOGTAG + "secretKey is: present");
 
-
         // Set the AWS account credentials
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
 
@@ -84,7 +83,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         AWSSupportClient awssclient = (AWSSupportClient)builder.build();
         awsSupportClient = awssclient;
 
-
         // Initialize the AWS client
         logger.info("Initializing AmazonCloudFormationClient...");
         AWSOrganizationsClient client = (AWSOrganizationsClient)builder.build();
@@ -92,7 +90,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
 
         setAwsOrganizationsClient(client);
         ListAccountsRequest request = new ListAccountsRequest();
-
 
         // Perform a test query
         ListAccountsResult result = client.listAccounts(request);
@@ -102,7 +99,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         setAwsOrganizationsClient(client);
 
         logger.info(LOGTAG + "Initialization complete.");
-
     }
 
     protected List<Property> run() throws StepException {
@@ -110,11 +106,8 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         String LOGTAG = getStepTag() + "[SupportRequestAutomation.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
-
-        // Return properties
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
         addResultProperty("accountSeriesName", getAccountSeriesName());
-
 
         // CREATE_SUPPORT_CASE step. THIS IS WHERE WE ADD THE NEW STEP NAME
         logger.info(LOGTAG + "Getting properties from preceding steps...");
@@ -134,7 +127,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
 		VirtualPrivateCloudProvisioning virtualPrivateCloudProvisioning = getVirtualPrivateCloudProvisioning();
 		VirtualPrivateCloudRequisition virtualPrivateCloudRequisition = virtualPrivateCloudProvisioning.getVirtualPrivateCloudRequisition();
 
-
 		CreateCaseRequest caseRequest = new CreateCaseRequest()
 				.withServiceCode("account-management")
 				.withCategoryCode("billing")
@@ -144,29 +136,19 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
 				.withSubject("Please add child/linked account ".concat(virtualPrivateCloudRequisition.getFinancialAccountNumber()).concat(" to Enterprise Support"))
 				.withSeverityCode("normal");
 
-        //AWSSupportClient client = new AWSSupportClient();
-        //awsSupportClient.setEndpoint("https://support.us-east-1.amazonaws.com");
-
 		CreateCaseResult result = awsSupportClient.createCase(caseRequest);
 
-
-        // Update the step.
         String stepResult = FAILURE_RESULT;
         String caseId = result.getCaseId();
         if (caseId != null && !caseId.equals("")) {
             stepResult = SUCCESS_RESULT;
         }
 
-        // Update the step.
         update(COMPLETED_STATUS, stepResult);
-
-        // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
 
-        // Return the properties.
         return getResultProperties();
-
     }
 
     protected List<Property> simulate() throws StepException {
