@@ -49,6 +49,7 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 	
 	private String m_stackName = null;
 	private long m_maxWaitTimeInMillis = 60000;
+	private long m_sleepTimeInMillis = 10000;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 
 	public void init (String provisioningId, Properties props, 
@@ -100,6 +101,8 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 		String accountId = null;
 		boolean isCloudFormationReady = false;
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+		addResultProperty("maxWaitTimeInMillis", Long.toString(getMaxWaitTimeInMillis()));
+		addResultProperty("sleepTimeInMillis", Long.toString(getSleepTimeInMillis()));
 		
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
@@ -367,6 +370,10 @@ public class WaitForCloudFormationToBeReady extends AbstractStep implements Step
 	
 	private Long getMaxWaitTimeInMillis() {
 		return m_maxWaitTimeInMillis;
+	}
+	
+	private Long getSleepTimeInMillis() {
+		return m_sleepTimeInMillis;
 	}
 	
 	private long getQueryTimeInMillis(long queryStartTime) {
