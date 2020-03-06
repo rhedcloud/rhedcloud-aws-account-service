@@ -35,7 +35,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
     private final static String IN_PROGRESS = "IN_PROGRESS";
     private final static String SUCCEEDED = "SUCCEEDED";
     private final static String FAILED = "FAILED";
-    private String m_orgRootId = null;
     private String m_pendingDeleteOuId = null;
     private String m_accountSeriesName = null;
     private String m_accessKey = null;
@@ -52,13 +51,8 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         // Get custom step properties.
         logger.info(LOGTAG + "Getting custom step properties...");
 
-        String orgRootId = getProperties().getProperty("orgRootId", null);
-        setOrgRootId(orgRootId);
-        logger.info(LOGTAG + "orgRootId is: " + getOrgRootId());
-
         String pendingDeleteOuId = getProperties().getProperty("pendingDeleteOuId", null);
         setPendingDeleteOuId(pendingDeleteOuId);
-        logger.info(LOGTAG + "pendingDeleteOuId is: " + getPendingDeleteOuId());
 
         String accountSeriesName = getProperties().getProperty("accountSeriesName", null);
         setAccountSeriesName(accountSeriesName);
@@ -218,7 +212,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         if (newAccountId != null) {
             try {
                 ListAccountsForParentRequest request = new ListAccountsForParentRequest();
-                request.setParentId(getOrgRootId());
                 ListAccountsForParentResult result =
                         getAwsOrganizationsClient().listAccountsForParent(request);
                 List<com.amazonaws.services.organizations.model.Account> accounts =
@@ -246,8 +239,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
             // Build the request.
             MoveAccountRequest request = new MoveAccountRequest();
             request.setAccountId(newAccountId);
-            request.setDestinationParentId(getPendingDeleteOuId());
-            request.setSourceParentId(getOrgRootId());
 
             // Send the request.
             try {
@@ -265,8 +256,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
                 throw new StepException(errMsg, e);
             }
 
-            addResultProperty("orgRootId", getOrgRootId());
-            addResultProperty("getPendingDeleteOuId", getPendingDeleteOuId());
             addResultProperty("movedAccountToPendingDeleteOu",
                     Boolean.toString(movedAccountToPendingDeleteOu));
 
@@ -341,26 +330,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         }
 
         m_secretKey = secretKey;
-    }
-
-    private String getOrgRootId() {
-        return m_orgRootId;
-    }
-
-    private void setOrgRootId(String id) throws
-            StepException {
-
-        if (id == null) {
-            String errMsg = "orgRootId property is null. " +
-                    "Can't continue.";
-            throw new StepException(errMsg);
-        }
-
-        m_orgRootId = id;
-    }
-
-    private String getPendingDeleteOuId() {
-        return m_orgRootId;
     }
 
     private void setPendingDeleteOuId(String id) throws
