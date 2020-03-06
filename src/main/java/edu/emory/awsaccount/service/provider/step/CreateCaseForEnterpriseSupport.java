@@ -132,6 +132,8 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         String caseId = result.getCaseId();
         if (caseId != null && !caseId.equals("")) {
             stepResult = SUCCESS_RESULT;
+        } else {
+            logger.info("Step failed because case id is null for CreateCaseForEnterpriseSupport caseid = '" + result.getCaseId() + "'");
         }
 
         update(COMPLETED_STATUS, stepResult);
