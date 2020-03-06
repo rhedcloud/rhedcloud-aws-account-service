@@ -30,12 +30,11 @@ import java.util.ListIterator;
 import java.util.Properties;
 
 
-public class SupportRequestAutomation extends AbstractStep implements Step {
+public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step {
 
     private final static String IN_PROGRESS = "IN_PROGRESS";
     private final static String SUCCEEDED = "SUCCEEDED";
     private final static String FAILED = "FAILED";
-    private String m_pendingDeleteOuId = null;
     private String m_accountSeriesName = null;
     private String m_accessKey = null;
     private String m_secretKey = null;
@@ -46,13 +45,10 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
 
         super.init(provisioningId, props, aConfig, vpcpp);
 
-        String LOGTAG = getStepTag() + "[SupportRequestAutomation.init] ";
+        String LOGTAG = getStepTag() + "[CreateCaseForEnterpriseSupport.init] ";
 
         // Get custom step properties.
         logger.info(LOGTAG + "Getting custom step properties...");
-
-        String pendingDeleteOuId = getProperties().getProperty("pendingDeleteOuId", null);
-        setPendingDeleteOuId(pendingDeleteOuId);
 
         String accountSeriesName = getProperties().getProperty("accountSeriesName", null);
         setAccountSeriesName(accountSeriesName);
@@ -97,11 +93,13 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
 
     protected List<Property> run() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() + "[SupportRequestAutomation.run] ";
+        String LOGTAG = getStepTag() + "[CreateCaseForEnterpriseSupport.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-        addResultProperty("accountSeriesName", getAccountSeriesName());
+        if (getAccountSeriesName() != null) {
+            addResultProperty("accountSeriesName", getAccountSeriesName());
+        }
 
         // CREATE_SUPPORT_CASE step. THIS IS WHERE WE ADD THE NEW STEP NAME
         logger.info(LOGTAG + "Getting properties from preceding steps...");
@@ -110,7 +108,11 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         if (step2 != null) {
             logger.info(LOGTAG + "Step CREATE_SUPPORT_CASE found.");
             accountSequenceNumber = getResultProperty(step2, "accountSequenceNumber");
-            addResultProperty("accountSequenceNumber", accountSequenceNumber);
+
+            if (accountSequenceNumber != null) {
+                addResultProperty("accountSequenceNumber", accountSequenceNumber);
+            }
+
             logger.info(LOGTAG + "Property accountSequenceNumber from preceding step is: " + accountSequenceNumber);
         } else {
             String errMsg = "Step CREATE_SUPPORT_CASE not found. Can't continue.";
@@ -167,8 +169,7 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
 
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[GenerateNewAccount.fail] ";
+        String LOGTAG = getStepTag() + "[GenerateNewAccount.fail] ";
         logger.info(LOGTAG + "Begin step failure simulation.");
 
         // Set return properties.
@@ -181,7 +182,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
 
-        // Return the properties.
         return getResultProperties();
     }
 
@@ -190,19 +190,15 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         super.rollback();
 
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[GenerateNewAccount.rollback] ";
+        String LOGTAG = getStepTag() + "[GenerateNewAccount.rollback] ";
 
-        logger.info(LOGTAG + "Rollback called, if a new account was " +
-                "created successfully and if it is still in the destination ou, "
-                + "will attempt to move it to the pending delete ou.");
+        logger.info(LOGTAG + "Rollback called, if a new account was created successfully and if it is still in the destination ou, will attempt to move it to the pending delete ou.");
 
         // Get the result props
         List<Property> props = getResultProperties();
 
         // Get the createdNewAccount and account number properties
-        boolean createdNewAccount = Boolean
-                .getBoolean(getResultProperty("createdNewAccount"));
+        boolean createdNewAccount = Boolean.getBoolean(getResultProperty("createdNewAccount"));
         String newAccountId = getResultProperty("newAccountId");
         boolean isAccountInOrgRoot = false;
         boolean movedAccountToPendingDeleteOu = false;
@@ -212,12 +208,9 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         if (newAccountId != null) {
             try {
                 ListAccountsForParentRequest request = new ListAccountsForParentRequest();
-                ListAccountsForParentResult result =
-                        getAwsOrganizationsClient().listAccountsForParent(request);
-                List<com.amazonaws.services.organizations.model.Account> accounts =
-                        result.getAccounts();
-                ListIterator<com.amazonaws.services.organizations.model.Account> li =
-                        accounts.listIterator();
+                ListAccountsForParentResult result = getAwsOrganizationsClient().listAccountsForParent(request);
+                List<com.amazonaws.services.organizations.model.Account> accounts = result.getAccounts();
+                ListIterator<com.amazonaws.services.organizations.model.Account> li = accounts.listIterator();
                 while (li.hasNext()) {
                     com.amazonaws.services.organizations.model.Account account =
                             (com.amazonaws.services.organizations.model.Account) li.next();
@@ -225,9 +218,7 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
                     isAccountInOrgRoot = true;
                 }
             } catch (Exception e) {
-                String errMsg = "An error occurred querying for a list of " +
-                        "accounts in the org root. The exception is: " +
-                        e.getMessage();
+                String errMsg = "An error occurred querying for a list of accounts in the org root. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, e);
             }
@@ -246,27 +237,22 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
                 long moveStartTime = System.currentTimeMillis();
                 MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
                 long moveTime = System.currentTimeMillis() - moveStartTime;
-                logger.info(LOGTAG + "received response to move account request in " +
-                        moveTime + " ms.");
+                logger.info(LOGTAG + "received response to move account request in " + moveTime + " ms.");
                 movedAccountToPendingDeleteOu = true;
             } catch (Exception e) {
-                String errMsg = "An error occurred moving the account. " +
-                        "The exception is: " + e.getMessage();
+                String errMsg = "An error occurred moving the account. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, e);
             }
 
-            addResultProperty("movedAccountToPendingDeleteOu",
-                    Boolean.toString(movedAccountToPendingDeleteOu));
+            addResultProperty("movedAccountToPendingDeleteOu", Boolean.toString(movedAccountToPendingDeleteOu));
 
         }
         // If createdNewAccount or isAccountInOrgRoot is false, there is
         // nothing to roll back. Log it.
         else {
-            logger.info(LOGTAG + "No account was created or it is no longer " +
-                    "in the organization root, so there is nothing to roll back.");
-            addResultProperty("movedAccountToPendingDeleteOu",
-                    "not applicable");
+            logger.info(LOGTAG + "No account was created or it is no longer in the organization root, so there is nothing to roll back.");
+            addResultProperty("movedAccountToPendingDeleteOu", "not applicable");
         }
 
         update(ROLLBACK_STATUS, SUCCESS_RESULT);
@@ -292,8 +278,7 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
             StepException {
 
         if (name == null) {
-            String errMsg = "accountSeriesName property is null. " +
-                    "Can't continue.";
+            String errMsg = "accountSeriesName property is null. Can't continue.";
             throw new StepException(errMsg);
         }
 
@@ -330,18 +315,6 @@ public class SupportRequestAutomation extends AbstractStep implements Step {
         }
 
         m_secretKey = secretKey;
-    }
-
-    private void setPendingDeleteOuId(String id) throws
-            StepException {
-
-        if (id == null) {
-            String errMsg = "pendingDeleteOuId property is null. " +
-                    "Can't continue.";
-            throw new StepException(errMsg);
-        }
-
-        m_pendingDeleteOuId = id;
     }
 
 }
