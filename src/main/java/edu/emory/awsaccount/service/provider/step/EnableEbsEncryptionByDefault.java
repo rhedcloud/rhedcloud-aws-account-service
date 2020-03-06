@@ -213,17 +213,18 @@ public class EnableEbsEncryptionByDefault extends AbstractStep implements Step {
 				EnableEbsEncryptionByDefaultRequest request = 
 					new EnableEbsEncryptionByDefaultRequest();
 				
+				
 				EnableEbsEncryptionByDefaultResult result = null;
 				try {
 					logger.info(LOGTAG + "Sending the encryption by default request...");
 					long queryStartTime = System.currentTimeMillis();
-					result = getAmazonEC2Client().enableEbsEncryptionByDefault(request);
+					result = client.enableEbsEncryptionByDefault(request);
 					long queryTime = System.currentTimeMillis() - queryStartTime;
 					logger.info(LOGTAG + "received response to encryption by default " +
 						"request in queryTime ms.");
 				}
 				catch (Exception e) {
-					String errMsg = "An error occurred setting EBS encryption by . " +
+					String errMsg = "An error occurred setting EBS encryption by default. " +
 						"The exception is: " + e.getMessage();
 					logger.error(LOGTAG + errMsg);
 					throw new StepException(errMsg, e);
