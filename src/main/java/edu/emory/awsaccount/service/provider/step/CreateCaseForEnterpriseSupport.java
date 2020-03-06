@@ -35,7 +35,6 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     private final static String IN_PROGRESS = "IN_PROGRESS";
     private final static String SUCCEEDED = "SUCCEEDED";
     private final static String FAILED = "FAILED";
-    private String m_accountSeriesName = null;
     private String m_accessKey = null;
     private String m_secretKey = null;
     private AWSOrganizationsClient m_awsOrganizationsClient = null;
@@ -49,11 +48,6 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         // Get custom step properties.
         logger.info(LOGTAG + "Getting custom step properties...");
-
-        String accountSeriesName = getProperties().getProperty("accountSeriesName", null);
-        setAccountSeriesName(accountSeriesName);
-
-        logger.info(LOGTAG + "accountSeriesName is: " + getAccountSeriesName());
 
         String accessKey = getProperties().getProperty("accessKey", null);
         setAccessKey(accessKey);
@@ -97,14 +91,12 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         logger.info(LOGTAG + "Begin running the step.");
 
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-        if (getAccountSeriesName() != null) {
-            addResultProperty("accountSeriesName", getAccountSeriesName());
-        }
 
         // CREATE_SUPPORT_CASE step. THIS IS WHERE WE ADD THE NEW STEP NAME
         logger.info(LOGTAG + "Getting properties from preceding steps...");
-        ProvisioningStep step2 = getProvisioningStepByType("CREATE_SUPPORT_CASE");
-        String accountSequenceNumber = null;
+        // ProvisioningStep step2 = getProvisioningStepByType("CREATE_SUPPORT_CASE");
+        // String accountSequenceNumber = null;
+        /*
         if (step2 != null) {
             logger.info(LOGTAG + "Step CREATE_SUPPORT_CASE found.");
             accountSequenceNumber = getResultProperty(step2, "accountSequenceNumber");
@@ -119,6 +111,8 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
+
+         */
 
 		VirtualPrivateCloudProvisioning virtualPrivateCloudProvisioning = getVirtualPrivateCloudProvisioning();
 		VirtualPrivateCloudRequisition virtualPrivateCloudRequisition = virtualPrivateCloudProvisioning.getVirtualPrivateCloudRequisition();
@@ -268,21 +262,6 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
     private void setAwsOrganizationsClient(AWSOrganizationsClient client) {
         m_awsOrganizationsClient = client;
-    }
-
-    private String getAccountSeriesName() {
-        return m_accountSeriesName;
-    }
-
-    private void setAccountSeriesName(String name) throws
-            StepException {
-
-        if (name == null) {
-            String errMsg = "accountSeriesName property is null. Can't continue.";
-            throw new StepException(errMsg);
-        }
-
-        m_accountSeriesName = name;
     }
 
     private String getAccessKey() {
