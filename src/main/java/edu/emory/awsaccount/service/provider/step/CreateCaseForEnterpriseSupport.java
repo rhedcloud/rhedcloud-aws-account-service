@@ -121,7 +121,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 				.withServiceCode("account-management")
 				.withCategoryCode("billing")
 				.withLanguage("en")
-				.withCcEmailAddresses("")
+				.withCcEmailAddresses("aws-support@emory.edu")
 				.withCommunicationBody("A recently created linked/child account has been created as part of our organization. Please add account ".concat(virtualPrivateCloudRequisition.getFinancialAccountNumber()).concat(" to Enterprise Support"))
 				.withSubject("Please add child/linked account ".concat(virtualPrivateCloudRequisition.getFinancialAccountNumber()).concat(" to Enterprise Support"))
 				.withSeverityCode("normal");
