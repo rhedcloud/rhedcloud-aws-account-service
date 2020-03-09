@@ -191,8 +191,10 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 			
 			List<String> caseCcEmailAddresses = buildCcEmailAddresses(ownerEmail, requestorEmail);
 			request.setCcEmailAddresses(caseCcEmailAddresses);
-			request.setCommunicationBody(getCaseCommunicationBody());
-			request.setSubject(getCaseSubject());
+			String communicationBody = replaceAccountNumber(getCaseCommunicationBody(), newAccountId);
+			request.setCommunicationBody(communicationBody);
+			String caseSubject = replaceAccountNumber(getCaseSubject(), newAccountId);
+			request.setSubject(caseSubject);
 			request.setSeverityCode(getCaseSeverityCode());
 			
 			// Send the request.
@@ -540,6 +542,11 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         DirectoryPerson dp = (DirectoryPerson) directoryPersonList.get(0);
         return dp;
+    }
+    
+    private String replaceAccountNumber(String text, String accountNumber) {
+    	String result = text.replaceAll("ACCOUNT_NUMBER", accountNumber);
+        return result;
     }
     
 }
