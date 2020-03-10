@@ -174,8 +174,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
  		// Create a support case to add the account to the enterprise support plan.
  		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("not applicable") == false)) {
  			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
- 				"is not null. Sending an AccountAlias.Create-Request to create an" +
- 				"acount alias.");
+ 				"is not null. Will create a support case.");
     
 			VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
 			VirtualPrivateCloudRequisition vpcr = vpcp.getVirtualPrivateCloudRequisition();
@@ -196,6 +195,8 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 			String caseSubject = replaceAccountNumber(getCaseSubject(), newAccountId);
 			request.setSubject(caseSubject);
 			request.setSeverityCode(getCaseSeverityCode());
+			
+			logger.info(LOGTAG + "Built the request: " + request.toString());
 			
 			// Send the request.
 			try {
@@ -525,7 +526,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
             logger.info(LOGTAG + "Queried for DirectoryPerson for " + "userId " + userId + " in " + time + " ms. Returned "
                     + directoryPersonList.size() + " user(s) in the role.");
         } catch (EnterpriseObjectQueryException eoqe) {
-            String errMsg = "An error occurred querying for the " + "RoleAssignment objects The exception is: " + eoqe.getMessage();
+            String errMsg = "An error occurred querying for the DirectoryPerson objects The exception is: " + eoqe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, eoqe);
         }
