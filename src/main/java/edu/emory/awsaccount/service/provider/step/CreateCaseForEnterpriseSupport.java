@@ -465,12 +465,11 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     			logger.info(LOGTAG + "Adding email address: " + emailAddresses[i]);
     			ccEmailAddresses.add(emailAddresses[i]);
     		}
-    		ccEmailAddresses = Arrays.asList(getCaseCcEmailAddresses().split("\\s*,\\s*"));
     	}
     	
     	logger.info(LOGTAG + "Adding ownerEmail: " + ownerEmail);
     	ccEmailAddresses.add(ownerEmail);
-    	logger.info(LOGTAG + "Adding requestorEmail: " +requestorEmail);
+    	logger.info(LOGTAG + "Adding requestorEmail: " + requestorEmail);
     	ccEmailAddresses.add(requestorEmail);
     	
     	logger.info(LOGTAG + "CcEmailAddresses is: " + ccEmailAddresses.toString());
