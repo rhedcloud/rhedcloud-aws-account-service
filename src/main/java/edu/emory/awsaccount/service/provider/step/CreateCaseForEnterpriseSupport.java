@@ -460,10 +460,17 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     	List<String> ccEmailAddresses = new ArrayList();
     	
     	if (getCaseCcEmailAddresses() != null && !getCaseCcEmailAddresses().equals("")) {
+    		String[] emailAddresses = getCaseCcEmailAddresses().split("\\s*,\\s*");
+    		for (int i=0; i < emailAddresses.length; i++) {
+    			logger.info(LOGTAG + "Adding email address: " + emailAddresses[i]);
+    			ccEmailAddresses.add(emailAddresses[i]);
+    		}
     		ccEmailAddresses = Arrays.asList(getCaseCcEmailAddresses().split("\\s*,\\s*"));
     	}
     	
+    	logger.info(LOGTAG + "Adding ownerEmail: " + ownerEmail);
     	ccEmailAddresses.add(ownerEmail);
+    	logger.info(LOGTAG + "Adding requestorEmail: " +requestorEmail);
     	ccEmailAddresses.add(requestorEmail);
     	
     	logger.info(LOGTAG + "CcEmailAddresses is: " + ccEmailAddresses.toString());
