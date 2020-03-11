@@ -208,7 +208,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 				logger.info(LOGTAG + "received response to case create request in " +
 					createTime + " ms. Case ID is: " + caseId);
 				createdSupportCase = true;
-				addResultProperty("caseId", "not applicable");
+				addResultProperty("caseId", caseId);
 			}
 			catch (Exception e) {
 				String errMsg = "An error occurred creating the case. " +
