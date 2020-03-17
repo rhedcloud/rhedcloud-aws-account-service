@@ -987,6 +987,7 @@ public abstract class AbstractStep {
 		String value = null;
 		if (step != null) {
 			value = getResultProperty(step, key);
+			if (value == null || value.equals("")) value = "not available";
 			addResultProperty(key, value);
 			logger.info(LOGTAG + "Property " + key + " from preceding " +
 				"step " + stepType  + " is: " + value);	
