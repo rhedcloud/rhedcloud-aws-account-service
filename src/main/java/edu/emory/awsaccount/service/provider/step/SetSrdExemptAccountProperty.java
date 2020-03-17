@@ -102,7 +102,8 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 		String sAllocateNewAccount = 
 			getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT",
 			"allocateNewAccount");
-		allocateNewAccount = Boolean.getBoolean(sAllocateNewAccount);
+		logger.info(LOGTAG + "allocateNewAccount property is: " + sAllocateNewAccount);
+		allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
 		logger.info(LOGTAG + "allocateNewAccount is: " + allocateNewAccount);
 		
 		// If allocateNewAccount is false, set the srdExempt property to true.
