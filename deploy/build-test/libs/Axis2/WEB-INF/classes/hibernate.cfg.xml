@@ -11,7 +11,7 @@
 
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
-<property name="hibernate.show_sql">true</property>
+<property name="hibernate.show_sql">false</property>
 <property name="hibernate.hbm2ddl.auto">HIBERNATE_HBM2DDL_AUTO</property>
 <mapping resource="OpenEai.hbm.xml"/>
 <mapping resource="DbLock.hbm.xml"/>
