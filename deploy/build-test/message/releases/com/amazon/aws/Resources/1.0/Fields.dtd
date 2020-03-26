@@ -30,6 +30,7 @@
 <!ELEMENT AccountOwnerUserId %STRDOM;>
 <!ELEMENT ActualTime %STRDOM;>
 <!ELEMENT AgreedDatetime %DATETIME;>
+<!ELEMENT AlternateName %STRDOM;>
 <!ELEMENT AlternateServiceName %STRDOM;>
 <!ELEMENT AmazonResourceName %STRDOM;>
 <!ELEMENT AnnotationText %STRDOM;>

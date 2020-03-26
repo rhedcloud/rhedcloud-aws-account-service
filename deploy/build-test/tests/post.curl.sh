@@ -1,1 +1,0 @@
-curl --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: http://www.emory.edu/GreetingService/GreetingGenerate" --data @$BUILD_HOME/tests/GreetingService.soap.xml http://localhost:8080/axis2/services/GreetingService

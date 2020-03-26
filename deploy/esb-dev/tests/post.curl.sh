@@ -1,1 +1,0 @@
-curl --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: http://www.emory.edu/AwsAccountService/AccountQuery" --data @$BUILD_HOME/tests/AwsAccountService.soap.xml https://emory-awsaccount-service-dev/services/AwsAccountService 

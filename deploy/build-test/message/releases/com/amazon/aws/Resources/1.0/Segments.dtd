@@ -38,7 +38,7 @@
 <!-- 
 MessageId was defined as an Element in openeai/segments.dtd
 -->
-<!ELEMENT Account (AccountId, AccountName, ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT Account (AccountId, AccountName, AlternateName?,ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountAlias (AccountId, Name)>
 <!ELEMENT AccountAliasQuerySpecification (AccountId)>
 <!ELEMENT AccountNotification (AccountNotificationId?, AccountId, Type, Priority, Subject, Text, ReferenceId?, Annotation*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
@@ -47,7 +47,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT AccountOrganizationMembershipQuerySpecification (AccountId)>
 <!ELEMENT AccountProvisioningAuthorization (UserId, IsAuthorized, AuthorizedUserDescription, UnauthorizedReason*)>
 <!ELEMENT AccountProvisioningAuthorizationQuerySpecification (UserId)>
-<!ELEMENT AccountQuerySpecification (Comparison*, QueryLanguage?, AccountId?, AccountName?, EmailAddress?, AccountOwnerId?, FinancialAccountNumber?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT AccountQuerySpecification (Comparison*, QueryLanguage?, AccountId?, AccountName?, AlternateName?, EmailAddress?, AccountOwnerId?, FinancialAccountNumber?, CreateUser?, LastUpdateUser?)>
 <!ELEMENT AccountUser (AccountId, UserId, FullName, EmailAddress, RoleName+, Property*)>
 <!ELEMENT AccountUserQuerySpecification (AccountId?, UserId?)>
 <!ELEMENT Annotation (Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>

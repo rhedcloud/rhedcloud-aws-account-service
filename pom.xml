@@ -72,7 +72,7 @@
    <artifactId>aws-moa</artifactId>
    <version>master-117</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/aws-moa-master-117.jar</systemPath>
+   <systemPath>${project.basedir}/lib/rhedcloud-aws-moa-master-3.jar</systemPath>
   </dependency>
 
   <dependency>
