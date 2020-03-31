@@ -1,0 +1,891 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <ns3:AccountReply xmlns:ns3="http://www.rhedcloud.org/AwsAccountService/">
+         <Result action="Query" status="success" xmlns="http://www.openeai.org/openeai/"/>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>828157132492</AccountId>
+            <AccountName>Emory Dev 1</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>Steve Wheat's head</PasswordLocation>
+            <EmailAddress>
+               <Type>security</Type>
+               <Email>aws-security@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-1@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-1@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2018-07-26T14:37:51.601-04:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-11-28T17:42:37.145-05:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>533807676754</AccountId>
+            <AccountName>Emory Test 1</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>Steve Wheat's head</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-2@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-2@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>security</Type>
+               <Email>aws-security@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2018-07-26T10:39:26.640-04:00</CreateDatetime>
+            <LastUpdateUser>P7142166</LastUpdateUser>
+            <LastUpdateDatetime>2020-03-30T15:16:23.821-04:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>753445921657</AccountId>
+            <AccountName>Emory Dev 3</AccountName>
+            <ComplianceClass>HIPAA</ComplianceClass>
+            <PasswordLocation>Steve Wheat's head</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-3@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-3@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>security</Type>
+               <Email>aws-security@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2018-07-26T10:40:44.908-04:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-06-14T10:11:42.731-04:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>731363757793</AccountId>
+            <AccountName>Emory Dev 300</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-300@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-300@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-11T10:10:11.695-05:00</CreateDatetime>
+            <LastUpdateUser>P7247525</LastUpdateUser>
+            <LastUpdateDatetime>2020-03-27T11:39:09.774-04:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>635884158086</AccountId>
+            <AccountName>Emory Dev 302</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-302@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-302@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-11T12:16:37.177-05:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-02-19T14:46:02.716-05:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>051061325717</AccountId>
+            <AccountName>Emory Dev 312</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-312@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-312@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-14T17:06:19.201-05:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-02-19T14:46:28.261-05:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>046940656139</AccountId>
+            <AccountName>Emory Dev 318</AccountName>
+            <ComplianceClass>HIPAA</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-318@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-318@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-22T21:39:27.618-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>923541808637</AccountId>
+            <AccountName>Emory Dev 326</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-326@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-326@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-24T12:21:45.910-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>323706905840</AccountId>
+            <AccountName>Emory Dev 379</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-379@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-379@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-02T20:24:41.249-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>692785613355</AccountId>
+            <AccountName>Emory Dev 381</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-381@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-381@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-04T19:34:40.645-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>643446397740</AccountId>
+            <AccountName>Emory Dev 392</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-392@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-392@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-11T07:28:10.637-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>369799395316</AccountId>
+            <AccountName>Emory Dev 391</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-391@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-391@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-10T18:57:12.728-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>861545808509</AccountId>
+            <AccountName>Emory Dev 322</AccountName>
+            <ComplianceClass>HIPAA</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-322@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-322@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-23T19:08:07.484-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>452282779753</AccountId>
+            <AccountName>Emory Dev 324</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-324@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-324@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-23T21:45:30.607-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>149449997233</AccountId>
+            <AccountName>Emory Dev 337</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-337@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-337@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-28T16:03:48.032-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>133248321940</AccountId>
+            <AccountName>Emory Dev 395</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-395@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-395@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-11T13:58:25.470-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>952662784604</AccountId>
+            <AccountName>Emory Dev 399</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-399@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-399@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1521000000</FinancialAccountNumber>
+            <CreateUser>P2155645</CreateUser>
+            <CreateDatetime>2020-03-30T15:30:49.212-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>215248545338</AccountId>
+            <AccountName>Emory Dev 308</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-308@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-308@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-13T00:03:47.698-05:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-02-19T14:48:28.108-05:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>483760752863</AccountId>
+            <AccountName>Emory Dev 319</AccountName>
+            <ComplianceClass>HIPAA</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-319@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-319@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-23T12:00:18.398-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>969157306617</AccountId>
+            <AccountName>Emory Dev 323</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-323@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-323@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-23T20:52:10.939-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>937124693942</AccountId>
+            <AccountName>Emory Dev 325</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-325@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-325@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-24T10:11:19.365-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>969867975606</AccountId>
+            <AccountName>Emory Dev 332</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-332@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-332@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-26T13:20:34.206-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>234826388199</AccountId>
+            <AccountName>Emory Dev 338</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-338@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-338@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-03-05T12:38:50.278-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>173412030651</AccountId>
+            <AccountName>Emory Dev 341</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-341@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-341@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-03-07T10:19:43.993-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>581956922089</AccountId>
+            <AccountName>Emory Dev 352</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-352@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-352@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <Property>
+               <Key>srdExemptBecause</Key>
+               <Value>Account in EmoryCostSavingsHipaaOrg</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P4883103</CreateUser>
+            <CreateDatetime>2019-06-13T14:11:48.258-04:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2020-03-18T14:34:31.581-04:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>366473364953</AccountId>
+            <AccountName>Emory Dev 353</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-353@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-353@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-09-26T16:57:05.351-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>204555682608</AccountId>
+            <AccountName>Emory Dev 396</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-396@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-396@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-11T20:24:13.334-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>190716721543</AccountId>
+            <AccountName>Emory Dev 301</AccountName>
+            <ComplianceClass>HIPAA</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-301@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-301@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-11T11:08:48.369-05:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-02-19T14:48:49.397-05:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>643426615439</AccountId>
+            <AccountName>Emory Dev 303</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-303@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-303@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-11T14:04:23.625-05:00</CreateDatetime>
+            <LastUpdateUser>P4883103</LastUpdateUser>
+            <LastUpdateDatetime>2019-02-19T14:49:12.563-05:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>1142211425870</AccountId>
+            <AccountName>Emory Test 11</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>Steve Wheat's head1</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-2@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-2@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>security</Type>
+               <Email>aws-security@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2018-07-26T10:39:26.640-04:00</CreateDatetime>
+            <LastUpdateUser>P7142166</LastUpdateUser>
+            <LastUpdateDatetime>2020-03-30T15:09:56.610-04:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>696215836485</AccountId>
+            <AccountName>Emory Dev 388</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-388@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-388@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-06T18:24:06.849-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>781914516704</AccountId>
+            <AccountName>Emory Dev 394</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-394@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-394@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>false</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2020-03-11T10:49:13.757-04:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>766540415526</AccountId>
+            <AccountName>Emory Dev 321</AccountName>
+            <ComplianceClass>HIPAA</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-321@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-321@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-02-23T14:42:09.789-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>236994348204</AccountId>
+            <AccountName>Emory Dev Master</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>See Paul Petersen or John Connerat</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-master@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-master@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>security</Type>
+               <Email>aws-security@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <Property>
+               <Key>srdExemptBecause</Key>
+               <Value>JCONNER-> DEV Master Must Remain True</Value>
+            </Property>
+            <AccountOwnerId>P2571364</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P2571364</CreateUser>
+            <CreateDatetime>2019-01-02T12:48:58.571-05:00</CreateDatetime>
+            <LastUpdateUser>P4731608</LastUpdateUser>
+            <LastUpdateDatetime>2019-06-17T16:29:10.438-04:00</LastUpdateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>736229015896</AccountId>
+            <AccountName>Emory Dev 340</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-340@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-340@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-03-05T18:58:32.831-05:00</CreateDatetime>
+         </Account>
+         <Account xmlns="http://www.rhedcloud.org/awsaccount/">
+            <AccountId>428611986365</AccountId>
+            <AccountName>Emory Dev 344</AccountName>
+            <ComplianceClass>Standard</ComplianceClass>
+            <PasswordLocation>AWS default</PasswordLocation>
+            <EmailAddress>
+               <Type>primary</Type>
+               <Email>aws-dev-344@emory.edu</Email>
+            </EmailAddress>
+            <EmailAddress>
+               <Type>operations</Type>
+               <Email>aws-dev-344@emory.edu</Email>
+            </EmailAddress>
+            <Property>
+               <Key>srdExempt</Key>
+               <Value>true</Value>
+            </Property>
+            <AccountOwnerId>P0934572</AccountOwnerId>
+            <FinancialAccountNumber>1200000026</FinancialAccountNumber>
+            <CreateUser>P0934572</CreateUser>
+            <CreateDatetime>2019-03-07T16:08:16.459-05:00</CreateDatetime>
+         </Account>
+      </ns3:AccountReply>
+   </soapenv:Body>
+</soapenv:Envelope>

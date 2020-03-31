@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:aws="http://www.rhedcloud.org/AwsAccountService/" xmlns:aws1="http://www.rhedcloud.org/awsaccount/" xmlns:open="http://www.openeai.org/openeai/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <aws:AccountQueryRequest>
+         <aws1:AccountQuerySpecification>
+            <aws1:AccountId></aws1:AccountId>
+         </aws1:AccountQuerySpecification>
+      </aws:AccountQueryRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
