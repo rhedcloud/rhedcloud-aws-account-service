@@ -80,7 +80,7 @@
    <artifactId>emory-moa-1.2</artifactId>
    <version>1.2</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/rhedcloud-emory-moa-master-5.jar</systemPath>
+   <systemPath>${project.basedir}/lib/rhedcloud-emory-moas-master-5.jar</systemPath>
   </dependency>
 
   <dependency>
