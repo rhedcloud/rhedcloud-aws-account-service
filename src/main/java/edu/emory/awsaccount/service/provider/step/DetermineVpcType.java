@@ -32,16 +32,16 @@ public class DetermineVpcType extends AbstractStep implements Step {
   protected List<Property> run() throws StepException {
     String LOGTAG = getStepTag() + "[DetermineVpcType.run] ";
     logger.info(LOGTAG + " Step started");
-    long started = System.currentTimeMillis();
 
     // get the creating account flag
-    String allocateNewAccount = super.getResultProperty("allocateNewAccount");
+    String allocateNewAccount =
+        getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "allocateNewAccount");
     // get the VPC type flag
     String vpcType =
         getVirtualPrivateCloudProvisioning().getVirtualPrivateCloudRequisition().getType();
 
-    logger.debug(LOGTAG + " creatingAccount=" + allocateNewAccount);
-    logger.debug(LOGTAG + " vpcType=" + vpcType);
+    logger.info(LOGTAG + " creatingAccount=" + allocateNewAccount);
+    logger.info(LOGTAG + " vpcType=" + vpcType);
 
     if (allocateNewAccount != null && vpcType != null) {
       // if we're not allocating anew account and the type is 0 then raise an exception
@@ -54,13 +54,11 @@ public class DetermineVpcType extends AbstractStep implements Step {
       addResultProperty(CREATE_VPC_PROPERTY, String.valueOf(vpcType.equals("1")));
     }
 
-    logger.info(LOGTAG + " Step completed in " + (System.currentTimeMillis() - started) + "ms");
     return getResultProperties();
   }
 
   @Override
   protected List<Property> fail() throws StepException {
-    long startTime = System.currentTimeMillis();
     String LOGTAG = getStepTag() + "[DetermineVpcType.fail] ";
     logger.info(LOGTAG + "Begin step failure simulation.");
 
@@ -69,10 +67,6 @@ public class DetermineVpcType extends AbstractStep implements Step {
 
     // Update the step.
     update(COMPLETED_STATUS, FAILURE_RESULT);
-
-    // Log completion time.
-    long time = System.currentTimeMillis() - startTime;
-    logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
 
     // Return the properties.
     return getResultProperties();
@@ -83,13 +77,7 @@ public class DetermineVpcType extends AbstractStep implements Step {
     String LOGTAG = getStepTag() + "[DetermineVpcType.rollback] ";
     super.rollback();
 
-    long startTime = System.currentTimeMillis();
-
     logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
     update(ROLLBACK_STATUS, SUCCESS_RESULT);
-
-    // Log completion time.
-    long time = System.currentTimeMillis() - startTime;
-    logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
   }
 }
