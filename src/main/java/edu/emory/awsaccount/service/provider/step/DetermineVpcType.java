@@ -54,6 +54,8 @@ public class DetermineVpcType extends AbstractStep implements Step {
       addResultProperty(CREATE_VPC_PROPERTY, String.valueOf(vpcType.equals("1")));
     }
 
+    update(COMPLETED_STATUS, SUCCESS_RESULT);
+
     return getResultProperties();
   }
 
