@@ -99,247 +99,245 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
-		// Get the VPC ProvisioningId to use to reserve the VpnConnection Profile
-		String provisioningId = getVirtualPrivateCloudProvisioning().getProvisioningId();
-		logger.info(LOGTAG + "The ProvisioningId is: " + provisioningId);
-		addResultProperty("provisioningId", provisioningId);
-		
-		// Get a configured VpnConnectionProfileAssignment and
-		// VpnConnectionProfileAssignmentRequistion from AppConfig
-		VpnConnectionProfileAssignment vcpa = new 
-			VpnConnectionProfileAssignment();
-		VpnConnectionProfileAssignmentRequisition vcpar = new
-			VpnConnectionProfileAssignmentRequisition();
-	    try {
-	    	vcpa = (VpnConnectionProfileAssignment)getAppConfig()
-		    		.getObjectByType(vcpa.getClass().getName());
-	    	vcpar = (VpnConnectionProfileAssignmentRequisition)getAppConfig()
-		    		.getObjectByType(vcpar.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-	    
-	    // Set the values of the requisition.
-	    try {
-	    	vcpar.setOwnerId(provisioningId);
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting the values of the " +
-	  	    	  "requisition. The exception is: " + efe.getMessage();
-	  	    logger.error(LOGTAG + errMsg);
-	  	    throw new StepException(errMsg, efe);
-	    }
-	    
-	    // Log the state of the requisition.
-	    try {
-	    	logger.info(LOGTAG + "Requistion is: " + vcpar.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the requisition " +
-	  	    	  "to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			PointToPointProducer p2p = 
-				(PointToPointProducer)getNetworkOpsServiceProducerPool()
-				.getExclusiveProducer();
-			p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
-			rs = (RequestService)p2p;
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-	    
-		List assignmentResults = null;
-		try { 
-			long generateStartTime = System.currentTimeMillis();
-			assignmentResults = vcpa.generate(vcpar, rs);
-			long generateTime = System.currentTimeMillis() - generateStartTime;
-			logger.info(LOGTAG + "Generated VpnConnectionProfileAssignment " +
-				"for ProvisioningId " + provisioningId + " in "
-				+ generateTime + " ms. Returned " + assignmentResults.size() + 
-				" result(s).");
-		}
-		catch (EnterpriseObjectGenerateException eoqe) {
-			String errMsg = "An error occurred generating the  " +
-	    	  "VpnConnectionProfileAssignmnet object. " +
-	    	  "The exception is: " + eoqe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoqe);
-		}
-		finally {
-			// Release the producer back to the pool
-			getNetworkOpsServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
-		
-		// If there is exactly one result, query for the VpnConnectionProfile
-		if (assignmentResults.size() == 1) {
-			VpnConnectionProfileAssignment assignment = 
-				(VpnConnectionProfileAssignment)assignmentResults.get(0);
-			
-			// Get a configured VpnConnectionProfile and a
-			// VpnConnectionProfileQuerySpecification from AppConfig
-			VpnConnectionProfile vcp = new VpnConnectionProfile();
-			VpnConnectionProfileQuerySpecification vcpqs = new
-				VpnConnectionProfileQuerySpecification();
-		    try {
-		    	vcp = (VpnConnectionProfile)getAppConfig()
-			    		.getObjectByType(vcp.getClass().getName());
-		    	vcpqs = (VpnConnectionProfileQuerySpecification)getAppConfig()
-			    		.getObjectByType(vcpqs.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-		    
-		    // Set the values of the query spec.
-		    try {
-		    	vcpqs.setVpnConnectionProfileId(assignment
-		    		.getVpnConnectionProfileId());
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "query spec. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-		    
-		    // Log the state of the query spec.
-		    try {
-		    	logger.info(LOGTAG + "Query spec is: " + vcpqs.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the query " +
-		  	    	  "spec to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
-			// Get a producer from the pool
-			rs = null;
+
+		// check if a VPC is being created
+		String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
+		logger.info(LOGTAG + "createVpc=" + createVpc);
+		if(Boolean.valueOf(createVpc) == Boolean.FALSE) {
+			logger.info(LOGTAG + "Bypassing CIDR determination since no VPC is being created");
+			addResultProperty("createVpc", Boolean.FALSE.toString());
+			addResultProperty("vpcNetwork", "not applicable");
+		} else {
+			logger.info(LOGTAG + "Determining CIDR type");
+			addResultProperty("createVpc", Boolean.TRUE.toString());
+			// Get the VPC ProvisioningId to use to reserve the VpnConnection Profile
+			String provisioningId = getVirtualPrivateCloudProvisioning().getProvisioningId();
+			logger.info(LOGTAG + "The ProvisioningId is: " + provisioningId);
+			addResultProperty("provisioningId", provisioningId);
+
+			// Get a configured VpnConnectionProfileAssignment and
+			// VpnConnectionProfileAssignmentRequistion from AppConfig
+			VpnConnectionProfileAssignment vcpa = new
+					VpnConnectionProfileAssignment();
+			VpnConnectionProfileAssignmentRequisition vcpar = new
+					VpnConnectionProfileAssignmentRequisition();
 			try {
-				rs = (RequestService)getNetworkOpsServiceProducerPool()
-					.getExclusiveProducer();
+				vcpa = (VpnConnectionProfileAssignment) getAppConfig()
+						.getObjectByType(vcpa.getClass().getName());
+				vcpar = (VpnConnectionProfileAssignmentRequisition) getAppConfig()
+						.getObjectByType(vcpar.getClass().getName());
+			} catch (EnterpriseConfigurationObjectException ecoe) {
+				String errMsg = "An error occurred retrieving an object from " +
+						"AppConfig. The exception is: " + ecoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, ecoe);
 			}
-			catch (JMSException jmse) {
+
+			// Set the values of the requisition.
+			try {
+				vcpar.setOwnerId(provisioningId);
+			} catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting the values of the " +
+						"requisition. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, efe);
+			}
+
+			// Log the state of the requisition.
+			try {
+				logger.info(LOGTAG + "Requistion is: " + vcpar.toXmlString());
+			} catch (XmlEnterpriseObjectException xeoe) {
+				String errMsg = "An error occurred serializing the requisition " +
+						"to XML. The exception is: " + xeoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, xeoe);
+			}
+
+			// Get a producer from the pool
+			RequestService rs = null;
+			try {
+				PointToPointProducer p2p =
+						(PointToPointProducer) getNetworkOpsServiceProducerPool()
+								.getExclusiveProducer();
+				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+				rs = (RequestService) p2p;
+			} catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
+						"from the pool. The exception is: " + jmse.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-		    
-			List profileResults = null;
-			try { 
-				long queryStartTime = System.currentTimeMillis();
-				profileResults = vcp.query(vcpqs, rs);
-				long queryTime = System.currentTimeMillis() - queryStartTime;
-				logger.info(LOGTAG + "Queried for VpnConnectionProfile" +
-					"for ProvisioningId " + provisioningId + " in "
-					+ queryTime + " ms. Returned " + profileResults.size() + 
-					" result(s).");
-			}
-			catch (EnterpriseObjectQueryException eoqe) {
-				String errMsg = "An error occurred querying for the  " +
-		    	  "VpnConnectionProfile object. The exception is: " +
-		    	  eoqe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoqe);
-			}
-			finally {
+
+			List assignmentResults = null;
+			try {
+				long generateStartTime = System.currentTimeMillis();
+				assignmentResults = vcpa.generate(vcpar, rs);
+				long generateTime = System.currentTimeMillis() - generateStartTime;
+				logger.info(LOGTAG + "Generated VpnConnectionProfileAssignment " +
+						"for ProvisioningId " + provisioningId + " in "
+						+ generateTime + " ms. Returned " + assignmentResults.size() +
+						" result(s).");
+			} catch (EnterpriseObjectGenerateException eoqe) {
+				String errMsg = "An error occurred generating the  " +
+						"VpnConnectionProfileAssignmnet object. " +
+						"The exception is: " + eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, eoqe);
+			} finally {
 				// Release the producer back to the pool
 				getNetworkOpsServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
+						.releaseProducer((MessageProducer) rs);
 			}
-			
-			// If exactly one VpnConnectionProfile is returned, add the 
-			// profile id and CIDR to the provisioning properties. Otherwise.
-			// log it and throw and exception.
-			if (profileResults.size() == 1) {
-				VpnConnectionProfile p = (VpnConnectionProfile)profileResults.get(0);
-				String profileId = p.getVpnConnectionProfileId();
-				String network = p.getVpcNetwork();
-				
-				logger.info(LOGTAG + "vpnConnectionProfileId is: " + profileId);
-				addResultProperty("vpnConnectionProfileId", profileId);
-				
-				logger.info(LOGTAG + "vpcNetwork is: " + network);
-				addResultProperty("vpcNetwork", network);
-				
-				// Also need to add some details from the tunnel profiles.
-				List<TunnelProfile> tunnelProfiles = p.getTunnelProfile();
-				ListIterator li = tunnelProfiles.listIterator();
-				String vpn1InsideTunnelCidr1 = null;
-				String vpn1InsideTunnelCidr2 = null;
-				String vpn1CustomerGatewayIp = null;
-				String vpn2InsideTunnelCidr1 = null;
-				String vpn2InsideTunnelCidr2 = null;
-				String vpn2CustomerGatewayIp = null;
-				while (li.hasNext()) {
-					TunnelProfile tp = (TunnelProfile)li.next();
-					if (tp.getTunnelId().startsWith("1")) {
-						vpn1InsideTunnelCidr1 = tp.getVpnInsideIpCidr1();
-						vpn1InsideTunnelCidr2 = tp.getVpnInsideIpCidr2();
-						vpn1CustomerGatewayIp = tp.getCustomerGatewayIp();
-					}
-					if (tp.getTunnelId().startsWith("2")) {
-						vpn2InsideTunnelCidr1 = tp.getVpnInsideIpCidr1();
-						vpn2InsideTunnelCidr2 = tp.getVpnInsideIpCidr2();
-						vpn2CustomerGatewayIp = tp.getCustomerGatewayIp();
-					}
+
+			// If there is exactly one result, query for the VpnConnectionProfile
+			if (assignmentResults.size() == 1) {
+				VpnConnectionProfileAssignment assignment =
+						(VpnConnectionProfileAssignment) assignmentResults.get(0);
+
+				// Get a configured VpnConnectionProfile and a
+				// VpnConnectionProfileQuerySpecification from AppConfig
+				VpnConnectionProfile vcp = new VpnConnectionProfile();
+				VpnConnectionProfileQuerySpecification vcpqs = new
+						VpnConnectionProfileQuerySpecification();
+				try {
+					vcp = (VpnConnectionProfile) getAppConfig()
+							.getObjectByType(vcp.getClass().getName());
+					vcpqs = (VpnConnectionProfileQuerySpecification) getAppConfig()
+							.getObjectByType(vcpqs.getClass().getName());
+				} catch (EnterpriseConfigurationObjectException ecoe) {
+					String errMsg = "An error occurred retrieving an object from " +
+							"AppConfig. The exception is: " + ecoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, ecoe);
 				}
-				
-				logger.info(LOGTAG + "vpn1InsideTunnelCidr1 is: " + vpn1InsideTunnelCidr1);
-				addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
-				
-				logger.info(LOGTAG + "vpn1InsideTunnelCidr2 is: " + vpn1InsideTunnelCidr2);
-				addResultProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2);
-				
-				logger.info(LOGTAG + "vpn1CustomerGatewayIp is: " + vpn1CustomerGatewayIp);
-				addResultProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp);
-				
-				logger.info(LOGTAG + "vpn2InsideTunnelCidr1 is: " + vpn2InsideTunnelCidr1);
-				addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
-				
-				logger.info(LOGTAG + "vpn2InsideTunnelCidr2 is: " + vpn2InsideTunnelCidr2);
-				addResultProperty("vpn2InsideTunnelCidr2", vpn2InsideTunnelCidr2);
-				
-				logger.info(LOGTAG + "vpn2CustomerGatewayIp is: " + vpn2CustomerGatewayIp);
-				addResultProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp);
-				
+
+				// Set the values of the query spec.
+				try {
+					vcpqs.setVpnConnectionProfileId(assignment
+							.getVpnConnectionProfileId());
+				} catch (EnterpriseFieldException efe) {
+					String errMsg = "An error occurred setting the values of the " +
+							"query spec. The exception is: " + efe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, efe);
+				}
+
+				// Log the state of the query spec.
+				try {
+					logger.info(LOGTAG + "Query spec is: " + vcpqs.toXmlString());
+				} catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing the query " +
+							"spec to XML. The exception is: " + xeoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, xeoe);
+				}
+
+				// Get a producer from the pool
+				rs = null;
+				try {
+					rs = (RequestService) getNetworkOpsServiceProducerPool()
+							.getExclusiveProducer();
+				} catch (JMSException jmse) {
+					String errMsg = "An error occurred getting a producer " +
+							"from the pool. The exception is: " + jmse.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, jmse);
+				}
+
+				List profileResults = null;
+				try {
+					long queryStartTime = System.currentTimeMillis();
+					profileResults = vcp.query(vcpqs, rs);
+					long queryTime = System.currentTimeMillis() - queryStartTime;
+					logger.info(LOGTAG + "Queried for VpnConnectionProfile" +
+							"for ProvisioningId " + provisioningId + " in "
+							+ queryTime + " ms. Returned " + profileResults.size() +
+							" result(s).");
+				} catch (EnterpriseObjectQueryException eoqe) {
+					String errMsg = "An error occurred querying for the  " +
+							"VpnConnectionProfile object. The exception is: " +
+							eoqe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, eoqe);
+				} finally {
+					// Release the producer back to the pool
+					getNetworkOpsServiceProducerPool()
+							.releaseProducer((MessageProducer) rs);
+				}
+
+				// If exactly one VpnConnectionProfile is returned, add the
+				// profile id and CIDR to the provisioning properties. Otherwise.
+				// log it and throw and exception.
+				if (profileResults.size() == 1) {
+					VpnConnectionProfile p = (VpnConnectionProfile) profileResults.get(0);
+					String profileId = p.getVpnConnectionProfileId();
+					String network = p.getVpcNetwork();
+
+					logger.info(LOGTAG + "vpnConnectionProfileId is: " + profileId);
+					addResultProperty("vpnConnectionProfileId", profileId);
+
+					logger.info(LOGTAG + "vpcNetwork is: " + network);
+					addResultProperty("vpcNetwork", network);
+
+					// Also need to add some details from the tunnel profiles.
+					List<TunnelProfile> tunnelProfiles = p.getTunnelProfile();
+					ListIterator li = tunnelProfiles.listIterator();
+					String vpn1InsideTunnelCidr1 = null;
+					String vpn1InsideTunnelCidr2 = null;
+					String vpn1CustomerGatewayIp = null;
+					String vpn2InsideTunnelCidr1 = null;
+					String vpn2InsideTunnelCidr2 = null;
+					String vpn2CustomerGatewayIp = null;
+					while (li.hasNext()) {
+						TunnelProfile tp = (TunnelProfile) li.next();
+						if (tp.getTunnelId().startsWith("1")) {
+							vpn1InsideTunnelCidr1 = tp.getVpnInsideIpCidr1();
+							vpn1InsideTunnelCidr2 = tp.getVpnInsideIpCidr2();
+							vpn1CustomerGatewayIp = tp.getCustomerGatewayIp();
+						}
+						if (tp.getTunnelId().startsWith("2")) {
+							vpn2InsideTunnelCidr1 = tp.getVpnInsideIpCidr1();
+							vpn2InsideTunnelCidr2 = tp.getVpnInsideIpCidr2();
+							vpn2CustomerGatewayIp = tp.getCustomerGatewayIp();
+						}
+					}
+
+					logger.info(LOGTAG + "vpn1InsideTunnelCidr1 is: " + vpn1InsideTunnelCidr1);
+					addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
+
+					logger.info(LOGTAG + "vpn1InsideTunnelCidr2 is: " + vpn1InsideTunnelCidr2);
+					addResultProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2);
+
+					logger.info(LOGTAG + "vpn1CustomerGatewayIp is: " + vpn1CustomerGatewayIp);
+					addResultProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp);
+
+					logger.info(LOGTAG + "vpn2InsideTunnelCidr1 is: " + vpn2InsideTunnelCidr1);
+					addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
+
+					logger.info(LOGTAG + "vpn2InsideTunnelCidr2 is: " + vpn2InsideTunnelCidr2);
+					addResultProperty("vpn2InsideTunnelCidr2", vpn2InsideTunnelCidr2);
+
+					logger.info(LOGTAG + "vpn2CustomerGatewayIp is: " + vpn2CustomerGatewayIp);
+					addResultProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp);
+
+				} else {
+					String errMsg = "Invalid number of results returned from " +
+							"VpnConnectionProfile.Query-Request. " + profileResults.size() +
+							" results returned. Expected exactly 1.";
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg);
+				}
 			}
+			// If there is not exactly one assignment returned, log it and
+			// throw an exception.
 			else {
 				String errMsg = "Invalid number of results returned from " +
-					"VpnConnectionProfile.Query-Request. " + profileResults.size() +
-					" results returned. Expected exactly 1.";
+						"VpnConnectionProfileAssignment.Generate-Request. " +
+						assignmentResults.size() + " results returned. " +
+						"Expected exactly 1.";
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg);
 			}
-		}
-	    // If there is not exactly one assignment returned, log it and 
-		// throw an exception.
-		else {
-			String errMsg = "Invalid number of results returned from " +
-				"VpnConnectionProfileAssignment.Generate-Request. " +
-				assignmentResults.size() + " results returned. " +
-				"Expected exactly 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
 		}
 			
 		// Update the step.
