@@ -55,88 +55,96 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
-		// Get the vpcNetwork property from the
-		// DETERMINE_VPC_CIDR step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step1 = getProvisioningStepByType("DETERMINE_VPC_CIDR");
-		String vpcNetwork = null;
-		if (step1 != null) {
-			logger.info(LOGTAG + "Step DETERMINE_VPC_CIDR found.");
-			vpcNetwork = getResultProperty(step1, "vpcNetwork");
-			addResultProperty("vpcNetwork", vpcNetwork);
-			logger.info(LOGTAG + "Property vpcNetwork from preceding " +
-				"step is: " + vpcNetwork);
-		}
-		else {
-			String errMsg = "Step DETERMINE_VPC_CIDR not found. " +
-				"Can't continue.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-		// If the vpcNetwork is not null, compute the subnets for the VPC
-		if (vpcNetwork != null) {
-			
-			
-			// Begin pseudocode provided by Paul Petersen. Modified for proper syntax.
-			String originalCidr = vpcNetwork;
-			
-			logger.info(LOGTAG + "originalCidr (vpcNetwork) is: " + originalCidr);
-			
-			String[] originalCidrArray = originalCidr.split("/");
-			String originalCidrNetwork = originalCidrArray[0];
-			String originalCidrBits = originalCidrArray[1];
-			logger.info(LOGTAG + "originalCidrBits is: " + originalCidrBits);
-			int bits = Integer.parseInt(originalCidrBits);
 
-			String mgmtPubMask =  Integer.toString(bits + 3);
-			logger.info(LOGTAG + "mgmtPubMask is: " + mgmtPubMask);
-			addResultProperty("mgmtPubMask", mgmtPubMask);
-			
-			String privMask = Integer.toString(bits + 2);
-			logger.info(LOGTAG + "privMask is: " + privMask);
-			addResultProperty("privMask", privMask);
+		logger.info(LOGTAG + "Checking for applicable VPC network");
+		String applicableVpcNetwork = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpcNetwork");
+		logger.info(LOGTAG + "applicableVpcNetwork=" + applicableVpcNetwork);
+		if(applicableVpcNetwork.equals("not applicable")) {
+			logger.info(LOGTAG + "VPC network is not applicable; skipping VPC subnet determination");
+			addResultProperty("vpcNetwork", "no applicable");
+		} else {
+			logger.info(LOGTAG + "Proceed with VPC subnet determination");
+			// Get the vpcNetwork property from the
+			// DETERMINE_VPC_CIDR step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step1 = getProvisioningStepByType("DETERMINE_VPC_CIDR");
+			String vpcNetwork = null;
+			if (step1 != null) {
+				logger.info(LOGTAG + "Step DETERMINE_VPC_CIDR found.");
+				vpcNetwork = getResultProperty(step1, "vpcNetwork");
+				addResultProperty("vpcNetwork", vpcNetwork);
+				logger.info(LOGTAG + "Property vpcNetwork from preceding " +
+						"step is: " + vpcNetwork);
+			} else {
+				String errMsg = "Step DETERMINE_VPC_CIDR not found. " +
+						"Can't continue.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
 
-			String mgmt1Subnet = originalCidrNetwork + "/" + mgmtPubMask;
-			logger.info(LOGTAG + "mgmt1Subnet is: " + mgmt1Subnet);
-			addResultProperty("mgmt1Subnet", mgmt1Subnet);
-			
-			String mgmt2Subnet = getNextSubnet(mgmt1Subnet, mgmtPubMask);
-			logger.info(LOGTAG + "mgmt2Subnet is: " + mgmt2Subnet);
-			addResultProperty("mgmt2Subnet", mgmt2Subnet);
-			
-			String public1Subnet = getNextSubnet(mgmt2Subnet, mgmtPubMask);
-			logger.info(LOGTAG + "public1Subnet is: " + public1Subnet);
-			addResultProperty("public1Subnet", public1Subnet);
-			
-			String public2Subnet = getNextSubnet(public1Subnet, mgmtPubMask);
-			logger.info(LOGTAG + "public2Subnet is: " + public2Subnet);
-			addResultProperty("public2Subnet", public2Subnet);
+			// If the vpcNetwork is not null, compute the subnets for the VPC
+			if (vpcNetwork != null) {
 
-			String[] private1NetworkArray = getNextSubnet(public2Subnet, mgmtPubMask).split("/");
-			logger.info(LOGTAG + "private1NetworkArray is: " + private1NetworkArray);
-			String private1Network = private1NetworkArray[0];
-			logger.info(LOGTAG + "private1Network is: " + private1Network);
-			
-			String private1Subnet = private1Network + "/" + privMask;
-			logger.info(LOGTAG + "private1Subnet is: " + private1Subnet);
-			addResultProperty("private1Subnet", private1Subnet);
 
-			String private2Subnet = getNextSubnet(private1Subnet, privMask);
-			logger.info(LOGTAG + "private2Subnet is: " + private2Subnet);
-			addResultProperty("private2Subnet", private2Subnet);
-			
-			// End pseudocode provided by Paul Petersen.
-			
-			stepResult = SUCCESS_RESULT;
-		}
-		
-		// Otherwise, if vpcNetwork is null the subnets cannot be computed.
-		else {
-			logger.info(LOGTAG + "vpcNetwork property is null. Cannot " +
-				"compute subnets.");
-			addResultProperty("vpcNetwork", "null");
+				// Begin pseudocode provided by Paul Petersen. Modified for proper syntax.
+				String originalCidr = vpcNetwork;
+
+				logger.info(LOGTAG + "originalCidr (vpcNetwork) is: " + originalCidr);
+
+				String[] originalCidrArray = originalCidr.split("/");
+				String originalCidrNetwork = originalCidrArray[0];
+				String originalCidrBits = originalCidrArray[1];
+				logger.info(LOGTAG + "originalCidrBits is: " + originalCidrBits);
+				int bits = Integer.parseInt(originalCidrBits);
+
+				String mgmtPubMask = Integer.toString(bits + 3);
+				logger.info(LOGTAG + "mgmtPubMask is: " + mgmtPubMask);
+				addResultProperty("mgmtPubMask", mgmtPubMask);
+
+				String privMask = Integer.toString(bits + 2);
+				logger.info(LOGTAG + "privMask is: " + privMask);
+				addResultProperty("privMask", privMask);
+
+				String mgmt1Subnet = originalCidrNetwork + "/" + mgmtPubMask;
+				logger.info(LOGTAG + "mgmt1Subnet is: " + mgmt1Subnet);
+				addResultProperty("mgmt1Subnet", mgmt1Subnet);
+
+				String mgmt2Subnet = getNextSubnet(mgmt1Subnet, mgmtPubMask);
+				logger.info(LOGTAG + "mgmt2Subnet is: " + mgmt2Subnet);
+				addResultProperty("mgmt2Subnet", mgmt2Subnet);
+
+				String public1Subnet = getNextSubnet(mgmt2Subnet, mgmtPubMask);
+				logger.info(LOGTAG + "public1Subnet is: " + public1Subnet);
+				addResultProperty("public1Subnet", public1Subnet);
+
+				String public2Subnet = getNextSubnet(public1Subnet, mgmtPubMask);
+				logger.info(LOGTAG + "public2Subnet is: " + public2Subnet);
+				addResultProperty("public2Subnet", public2Subnet);
+
+				String[] private1NetworkArray = getNextSubnet(public2Subnet, mgmtPubMask).split("/");
+				logger.info(LOGTAG + "private1NetworkArray is: " + private1NetworkArray);
+				String private1Network = private1NetworkArray[0];
+				logger.info(LOGTAG + "private1Network is: " + private1Network);
+
+				String private1Subnet = private1Network + "/" + privMask;
+				logger.info(LOGTAG + "private1Subnet is: " + private1Subnet);
+				addResultProperty("private1Subnet", private1Subnet);
+
+				String private2Subnet = getNextSubnet(private1Subnet, privMask);
+				logger.info(LOGTAG + "private2Subnet is: " + private2Subnet);
+				addResultProperty("private2Subnet", private2Subnet);
+
+				// End pseudocode provided by Paul Petersen.
+
+				stepResult = SUCCESS_RESULT;
+			}
+
+			// Otherwise, if vpcNetwork is null the subnets cannot be computed.
+			else {
+				logger.info(LOGTAG + "vpcNetwork property is null. Cannot " +
+						"compute subnets.");
+				addResultProperty("vpcNetwork", "null");
+			}
 		}
 		
 		// Update the step.
