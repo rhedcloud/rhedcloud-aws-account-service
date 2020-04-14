@@ -62,6 +62,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		if(applicableVpcNetwork.equals("not applicable")) {
 			logger.info(LOGTAG + "VPC network is not applicable; skipping VPC subnet determination");
 			addResultProperty("vpcNetwork", "no applicable");
+			stepResult = SUCCESS_RESULT;
 		} else {
 			logger.info(LOGTAG + "Proceed with VPC subnet determination");
 			// Get the vpcNetwork property from the
