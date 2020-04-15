@@ -131,61 +131,68 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[QueryForVpnConfiguration.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
-		boolean allocatedNewAccount = false;
-		String newAccountId = null;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
-		// Get some properties from previous steps.
-		String vpn1ConnectionId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn1ConnectionId");
-		addResultProperty("Vpn1ConnectionId", vpn1ConnectionId);
-		String vpn1InsideTunnelCidr1 = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn1InsideTunnelCidr1");
-		addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
-		String vpn2ConnectionId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
-		addResultProperty("Vpn2ConnectionId", vpn2ConnectionId);
-		String vpn2InsideTunnelCidr1 = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
-		addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
-		String accountId = 
-				getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "accountId");
-			addResultProperty("accountId", accountId);
-		String region = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "region");
-		addResultProperty("region", region);
-		
-		// Build the EC2 client.
-		AmazonEC2Client client = buildAmazonEC2Client(accountId, region);
-		setAmazonEC2Client(client);
-		
-		// Get the customer gateway configurations for the VPN connections
-		String vpn1CustomerGatewayConfig = getCustomerGatewayConfig(vpn1ConnectionId);
-		logger.info(LOGTAG + "vpn1CustomerGatewayConfig is: " + vpn1CustomerGatewayConfig);
-		
-		String vpn2CustomerGatewayConfig = getCustomerGatewayConfig(vpn2ConnectionId);
-		logger.info(LOGTAG + "vpn2CustomerGatewayConfig is: " + vpn2CustomerGatewayConfig);
 
-		// Get the remote ip address for the VPN connections
-		String vpn1RemoteIpAddress = getRemoteIpAddress(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn1RemoteIpAddress is: " + vpn1RemoteIpAddress);
-		addResultProperty("vpn1RemoteIpAddress", vpn1RemoteIpAddress);
-	
-		String vpn2RemoteIpAddress = getRemoteIpAddress(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn2RemoteIpAddress is: " + vpn2RemoteIpAddress);
-		addResultProperty("vpn2RemoteIpAddress", vpn2RemoteIpAddress);
-	
-		// Get the preshared key for the VPN connections
-		String vpn1PresharedKey = getPresharedKey(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn1PresharedKey is: " + vpn1PresharedKey);
-		addResultProperty("vpn1PresharedKey", vpn1PresharedKey);
-		
-		String vpn2PresharedKey = getPresharedKey(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
-		logger.info(LOGTAG + "vpn2PresharedKey is: " + vpn2PresharedKey);
-		addResultProperty("vpn2PresharedKey", vpn2PresharedKey);
+		// check if a VPC is being created
+		String createVpc = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "createVpc");
+		logger.info(LOGTAG + "createVpc=" + createVpc);
+		if(Boolean.valueOf(createVpc)) {
+			boolean allocatedNewAccount = false;
+			String newAccountId = null;
+
+			// Get some properties from previous steps.
+			String vpn1ConnectionId =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn1ConnectionId");
+			addResultProperty("Vpn1ConnectionId", vpn1ConnectionId);
+			String vpn1InsideTunnelCidr1 =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn1InsideTunnelCidr1");
+			addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
+			String vpn2ConnectionId =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
+			addResultProperty("Vpn2ConnectionId", vpn2ConnectionId);
+			String vpn2InsideTunnelCidr1 =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
+			addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
+			String accountId =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "accountId");
+			addResultProperty("accountId", accountId);
+			String region =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "region");
+			addResultProperty("region", region);
+
+			// Build the EC2 client.
+			AmazonEC2Client client = buildAmazonEC2Client(accountId, region);
+			setAmazonEC2Client(client);
+
+			// Get the customer gateway configurations for the VPN connections
+			String vpn1CustomerGatewayConfig = getCustomerGatewayConfig(vpn1ConnectionId);
+			logger.info(LOGTAG + "vpn1CustomerGatewayConfig is: " + vpn1CustomerGatewayConfig);
+
+			String vpn2CustomerGatewayConfig = getCustomerGatewayConfig(vpn2ConnectionId);
+			logger.info(LOGTAG + "vpn2CustomerGatewayConfig is: " + vpn2CustomerGatewayConfig);
+
+			// Get the remote ip address for the VPN connections
+			String vpn1RemoteIpAddress = getRemoteIpAddress(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
+			logger.info(LOGTAG + "vpn1RemoteIpAddress is: " + vpn1RemoteIpAddress);
+			addResultProperty("vpn1RemoteIpAddress", vpn1RemoteIpAddress);
+
+			String vpn2RemoteIpAddress = getRemoteIpAddress(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
+			logger.info(LOGTAG + "vpn2RemoteIpAddress is: " + vpn2RemoteIpAddress);
+			addResultProperty("vpn2RemoteIpAddress", vpn2RemoteIpAddress);
+
+			// Get the preshared key for the VPN connections
+			String vpn1PresharedKey = getPresharedKey(vpn1CustomerGatewayConfig, vpn1InsideTunnelCidr1);
+			logger.info(LOGTAG + "vpn1PresharedKey is: " + vpn1PresharedKey);
+			addResultProperty("vpn1PresharedKey", vpn1PresharedKey);
+
+			String vpn2PresharedKey = getPresharedKey(vpn2CustomerGatewayConfig, vpn2InsideTunnelCidr1);
+			logger.info(LOGTAG + "vpn2PresharedKey is: " + vpn2PresharedKey);
+			addResultProperty("vpn2PresharedKey", vpn2PresharedKey);
+		} else {
+			logger.info(LOGTAG + "Bypass VPN configuration: not creating VPC");
+		}
 		
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
