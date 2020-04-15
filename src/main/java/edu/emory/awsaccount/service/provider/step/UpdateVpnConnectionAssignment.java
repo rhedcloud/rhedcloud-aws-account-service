@@ -84,185 +84,181 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[UpdateVpnConnectionAssignment.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
-		// Get the VpcId property from a previous step.
-		String vpcId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
-		
-		// Get a configured VpnConnectionProfileAssignment and
-		// VpnConnectionProfileAssignmentQuerySpecification from
-		// AppConfig
-		VpnConnectionProfileAssignment vcpa = new 
-			VpnConnectionProfileAssignment();
-		VpnConnectionProfileAssignmentQuerySpecification querySpec = 
-			new VpnConnectionProfileAssignmentQuerySpecification();
-	    try {
-	    	vcpa = (VpnConnectionProfileAssignment)getAppConfig()
-		    		.getObjectByType(vcpa.getClass().getName());
-	    	querySpec = (VpnConnectionProfileAssignmentQuerySpecification)getAppConfig()
-		    		.getObjectByType(querySpec.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-    
-	    String provisioningId = getVirtualPrivateCloudProvisioning()
-	    		.getProvisioningId();
-	    
-	    // Set the values of the querySpec.
-	    try {
-	    	querySpec.setOwnerId(provisioningId);
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting the values of the " +
-	  	    	  "requisition. The exception is: " + efe.getMessage();
-	  	    logger.error(LOGTAG + errMsg);
-	  	    throw new StepException(errMsg, efe);
-	    }
-	    
-	    // Log the state of the querySpec.
-	    try {
-	    	logger.info(LOGTAG + "querySpec is: " + querySpec.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the querySpec " +
-	  	    	  "to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getNetworkOpsServiceProducerPool()
-				.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-	    
-		List assignmentResults = null;
-		try { 
-			long generateStartTime = System.currentTimeMillis();
-			assignmentResults = vcpa.query(querySpec, rs);
-			long generateTime = System.currentTimeMillis() - generateStartTime;
-			logger.info(LOGTAG + "Queried for VpnConnectionProfileAssignment " +
-				"for ProvisioningId " + provisioningId + " in "
-				+ generateTime + " ms. Returned " + assignmentResults.size() + 
-				" result(s).");
-		}
-		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the  " +
-	    	  "VpnConnectionProfileAssignmnet object. " +
-	    	  "The exception is: " + eoqe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoqe);
-		}
-		finally {
-			// Release the producer back to the pool
-			getNetworkOpsServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
-		
-		// If there is exactly one result, update the 
-		// VpnConnectionProfileAssignment to reflect the new
-		// VpcId
-		if (assignmentResults.size() == 1) {
-			vcpa = (VpnConnectionProfileAssignment)assignmentResults.get(0);
-			
-			// Log the state of the object.
-		    try {
-		    	logger.info(LOGTAG + "VpnConnectionProfileAssignment returned is: "
-		    		+ vcpa.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the query " +
-		  	    	  "spec to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
-			
-		    // Set the values of the VpnConnectionProfileAssignment.
-		    try {
-		    	vcpa.setOwnerId(vpcId);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "object. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-		    
-		    // Log the state of the object.
-		    try {
-		    	logger.info(LOGTAG + "updated VpnConnectionProfileAssignment: " 
-		    		+ vcpa.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the query " +
-		  	    	  "spec to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
-			// Get a producer from the pool
-			rs = null;
+
+		logger.info(LOGTAG + "Checking if VPC network is applicable");
+		String vpcNetwork = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpcNetwork");
+		logger.info(LOGTAG + "vpcNetwork=" + vpcNetwork);
+		if(vpcNetwork.equals("not applicable")) {
+			logger.info(LOGTAG + "bypassing: no applicable network");
+			addResultProperty("vpcNetwork", "not appplicable");
+		} else {
+			// Get the VpcId property from a previous step.
+			String vpcId =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
+
+			// Get a configured VpnConnectionProfileAssignment and
+			// VpnConnectionProfileAssignmentQuerySpecification from
+			// AppConfig
+			VpnConnectionProfileAssignment vcpa = new
+					VpnConnectionProfileAssignment();
+			VpnConnectionProfileAssignmentQuerySpecification querySpec =
+					new VpnConnectionProfileAssignmentQuerySpecification();
 			try {
-				rs = (RequestService)getNetworkOpsServiceProducerPool()
-					.getExclusiveProducer();
+				vcpa = (VpnConnectionProfileAssignment) getAppConfig()
+						.getObjectByType(vcpa.getClass().getName());
+				querySpec = (VpnConnectionProfileAssignmentQuerySpecification) getAppConfig()
+						.getObjectByType(querySpec.getClass().getName());
+			} catch (EnterpriseConfigurationObjectException ecoe) {
+				String errMsg = "An error occurred retrieving an object from " +
+						"AppConfig. The exception is: " + ecoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, ecoe);
 			}
-			catch (JMSException jmse) {
+
+			String provisioningId = getVirtualPrivateCloudProvisioning()
+					.getProvisioningId();
+
+			// Set the values of the querySpec.
+			try {
+				querySpec.setOwnerId(provisioningId);
+			} catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting the values of the " +
+						"requisition. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, efe);
+			}
+
+			// Log the state of the querySpec.
+			try {
+				logger.info(LOGTAG + "querySpec is: " + querySpec.toXmlString());
+			} catch (XmlEnterpriseObjectException xeoe) {
+				String errMsg = "An error occurred serializing the querySpec " +
+						"to XML. The exception is: " + xeoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, xeoe);
+			}
+
+			// Get a producer from the pool
+			RequestService rs = null;
+			try {
+				rs = (RequestService) getNetworkOpsServiceProducerPool()
+						.getExclusiveProducer();
+			} catch (JMSException jmse) {
 				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
+						"from the pool. The exception is: " + jmse.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-		    
-			List profileResults = null;
-			try { 
-				long updateStartTime = System.currentTimeMillis();
-				vcpa.update(rs);
-				long updateTime = System.currentTimeMillis() - updateStartTime;
-				logger.info(LOGTAG + "Updated VpnConnectionProfileAssignment" +
-					"for ProvisioningId " + provisioningId + " in "
-					+ updateTime + " ms.");
-				// Add step properties
-				addResultProperty("updatedVpnConnectionProfileAssignment", "true");
-				addResultProperty("vpnConnectionProfileAssignmentId", 
-						vcpa.getVpnConnectionProfileAssignmentId());
-				addResultProperty("vpnConnectionProfileId", 
-						vcpa.getVpnConnectionProfileId());
-				addResultProperty("vpcId", vpcId);
-			}
-			catch (EnterpriseObjectUpdateException eoue) {
-				String errMsg = "An error occurred updating the  " +
-		    	  "VpnConnectionProfileAssignment object. The " +
-		    	  "exception is: " + eoue.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoue);
-			}
-			finally {
+
+			List assignmentResults = null;
+			try {
+				long generateStartTime = System.currentTimeMillis();
+				assignmentResults = vcpa.query(querySpec, rs);
+				long generateTime = System.currentTimeMillis() - generateStartTime;
+				logger.info(LOGTAG + "Queried for VpnConnectionProfileAssignment " +
+						"for ProvisioningId " + provisioningId + " in "
+						+ generateTime + " ms. Returned " + assignmentResults.size() +
+						" result(s).");
+			} catch (EnterpriseObjectQueryException eoqe) {
+				String errMsg = "An error occurred querying for the  " +
+						"VpnConnectionProfileAssignmnet object. " +
+						"The exception is: " + eoqe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, eoqe);
+			} finally {
 				// Release the producer back to the pool
 				getNetworkOpsServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
+						.releaseProducer((MessageProducer) rs);
 			}
-		}
-	    // If there is not exactly one assignment returned, log it and 
-		// throw an exception.
-		else {
-			String errMsg = "Invalid number of results returned from " +
-				"VpnConnectionProfileAssignment.Query-Request. " +
-				assignmentResults.size() + " results returned. " +
-				"Expected exactly 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
+
+			// If there is exactly one result, update the
+			// VpnConnectionProfileAssignment to reflect the new
+			// VpcId
+			if (assignmentResults.size() == 1) {
+				vcpa = (VpnConnectionProfileAssignment) assignmentResults.get(0);
+
+				// Log the state of the object.
+				try {
+					logger.info(LOGTAG + "VpnConnectionProfileAssignment returned is: "
+							+ vcpa.toXmlString());
+				} catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing the query " +
+							"spec to XML. The exception is: " + xeoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, xeoe);
+				}
+
+
+				// Set the values of the VpnConnectionProfileAssignment.
+				try {
+					vcpa.setOwnerId(vpcId);
+				} catch (EnterpriseFieldException efe) {
+					String errMsg = "An error occurred setting the values of the " +
+							"object. The exception is: " + efe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, efe);
+				}
+
+				// Log the state of the object.
+				try {
+					logger.info(LOGTAG + "updated VpnConnectionProfileAssignment: "
+							+ vcpa.toXmlString());
+				} catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing the query " +
+							"spec to XML. The exception is: " + xeoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, xeoe);
+				}
+
+				// Get a producer from the pool
+				rs = null;
+				try {
+					rs = (RequestService) getNetworkOpsServiceProducerPool()
+							.getExclusiveProducer();
+				} catch (JMSException jmse) {
+					String errMsg = "An error occurred getting a producer " +
+							"from the pool. The exception is: " + jmse.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, jmse);
+				}
+
+				List profileResults = null;
+				try {
+					long updateStartTime = System.currentTimeMillis();
+					vcpa.update(rs);
+					long updateTime = System.currentTimeMillis() - updateStartTime;
+					logger.info(LOGTAG + "Updated VpnConnectionProfileAssignment" +
+							"for ProvisioningId " + provisioningId + " in "
+							+ updateTime + " ms.");
+					// Add step properties
+					addResultProperty("updatedVpnConnectionProfileAssignment", "true");
+					addResultProperty("vpnConnectionProfileAssignmentId",
+							vcpa.getVpnConnectionProfileAssignmentId());
+					addResultProperty("vpnConnectionProfileId",
+							vcpa.getVpnConnectionProfileId());
+					addResultProperty("vpcId", vpcId);
+				} catch (EnterpriseObjectUpdateException eoue) {
+					String errMsg = "An error occurred updating the  " +
+							"VpnConnectionProfileAssignment object. The " +
+							"exception is: " + eoue.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, eoue);
+				} finally {
+					// Release the producer back to the pool
+					getNetworkOpsServiceProducerPool()
+							.releaseProducer((MessageProducer) rs);
+				}
+			}
+			// If there is not exactly one assignment returned, log it and
+			// throw an exception.
+			else {
+				String errMsg = "Invalid number of results returned from " +
+						"VpnConnectionProfileAssignment.Query-Request. " +
+						assignmentResults.size() + " results returned. " +
+						"Expected exactly 1.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
 		}
 		
 		// Update the step.
