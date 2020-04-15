@@ -67,7 +67,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
 		String LOGTAG = getStepTag() + "[CreateVpcType1CfnStack.init] ";
-		
+
 		// Get the custom step properties
 		// requestTimeoutInterval is the time to wait for the
 		// response to the request
@@ -75,17 +75,17 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 			"10000");
 		int requestTimeoutInterval = Integer.parseInt(timeout);
 		setRequestTimeoutInterval(requestTimeoutInterval);
-		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+		logger.info(LOGTAG + "requestTimeoutInterval is: " +
 			getRequestTimeoutInterval());
-		
+
 		// cloudFormationTemplateUrl is the S3 bucket URL of the
 		// CloudFormation Template
 		String cloudFormationTemplateUrl = getProperties()
 			.getProperty("cloudFormationTemplateUrl", null);
 		setCloudFormationTemplateUrl(cloudFormationTemplateUrl);
-		logger.info(LOGTAG + "cloudFormationTemplateUrl is: " + 
+		logger.info(LOGTAG + "cloudFormationTemplateUrl is: " +
 			getCloudFormationTemplateUrl());
-		
+
 		// cloudFormationTemplateBodyUrl is a non S3 URL to the
 		// body of the template if an S3 URL cannot be used.
 		String cloudFormationTemplateBodyUrl = getProperties()
@@ -93,19 +93,19 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		setCloudFormationTemplateBodyUrl(cloudFormationTemplateBodyUrl);
 		logger.info(LOGTAG + "cloudFormationTemplateBodyUrl is: " +
 			getCloudFormationTemplateBodyUrl());
-		
+
 		// stackName is the name to give the stack.
 		String stackName = getProperties()
 			.getProperty("stackName", null);
 		setStackName(stackName);
 		logger.info(LOGTAG + "stackName is: " + getStackName());
-		
+
 		// roleArnPattern to assume a role to perform stack operations
 		String roleArnPattern = getProperties()
 			.getProperty("roleArnPattern", null);
 		setRoleArnPattern(roleArnPattern);
 		logger.info(LOGTAG + "roleArnPattern is: " + getRoleArnPattern());
-		
+
 		// This step needs to send messages to the AWS account service
 		// to create stacks.
 		ProducerPool p2p1 = null;
@@ -130,498 +130,494 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateVpcType1CfnStack.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
-		boolean stackCreated = false;
-		
+
+		logger.info(LOGTAG + "Checking if creating a VPC");
+		String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
+		logger.info(LOGTAG + "createVpc=" + createVpc);
+
 		// Return properties
 		List<Property> props = new ArrayList<Property>();
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
-		// Get the accountId property from the
-		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step1 = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
-		String accountId = null;
-		if (step1 != null) {
-			logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
-			accountId = getResultProperty(step1, "accountId");
-			logger.info(LOGTAG + "Property accountId from preceding " +
-				"step is: " + accountId);
-			if (accountId != null && accountId.equalsIgnoreCase("null") == false) {
-				addResultProperty("accountId", accountId);
-			}
-		}
-		else {
-			String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
-				"Cannot determine what the accountId is from this step. ";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-		// If the existing accountId is null. Get the accountId of the newly 
-		// generated account.
-		if (accountId == null || accountId.equalsIgnoreCase("null")) {
-			// Get the newAccountId property from the GENERATE_NEW_ACCOUNT step.
+
+		if(Boolean.valueOf(createVpc)) {
+			boolean stackCreated = false;
+
+			// Get the accountId property from the
+			// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 			logger.info(LOGTAG + "Getting properties from preceding steps...");
-			ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-			if (step2 != null) {
-				logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
-				accountId = getResultProperty(step2, "newAccountId");
-				logger.info(LOGTAG + "Property newAccountId from preceding " +
-					"step is: " + accountId);
-				addResultProperty("newAccountId", accountId);
-			}
-			else {
-				String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
-					"determine whether or not to authorize the new account " +
-					"requestor.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
-			}
-		}
-		
-		if (accountId == null || accountId.equalsIgnoreCase("null")) {
-			String errMsg = "The value of accountId could not be " +
-				"found in preceding steps. Can't continue.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		addResultProperty("accountId", accountId);
-		
-		// Get the VPN inside CIDR properties from the 
-		// DETERMINE_VPC_CIDR step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step3 = 
-			getProvisioningStepByType("DETERMINE_VPC_CIDR");
-		String vpn1InsideTunnelCidr1 = null;
-		String vpn1InsideTunnelCidr2 = null;
-		String vpn1CustomerGatewayIp = null;
-		String vpn2InsideTunnelCidr1 = null;
-		String vpn2InsideTunnelCidr2 = null;
-		String vpn2CustomerGatewayIp = null;
-		if (step3 != null) {
-			logger.info(LOGTAG + "Step COMPUTE_VPC_SUBNETS found.");
-			
-			vpn1InsideTunnelCidr1 = getResultProperty(step3, 
-				"vpn1InsideTunnelCidr1");
-			logger.info(LOGTAG + "Property vpn1InsideTunnelCidr1 from preceding " +
-				"step is: " + vpn1InsideTunnelCidr1);
-			addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
-			
-			vpn1InsideTunnelCidr2 = getResultProperty(step3, 
-				"vpn1InsideTunnelCidr2");
-			logger.info(LOGTAG + "Property vpn1InsideTunnelCidr2 from preceding " +
-				"step is: " + vpn1InsideTunnelCidr2);
-			addResultProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2);
-			
-			vpn1CustomerGatewayIp = getResultProperty(step3, 
-				"vpn1CustomerGatewayIp");
-			logger.info(LOGTAG + "Property vpn1CustomerGatewayIp from preceding " +
-				"step is: " + vpn1CustomerGatewayIp);
-			addResultProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp);
-			
-			vpn2InsideTunnelCidr1 = getResultProperty(step3, 
-				"vpn2InsideTunnelCidr1");
-			logger.info(LOGTAG + "Property vpn2InsideTunnelCidr1 from preceding " +
-				"step is: " + vpn2InsideTunnelCidr1);
-			addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
-			
-			vpn2InsideTunnelCidr2 = getResultProperty(step3, 
-				"vpn2InsideTunnelCidr2");
-			logger.info(LOGTAG + "Property vpn2InsideTunnelCidr2 from preceding " +
-				"step is: " + vpn2InsideTunnelCidr2);
-			addResultProperty("vpn2InsideTunnelCidr2",vpn2InsideTunnelCidr2);
-			
-			vpn2CustomerGatewayIp = getResultProperty(step3, 
-				"vpn2CustomerGatewayIp");
-			logger.info(LOGTAG + "Property vpn2CustomerGatewayIp from preceding " +
-				"step is: " + vpn2CustomerGatewayIp);
-			addResultProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp);
-		}
-		else {
-			String errMsg = "Step DETERMINE_VPC_CIDR not " +
-				"found. Cannot determine account sequence number.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-		// Get the vpcNetwork property from the COMPUTE_VPC_SUBNETS step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		ProvisioningStep step4 = 
-			getProvisioningStepByType("COMPUTE_VPC_SUBNETS");
-		String vpcNetwork = null;
-		String mgmt1Subnet = null;
-		String mgmt2Subnet = null;
-		String public1Subnet = null;
-		String public2Subnet = null;
-		String private1Subnet = null;
-		String private2Subnet = null;
-		if (step4 != null) {
-			logger.info(LOGTAG + "Step COMPUTE_VPC_SUBNETS found.");
-			
-			vpcNetwork = getResultProperty(step4, 
-				"vpcNetwork");
-			logger.info(LOGTAG + "Property vpcNetwork from preceding " +
-				"step is: " + vpcNetwork);
-			addResultProperty("vpcNetwork", vpcNetwork);
-			
-			mgmt1Subnet = getResultProperty(step4, 
-				"mgmt1Subnet");
-			logger.info(LOGTAG + "Property mgmt1Subnet from preceding " +
-				"step is: " + mgmt1Subnet);
-			addResultProperty("mgmt1Subnet", mgmt1Subnet);
-			
-			mgmt2Subnet = getResultProperty(step4, 
-				"mgmt2Subnet");
-			logger.info(LOGTAG + "Property mgmt2Subnet from preceding " +
-				"step is: " + mgmt2Subnet);
-			addResultProperty("mgmt2Subnet", mgmt2Subnet);
-			
-			public1Subnet = getResultProperty(step4, 
-				"public1Subnet");
-			logger.info(LOGTAG + "Property public1Subnet from preceding " +
-				"step is: " + public1Subnet);
-			addResultProperty("public1Subnet", public1Subnet);
-			
-			public2Subnet = getResultProperty(step4, 
-				"public2Subnet");
-			logger.info(LOGTAG + "Property public2Subnet from preceding " +
-				"step is: " + public2Subnet);
-			addResultProperty("public2Subnet", public2Subnet);
-			
-			private1Subnet = getResultProperty(step4, 
-				"private1Subnet");
-			logger.info(LOGTAG + "Property private1Subnet from preceding " +
-				"step is: " + private1Subnet);
-			addResultProperty("private1Subnet", private1Subnet);
-			
-			private2Subnet = getResultProperty(step4, 
-				"private2Subnet");
-			logger.info(LOGTAG + "Property private2Subnet from preceding " +
-				"step is: " + private2Subnet);
-			addResultProperty("private2Subnet", private2Subnet);
-		}
-		else {
-			String errMsg = "Step COMPUTE_VPC_SUBNETS not " +
-				"found. Cannot determine account sequence number.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-		// Get the VPC sequence number.
-		String vpcSequenceNumber = 
-			getStepPropertyValue("DETERMINE_NEW_VPC_SEQUENCE_VALUE",
-				"vpcSequenceNumber");
-		logger.info(LOGTAG + "Property vpcSequenceNumber from preceding " +
-				"step is: " + vpcSequenceNumber);
-			addResultProperty("vpcSequenceNumber", vpcSequenceNumber);
-		if (vpcSequenceNumber == null) {
-			String errMsg = "VPC sequence number not found in preceding step. " +
-				"Cannot proceed.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-		
-		// Update the step, so the parameters are visible for execution.
-		update(IN_PROGRESS_STATUS, NO_RESULT);
-		
-		// Get the VPCP requisition.
-		VirtualPrivateCloudRequisition vpcpr =
-			getVirtualPrivateCloudProvisioning()
-			.getVirtualPrivateCloudRequisition();
-		
-		// If this is a type 1 VPC and there is an account number,
-		// send a Stack.Generate-Request to generate the rs-account stack.
-		if (vpcpr.getType().equals("1") && accountId != null) {
-			logger.info(LOGTAG + "This is a request for a type 1 VPC " + 
-				" and the accountNumber is " + accountId + 
-				". Sending a Stack.Generate-Request to create the " +
-				"rhedcloud-aws-vpc-type1 stack in the account.");
-			
-			// Send an Stack.Generate-Request. Get a configured Stack and requisition
-			// object from AppConfig.
-			Stack stack = new Stack();
-			StackRequisition req = new StackRequisition();
-		    try {
-		    	stack = (Stack)getAppConfig()
-			    		.getObjectByType(stack.getClass().getName());
-		    	req = (StackRequisition)getAppConfig()
-			    		.getObjectByType(req.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-		    
-		    // Set the values of the requisition and place them in step props.
-		    try {
-		    	// AccountId
-		    	req.setAccountId(accountId);
-		    	addResultProperty("accountId", req.getAccountId());
-		    	logger.info(LOGTAG + "accountId: " + req.getAccountId());
-		    	
-		    	// Region
-		    	VirtualPrivateCloudRequisition vpcr =
-		    		getVirtualPrivateCloudProvisioning()
-		    		.getVirtualPrivateCloudRequisition();
-		    	req.setRegion(vpcr.getRegion());
-		    	addResultProperty("region", req.getRegion());
-		    	logger.info(LOGTAG + "Region is: " + req.getRegion());
-		    	
-		    	// StackName
-		    	req.setStackName(getStackName() + "-" + vpcSequenceNumber);
-		    	addResultProperty("accountId", req.getAccountId());
-		    	logger.info(LOGTAG + "stackName: " + req.getStackName());
-		    	
-		    	// Credential, presently used to pass the roleArnPattern to
-		    	// assume a role to create the stack.
-		    	Credentials creds = req.newCredentials();
-		    	creds.setAccessKeyId("roleArnPattern");
-		    	creds.setSecretKey(getRoleArnPattern());
-		    	req.setCredentials(creds);
-		    	
-		    	// Description
-		    	req.setDescription("RHEDcloud AWS CloudFormation template for type 1 vpc-level structures and policies");
-		    
-		    	// DisableRollback
-		    	req.setDisableRollback("false");
-		    	
-		    	// Template URL - we prefer to pull this from an S3 bucket,
-		    	// but if we have to we read it from a non-S3 URL.
-		    	if (getCloudFormationTemplateUrl() != null) {
-		    		req.setTemplateUrl(getCloudFormationTemplateUrl());
-		    		addResultProperty("templateUrl", req.getTemplateUrl());
-		    		logger.info(LOGTAG + "templateUrl: " + req.getTemplateUrl());
-		    	}
-		    	else if (getCloudFormationTemplateBodyUrl() != null) {
-		    		req.setTemplateBody(getCloudFormationTemplateBody());
-		    		addResultProperty("templateBodyUrl", 
-		    			getCloudFormationTemplateBodyUrl());
-		    		logger.info(LOGTAG + "templateBody: " + 
-		    			req.getTemplateBody());
-		    	}
-		    	else {
-		    		String errMsg = "No CloudFormation template source " +
-		    			"specified. Can't continue.";
-		    		logger.error(LOGTAG + errMsg);
-		    		throw new StepException(errMsg);
-		    	}
-		    	
-		    	// Set stack parameters
-		    	logger.info(LOGTAG + "Setting stack parameters...");
-		    	
-		    	// Parameter 1 - VpcCidr
-		    	StackParameter parameter1 = req.newStackParameter();
-		    	parameter1.setKey("VpcCidr");
-		    	parameter1.setValue(vpcNetwork);
-		    	req.addStackParameter(parameter1);
-		    	
-		    	// Parameter 2 - ManagementSubnet1Cidr
-		    	StackParameter parameter2 = req.newStackParameter();
-		    	parameter2.setKey("ManagementSubnet1Cidr");
-		    	parameter2.setValue(mgmt1Subnet);
-		    	req.addStackParameter(parameter2);
-		    	
-		    	// Parameter 3 - ManagementSubnet2Cidr
-		    	StackParameter parameter3 = req.newStackParameter();
-		    	parameter3.setKey("ManagementSubnet2Cidr");
-		    	parameter3.setValue(mgmt2Subnet);
-		    	req.addStackParameter(parameter3);
-		        
-		        // Parameter 4 - PublicSubnet1Cidr
-		    	StackParameter parameter4 = req.newStackParameter();
-		    	parameter4.setKey("PublicSubnet1Cidr");
-		    	parameter4.setValue(public1Subnet);
-		    	req.addStackParameter(parameter4);
-		    	
-		    	// Parameter 5 - PublicSubnet2Cidr
-		    	StackParameter parameter5 = req.newStackParameter();
-		    	parameter5.setKey("PublicSubnet2Cidr");
-		    	parameter5.setValue(public2Subnet);
-		    	req.addStackParameter(parameter5);
-		    	
-		        // Parameter 6 - PrivateSubnet1Cidr
-		    	StackParameter parameter6 = req.newStackParameter();
-		    	parameter6.setKey("PrivateSubnet1Cidr");
-		    	parameter6.setValue(private1Subnet);
-		    	req.addStackParameter(parameter6);
-		    	
-		    	// Parameter 7 - PrivateSubnet2Cidr
-		    	StackParameter parameter7 = req.newStackParameter();
-		    	parameter7.setKey("PrivateSubnet2Cidr");
-		    	parameter7.setValue(private2Subnet);
-		    	req.addStackParameter(parameter7);		    	
-		    	
-		        // Parameter 8 - RHEDcloudVpn1InsideTunnelCidr1
-		    	StackParameter parameter8 = req.newStackParameter();
-		    	parameter8.setKey("RHEDcloudVpn1InsideTunnelCidr1");
-		    	parameter8.setValue(vpn1InsideTunnelCidr1);
-		    	req.addStackParameter(parameter8);
-		    	
-		    	// Parameter 9 - RHEDcloudVpn1InsideTunnelCidr2
-		    	StackParameter parameter9 = req.newStackParameter();
-		    	parameter9.setKey("RHEDcloudVpn1InsideTunnelCidr2");
-		    	parameter9.setValue(vpn1InsideTunnelCidr2);
-		    	req.addStackParameter(parameter9);
-		    	
-		        // Parameter 10 - RHEDcloudVpn2InsideTunnelCidr1
-		    	StackParameter parameter10 = req.newStackParameter();
-		    	parameter10.setKey("RHEDcloudVpn2InsideTunnelCidr1");
-		    	parameter10.setValue(vpn2InsideTunnelCidr1);
-		    	req.addStackParameter(parameter10);
-		    	
-		    	// Parameter 11 - RHEDcloudVpn2InsideTunnelCidr2
-		    	StackParameter parameter11 = req.newStackParameter();
-		    	parameter11.setKey("RHEDcloudVpn2InsideTunnelCidr2");
-		    	parameter11.setValue(vpn2InsideTunnelCidr2);
-		    	req.addStackParameter(parameter11);
-		    	
-		    	// Parameter 12 - RHEDcloud1CustomerGatewayIp
-		    	StackParameter parameter12 = req.newStackParameter();
-		    	parameter12.setKey("RHEDcloud1CustomerGatewayIp");
-		    	parameter12.setValue(vpn1CustomerGatewayIp);
-		    	req.addStackParameter(parameter12);
-		    	
-		    	// Parameter 13 - RHEDcloud2CustomerGatewayIp
-		    	StackParameter parameter13 = req.newStackParameter();
-		    	parameter13.setKey("RHEDcloud2CustomerGatewayIp");
-		    	parameter13.setValue(vpn2CustomerGatewayIp);
-		    	req.addStackParameter(parameter13);
-		    	
-		    	// Log out all parameters.
-		    	List<StackParameter> params = req.getStackParameter();
-		    	ListIterator<StackParameter> spi = params.listIterator();
-		    	while (spi.hasNext()) {
-		    		StackParameter param = (StackParameter)spi.next();
-		    		logger.info(LOGTAG + "StackParameter " + param.getKey()
-		    			+ ": " + param.getValue());
-		    	}
-		    	
-		    	// Add capabilities
-		    	String cap1 = "CAPABILITY_IAM";
-		    	String cap2 = "CAPABILITY_NAMED_IAM";
-		    	req.addCapability(cap1);
-		    	req.addCapability(cap2);
-		    	
-		    	// Log out all capabilities and add them to the
-		    	// step properties.
-		    	List<String> capabilities = req.getCapability();
-		    	ListIterator<String> ci = capabilities.listIterator();
-		    	while (ci.hasNext()) {
-		    		String capability = (String)ci.next();
-		    		logger.info(LOGTAG + "Capability: " + capability);
-		    	}
-		    	
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "requisition. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-		    
-		    // Log the state of the requisition.
-		    try {
-		    	logger.info(LOGTAG + "Requisition is: " + req.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the requisition " +
-		  	    	  "to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-		    
-		    // TODO:Set the message authentication
-		    // Authentication auth = stack.getAuthentication();
-		    // auth.setAuthUserId(userId);
-			
-			// Get a request service from the pool and set the timeout interval.
-			RequestService rs = null;
-			try {
-				PointToPointProducer p2p = 
-					(PointToPointProducer)getAwsAccountServiceProducerPool()
-					.getExclusiveProducer();
-				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
-				rs = (RequestService)p2p;
-			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
-		    
-			List results = null;
-			try { 
-				long generateStartTime = System.currentTimeMillis();
-				logger.info(LOGTAG + "Sending the Stack.Generate-Request...");
-				results = stack.generate(req, rs);
-				long generateTime = System.currentTimeMillis() - generateStartTime;
-				logger.info(LOGTAG + "Generated CloudFormation Stack in "
-					+ generateTime + " ms. Returned " + results.size() + 
-					" result.");
-			}
-			catch (EnterpriseObjectGenerateException eoge) {
-				String errMsg = "An error occurred generating the " +
-		    	  "Stack object. The exception is: " + eoge.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoge);
-			}
-			finally {
-				// Release the producer back to the pool
-				getAwsAccountServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
-			}
-			
-			if (results.size() == 1) {
-				Stack stackResult = (Stack)results.get(0);
-				logger.info(LOGTAG + "Stack status is: " + 
-					stackResult.getStackStatus());
-				addResultProperty("stackStatus", 
-						stackResult.getStackStatus());
-				if (stackResult.getStackStatus()
-						.equalsIgnoreCase("CREATE_COMPLETE")) {
-					stackCreated = true;
+			ProvisioningStep step1 = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
+			String accountId = null;
+			if (step1 != null) {
+				logger.info(LOGTAG + "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT found.");
+				accountId = getResultProperty(step1, "accountId");
+				logger.info(LOGTAG + "Property accountId from preceding " +
+						"step is: " + accountId);
+				if (accountId != null && accountId.equalsIgnoreCase("null") == false) {
+					addResultProperty("accountId", accountId);
 				}
-				
-				// Get the outputs and add them as result properties. 
-				List<Output> outputs = stackResult.getOutput();
-				if (outputs != null) {
-					ListIterator li = outputs.listIterator();
-					while (li.hasNext()) {
-						Output o = (Output)li.next();
-						addResultProperty(o.getOutputKey(), o.getOutputValue());
-						logger.info(LOGTAG + "CloudFormation Template Output: " +
-							o.getOutputKey() + "=" + o.getOutputValue());
-					}	
-				}	
-			}
-			else {
-				String errMsg = "Invalid number of results returned from " +
-					"Stack.Generate-Request. " +
-					results.size() + " results returned. Expected exactly 1.";
+			} else {
+				String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. " +
+						"Cannot determine what the accountId is from this step. ";
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg);
 			}
-		}
-		// If this is not a type1 VPC or there is no account 
-		// number, log it and add result props.
-		else {
-			logger.info(LOGTAG + "This is not a type 1 VPC or there  " +
-				"is no account number. No need to create the " +
-				"rhedcloud-aws-vpc-type1 stack.");
-			addResultProperty("vpcType", vpcpr.getType());
+
+			// If the existing accountId is null. Get the accountId of the newly
+			// generated account.
+			if (accountId == null || accountId.equalsIgnoreCase("null")) {
+				// Get the newAccountId property from the GENERATE_NEW_ACCOUNT step.
+				logger.info(LOGTAG + "Getting properties from preceding steps...");
+				ProvisioningStep step2 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
+				if (step2 != null) {
+					logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
+					accountId = getResultProperty(step2, "newAccountId");
+					logger.info(LOGTAG + "Property newAccountId from preceding " +
+							"step is: " + accountId);
+					addResultProperty("newAccountId", accountId);
+				} else {
+					String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot " +
+							"determine whether or not to authorize the new account " +
+							"requestor.";
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg);
+				}
+			}
+
+			if (accountId == null || accountId.equalsIgnoreCase("null")) {
+				String errMsg = "The value of accountId could not be " +
+						"found in preceding steps. Can't continue.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
 			addResultProperty("accountId", accountId);
-			
-		}
-		
-		// Update the step.
-		if (vpcpr.getType().equals("1") == false || stackCreated == true) {
+
+			// Get the VPN inside CIDR properties from the
+			// DETERMINE_VPC_CIDR step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step3 =
+					getProvisioningStepByType("DETERMINE_VPC_CIDR");
+			String vpn1InsideTunnelCidr1 = null;
+			String vpn1InsideTunnelCidr2 = null;
+			String vpn1CustomerGatewayIp = null;
+			String vpn2InsideTunnelCidr1 = null;
+			String vpn2InsideTunnelCidr2 = null;
+			String vpn2CustomerGatewayIp = null;
+			if (step3 != null) {
+				logger.info(LOGTAG + "Step COMPUTE_VPC_SUBNETS found.");
+
+				vpn1InsideTunnelCidr1 = getResultProperty(step3,
+						"vpn1InsideTunnelCidr1");
+				logger.info(LOGTAG + "Property vpn1InsideTunnelCidr1 from preceding " +
+						"step is: " + vpn1InsideTunnelCidr1);
+				addResultProperty("vpn1InsideTunnelCidr1", vpn1InsideTunnelCidr1);
+
+				vpn1InsideTunnelCidr2 = getResultProperty(step3,
+						"vpn1InsideTunnelCidr2");
+				logger.info(LOGTAG + "Property vpn1InsideTunnelCidr2 from preceding " +
+						"step is: " + vpn1InsideTunnelCidr2);
+				addResultProperty("vpn1InsideTunnelCidr2", vpn1InsideTunnelCidr2);
+
+				vpn1CustomerGatewayIp = getResultProperty(step3,
+						"vpn1CustomerGatewayIp");
+				logger.info(LOGTAG + "Property vpn1CustomerGatewayIp from preceding " +
+						"step is: " + vpn1CustomerGatewayIp);
+				addResultProperty("vpn1CustomerGatewayIp", vpn1CustomerGatewayIp);
+
+				vpn2InsideTunnelCidr1 = getResultProperty(step3,
+						"vpn2InsideTunnelCidr1");
+				logger.info(LOGTAG + "Property vpn2InsideTunnelCidr1 from preceding " +
+						"step is: " + vpn2InsideTunnelCidr1);
+				addResultProperty("vpn2InsideTunnelCidr1", vpn2InsideTunnelCidr1);
+
+				vpn2InsideTunnelCidr2 = getResultProperty(step3,
+						"vpn2InsideTunnelCidr2");
+				logger.info(LOGTAG + "Property vpn2InsideTunnelCidr2 from preceding " +
+						"step is: " + vpn2InsideTunnelCidr2);
+				addResultProperty("vpn2InsideTunnelCidr2", vpn2InsideTunnelCidr2);
+
+				vpn2CustomerGatewayIp = getResultProperty(step3,
+						"vpn2CustomerGatewayIp");
+				logger.info(LOGTAG + "Property vpn2CustomerGatewayIp from preceding " +
+						"step is: " + vpn2CustomerGatewayIp);
+				addResultProperty("vpn2CustomerGatewayIp", vpn2CustomerGatewayIp);
+			} else {
+				String errMsg = "Step DETERMINE_VPC_CIDR not " +
+						"found. Cannot determine account sequence number.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+
+			// Get the vpcNetwork property from the COMPUTE_VPC_SUBNETS step.
+			logger.info(LOGTAG + "Getting properties from preceding steps...");
+			ProvisioningStep step4 =
+					getProvisioningStepByType("COMPUTE_VPC_SUBNETS");
+			String vpcNetwork = null;
+			String mgmt1Subnet = null;
+			String mgmt2Subnet = null;
+			String public1Subnet = null;
+			String public2Subnet = null;
+			String private1Subnet = null;
+			String private2Subnet = null;
+			if (step4 != null) {
+				logger.info(LOGTAG + "Step COMPUTE_VPC_SUBNETS found.");
+
+				vpcNetwork = getResultProperty(step4,
+						"vpcNetwork");
+				logger.info(LOGTAG + "Property vpcNetwork from preceding " +
+						"step is: " + vpcNetwork);
+				addResultProperty("vpcNetwork", vpcNetwork);
+
+				mgmt1Subnet = getResultProperty(step4,
+						"mgmt1Subnet");
+				logger.info(LOGTAG + "Property mgmt1Subnet from preceding " +
+						"step is: " + mgmt1Subnet);
+				addResultProperty("mgmt1Subnet", mgmt1Subnet);
+
+				mgmt2Subnet = getResultProperty(step4,
+						"mgmt2Subnet");
+				logger.info(LOGTAG + "Property mgmt2Subnet from preceding " +
+						"step is: " + mgmt2Subnet);
+				addResultProperty("mgmt2Subnet", mgmt2Subnet);
+
+				public1Subnet = getResultProperty(step4,
+						"public1Subnet");
+				logger.info(LOGTAG + "Property public1Subnet from preceding " +
+						"step is: " + public1Subnet);
+				addResultProperty("public1Subnet", public1Subnet);
+
+				public2Subnet = getResultProperty(step4,
+						"public2Subnet");
+				logger.info(LOGTAG + "Property public2Subnet from preceding " +
+						"step is: " + public2Subnet);
+				addResultProperty("public2Subnet", public2Subnet);
+
+				private1Subnet = getResultProperty(step4,
+						"private1Subnet");
+				logger.info(LOGTAG + "Property private1Subnet from preceding " +
+						"step is: " + private1Subnet);
+				addResultProperty("private1Subnet", private1Subnet);
+
+				private2Subnet = getResultProperty(step4,
+						"private2Subnet");
+				logger.info(LOGTAG + "Property private2Subnet from preceding " +
+						"step is: " + private2Subnet);
+				addResultProperty("private2Subnet", private2Subnet);
+			} else {
+				String errMsg = "Step COMPUTE_VPC_SUBNETS not " +
+						"found. Cannot determine account sequence number.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+
+			// Get the VPC sequence number.
+			String vpcSequenceNumber =
+					getStepPropertyValue("DETERMINE_NEW_VPC_SEQUENCE_VALUE",
+							"vpcSequenceNumber");
+			logger.info(LOGTAG + "Property vpcSequenceNumber from preceding " +
+					"step is: " + vpcSequenceNumber);
+			addResultProperty("vpcSequenceNumber", vpcSequenceNumber);
+			if (vpcSequenceNumber == null) {
+				String errMsg = "VPC sequence number not found in preceding step. " +
+						"Cannot proceed.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+
+			// Update the step, so the parameters are visible for execution.
+			update(IN_PROGRESS_STATUS, NO_RESULT);
+
+			// Get the VPCP requisition.
+			VirtualPrivateCloudRequisition vpcpr =
+					getVirtualPrivateCloudProvisioning()
+							.getVirtualPrivateCloudRequisition();
+
+			// If this is a type 1 VPC and there is an account number,
+			// send a Stack.Generate-Request to generate the rs-account stack.
+			if (vpcpr.getType().equals("1") && accountId != null) {
+				logger.info(LOGTAG + "This is a request for a type 1 VPC " +
+						" and the accountNumber is " + accountId +
+						". Sending a Stack.Generate-Request to create the " +
+						"rhedcloud-aws-vpc-type1 stack in the account.");
+
+				// Send an Stack.Generate-Request. Get a configured Stack and requisition
+				// object from AppConfig.
+				Stack stack = new Stack();
+				StackRequisition req = new StackRequisition();
+				try {
+					stack = (Stack) getAppConfig()
+							.getObjectByType(stack.getClass().getName());
+					req = (StackRequisition) getAppConfig()
+							.getObjectByType(req.getClass().getName());
+				} catch (EnterpriseConfigurationObjectException ecoe) {
+					String errMsg = "An error occurred retrieving an object from " +
+							"AppConfig. The exception is: " + ecoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, ecoe);
+				}
+
+				// Set the values of the requisition and place them in step props.
+				try {
+					// AccountId
+					req.setAccountId(accountId);
+					addResultProperty("accountId", req.getAccountId());
+					logger.info(LOGTAG + "accountId: " + req.getAccountId());
+
+					// Region
+					VirtualPrivateCloudRequisition vpcr =
+							getVirtualPrivateCloudProvisioning()
+									.getVirtualPrivateCloudRequisition();
+					req.setRegion(vpcr.getRegion());
+					addResultProperty("region", req.getRegion());
+					logger.info(LOGTAG + "Region is: " + req.getRegion());
+
+					// StackName
+					req.setStackName(getStackName() + "-" + vpcSequenceNumber);
+					addResultProperty("accountId", req.getAccountId());
+					logger.info(LOGTAG + "stackName: " + req.getStackName());
+
+					// Credential, presently used to pass the roleArnPattern to
+					// assume a role to create the stack.
+					Credentials creds = req.newCredentials();
+					creds.setAccessKeyId("roleArnPattern");
+					creds.setSecretKey(getRoleArnPattern());
+					req.setCredentials(creds);
+
+					// Description
+					req.setDescription("RHEDcloud AWS CloudFormation template for type 1 vpc-level structures and policies");
+
+					// DisableRollback
+					req.setDisableRollback("false");
+
+					// Template URL - we prefer to pull this from an S3 bucket,
+					// but if we have to we read it from a non-S3 URL.
+					if (getCloudFormationTemplateUrl() != null) {
+						req.setTemplateUrl(getCloudFormationTemplateUrl());
+						addResultProperty("templateUrl", req.getTemplateUrl());
+						logger.info(LOGTAG + "templateUrl: " + req.getTemplateUrl());
+					} else if (getCloudFormationTemplateBodyUrl() != null) {
+						req.setTemplateBody(getCloudFormationTemplateBody());
+						addResultProperty("templateBodyUrl",
+								getCloudFormationTemplateBodyUrl());
+						logger.info(LOGTAG + "templateBody: " +
+								req.getTemplateBody());
+					} else {
+						String errMsg = "No CloudFormation template source " +
+								"specified. Can't continue.";
+						logger.error(LOGTAG + errMsg);
+						throw new StepException(errMsg);
+					}
+
+					// Set stack parameters
+					logger.info(LOGTAG + "Setting stack parameters...");
+
+					// Parameter 1 - VpcCidr
+					StackParameter parameter1 = req.newStackParameter();
+					parameter1.setKey("VpcCidr");
+					parameter1.setValue(vpcNetwork);
+					req.addStackParameter(parameter1);
+
+					// Parameter 2 - ManagementSubnet1Cidr
+					StackParameter parameter2 = req.newStackParameter();
+					parameter2.setKey("ManagementSubnet1Cidr");
+					parameter2.setValue(mgmt1Subnet);
+					req.addStackParameter(parameter2);
+
+					// Parameter 3 - ManagementSubnet2Cidr
+					StackParameter parameter3 = req.newStackParameter();
+					parameter3.setKey("ManagementSubnet2Cidr");
+					parameter3.setValue(mgmt2Subnet);
+					req.addStackParameter(parameter3);
+
+					// Parameter 4 - PublicSubnet1Cidr
+					StackParameter parameter4 = req.newStackParameter();
+					parameter4.setKey("PublicSubnet1Cidr");
+					parameter4.setValue(public1Subnet);
+					req.addStackParameter(parameter4);
+
+					// Parameter 5 - PublicSubnet2Cidr
+					StackParameter parameter5 = req.newStackParameter();
+					parameter5.setKey("PublicSubnet2Cidr");
+					parameter5.setValue(public2Subnet);
+					req.addStackParameter(parameter5);
+
+					// Parameter 6 - PrivateSubnet1Cidr
+					StackParameter parameter6 = req.newStackParameter();
+					parameter6.setKey("PrivateSubnet1Cidr");
+					parameter6.setValue(private1Subnet);
+					req.addStackParameter(parameter6);
+
+					// Parameter 7 - PrivateSubnet2Cidr
+					StackParameter parameter7 = req.newStackParameter();
+					parameter7.setKey("PrivateSubnet2Cidr");
+					parameter7.setValue(private2Subnet);
+					req.addStackParameter(parameter7);
+
+					// Parameter 8 - RHEDcloudVpn1InsideTunnelCidr1
+					StackParameter parameter8 = req.newStackParameter();
+					parameter8.setKey("RHEDcloudVpn1InsideTunnelCidr1");
+					parameter8.setValue(vpn1InsideTunnelCidr1);
+					req.addStackParameter(parameter8);
+
+					// Parameter 9 - RHEDcloudVpn1InsideTunnelCidr2
+					StackParameter parameter9 = req.newStackParameter();
+					parameter9.setKey("RHEDcloudVpn1InsideTunnelCidr2");
+					parameter9.setValue(vpn1InsideTunnelCidr2);
+					req.addStackParameter(parameter9);
+
+					// Parameter 10 - RHEDcloudVpn2InsideTunnelCidr1
+					StackParameter parameter10 = req.newStackParameter();
+					parameter10.setKey("RHEDcloudVpn2InsideTunnelCidr1");
+					parameter10.setValue(vpn2InsideTunnelCidr1);
+					req.addStackParameter(parameter10);
+
+					// Parameter 11 - RHEDcloudVpn2InsideTunnelCidr2
+					StackParameter parameter11 = req.newStackParameter();
+					parameter11.setKey("RHEDcloudVpn2InsideTunnelCidr2");
+					parameter11.setValue(vpn2InsideTunnelCidr2);
+					req.addStackParameter(parameter11);
+
+					// Parameter 12 - RHEDcloud1CustomerGatewayIp
+					StackParameter parameter12 = req.newStackParameter();
+					parameter12.setKey("RHEDcloud1CustomerGatewayIp");
+					parameter12.setValue(vpn1CustomerGatewayIp);
+					req.addStackParameter(parameter12);
+
+					// Parameter 13 - RHEDcloud2CustomerGatewayIp
+					StackParameter parameter13 = req.newStackParameter();
+					parameter13.setKey("RHEDcloud2CustomerGatewayIp");
+					parameter13.setValue(vpn2CustomerGatewayIp);
+					req.addStackParameter(parameter13);
+
+					// Log out all parameters.
+					List<StackParameter> params = req.getStackParameter();
+					ListIterator<StackParameter> spi = params.listIterator();
+					while (spi.hasNext()) {
+						StackParameter param = (StackParameter) spi.next();
+						logger.info(LOGTAG + "StackParameter " + param.getKey()
+								+ ": " + param.getValue());
+					}
+
+					// Add capabilities
+					String cap1 = "CAPABILITY_IAM";
+					String cap2 = "CAPABILITY_NAMED_IAM";
+					req.addCapability(cap1);
+					req.addCapability(cap2);
+
+					// Log out all capabilities and add them to the
+					// step properties.
+					List<String> capabilities = req.getCapability();
+					ListIterator<String> ci = capabilities.listIterator();
+					while (ci.hasNext()) {
+						String capability = (String) ci.next();
+						logger.info(LOGTAG + "Capability: " + capability);
+					}
+
+				} catch (EnterpriseFieldException efe) {
+					String errMsg = "An error occurred setting the values of the " +
+							"requisition. The exception is: " + efe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, efe);
+				}
+
+				// Log the state of the requisition.
+				try {
+					logger.info(LOGTAG + "Requisition is: " + req.toXmlString());
+				} catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing the requisition " +
+							"to XML. The exception is: " + xeoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, xeoe);
+				}
+
+				// TODO:Set the message authentication
+				// Authentication auth = stack.getAuthentication();
+				// auth.setAuthUserId(userId);
+
+				// Get a request service from the pool and set the timeout interval.
+				RequestService rs = null;
+				try {
+					PointToPointProducer p2p =
+							(PointToPointProducer) getAwsAccountServiceProducerPool()
+									.getExclusiveProducer();
+					p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+					rs = (RequestService) p2p;
+				} catch (JMSException jmse) {
+					String errMsg = "An error occurred getting a producer " +
+							"from the pool. The exception is: " + jmse.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, jmse);
+				}
+
+				List results = null;
+				try {
+					long generateStartTime = System.currentTimeMillis();
+					logger.info(LOGTAG + "Sending the Stack.Generate-Request...");
+					results = stack.generate(req, rs);
+					long generateTime = System.currentTimeMillis() - generateStartTime;
+					logger.info(LOGTAG + "Generated CloudFormation Stack in "
+							+ generateTime + " ms. Returned " + results.size() +
+							" result.");
+				} catch (EnterpriseObjectGenerateException eoge) {
+					String errMsg = "An error occurred generating the " +
+							"Stack object. The exception is: " + eoge.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, eoge);
+				} finally {
+					// Release the producer back to the pool
+					getAwsAccountServiceProducerPool()
+							.releaseProducer((MessageProducer) rs);
+				}
+
+				if (results.size() == 1) {
+					Stack stackResult = (Stack) results.get(0);
+					logger.info(LOGTAG + "Stack status is: " +
+							stackResult.getStackStatus());
+					addResultProperty("stackStatus",
+							stackResult.getStackStatus());
+					if (stackResult.getStackStatus()
+							.equalsIgnoreCase("CREATE_COMPLETE")) {
+						stackCreated = true;
+					}
+
+					// Get the outputs and add them as result properties.
+					List<Output> outputs = stackResult.getOutput();
+					if (outputs != null) {
+						ListIterator li = outputs.listIterator();
+						while (li.hasNext()) {
+							Output o = (Output) li.next();
+							addResultProperty(o.getOutputKey(), o.getOutputValue());
+							logger.info(LOGTAG + "CloudFormation Template Output: " +
+									o.getOutputKey() + "=" + o.getOutputValue());
+						}
+					}
+				} else {
+					String errMsg = "Invalid number of results returned from " +
+							"Stack.Generate-Request. " +
+							results.size() + " results returned. Expected exactly 1.";
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg);
+				}
+			}
+			// If this is not a type1 VPC or there is no account
+			// number, log it and add result props.
+			else {
+				logger.info(LOGTAG + "This is not a type 1 VPC or there  " +
+						"is no account number. No need to create the " +
+						"rhedcloud-aws-vpc-type1 stack.");
+				addResultProperty("vpcType", vpcpr.getType());
+				addResultProperty("accountId", accountId);
+
+			}
+
+			// Update the step.
+			if (vpcpr.getType().equals("1") == false || stackCreated == true) {
+				update(COMPLETED_STATUS, SUCCESS_RESULT);
+			} else update(COMPLETED_STATUS, FAILURE_RESULT);
+		} else {
+			logger.info(LOGTAG + "Not creating VPC");
+			addResultProperty("createVpc", String.valueOf(false));
 			update(COMPLETED_STATUS, SUCCESS_RESULT);
 		}
-		else update(COMPLETED_STATUS, FAILURE_RESULT);
     	
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
