@@ -76,12 +76,12 @@ import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecifica
 /**
  * If this is a new account request, create the account.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 17 August 2018
  **/
 public class QueryForVpnConfiguration extends AbstractStep implements Step {
-	
+
 	private final static String IN_PROGRESS = "IN_PROGRESS";
 	private final static String SUCCEEDED = "SUCCEEDED";
 	private final static String FAILED = "FAILED";
@@ -92,41 +92,41 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 	private AmazonEC2Client m_client = null;
 	private String LOGTAG = "[QueryForVpnConfiguration] ";
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[QueryForVpnConfiguration.init] ";
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-		
+
 		// Access key
 		String accessKeyId = getProperties().getProperty("accessKeyId", null);
 		setAccessKeyId(accessKeyId);
 		logger.info(LOGTAG + "accessKeyId is: " + getAccessKeyId());
-		
+
 		// Secret key
 		String secretKey = getProperties().getProperty("secretKey", null);
 		setSecretKey(secretKey);
 		logger.info(LOGTAG + "secretKey is: present");
-		
+
 		// Set the roleArnPattern property
 		setRoleArnPattern(getProperties().getProperty("roleArnPattern", null));
 		logger.info(LOGTAG + "roleArnPattern property is: " + getRoleArnPattern());
-		
+
 		// Set the roleAssumptionDurationSeconds property
 		setRoleAssumptionDurationSeconds(getProperties()
 			.getProperty("roleAssumptionDurationSeconds", null));
 		logger.info(LOGTAG + "roleAssumptionDurationSeconds is: " +
 			getRoleAssumptionDurationSeconds());
-	
-		
+
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[QueryForVpnConfiguration.run] ";
@@ -141,6 +141,8 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 		if(Boolean.valueOf(createVpc)) {
 			boolean allocatedNewAccount = false;
 			String newAccountId = null;
+
+			addResultProperty("createVpnConnection", String.valueOf(true));
 
 			// Get some properties from previous steps.
 			String vpn1ConnectionId =
@@ -192,102 +194,103 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 			addResultProperty("vpn2PresharedKey", vpn2PresharedKey);
 		} else {
 			logger.info(LOGTAG + "Bypass VPN configuration: not creating VPC");
+			addResultProperty("createVpnConnection", String.valueOf(false));
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
-		
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[QueryForVpnConfiguration.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[QueryForVpnConfiguration.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[QueryForVpnConfiguration.rollback] ";
-		
+
 		logger.info(LOGTAG + "Rollback called, nothing to rollback.");
-		
+
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAmazonEC2Client(AmazonEC2Client client) {
 		m_client = client;
 	}
-	
+
 	private AmazonEC2Client getAmazonEC2Client() {
 		return m_client;
 	}
-	
-	private void setAccessKeyId (String accessKeyId) throws 
+
+	private void setAccessKeyId (String accessKeyId) throws
 		StepException {
-	
+
 		if (accessKeyId == null) {
 			String errMsg = "accessKeyId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-		
+
 		m_accessKeyId = accessKeyId;
 	}
 
 	private String getAccessKeyId() {
 		return m_accessKeyId;
 	}
-	
-	private void setSecretKey (String secretKey) throws 
+
+	private void setSecretKey (String secretKey) throws
 		StepException {
 
 		if (secretKey == null) {
@@ -295,28 +298,28 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_secretKey = secretKey;
 	}
 
 	private String getSecretKey() {
 		return m_secretKey;
 	}
-	
+
 	/**
 	 * @param String, the pattern of the role to assume
 	 * <P>
 	 * This method sets the pattern of the role to assume
 	 */
 	private void setRoleArnPattern(String pattern) throws StepException {
-		
+
 		if (pattern == null) {
 			String errMsg = "roleArnPattern property is null. " +
 				"Can't assume role in target accounts. Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		m_roleArnPattern = pattern;
 	}
 
@@ -328,25 +331,25 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 	private String getRoleArnPattern() {
 		return m_roleArnPattern;
 	}
-	
+
 	/**
 	 * @param String, the role assumption duration
 	 * <P>
 	 * This method sets the role assumption duration
 	 */
 	private void setRoleAssumptionDurationSeconds(String seconds) throws StepException {
-		
+
 		if (seconds == null) {
 			String errMsg = "roleAssumptionDurationSeconds property is null. " +
 				"Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		m_roleAssumptionDurationSeconds = Integer.parseInt(seconds);
 	}
 
-	
+
 	/**
 	 * @return int, the role assumption duration
 	 * <P>
@@ -354,17 +357,17 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 	 */
 	private int getRoleAssumptionDurationSeconds() {
 		return m_roleAssumptionDurationSeconds;
-	}			
-	
+	}
+
 	private String getCustomerGatewayConfig(String vpnId) throws StepException {
 		String LOGTAG = getStepTag() + "[getCustomerGatewayConfig] ";
-		
+
 		// Build the request.
 		DescribeVpnConnectionsRequest request = new DescribeVpnConnectionsRequest();
 		List vpnConnectionIds = new ArrayList<String>();
 		vpnConnectionIds.add(vpnId);
 		request.setVpnConnectionIds(vpnConnectionIds);
-		
+
 		// Send the request.
 		DescribeVpnConnectionsResult result = null;
 		try {
@@ -381,12 +384,12 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, e);
 		}
-		
+
 		List<VpnConnection> vpnConnections = result.getVpnConnections();
 		if (vpnConnections.size() == 1) {
 			VpnConnection vpn = (VpnConnection)vpnConnections.get(0);
 			return vpn.getCustomerGatewayConfiguration();
-			
+
 		}
 		else {
 			String errMsg = "Unexpected number of VpnConnections. " +
@@ -394,39 +397,39 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 	}
-	
+
 	   /**
-     * 
+     *
      * @param String, accountId
      * @param String, region
      * <P>
      * @return, Amazon EC2 client connected to the correct
      * account with the correct role
-     * 
+     *
      */
     private AmazonEC2Client buildAmazonEC2Client(String accountId, String region) {
     	String LOGTAG = getStepTag() + "[buildAmazonEC2Client] ";
-    	
-    	// Build the roleArn of the role to assume from the base ARN and 
+
+    	// Build the roleArn of the role to assume from the base ARN and
         // the account number in the query spec.
         logger.info(LOGTAG + "The account targeted by this request is: " + accountId);
         logger.info(LOGTAG + "The region targeted by this request is: " + region);
         logger.info(LOGTAG + "The roleArnPattern is: " + getRoleArnPattern());
         String roleArn = getRoleArnPattern().replace("ACCOUNT_NUMBER", accountId);
-        logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn); 
-        		
+        logger.info(LOGTAG + "Role ARN to assume for this request is: " + roleArn);
+
 		// Instantiate a basic credential provider
         BasicAWSCredentials creds = new BasicAWSCredentials(getAccessKeyId(), getSecretKey());
-        AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);      
-        
+        AWSStaticCredentialsProvider cp = new AWSStaticCredentialsProvider(creds);
+
         // Create the STS client
         AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard()
         								.withCredentials(cp)
         								.withRegion(region)
-        								.build();       
-        
+        								.build();
+
         // Assume the appropriate role in the appropriate account.
         AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(roleArn)
         	.withDurationSeconds(getRoleAssumptionDurationSeconds())
@@ -438,27 +441,27 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
         // Instantiate a credential provider
         BasicSessionCredentials temporaryCredentials = new BasicSessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(), credentials.getSessionToken());
         AWSStaticCredentialsProvider credProvider = new AWSStaticCredentialsProvider(temporaryCredentials);
-        
+
         // Create the EC2 client
-        AmazonEC2Client ec2c = 
+        AmazonEC2Client ec2c =
         	(AmazonEC2Client)AmazonEC2ClientBuilder
         	.standard().withCredentials(credProvider).withRegion(region).build();
-    
+
         return ec2c;
     }
-    
-    private String getRemoteIpAddress(String customerGatewayConfig, 	
+
+    private String getRemoteIpAddress(String customerGatewayConfig,
     	String insideIpCidr) throws StepException {
     	String LOGTAG = getStepTag() + "[getRemoteIpAddress] ";
-    	
+
     	String remoteIpAddress = null;
-   
+
     	SAXBuilder sb = new SAXBuilder();
-    	
+
     	Document cgcDoc = null;
     	try {
     		cgcDoc = sb.build(new StringReader(customerGatewayConfig));
-    	
+
     	}
     	catch (IOException ioe) {
     		String errMsg = "An error occured building and XML document " +
@@ -474,9 +477,9 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     		logger.error(LOGTAG + errMsg);
     		throw new StepException(errMsg, je);
      	}
-    	
+
     	Element rootElement = cgcDoc.getRootElement();
-    	
+
     	List tunnels = rootElement.getChildren("ipsec_tunnel");
     	ListIterator li = tunnels.listIterator();
     	while (li.hasNext()) {
@@ -486,36 +489,36 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     			remoteIpAddress = e.getChild("vpn_gateway")
     				.getChild("tunnel_outside_address")
     				.getChildText("ip_address");
-    			logger.info(LOGTAG + "remoteIpAddress is: " 
+    			logger.info(LOGTAG + "remoteIpAddress is: "
     				+ remoteIpAddress);
     		}
     		else {
     			logger.info(LOGTAG + "This is not the matching tunnel.");
     		}
     	}
-    		
+
     	if (remoteIpAddress == null) {
     		String errMsg = "remoteIpAddress is null. Can't continue.";
     		logger.error(LOGTAG + errMsg);
     		throw new StepException(errMsg);
     	}
-    	
+
     	return remoteIpAddress;
-    	
+
     }
-    
-    private String getPresharedKey(String customerGatewayConfig, 	
+
+    private String getPresharedKey(String customerGatewayConfig,
     	String insideIpCidr) throws StepException {
     	String LOGTAG = getStepTag() + "[getPresharedKey] ";
-    	
+
     	String presharedKey = null;
-   
+
     	SAXBuilder sb = new SAXBuilder();
-    	
+
     	Document cgcDoc = null;
     	try {
     		cgcDoc = sb.build(new StringReader(customerGatewayConfig));
-    	
+
     	}
     	catch (IOException ioe) {
     		String errMsg = "An error occured building and XML document " +
@@ -531,9 +534,9 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     		logger.error(LOGTAG + errMsg);
     		throw new StepException(errMsg, je);
      	}
-    	
+
     	Element rootElement = cgcDoc.getRootElement();
-    	
+
     	List tunnels = rootElement.getChildren("ipsec_tunnel");
     	ListIterator li = tunnels.listIterator();
     	while (li.hasNext()) {
@@ -542,40 +545,40 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
     			logger.info(LOGTAG + "This is the matching tunnel.");
     			presharedKey = e.getChild("ike")
     				.getChildText("pre_shared_key");
-    			logger.info(LOGTAG + "presharedKey is: " 
+    			logger.info(LOGTAG + "presharedKey is: "
     				+ presharedKey);
     		}
     		else {
     			logger.info(LOGTAG + "This is not the matching tunnel.");
     		}
     	}
-    		
+
     	if (presharedKey == null) {
     		String errMsg = "presharedKey is null. Can't continue.";
     		logger.error(LOGTAG + errMsg);
     		throw new StepException(errMsg);
     	}
-    	
+
     	return presharedKey;
-        	
+
     }
-	
-    private boolean isMatchingTunnel(Element e, String insideIpCidr) 
+
+    private boolean isMatchingTunnel(Element e, String insideIpCidr)
     	throws StepException {
     	String LOGTAG = getStepTag() + "[isMatchingTunnel] ";
-   	
+
     	String ipAddress = e.getChild("vpn_gateway")
     		.getChild("tunnel_inside_address")
     		.getChildText("ip_address");
-    	
-    	logger.info(LOGTAG + "ipAddress is: " + ipAddress + 
+
+    	logger.info(LOGTAG + "ipAddress is: " + ipAddress +
     		" insideIpCidr is: " + insideIpCidr);
-    	
+
     	SubnetInfo subnet = (new SubnetUtils(insideIpCidr)).getInfo();
     	boolean isMatchingTunnel = subnet.isInRange(ipAddress);
     	logger.info(LOGTAG + "isMatchingTunnel: " + isMatchingTunnel);
-    	
+
     	return isMatchingTunnel;
-    	
+
     }
 }
