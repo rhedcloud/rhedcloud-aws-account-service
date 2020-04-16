@@ -86,129 +86,131 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateAccountMetadata.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
+
+		String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
+		logger.info(LOGTAG + "createVpc=" + createVpc);
+		if(!Boolean.valueOf(createVpc)) {
+			logger.info(LOGTAG + "Bypassing: no VPC created");
+			addResultProperty("createVpc", String.valueOf(false));
+		} else {
+			addResultProperty("createVpc", String.valueOf(true));
+            boolean vpcMetadataCreated = false;
 		
-		boolean vpcMetadataCreated = false;
-		
-		// Return properties
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
-		// Get some properties from previous steps.
-		String accountId = 
-			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
-			accountId = getVirtualPrivateCloudProvisioning()
-				.getVirtualPrivateCloudRequisition()
-				.getAccountId();
-			if (accountId == null || accountId.equals("")) {
-				String errMsg = "No account number for the new VPC " +
-					"can be found. Can't continue.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
+		    // Return properties
+		    addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+
+			// Get some properties from previous steps.
+			String accountId =
+					getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+			if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
+				accountId = getVirtualPrivateCloudProvisioning()
+						.getVirtualPrivateCloudRequisition()
+						.getAccountId();
+				if (accountId == null || accountId.equals("")) {
+					String errMsg = "No account number for the new VPC " +
+							"can be found. Can't continue.";
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg);
+				}
 			}
-		}
-		String vpcId = 
-			getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
-		String region = getVirtualPrivateCloudProvisioning()
-				.getVirtualPrivateCloudRequisition()
-				.getRegion();
-		String vpcType = getVirtualPrivateCloudProvisioning()
-				.getVirtualPrivateCloudRequisition()
-				.getType();
-		String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS",
-			"vpcNetwork"); 
-		String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR",
-			"vpnConnectionProfileId");
-		
-		// Get the VirtualPrivateCloudRequisition
-		VirtualPrivateCloudRequisition req = 
-			getVirtualPrivateCloudProvisioning()
-			.getVirtualPrivateCloudRequisition();
-			
-		// Get a configured VPC object from AppConfig.
-		VirtualPrivateCloud vpc = new VirtualPrivateCloud();
-	    try {
-	    	vpc = (VirtualPrivateCloud)getAppConfig()
-		    	.getObjectByType(vpc.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-	    
-	    // Set the values of the VPC.
-	    try {
-	    	vpc.setAccountId(accountId);
-	    	vpc.setVpcId(vpcId);
-	    	vpc.setRegion(region);
-	    	vpc.setType(vpcType);
-	    	vpc.setCidr(vpcCidr);
-	    	vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
-	    	vpc.setPurpose(req.getPurpose());
-	    	vpc.setCreateUser(req.getAuthenticatedRequestorUserId());
-	    	Datetime createDatetime = new Datetime("Create", 
-	    			System.currentTimeMillis());
-	    	vpc.setCreateDatetime(createDatetime);
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting the values of the " +
-	  	    	  "query spec. The exception is: " + efe.getMessage();
-	  	    logger.error(LOGTAG + errMsg);
-	  	    throw new StepException(errMsg, efe);
-	    }
-	    
-	    // Log the state of the account.
-	    try {
-	    	logger.info(LOGTAG + "VPC to create is: " + vpc.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the query spec " +
-	  	    	  "to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool()
-				.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-	    
-		try { 
-			long createStartTime = System.currentTimeMillis();
-			vpc.create(rs);
-			long createTime = System.currentTimeMillis() - createStartTime;
-			logger.info(LOGTAG + "Create Account in " + createTime +
-				" ms.");
-			vpcMetadataCreated = true;
-			addResultProperty("vpcMetadataCreated", 
-				Boolean.toString(vpcMetadataCreated));
-			addResultProperty("accountId", accountId);
-			addResultProperty("vpcId", vpcId);
-			addResultProperty("region", region);
-			addResultProperty("vpcType", vpcType);
-			addResultProperty("vpcCidr", vpcCidr);
-			addResultProperty("vpnConnectionProfileId", 
-				vpnConnectionProfileId);
-		}
-		catch (EnterpriseObjectCreateException eoce) {
-			String errMsg = "An error occurred creating the object. " +
-	    	  "The exception is: " + eoce.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoce);
-		}
-		finally {
-			// Release the producer back to the pool
-			getAwsAccountServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
+			String vpcId =
+					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
+			String region = getVirtualPrivateCloudProvisioning()
+					.getVirtualPrivateCloudRequisition()
+					.getRegion();
+			String vpcType = getVirtualPrivateCloudProvisioning()
+					.getVirtualPrivateCloudRequisition()
+					.getType();
+			String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS",
+					"vpcNetwork");
+			String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR",
+					"vpnConnectionProfileId");
+
+			// Get the VirtualPrivateCloudRequisition
+			VirtualPrivateCloudRequisition req =
+					getVirtualPrivateCloudProvisioning()
+							.getVirtualPrivateCloudRequisition();
+
+			// Get a configured VPC object from AppConfig.
+			VirtualPrivateCloud vpc = new VirtualPrivateCloud();
+			try {
+				vpc = (VirtualPrivateCloud) getAppConfig()
+						.getObjectByType(vpc.getClass().getName());
+			} catch (EnterpriseConfigurationObjectException ecoe) {
+				String errMsg = "An error occurred retrieving an object from " +
+						"AppConfig. The exception is: " + ecoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, ecoe);
+			}
+
+			// Set the values of the VPC.
+			try {
+				vpc.setAccountId(accountId);
+				vpc.setVpcId(vpcId);
+				vpc.setRegion(region);
+				vpc.setType(vpcType);
+				vpc.setCidr(vpcCidr);
+				vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
+				vpc.setPurpose(req.getPurpose());
+				vpc.setCreateUser(req.getAuthenticatedRequestorUserId());
+				Datetime createDatetime = new Datetime("Create",
+						System.currentTimeMillis());
+				vpc.setCreateDatetime(createDatetime);
+			} catch (EnterpriseFieldException efe) {
+				String errMsg = "An error occurred setting the values of the " +
+						"query spec. The exception is: " + efe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, efe);
+			}
+
+			// Log the state of the account.
+			try {
+				logger.info(LOGTAG + "VPC to create is: " + vpc.toXmlString());
+			} catch (XmlEnterpriseObjectException xeoe) {
+				String errMsg = "An error occurred serializing the query spec " +
+						"to XML. The exception is: " + xeoe.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, xeoe);
+			}
+
+			// Get a producer from the pool
+			RequestService rs = null;
+			try {
+				rs = (RequestService) getAwsAccountServiceProducerPool()
+						.getExclusiveProducer();
+			} catch (JMSException jmse) {
+				String errMsg = "An error occurred getting a producer " +
+						"from the pool. The exception is: " + jmse.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, jmse);
+			}
+
+			try {
+				long createStartTime = System.currentTimeMillis();
+				vpc.create(rs);
+				long createTime = System.currentTimeMillis() - createStartTime;
+				logger.info(LOGTAG + "Create Account in " + createTime +
+						" ms.");
+				vpcMetadataCreated = true;
+				addResultProperty("vpcMetadataCreated",
+						Boolean.toString(vpcMetadataCreated));
+				addResultProperty("accountId", accountId);
+				addResultProperty("vpcId", vpcId);
+				addResultProperty("region", region);
+				addResultProperty("vpcType", vpcType);
+				addResultProperty("vpcCidr", vpcCidr);
+				addResultProperty("vpnConnectionProfileId",
+						vpnConnectionProfileId);
+			} catch (EnterpriseObjectCreateException eoce) {
+				String errMsg = "An error occurred creating the object. " +
+						"The exception is: " + eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg, eoce);
+			} finally {
+				// Release the producer back to the pool
+				getAwsAccountServiceProducerPool()
+						.releaseProducer((MessageProducer) rs);
+			}
 		}
 		
 		// Update the step.
