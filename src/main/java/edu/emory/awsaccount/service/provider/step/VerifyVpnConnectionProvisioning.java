@@ -109,88 +109,94 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[VerifyVpnConnectionProvisioning.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
-		boolean vpnConnectionProvisioningSuccess = false;
-		boolean vpnConnectionProvisioningPartialSuccess = false;
-		String stepResult = FAILURE_RESULT;
-		
-		// Get the vpnConnectionProvisioningId property from a previous step.
-		String provisioningId = getStepPropertyValue("PROVISION_VPN_CONNECTION", 
-			"vpnConnectionProvisioningId");
-		
-		// While the step run time is less that the maxWaitTime,
-		// query for the VpnConnectionProvisioning object and 
-		// evaluate it for success or failure.
-		while (System.currentTimeMillis() - startTime < getMaxWaitTimeInMillis()) {
-			
-			// Sleep for the sleep interval.
-			logger.info(LOGTAG + "Sleeping for " + getSleepTimeInMillis() +
-				" prior to next VpnConnectionProvisioning query.");
-			try {
-				Thread.sleep(getSleepTimeInMillis());
-			}
-			catch (InterruptedException ie) {
-				String errMsg = "Error occurred sleeping.";
-				logger.error(LOGTAG + errMsg + ie.getMessage());
-				throw new StepException(errMsg, ie);
+
+		String createVpnConnection = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "createVpnConnection");
+		logger.info("createVpnConnection=" + createVpnConnection);
+
+		if(!Boolean.valueOf(createVpnConnection)) {
+			logger.info("Bypassing since not creating VPN connection");
+			addResultProperty("createVpnConnection", String.valueOf(false));
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
+		} else {
+			boolean vpnConnectionProvisioningSuccess = false;
+			boolean vpnConnectionProvisioningPartialSuccess = false;
+			String stepResult = FAILURE_RESULT;
+
+			// Get the vpnConnectionProvisioningId property from a previous step.
+			String provisioningId = getStepPropertyValue("PROVISION_VPN_CONNECTION",
+					"vpnConnectionProvisioningId");
+
+			// While the step run time is less that the maxWaitTime,
+			// query for the VpnConnectionProvisioning object and
+			// evaluate it for success or failure.
+			while (System.currentTimeMillis() - startTime < getMaxWaitTimeInMillis()) {
+
+				// Sleep for the sleep interval.
+				logger.info(LOGTAG + "Sleeping for " + getSleepTimeInMillis() +
+						" prior to next VpnConnectionProvisioning query.");
+				try {
+					Thread.sleep(getSleepTimeInMillis());
+				} catch (InterruptedException ie) {
+					String errMsg = "Error occurred sleeping.";
+					logger.error(LOGTAG + errMsg + ie.getMessage());
+					throw new StepException(errMsg, ie);
+				}
+
+				// Query for the VpnConnectionProvisioning object.
+				VpnConnectionProvisioning vcp = queryForVpnProvisioning(provisioningId);
+
+				// If the VpnConnectionProvisioning is successful, log it,
+				// and set result properties.
+				if (isSuccess(vcp)) {
+					vpnConnectionProvisioningSuccess = true;
+					stepResult = SUCCESS_RESULT;
+					addResultProperty("provisioningMessage", "Both VPN tunnels " +
+							"configured properly in the time allowed.");
+					break;
+				} else if (isFailure(vcp)) {
+					vpnConnectionProvisioningSuccess = false;
+					stepResult = FAILURE_RESULT;
+					addResultProperty("provisioningMessage", "Neither VPN tunnel " +
+							"configured properly in the time allowed.");
+					break;
+				}
 			}
 
-			// Query for the VpnConnectionProvisioning object.
-			VpnConnectionProvisioning vcp = queryForVpnProvisioning(provisioningId);
-			
-			// If the VpnConnectionProvisioning is successful, log it,
-			// and set result properties.
-			if (isSuccess(vcp)) {
-				vpnConnectionProvisioningSuccess = true;
-				stepResult = SUCCESS_RESULT;
-				addResultProperty("provisioningMessage", "Both VPN tunnels " +
-					"configured properly in the time allowed.");
-				break;
+			// If the max wait time has expired and provisioning is not completely
+			// successful, evaluate the results for partial success.
+			if (vpnConnectionProvisioningSuccess != true) {
+				// Query for the VpnConnectionProvisioning object.
+				VpnConnectionProvisioning vcp = queryForVpnProvisioning(provisioningId);
+
+				// If the VpnConnectionProvisioning is successful, log it,
+				// and set result properties.
+				if (isPartialSuccess(vcp)) {
+					vpnConnectionProvisioningPartialSuccess = true;
+					stepResult = SUCCESS_RESULT;
+					addResultProperty("provisioningMessage", "Only one " +
+							"site-to-site VPN tunnel configured properly in the time " +
+							"allowed. The connection should still operate and be " +
+							"completed automatically later.");
+				} else {
+					addResultProperty("provisioningMessage", "Neither " +
+							"site-to-site VPN tunnel configured properly in the time " +
+							"allowed.");
+				}
 			}
-			else if (isFailure(vcp)) {
-				vpnConnectionProvisioningSuccess = false;
-				stepResult = FAILURE_RESULT;
-				addResultProperty("provisioningMessage", "Neither VPN tunnel " +
-					"configured properly in the time allowed.");
-				break;
-			}
+
+			// Set return properties.
+			addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+			addResultProperty("maxWaitTimeInMillis", Integer.toString(getMaxWaitTimeInMillis()));
+			addResultProperty("sleepTimeInMillis", Integer.toString(getMaxWaitTimeInMillis()));
+			addResultProperty("vpnConnectionProvisioningSuccess",
+					Boolean.toString(vpnConnectionProvisioningSuccess));
+			addResultProperty("vpnConnectionProvisioningPartialSuccess",
+					Boolean.toString(vpnConnectionProvisioningPartialSuccess));
+
+			// Update the step.
+            update(COMPLETED_STATUS, stepResult);
 		}
-		
-		// If the max wait time has expired and provisioning is not completely
-		// successful, evaluate the results for partial success.
-		if (vpnConnectionProvisioningSuccess != true) {
-			// Query for the VpnConnectionProvisioning object.
-			VpnConnectionProvisioning vcp = queryForVpnProvisioning(provisioningId);
-			
-			// If the VpnConnectionProvisioning is successful, log it,
-			// and set result properties.
-			if (isPartialSuccess(vcp)) {
-				vpnConnectionProvisioningPartialSuccess = true;
-				stepResult = SUCCESS_RESULT;
-				addResultProperty("provisioningMessage", "Only one " +
-					"site-to-site VPN tunnel configured properly in the time " +
-					"allowed. The connection should still operate and be " +
-					"completed automatically later.");
-			}
-			else {
-				addResultProperty("provisioningMessage", "Neither " +
-					"site-to-site VPN tunnel configured properly in the time " +
-					"allowed.");
-			}
-		}
-		
-		// Set return properties.
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		addResultProperty("maxWaitTimeInMillis", Integer.toString(getMaxWaitTimeInMillis()));
-		addResultProperty("sleepTimeInMillis", Integer.toString(getMaxWaitTimeInMillis()));
-		addResultProperty("vpnConnectionProvisioningSuccess", 
-			Boolean.toString(vpnConnectionProvisioningSuccess));
-		addResultProperty("vpnConnectionProvisioningPartialSuccess", 
-			Boolean.toString(vpnConnectionProvisioningPartialSuccess));
-		
-		// Update the step.
-    	update(COMPLETED_STATUS, stepResult);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
