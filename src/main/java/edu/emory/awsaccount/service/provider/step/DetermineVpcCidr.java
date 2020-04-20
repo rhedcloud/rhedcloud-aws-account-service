@@ -402,164 +402,162 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		logger.info(LOGTAG + "Rollback called, if vpcConnectionProfileId was " + 
 			"set, query for and delete the VpnConnectionProfileAssignment.");
 
-		String vpnConnectionProfileId = 
-			getResultProperty("vpnConnectionProfileId");
-		
-		// If the vpcConnectionProfileId is not null, query for the
-		// VpnConnectionProfileAssignment
-		if (vpnConnectionProfileId != null) {
-			// Get a configured VpnConnectionProfile and
-			// VpnConnectionProfileQuerySpecification from AppConfig
-			VpnConnectionProfileAssignment vcpa = new 
-				VpnConnectionProfileAssignment();
-			VpnConnectionProfileAssignmentQuerySpecification vcpqs = new
-				VpnConnectionProfileAssignmentQuerySpecification();
-		    try {
-		    	vcpa = (VpnConnectionProfileAssignment)getAppConfig()
-			    		.getObjectByType(vcpa.getClass().getName());
-		    	vcpqs = (VpnConnectionProfileAssignmentQuerySpecification)getAppConfig()
-			    		.getObjectByType(vcpqs.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-		    
-		    // Set the values of the query spec.
-		    try {
-		    	vcpqs.setVpnConnectionProfileId(vpnConnectionProfileId);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "query spec. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-		    
-		    // Log the state of the query spec.
-		    try {
-		    	logger.info(LOGTAG + "Query spec is: " + vcpqs.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the query spec " +
-		  	    	  "to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
-		    // Get a request service from the pool and set the timeout interval.
-			RequestService rs = null;
-			try {
-				PointToPointProducer p2p = 
-					(PointToPointProducer)getNetworkOpsServiceProducerPool()
-					.getExclusiveProducer();
-				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
-				rs = (RequestService)p2p;
-			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
-		    
-			List assignmentResults = null;
-			try { 
-				long queryStartTime = System.currentTimeMillis();
-				assignmentResults = vcpa.query(vcpqs, rs);
-				long queryTime = System.currentTimeMillis() - queryStartTime;
-				logger.info(LOGTAG + "Queried for VpnConnectionProfileAssignment " +
-					"for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
-					+ queryTime + " ms. Returned " + assignmentResults.size() + 
-					" result(s).");
-			}
-			catch (EnterpriseObjectQueryException eoqe) {
-				String errMsg = "An error occurred querying the  " +
-		    	  "VpnConnectionProfileAssignment object. " +
-		    	  "The exception is: " + eoqe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoqe);
-			}
-			finally {
-				// Release the producer back to the pool
-				getNetworkOpsServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
-			}
-			
-			// If there is more than one result, this is an
-			// error, log it and throw an exception.
-			if (assignmentResults.size() > 1) {
-				String errMsg = "An unexpected number of VpnConnectionProfile" +
-					"Assignments were found. " + assignmentResults.size() +
-					" results were found. Only 0 or 1 were expected.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
-			}
-			
-			// If there are no results, there is nothing to delete
-			// log it.
-			if (assignmentResults.size() == 0) {
-				logger.info(LOGTAG + "No VpnConnectionProfileAssignments " +
-					"found. Nothing to delete.");
-			}
-			
-			// If there is exactly one assignment, delete it.
-			VpnConnectionProfileAssignment resultAssignment = 
-				(VpnConnectionProfileAssignment)assignmentResults.get(0);
-			String provisioningId = getVirtualPrivateCloudProvisioning()
-				.getProvisioningId();
-			if (assignmentResults.size() == 1) {
-				logger.info(LOGTAG + "There is exactly one VpnConnectionProfile" +
-					"Assignment for this VpnConnectionProfileId.");
-				if (resultAssignment.getOwnerId().equalsIgnoreCase(provisioningId)) {
-					logger.info(LOGTAG + "The VpnConnectionProfile is assigned to the " +
-						"ProvisioningId of this run (" + provisioningId + "). Deleting " +
-						"the assignment.");
-					
-					// Get a request service from the pool and set the timeout interval.
-					rs = null;
-					try {
-						PointToPointProducer p2p = 
-							(PointToPointProducer)getNetworkOpsServiceProducerPool()
-							.getExclusiveProducer();
-						p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
-						rs = (RequestService)p2p;
-					}
-					catch (JMSException jmse) {
-						String errMsg = "An error occurred getting a producer " +
-							"from the pool. The exception is: " + jmse.getMessage();
-						logger.error(LOGTAG + errMsg);
-						throw new StepException(errMsg, jmse);
-					}
-				    
-					try { 
-						long deleteStartTime = System.currentTimeMillis();
-						resultAssignment.delete("Delete", rs);
-						long deleteTime = System.currentTimeMillis() - deleteStartTime;
-						logger.info(LOGTAG + "Deleted for VpnConnectionProfileAssignment " +
-							"for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
-							+ deleteTime + " ms.");
-					}
-					catch (EnterpriseObjectDeleteException eode) {
-						String errMsg = "An error occurred deleting the  " +
-				    	  "VpnConnectionProfileAssignment object. " +
-				    	  "The exception is: " + eode.getMessage();
-				    	logger.error(LOGTAG + errMsg);
-				    	throw new StepException(errMsg, eode);
-					}
-					finally {
-						// Release the producer back to the pool
-						getNetworkOpsServiceProducerPool()
-							.releaseProducer((MessageProducer)rs);
-					}
+		// if we created a VPC of type 0 then there's nothing to rollback
+		String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
+		logger.info(LOGTAG + "createVpc=" + createVpc);
+
+		if(!Boolean.valueOf(createVpc)) {
+			logger.info(LOGTAG + "No VPC created, so nothing to rollback");
+		} else {
+			String vpnConnectionProfileId =
+					getResultProperty("vpnConnectionProfileId");
+
+			// If the vpcConnectionProfileId is not null, query for the
+			// VpnConnectionProfileAssignment
+			if (vpnConnectionProfileId != null) {
+				// Get a configured VpnConnectionProfile and
+				// VpnConnectionProfileQuerySpecification from AppConfig
+				VpnConnectionProfileAssignment vcpa = new
+						VpnConnectionProfileAssignment();
+				VpnConnectionProfileAssignmentQuerySpecification vcpqs = new
+						VpnConnectionProfileAssignmentQuerySpecification();
+				try {
+					vcpa = (VpnConnectionProfileAssignment) getAppConfig()
+							.getObjectByType(vcpa.getClass().getName());
+					vcpqs = (VpnConnectionProfileAssignmentQuerySpecification) getAppConfig()
+							.getObjectByType(vcpqs.getClass().getName());
+				} catch (EnterpriseConfigurationObjectException ecoe) {
+					String errMsg = "An error occurred retrieving an object from " +
+							"AppConfig. The exception is: " + ecoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, ecoe);
 				}
-				else {
-					logger.info(LOGTAG + "The VpnConnectionProfile is not assigned to the " +
-						"ProvisioningId of this run  (" + provisioningId + "). It is assigned " +
-						"to the OwnerId: " + resultAssignment.getOwnerId() + 
-						". There is no delete required to roll back this step.");
+
+				// Set the values of the query spec.
+				try {
+					vcpqs.setVpnConnectionProfileId(vpnConnectionProfileId);
+				} catch (EnterpriseFieldException efe) {
+					String errMsg = "An error occurred setting the values of the " +
+							"query spec. The exception is: " + efe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, efe);
+				}
+
+				// Log the state of the query spec.
+				try {
+					logger.info(LOGTAG + "Query spec is: " + vcpqs.toXmlString());
+				} catch (XmlEnterpriseObjectException xeoe) {
+					String errMsg = "An error occurred serializing the query spec " +
+							"to XML. The exception is: " + xeoe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, xeoe);
+				}
+
+				// Get a request service from the pool and set the timeout interval.
+				RequestService rs = null;
+				try {
+					PointToPointProducer p2p =
+							(PointToPointProducer) getNetworkOpsServiceProducerPool()
+									.getExclusiveProducer();
+					p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+					rs = (RequestService) p2p;
+				} catch (JMSException jmse) {
+					String errMsg = "An error occurred getting a producer " +
+							"from the pool. The exception is: " + jmse.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, jmse);
+				}
+
+				List assignmentResults = null;
+				try {
+					long queryStartTime = System.currentTimeMillis();
+					assignmentResults = vcpa.query(vcpqs, rs);
+					long queryTime = System.currentTimeMillis() - queryStartTime;
+					logger.info(LOGTAG + "Queried for VpnConnectionProfileAssignment " +
+							"for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
+							+ queryTime + " ms. Returned " + assignmentResults.size() +
+							" result(s).");
+				} catch (EnterpriseObjectQueryException eoqe) {
+					String errMsg = "An error occurred querying the  " +
+							"VpnConnectionProfileAssignment object. " +
+							"The exception is: " + eoqe.getMessage();
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg, eoqe);
+				} finally {
+					// Release the producer back to the pool
+					getNetworkOpsServiceProducerPool()
+							.releaseProducer((MessageProducer) rs);
+				}
+
+				// If there is more than one result, this is an
+				// error, log it and throw an exception.
+				if (assignmentResults.size() > 1) {
+					String errMsg = "An unexpected number of VpnConnectionProfile" +
+							"Assignments were found. " + assignmentResults.size() +
+							" results were found. Only 0 or 1 were expected.";
+					logger.error(LOGTAG + errMsg);
+					throw new StepException(errMsg);
+				}
+
+				// If there are no results, there is nothing to delete
+				// log it.
+				if (assignmentResults.size() == 0) {
+					logger.info(LOGTAG + "No VpnConnectionProfileAssignments " +
+							"found. Nothing to delete.");
+				}
+
+				// If there is exactly one assignment, delete it.
+				VpnConnectionProfileAssignment resultAssignment =
+						(VpnConnectionProfileAssignment) assignmentResults.get(0);
+				String provisioningId = getVirtualPrivateCloudProvisioning()
+						.getProvisioningId();
+				if (assignmentResults.size() == 1) {
+					logger.info(LOGTAG + "There is exactly one VpnConnectionProfile" +
+							"Assignment for this VpnConnectionProfileId.");
+					if (resultAssignment.getOwnerId().equalsIgnoreCase(provisioningId)) {
+						logger.info(LOGTAG + "The VpnConnectionProfile is assigned to the " +
+								"ProvisioningId of this run (" + provisioningId + "). Deleting " +
+								"the assignment.");
+
+						// Get a request service from the pool and set the timeout interval.
+						rs = null;
+						try {
+							PointToPointProducer p2p =
+									(PointToPointProducer) getNetworkOpsServiceProducerPool()
+											.getExclusiveProducer();
+							p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+							rs = (RequestService) p2p;
+						} catch (JMSException jmse) {
+							String errMsg = "An error occurred getting a producer " +
+									"from the pool. The exception is: " + jmse.getMessage();
+							logger.error(LOGTAG + errMsg);
+							throw new StepException(errMsg, jmse);
+						}
+
+						try {
+							long deleteStartTime = System.currentTimeMillis();
+							resultAssignment.delete("Delete", rs);
+							long deleteTime = System.currentTimeMillis() - deleteStartTime;
+							logger.info(LOGTAG + "Deleted for VpnConnectionProfileAssignment " +
+									"for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
+									+ deleteTime + " ms.");
+						} catch (EnterpriseObjectDeleteException eode) {
+							String errMsg = "An error occurred deleting the  " +
+									"VpnConnectionProfileAssignment object. " +
+									"The exception is: " + eode.getMessage();
+							logger.error(LOGTAG + errMsg);
+							throw new StepException(errMsg, eode);
+						} finally {
+							// Release the producer back to the pool
+							getNetworkOpsServiceProducerPool()
+									.releaseProducer((MessageProducer) rs);
+						}
+					} else {
+						logger.info(LOGTAG + "The VpnConnectionProfile is not assigned to the " +
+								"ProvisioningId of this run  (" + provisioningId + "). It is assigned " +
+								"to the OwnerId: " + resultAssignment.getOwnerId() +
+								". There is no delete required to roll back this step.");
+					}
 				}
 			}
 		}
