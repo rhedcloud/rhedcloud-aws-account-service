@@ -403,11 +403,11 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 			"set, query for and delete the VpnConnectionProfileAssignment.");
 
 		// if we created a VPC of type 0 then there's nothing to rollback
-		String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
-		logger.info(LOGTAG + "createVpc=" + createVpc);
+		String vpcNetwork = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpcNetwork");
+		logger.info(LOGTAG + "vpcNetwork=" + vpcNetwork);
 
-		if(!Boolean.valueOf(createVpc)) {
-			logger.info(LOGTAG + "No VPC created, so nothing to rollback");
+		if(vpcNetwork.equals("not applicable")) {
+			logger.info(LOGTAG + "No applicable VPC network, so nothing to rollback");
 		} else {
 			String vpnConnectionProfileId =
 					getResultProperty("vpnConnectionProfileId");
