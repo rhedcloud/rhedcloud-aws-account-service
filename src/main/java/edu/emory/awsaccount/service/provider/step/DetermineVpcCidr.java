@@ -49,7 +49,7 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecificati
 public class DetermineVpcCidr extends AbstractStep implements Step {
 	
 	private ProducerPool m_networkOpsServiceProducerPool = null;
-	private int m_requestTimeoutInterval = 10000;
+	private int m_requestTimeoutInterval = 30000;
 
 	public void init (String provisioningId, Properties props, 
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
