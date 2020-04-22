@@ -10,13 +10,14 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Properties;
-
-import javax.jms.JMSException;
-
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
+import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
+import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentRequisition;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -28,14 +29,11 @@ import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
-import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
-import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
-import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
-import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentRequisition;
-import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
+
+import javax.jms.JMSException;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Properties;
 
 /**
  * Send a VpnConnectionProfileAssignment.Generate-Request to the 
@@ -177,11 +175,13 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 						"for ProvisioningId " + provisioningId + " in "
 						+ generateTime + " ms. Returned " + assignmentResults.size() +
 						" result(s).");
+				addResultProperty("VpnConnectionProfileAssignmentFailed",String.valueOf(false));
 			} catch (EnterpriseObjectGenerateException eoqe) {
 				String errMsg = "An error occurred generating the  " +
-						"VpnConnectionProfileAssignmnet object. " +
+						"VpnConnectionProfileAssignment object. " +
 						"The exception is: " + eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
+				addResultProperty("VpnConnectionProfileAssignmentFailed",String.valueOf(true));
 				throw new StepException(errMsg, eoqe);
 			} finally {
 				// Release the producer back to the pool
@@ -409,12 +409,17 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 		if(vpcNetwork.equals("not applicable")) {
 			logger.info(LOGTAG + "No applicable VPC network, so nothing to rollback");
 		} else {
+			String vpnConnectionProfileAssignmentFailed = getStepPropertyValue("DETERMINE_VPC_CIDE",
+					"VpnConnectionProfileAssignmentFailed");
+
+			logger.info(LOGTAG + "vpnConnectionProfileAssignementFailed=" + vpnConnectionProfileAssignmentFailed);
+
 			String vpnConnectionProfileId =
 					getResultProperty("vpnConnectionProfileId");
 
 			// If the vpcConnectionProfileId is not null, query for the
 			// VpnConnectionProfileAssignment
-			if (vpnConnectionProfileId != null) {
+			if (!Boolean.valueOf(vpnConnectionProfileAssignmentFailed) && vpnConnectionProfileId != null) {
 				// Get a configured VpnConnectionProfile and
 				// VpnConnectionProfileQuerySpecification from AppConfig
 				VpnConnectionProfileAssignment vcpa = new
