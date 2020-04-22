@@ -161,7 +161,7 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 						" result(s).");
 			} catch (EnterpriseObjectQueryException eoqe) {
 				String errMsg = "An error occurred querying for the  " +
-						"VpnConnectionProfileAssignmnet object. " +
+						"VpnConnectionProfileAssignment object. " +
 						"The exception is: " + eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, eoqe);
@@ -393,7 +393,7 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the  " +
-	    	  "VpnConnectionProfileAssignmnet object. " +
+              "VpnConnectionProfileAssignment object. " +
 	    	  "The exception is: " + eoqe.getMessage();
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException(errMsg, eoqe);
