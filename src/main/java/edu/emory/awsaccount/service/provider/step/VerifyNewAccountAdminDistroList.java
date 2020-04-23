@@ -10,12 +10,11 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.jms.JMSException;
-
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
+import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
+import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
+import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -25,11 +24,10 @@ import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
-import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
-import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
+
+import javax.jms.JMSException;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * If this is a new account request, send a e-mail validation
@@ -245,7 +243,8 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 				EmailAddressValidation eavResult = 
 						(EmailAddressValidation)results.get(0);
 				String statusCode = eavResult.getStatusCode();
-				if (statusCode.equalsIgnoreCase("0")) {
+				if (statusCode.equalsIgnoreCase("0") ||
+                    statusCode.equalsIgnoreCase("3")) {
 					isValid = true;
 					logger.info(LOGTAG + "isValid is true");
 					addResultProperty("isValid", Boolean.toString(isValid));
