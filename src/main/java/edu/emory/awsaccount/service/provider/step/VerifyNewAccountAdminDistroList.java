@@ -238,11 +238,13 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 				getEmailAddressValidationServiceProducerPool()
 					.releaseProducer((MessageProducer)rs);
 			}
-			
+
+			logger.info(LOGTAG + "received " + results.size() + " result(s)");
 			if (results.size() == 1) {
 				EmailAddressValidation eavResult = 
 						(EmailAddressValidation)results.get(0);
 				String statusCode = eavResult.getStatusCode();
+				logger.info(LOGTAG + "statusCode=" + statusCode);
 				if (statusCode.equalsIgnoreCase("0") ||
                     statusCode.equalsIgnoreCase("3")) {
 					isValid = true;
