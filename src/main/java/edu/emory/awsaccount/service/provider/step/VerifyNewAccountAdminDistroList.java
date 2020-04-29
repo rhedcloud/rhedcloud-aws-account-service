@@ -45,8 +45,9 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	private String m_accountSequenceNumber = null;
 	private int m_requestTimeoutInterval = 10000;
 	//backwrdCompatibility to emory
+	private String emailDistroListUserNamePrefix = "aws-";
 	private String emailDistroListDomainName="@emory.edu";
-	public void init (String provisioningId, Properties props, 
+	public void init (String provisioningId, Properties props,
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
 			throws StepException {
 		
@@ -88,6 +89,8 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
 			getRequestTimeoutInterval());
 
+		emailDistroListUserNamePrefix = getProperties().getProperty("emailDistroListUserNamePrefix", emailDistroListUserNamePrefix);
+		logger.info(LOGTAG + "emailDistroListUserNamePrefix is: " + emailDistroListUserNamePrefix);
 		emailDistroListDomainName=getProperties().getProperty("emailDistroListDomainName", emailDistroListDomainName);
 		logger.info(LOGTAG + "emailDistroListDomainName is: " + emailDistroListDomainName);
 
@@ -403,7 +406,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	}
 	
 	private String getAccountEmailAddress() {
-		String emailAddress = getAccountAlias() + emailDistroListDomainName;
+		String emailAddress = emailDistroListUserNamePrefix + getAccountAlias() + emailDistroListDomainName;
 				
 		return emailAddress;
 	}
