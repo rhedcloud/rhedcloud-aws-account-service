@@ -310,12 +310,12 @@ implements VirtualPrivateCloudProvisioningProvider {
 					step = (Step)stepClass.newInstance();
 					logger.info(LOGTAG + "Verified class for step "
 						+ stepId +": " + className);
-					logger.info(LOGTAG + "Invoking " + className + ".init() method");
-					VirtualPrivateCloudProvisioning vpcp = (VirtualPrivateCloudProvisioning) aConfig
-							.getObjectByType(this.getClass().getName());
-					step.init(vpcp.getProvisioningId(), props, getAppConfig(),
-							getVirtualPrivateCloudProvisioningProvider());
-					logger.info(LOGTAG + "Step initialization succeeded");
+//					logger.info(LOGTAG + "Invoking " + className + ".init() method");
+//					VirtualPrivateCloudProvisioning vpcp = (VirtualPrivateCloudProvisioning) aConfig
+//							.getObjectByType(this.getClass().getName());
+//					step.init(vpcp.getProvisioningId(), props, getAppConfig(),
+//							getVirtualPrivateCloudProvisioningProvider());
+//					logger.info(LOGTAG + "Step initialization succeeded");
 				}
 				catch (ClassNotFoundException cnfe) {
 					String errMsg = "An error occurred instantiating " +
@@ -334,16 +334,16 @@ implements VirtualPrivateCloudProvisioningProvider {
 						"a step. The exception is: " + ie.getMessage();
 					logger.error(LOGTAG + errMsg);
 					throw new ProviderException(errMsg, ie);
-				} catch (StepException error) {
-					String errMsg = "An error occurred instantiating " +
-							"a step. The exception is: " + error.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new ProviderException(errMsg, error);
-				} catch (EnterpriseConfigurationObjectException error) {
-					String errMsg = "An error occurred instantiating " +
-							"a step. The exception is: " + error.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new ProviderException(errMsg, error);
+//				} catch (StepException error) {
+//					String errMsg = "An error occurred instantiating " +
+//							"a step. The exception is: " + error.getMessage();
+//					logger.error(LOGTAG + errMsg);
+//					throw new ProviderException(errMsg, error);
+//				} catch (EnterpriseConfigurationObjectException error) {
+//					String errMsg = "An error occurred instantiating " +
+//							"a step. The exception is: " + error.getMessage();
+//					logger.error(LOGTAG + errMsg);
+//					throw new ProviderException(errMsg, error);
 				}
 			}	
 		}
