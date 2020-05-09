@@ -152,7 +152,7 @@
    <artifactId>log4j-1.2.15</artifactId>
    <version>1.2.15</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/log4j-1.2.15.jar</systemPath>
+   <systemPath>${project.basedir}/lib/log4j-1.2.17.jar</systemPath>
   </dependency>
 
   <dependency>
