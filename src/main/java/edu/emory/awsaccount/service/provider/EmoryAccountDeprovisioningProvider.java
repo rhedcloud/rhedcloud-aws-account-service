@@ -11,29 +11,18 @@
 
 package edu.emory.awsaccount.service.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 // Java utilities
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
-import java.util.Random;
 import java.util.StringTokenizer;
-
 import javax.jms.JMSException;
 
-import org.apache.commons.io.IOUtils;
+
 // Log4j
 import org.apache.log4j.Category;
-
-// JDOM
-import org.jdom.Document;
-import org.jdom.Element;
 
 // OpenEAI foundation
 import org.openeai.OpenEaiObject;
@@ -44,61 +33,35 @@ import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.EnterpriseObjectUpdateException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Result;
-import org.openeai.moa.objects.resources.v1_0.QueryLanguage;
 import org.openeai.threadpool.ThreadPool;
 import org.openeai.threadpool.ThreadPoolException;
 import org.openeai.transport.RequestService;
-import org.openeai.utils.filetransfer.handlers.TransferHandlerException;
-import org.openeai.utils.lock.Key;
-import org.openeai.utils.lock.Lock;
-import org.openeai.utils.lock.LockAlreadySetException;
-import org.openeai.utils.lock.LockException;
 import org.openeai.utils.sequence.Sequence;
 import org.openeai.utils.sequence.SequenceException;
-import org.openeai.xml.XmlDocumentReader;
-import org.openeai.xml.XmlDocumentReaderException;
-
-import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountDeprovisioning;
 
 //AWS Message Object API (MOA)
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
-import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningRequisition;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.DeprovisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
 import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 
-import edu.emory.awsaccount.service.provider.step.Step;
-import edu.emory.awsaccount.service.provider.step.StepException;
+import edu.emory.awsaccount.service.deprovisioning.step.Step;
+import edu.emory.awsaccount.service.deprovisioning.step.StepException;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
-import edu.emory.moa.jmsobjects.identity.v2_0.Person;
-import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
-import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
-import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
-import edu.emory.moa.objects.resources.v1_0.CidrRequisition;
-import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
-import edu.emory.moa.objects.resources.v2_0.PersonQuerySpecification;
 
 /**
  *  A provider that maintains provisions AWS accounts and VPC
@@ -1315,10 +1278,9 @@ implements AccountDeprovisioningProvider {
 						}
 **/						
 
-/**	RESUME HERE: uncomment					
+			
 						step.init(getDeprovisioningId(), props, getAppConfig(), 
 							getAccountDeprovisioningProvider());
-**/
 					}
 					catch (ClassNotFoundException cnfe) {
 						// An error occurred instantiating the step.
@@ -1379,8 +1341,7 @@ implements AccountDeprovisioningProvider {
 						}
 						rollbackCompletedSteps(completedSteps);
 						return;
-					}
-/** resume here: UNCOMMENT					
+					}				
 					catch (StepException se) {
 						// An error occurred initializing the step.
 						// Log it and roll back all preceding steps.
@@ -1401,7 +1362,7 @@ implements AccountDeprovisioningProvider {
 						rollbackCompletedSteps(completedSteps);
 						return;
 					}
-**/					
+										
 					// Execute the step
 					List<Property> resultProps = null;
 					try {
