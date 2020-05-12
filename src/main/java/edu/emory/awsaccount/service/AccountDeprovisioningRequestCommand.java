@@ -165,7 +165,9 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
         try {
             PropertyConfig pConfig = (PropertyConfig) getAppConfig().getObject("GeneralProperties");
             setProperties(pConfig.getProperties());
-        } catch (EnterpriseConfigurationObjectException ecoe) {
+            logger.info(LOGTAG + "Properties are: " + getProperties().toString());     
+        } 
+        catch (EnterpriseConfigurationObjectException ecoe) {
             // An error occurred retrieving a property config from AppConfig.
             // Log it
             // and throw an exception.
@@ -179,7 +181,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
         String className = getProperties()
         	.getProperty("accountDeprovisioningProviderClassName");
         if (className == null || className.equals("")) {
-            String errMsg = "No accountDeprovisinoingProviderClassName property "
+            String errMsg = "No accountDeprovisioningProviderClassName property "
                     + "specified. Can't continue.";
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
