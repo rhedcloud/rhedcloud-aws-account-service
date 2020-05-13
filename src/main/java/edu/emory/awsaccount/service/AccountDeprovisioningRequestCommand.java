@@ -272,9 +272,9 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
      *             text portion of the message, clears the message body in
      *             preparation for the reply, gets the ControlArea from the XML
      *             document, and verifies that message object of the message is
-     *             a VirtualPrivateCloud and the action is a query,
+     *             an AccountDeprovisioning object and the action is a query,
      *             generate, update, or delete. Then this method uses the 
-     *             configured VirtualPrivateCloudProvisioningProvider to perform each
+     *             configured AccountDeprovisioningProvider to perform each
      *             operation.
      */
     public final Message execute(int messageNumber, Message aMessage) throws CommandException {
