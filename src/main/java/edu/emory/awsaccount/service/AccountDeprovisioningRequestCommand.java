@@ -320,11 +320,11 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
 
         // Verify that the message object we are dealing with is a
         // VirtualPrivateCloudProvisioning object; if not, reply with an error.
-        if (msgObject.equalsIgnoreCase("VirtualPrivateCloudProvisioning") == false) {
+        if (msgObject.equalsIgnoreCase("AccountDeprovisioning") == false) {
             String errType = "application";
             String errCode = "OpenEAI-1001";
             String errDesc = "Unsupported message object: " + msgObject
-                    + ". This command expects 'VirtualPrivateCloudProvisioning'.";
+                    + ". This command expects 'AccountDeprovisioning'.";
             logger.error(LOGTAG + errDesc);
             logger.error(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
             ArrayList errors = new ArrayList();
