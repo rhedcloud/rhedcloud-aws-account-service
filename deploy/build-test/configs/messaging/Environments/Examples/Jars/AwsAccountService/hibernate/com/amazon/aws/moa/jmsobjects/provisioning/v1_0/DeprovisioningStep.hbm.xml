@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.objects.resources.v1_0">
-<class name="DeprovisioningStep" table="DEPRVSNNG_STP">
+<class name="DeprovisioningStep" table="DPRVSNNG_STP">
 <id name="DeprovisioningStepId" column="DEPROVISIONING_STEP_ID" type="OpenEaiLong" >
 <generator class="OpenEaiSequence">
 <param name="sequence">H_DEPROVISIONING_STEP_SEQ</param>
@@ -16,7 +16,7 @@
 <property name="ActualTime" column="ACTUAL_TIME"/>
 <property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
 
-<bag name="Property" table="PRVSNNG_STP_PRPT" batch-size="50">
+<bag name="Property" table="DPRVSNNG_STP_PRPT" batch-size="50">
 <key column="DEPROVISIONING_STEP_ID"></key>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
 <property name="Key" column="KEY_"/>
