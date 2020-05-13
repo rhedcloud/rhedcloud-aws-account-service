@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE com.amazon.aws.Provisioning.AccountDeprovisioning.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<com.amazon.aws.Provisioning.AccountDeprovisioning.Delete>
+	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
+		messageObject="VirtualPrivateCloudProvisioning" messageAction="Delete" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>VirtualPrivateCloud</SenderAppId>
+				<ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
+				<MessageSeq>2734</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>VirtualPrivateCloud</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<AccountDeprovisioning>
+				<DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+				<AccountDeprovisioningRequisition>
+					<AccountId>123456789012</AccountId>
+				</AccountDeprovisioningRequisition>
+				<Status>pending</Status>
+				<AnticipatedTime>371197</AnticipatedTime>
+				<DeprovisioningStep>
+					<DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+					<StepId>1</StepId>
+					<Type>DETERMINE_NEW_OR_EXISTING_AWS_ACCOUNT</Type>
+					<Description>Determine if the request is for a new VPC in a new AWS account from
+						the inventory or a new VPC in an account that is already in
+						use.</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>1</AnticipatedTime>
+					<CreateUser>AwsAccountService</CreateUser>
+					<CreateDatetime>
+						<Year>2016</Year>
+						<Month>2</Month>
+						<Day>3</Day>
+						<Hour>4</Hour>
+						<Minute>5</Minute>
+						<Second>6</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</DeprovisioningStep>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</AccountDeprovisioning>
+		</DeleteData>
+	</DataArea>
+</com.amazon.aws.Provisioning.AccountDeprovisioning.Delete>

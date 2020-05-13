@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.objects.resources.v1_0">
+<class name="DeprovisioningStep" table="DPRVSNNG_STP">
+<id name="DeprovisioningStepId" column="DEPROVISIONING_STEP_ID" type="OpenEaiLong" >
+<generator class="OpenEaiSequence">
+<param name="sequence">H_DEPROVISIONING_STEP_SEQ</param>
+</generator>
+</id>
+<property name="DeprovisioningId" column="DEPROVISIONING_ID"/>
+<property name="StepId" column="STEP_ID"/>
+<property name="Type" column="TYPE_"/>
+<property name="Description" column="DESCRIPTION" length="2500"/>
+<property name="Status" column="STATUS"/>
+<property name="StepResult" column="STEP_RESULT"/>
+<property name="ActualTime" column="ACTUAL_TIME"/>
+<property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
+
+<bag name="Property" table="DPRVSNNG_STP_PRPT" batch-size="50">
+<key column="DEPROVISIONING_STEP_ID"></key>
+<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property">
+<property name="Key" column="KEY_"/>
+<property name="Value" column="VALUE"/>
+</composite-element>
+</bag>
+
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+</hibernate-mapping>

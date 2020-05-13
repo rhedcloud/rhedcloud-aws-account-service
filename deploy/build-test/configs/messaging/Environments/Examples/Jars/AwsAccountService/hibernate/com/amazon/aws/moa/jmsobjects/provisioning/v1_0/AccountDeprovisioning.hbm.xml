@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.amazon.aws.moa.jmsobjects.provisioning.v1_0">
+<class name="AccountDeprovisioning" table="ACCOUNT_DEPROVISIONING">
+<id name="DeprovisioningId" column="DEPROVISIONING_ID">
+<generator class="assigned"/>
+</id>
+
+<component name="AccountDeprovisioningRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningRequisition">
+<property name="AccountId" column="ACCOUNT_ID"/>
+</component>
+
+
+
+
+
+<property name="Status" column="STATUS"/>
+<property name="DeprovisioningResult" column="DEPROVISIONING_RESULT"/>
+<property name="ActualTime" column="ACTUAL_TIME"/>
+<property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
+
+<bag name="DeprovisioningStep" cascade="all" >
+<key column="DEPROVISIONING_ID"/>
+<one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.DeprovisioningStep"/>
+</bag>
+
+<property name="CreateUser" column="CREATE_USER"/>
+<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+</class>
+
+<sql-query name="AccountDeprovisioningPendingWithin30mins">
+<return alias="AccountDeprovisioning" class="AccountDeprovisioning"/>
+<![CDATA[
+		select * from ACCOUNT_DEPROVISIONING where extract (day from (sysdate-create_datetime)*24*60) < 30 and status = 'pending'
+        ]]>
+</sql-query>
+</hibernate-mapping>

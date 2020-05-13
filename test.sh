@@ -11,7 +11,7 @@ cp -R deploy/build-test/configs target/deploy
 cp  deploy/build-test/libs/AwsAccountService/* target/deploy/lib
 cp lib/*.jar target/deploy/lib
 cp -R deploy/build-test/message target/deploy
-cp deploy/esb-dev/tests/AwsAccountService-hibernate-dev.cfg.xml target/deploy/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/hibernate.cfg.xml
+cp deploy/build-test/tests/AwsAccountService-hibernate-dev.cfg.xml target/deploy/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/hibernate.cfg.xml
 cp target/*.jar target/deploy/lib
 
 echo java
