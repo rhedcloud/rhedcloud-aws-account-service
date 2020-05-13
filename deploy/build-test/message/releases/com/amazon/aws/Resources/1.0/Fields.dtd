@@ -63,6 +63,8 @@
 <!ELEMENT Credits %STRDOM;>
 <!ELEMENT CurrencyCode %STRDOM;>
 <!ELEMENT CustomerAdminUserId %STRDOM;>
+<!ELEMENT DeprovisioningId %STRDOM;>
+<!ELEMENT DeprovisioningStepId %STRDOM;>
 <!ELEMENT Description %STRDOM;>
 <!ELEMENT DetectorName %STRDOM;>
 <!ELEMENT DisableRollback %STRDOM;>
@@ -86,6 +88,7 @@
 <!ELEMENT LinkedAccountName %STRDOM;>
 <!ELEMENT MetricName %STRDOM;>
 <!ELEMENT Name %STRDOM;>
+<!ELEMENT Namespace %STRDOM;>
 <!ELEMENT NetId %STRDOM;>
 <!ELEMENT NotificationArn %STRDOM;>
 <!ELEMENT NotifyAdmins %STRDOM;>
@@ -102,6 +105,7 @@
 <!ELEMENT Priority %STRDOM;>
 <!ELEMENT ProductCode %STRDOM;>
 <!ELEMENT ProductName %STRDOM;>
+<!ELEMENT ProfileName %STRDOM;>
 <!ELEMENT ProvisioningId %STRDOM;>
 <!ELEMENT ProvisioningResult %STRDOM;>
 <!ELEMENT ProvisioningStepId %STRDOM;>

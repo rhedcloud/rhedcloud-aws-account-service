@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Provisioning.AccountDeprovisioning.Create SYSTEM "../dtd/Create-Sync.dtd">
+<com.amazon.aws.Provisioning.AccountDeprovisioning.Create>
+	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning"
+		messageObject="AccountDeprovisioning" messageAction="Create" messageRelease="1.0"
+		messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.usda.ars.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>nutrientdbservice</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<AccountDeprovisioning>
+				<DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+				<AccountDeprovisioningRequisition>
+					<AccountId>123456789012</AccountId>
+				</AccountDeprovisioningRequisition>
+				<Status>pending</Status>
+				<AnticipatedTime>371197</AnticipatedTime>
+				<DeprovisioningStep>
+					<DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+					<StepId>1</StepId>
+					<Type>DETERMINE_NEW_OR_EXISTING_AWS_ACCOUNT</Type>
+					<Description>Determine if the request is for a new VPC in a new AWS account from
+						the inventory or a new VPC in an account that is already in
+						use.</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>1</AnticipatedTime>
+					<CreateUser>AwsAccountService</CreateUser>
+					<CreateDatetime>
+						<Year>2016</Year>
+						<Month>2</Month>
+						<Day>3</Day>
+						<Hour>4</Hour>
+						<Minute>5</Minute>
+						<Second>6</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</DeprovisioningStep>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</AccountDeprovisioning>
+		</NewData>
+	</DataArea>
+</com.amazon.aws.Provisioning.AccountDeprovisioning.Create>

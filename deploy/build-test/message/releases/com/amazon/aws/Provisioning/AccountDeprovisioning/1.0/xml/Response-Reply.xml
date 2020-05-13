@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Provisioning.AccountDeprovisioning.Response SYSTEM "../dtd/Response-Reply.dtd">
+<com.amazon.aws.Provisioning.AccountDeprovisioning.Response>
+	<ControlAreaReply messageCategory="com.amazon.aws.Provisioning"
+		messageObject="AccountDeprovisioning" messageAction="Response" messagePriority="9"
+		messageType="Reply" messageRelease="1.0">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.openeai.tutorial.Samples.VirtualPrivateCloud</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>1</Month>
+			<Day>1</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>23</Second>
+			<SubSecond>762</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Generate" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>Paymaster</SenderAppId>
+				<ProducerId>producer1</ProducerId>
+				<MessageSeq>1</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<AccountDeprovisioning>
+			<DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+			<AccountDeprovisioningRequisition>
+				<AccountId>123456789012</AccountId>
+			</AccountDeprovisioningRequisition>
+			<Status>pending</Status>
+			<AnticipatedTime>371197</AnticipatedTime>
+			<DeprovisioningStep>
+				<DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+				<StepId>1</StepId>
+				<Type>DETERMINE_NEW_OR_EXISTING_AWS_ACCOUNT</Type>
+				<Description>Determine if the request is for a new VPC in a new AWS account from the
+					inventory or a new VPC in an account that is already in use.</Description>
+				<Status>pending</Status>
+				<AnticipatedTime>1</AnticipatedTime>
+				<CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</DeprovisioningStep>
+			<CreateUser>swheat</CreateUser>
+			<CreateDatetime>
+				<Year>2016</Year>
+				<Month>2</Month>
+				<Day>3</Day>
+				<Hour>4</Hour>
+				<Minute>5</Minute>
+				<Second>6</Second>
+				<SubSecond>0</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</CreateDatetime>
+		</AccountDeprovisioning>
+	</DataArea>
+</com.amazon.aws.Provisioning.AccountDeprovisioning.Response>

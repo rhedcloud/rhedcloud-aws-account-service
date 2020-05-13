@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Defines a message that communicates a deletion of an AccountDeprovisioning object.
+-->
+<!-- AWS Account Service AccountDeprovisioning
+	Copyright 2020 RHEDcloud Foundation. All rights reserved.
+-->
+<!--Release History (this information is manually updated when the message is released)
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT com.amazon.aws.Provisioning.AccountDeprovisioning.Delete (ControlAreaSync, DataArea)>
+<!ELEMENT DataArea (DeleteData)>
+<!ELEMENT DeleteData (DeleteAction, AccountDeprovisioning)>

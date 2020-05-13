@@ -41,6 +41,9 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Account (AccountId, AccountName, AlternateName?,ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountAlias (AccountId, Name)>
 <!ELEMENT AccountAliasQuerySpecification (AccountId)>
+<!ELEMENT AccountDeprovisioning (DeprovisioningId, AccountDeprovisioningRequisition, Status, DeprovisioningResult?, ActualTime?, AnticipatedTime?, DeprovisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT AccountDeprovisioningQuerySpecification (Comparison*, QueryLanguage?, DeprovisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT AccountDeprovisioningRequisition (AccountId)>
 <!ELEMENT AccountNotification (AccountNotificationId?, AccountId, Type, Priority, Subject, Text, ReferenceId?, Annotation*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountNotificationQuerySpecification (Comparison*, QueryLanguage?, AccountNotificationId?, AccountId?, Type?, Priority?, AnnotationText?,StartCreateDatetime?,EndCreateDatetime?)>
 <!ELEMENT AccountOrganizationMembership (AccountId, ParentId)>
@@ -58,6 +61,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
 -->
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
+<!ELEMENT DeprovisioningStep (DeprovisioningStepId?,DeprovisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
 <!ELEMENT DetectionResult (Type, Status, Error*)>
 <!ELEMENT EmailAddress (Type, Email)>
@@ -73,7 +77,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT SecurityRisk (SecurityRiskId?, ServiceId, SequenceNumber, ServiceRiskName, RiskLevel, Description, AssessorId, AssessmentDatetime, ServiceControl*)>
 <!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectionResult, DetectedSecurityRisk*, InstanceId?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT SecurityRiskDetectionQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskDetectionId?, AccountId?, SecurityRiskDetector?, SecurityRiskRemediator?, InstanceId?, StartCreateDatetime?,EndCreateDatetime?,DetectedSecurityRisk*)>
-<!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?)>
+<!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?, SecurityRiskResourceTaggingProfile?)>
 <!ELEMENT SecurityRiskDetectionMetric (DetectorAccount*)>
 <!ELEMENT DetectorAccount (DetectorName, AccountId)>
 <!ATTLIST SecurityRiskDetectionMetric 
@@ -81,6 +85,7 @@ MessageId was defined as an Element in openeai/segments.dtd
     value CDATA #REQUIRED
 >
 <!ELEMENT SecurityRiskDetectionMetricQuerySpecification (MetricName)>
+<!ELEMENT SecurityRiskResourceTaggingProfile (Namespace, ProfileName, Revision)>
 <!ELEMENT SensitiveDataTypeAuthorization (IsAuthorized, AuthorizedSensitiveDataTypeDescription, UnauthorizedReason*)>
 <!ELEMENT SensitiveDataTypeAuthorizationQuerySpecification (SensitiveDataType*)>
 
