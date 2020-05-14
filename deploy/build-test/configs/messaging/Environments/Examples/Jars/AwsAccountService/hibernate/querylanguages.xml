@@ -144,6 +144,16 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 	</querylanguage>
 	<querylanguage>
 		<VpnConnectionProvisioningQuerySpecification>
+			<QueryLanguage max="20" type="hql" name="maxAccountDeprovisionings" value="from AccountDerovisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</VpnConnectionProvisioningQuerySpecification>
+		<VpnConnectionProvisioningQuerySpecification>
+			<QueryLanguage type="hql" name="allAccountDeprovisionings" value="from AccountDeprovisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</VpnConnectionProvisioningQuerySpecification>
+	</querylanguage>
+	<querylanguage>
+		<VpnConnectionProvisioningQuerySpecification>
 			<QueryLanguage max="20" type="hql" name="maxVpncps" value="from VpnConnectionProvisioning order by CreateDatetime desc">
 			</QueryLanguage>
 		</VpnConnectionProvisioningQuerySpecification>
