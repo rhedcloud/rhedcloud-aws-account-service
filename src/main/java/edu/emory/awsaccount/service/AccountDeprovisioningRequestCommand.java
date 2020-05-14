@@ -60,60 +60,59 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
- * This command handles requests for VirtualPrivateCloudProvisioning objects.
+ * This command handles requests for AccountDeprovisioning objects.
  * Specifically, it handles a Generate-Request. All other actions for the
- * VirtualPrivateCloudProvisioning object are handled by a deployment of the 
+ * AccountDeprovisioning object are handled by a deployment of the 
  * RDBMS connector for persistence and retrieval purposes only. This command
  * also proxies query requests to the RDBMS connector implementation, so 
  * one command and one endpoint can cleanly implement the entire public
- * interface for virtual private cloud provisioning.
+ * interface for account deprovisioning.
  * <P>
- * The generate and query actions for VirtualPrivateCloudProvisioning are
- * invoked by clients wanting to provision a new Emory AWS 
- * VirtualPrivateCloud in an Emory AWS account. The generate operation
- * passes in a VirtualPrivateCloudRequisition object with basic parameters
- * for the VPC they are requesting. The generate action immediately returns
- * a VirtualPrivateCloudProvisioning object with detailed status of the
- * provisioning process and a ProvisioningId that can be used for subsequent
+ * The generate and query actions for AccountDeprovisioning are
+ * invoked by clients wanting to deprovision an existing AWS account.
+ * The generate operation passes in an AccountDeprovisioningRequisition object
+ * with the account number to deprovision. The generate action immediately returns
+ * a AccountDeprovisioning object with detailed status of the
+ * deprovisioning process and a DeprovisioningId that can be used for subsequent
  * queries for updates on the progress of provisioning. Additionally, like
- * all ESB services the AwsAccountService also publishes create, update, and
- * delete sync messages, so as a new instance of the provisioning process
+ * all similar services the AwsAccountService also publishes create, update, and
+ * delete sync messages, so as a new instance of the deprovisioning process
  * is created and updated, create and update sync messages are published. 
  * Applications interested in the status of provisioning may also consume
  * these messages to take action on provisioning operations.
  * <OL>
- * <LI>com.amazon.aws.Provisioning.VirtualPrivateCloud.Query-Request (<A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/dtd/Query-Request.dtd?view=markup"
+ * <LI>com.amazon.aws.Provisioning.AccountDeprovisioning.Query-Request (<A HREF=
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountDeprovisioning/1.0/dtd/Query-Request.dtd?view=markup"
  * >Definition</A> | <A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/VirualPrivateCloudProvisioning/1.0/xml/Query-Request.xml?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountDeprovisioning/1.0/xml/Query-Request.xml?view=markup"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
  * <LI>Build a message object from the XML document for the
- * VirtualPrivateCloudProvisioningQuerySpecification</LI>
- * <LI>Get a configured VirtualPrivateCloudProvisioning object from
+ * AccountDeprovisioningQuerySpecification</LI>
+ * <LI>Get a configured AccountDeprovisioning object from
  * AppConfig</LI>
  * <LI>Get the P2P producer pool configured to send messages to the
  * AwsAccountService RDBMS command implementation</LI>
  * <LI>Call the query method on the VirtualPrivateCloudProvisioiningObject</LI>
  * <LI>Proxy the result to the requestor by building the message response from
  * the results of the query operation. This should contain a list of 
- * zero or more VirtualPrivateCloudProvisioning objects.</LI>
+ * zero or more AccountDeprovisioning objects.</LI>
  * <LI>Return the response.</LI>
  * </UL>
  * </LI>
- * <LI>com.amazon.aws.Provisioning.VirtualPrivateCloud.Generate-Request (<A
+ * <LI>com.amazon.aws.Provisioning.AccountDeprovisioning.Generate-Request (<A
  * HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/dtd/Generate-Request.dtd?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountDeprovisioning/1.0/dtd/Generate-Request.dtd?view=markup"
  * >Definition</A> | <A HREF=
- * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/VirtualPrivateCloudProvisioning/1.0/xml/Generate-Request.xml?view=markup"
+ * "https://svn.service.emory.edu:8443/cgi-bin/viewvc.cgi/emoryoit/message/releases/com/amazon/aws/Provisioning/AccountDeprovisioning/1.0/xml/Generate-Request.xml?view=markup"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
  * <LI>Build a message object from the XML document for the
  * VirtualPrivateCloudRequisition object</LI>
  * <LI>Invoke the generate method of the
- * configured virtual private cloud provisioning provider. </LI>
+ * configured account deprovisioning provider. </LI>
  * <LI>Build the response to the request message</LI>
  * <LI>Return the response to the request message</LI>
  * </UL>
@@ -319,7 +318,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
         String msgObject = eControlArea.getAttribute("messageObject").getValue();
 
         // Verify that the message object we are dealing with is a
-        // VirtualPrivateCloudProvisioning object; if not, reply with an error.
+        // AccountDeprovisioning object; if not, reply with an error.
         if (msgObject.equalsIgnoreCase("AccountDeprovisioning") == false) {
             String errType = "application";
             String errCode = "OpenEAI-1001";
@@ -506,7 +505,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountDeprovisioning."
                     + "Query-Request message.");
             Element eQuerySpec = inDoc.getRootElement().getChild("DataArea")
-                    .getChild("VirtualPrivateCloudProvisioningQuerySpecification");
+                    .getChild("AccountDeprovisioningQuerySpecification");
 
             // Get a configured query object from AppConfig.            
             AccountDeprovisioningQuerySpecification querySpec = new AccountDeprovisioningQuerySpecification();
