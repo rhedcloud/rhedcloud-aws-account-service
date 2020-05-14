@@ -144,7 +144,7 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 	</querylanguage>
 	<querylanguage>
 		<AccountDeprovisioningQuerySpecification>
-			<QueryLanguage max="20" type="hql" name="maxAccountDeprovisionings" value="from AccountDerovisioning order by CreateDatetime desc">
+			<QueryLanguage max="20" type="hql" name="maxAccountDeprovisionings" value="from AccountDeprovisioning order by CreateDatetime desc">
 			</QueryLanguage>
 		</AccountDeprovisioningQuerySpecification>
 		<AccountDeprovisioningQuerySpecification>
