@@ -4,7 +4,7 @@
 <!DOCTYPE com.amazon.aws.Provisioning.AccountDeprovisioning.Delete SYSTEM "../dtd/Delete-Request.dtd">
 <com.amazon.aws.Provisioning.AccountDeprovisioning.Delete>
 	<ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
-		messageObject="VirtualPrivateCloudProvisioning" messageAction="Delete" messageRelease="1.0"
+		messageObject="AccountDeprovisioning" messageAction="Delete" messageRelease="1.0"
 		messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>

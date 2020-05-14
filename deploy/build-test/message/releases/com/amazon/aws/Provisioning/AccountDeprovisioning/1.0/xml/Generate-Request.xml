@@ -25,7 +25,7 @@
 			<Timezone>6:00-GMT</Timezone>
 		</Datetime>
 		<ExpectedReplyFormat messageCategory="com.amazon.aws.Provisioning"
-			messageObject="VirtualPrivateCloudProvisioning" messageAction="Response"
+			messageObject="AccountDeprovisioning" messageAction="Response"
 			messageRelease="1.0" messageType="Reply"/>
 	</ControlAreaRequest>
 	<DataArea>

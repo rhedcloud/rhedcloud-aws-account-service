@@ -43,7 +43,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT AccountAliasQuerySpecification (AccountId)>
 <!ELEMENT AccountDeprovisioning (DeprovisioningId, AccountDeprovisioningRequisition, Status, DeprovisioningResult?, ActualTime?, AnticipatedTime?, DeprovisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountDeprovisioningQuerySpecification (Comparison*, QueryLanguage?, DeprovisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
-<!ELEMENT AccountDeprovisioningRequisition (AccountId)>
+<!ELEMENT AccountDeprovisioningRequisition (AccountId, AuthenticatedRequestorUserId)>
 <!ELEMENT AccountNotification (AccountNotificationId?, AccountId, Type, Priority, Subject, Text, ReferenceId?, Annotation*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountNotificationQuerySpecification (Comparison*, QueryLanguage?, AccountNotificationId?, AccountId?, Type?, Priority?, AnnotationText?,StartCreateDatetime?,EndCreateDatetime?)>
 <!ELEMENT AccountOrganizationMembership (AccountId, ParentId)>
