@@ -127,7 +127,7 @@ public class AuthorizeRequestor extends AbstractStep {
         /* begin business login */
 
         logger.info(LOGTAG + "Determine if the requestor is authorized to deprovision this account");
-        String requestorAccountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
+        String requestorAccountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAuthenticatedRequestorUserId();
         logger.info(LOGTAG + "requestorAccountId is: " + requestorAccountId);
         addResultProperty("requestorAccountId", requestorAccountId);
         List<RoleAssignment> roleAssignments = getRoleAssignments(requestorAccountId);
@@ -236,11 +236,17 @@ public class AuthorizeRequestor extends AbstractStep {
         List<RoleAssignment> result = null;
 
         try {
-            long started = System.currentTimeMillis();
             result = roleAssignment.query(querySpecification, requestService);
-            long time = System.currentTimeMillis() - started;
-            logger.info(LOGTAG + "Query for role assignments completed in " + time + "ms.");
             logger.info(LOGTAG + "Number of roles returned: " + result.size());
+            logger.info(LOGTAG + "Adding role assignments to result properties");
+            logger.info(LOGTAG + "totalRoleAssignments is:" + String.valueOf(result.size()));
+            addResultProperty("totalRoleAssignments", String.valueOf(result.size()));
+            for (int index = 0; index < result.size(); index++) {
+                String propertyLabel = "roleAssignment" + String.valueOf(index);
+                RoleAssignment role = result.get(index);
+                logger.info(LOGTAG + propertyLabel + " is: " + role.getRoleDN());
+                addResultProperty(propertyLabel, role.getRoleDN());
+            }
         } catch (EnterpriseObjectQueryException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -248,6 +254,10 @@ public class AuthorizeRequestor extends AbstractStep {
         } finally {
             this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
         }
+
+        long started = System.currentTimeMillis();
+        long time = System.currentTimeMillis() - started;
+        logger.info(LOGTAG + "Query for role assignments completed in " + time + "ms.");
 
         return result;
     }
