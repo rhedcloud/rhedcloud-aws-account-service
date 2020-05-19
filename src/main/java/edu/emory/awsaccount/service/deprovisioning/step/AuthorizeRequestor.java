@@ -24,7 +24,7 @@ import java.util.Properties;
  * @author Darryl L. Pierce (dpierce@surgeforward.com)
  * @version 1.0 - 12 May 2020
  */
-public class AuthorizeRequestor extends AbstractStep {
+public class AuthorizeRequestor extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "AuthorizeRequestor";
     private ProducerPool idmServiceProducerPool;
     private String adminRoleDnTemplate;
@@ -64,6 +64,19 @@ public class AuthorizeRequestor extends AbstractStep {
         logger.info(LOGTAG + "userDnTemplate is: " + userDnTemplate);
 
         logger.info(LOGTAG + "Initialization complete.");
+    }
+
+    @Override
+    public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = createLogTag("rollback");
+
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
+                "roll back.");
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
+
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
 
     private void setUserDnTemplate(String userDnTemplate) throws StepException {
