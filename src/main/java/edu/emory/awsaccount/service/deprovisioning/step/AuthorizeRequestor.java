@@ -253,12 +253,10 @@ public class AuthorizeRequestor extends AbstractStep implements Step {
             logger.info(LOGTAG + "Number of roles returned: " + result.size());
             logger.info(LOGTAG + "Adding role assignments to result properties");
             logger.info(LOGTAG + "totalRoleAssignments is:" + String.valueOf(result.size()));
-            addResultProperty("totalRoleAssignments", String.valueOf(result.size()));
             for (int index = 0; index < result.size(); index++) {
                 String propertyLabel = "roleAssignment" + String.valueOf(index);
                 RoleAssignment role = result.get(index);
                 logger.info(LOGTAG + propertyLabel + " is: " + role.getRoleDN());
-                addResultProperty(propertyLabel, role.getRoleDN());
             }
         } catch (EnterpriseObjectQueryException error) {
             String message = error.getMessage();
