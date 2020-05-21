@@ -140,10 +140,10 @@ public class AuthorizeRequestor extends AbstractStep implements Step {
         /* begin business login */
 
         logger.info(LOGTAG + "Determine if the requestor is authorized to deprovision this account");
-        String requestorAccountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAuthenticatedRequestorUserId();
-        logger.info(LOGTAG + "requestorAccountId is: " + requestorAccountId);
-        addResultProperty("requestorAccountId", requestorAccountId);
-        List<RoleAssignment> roleAssignments = getRoleAssignments(requestorAccountId);
+        String authenticatedRequestorUserId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAuthenticatedRequestorUserId();
+        logger.info(LOGTAG + "authenticatedRequestorUserId is: " + authenticatedRequestorUserId);
+        addResultProperty("authenticatedRequestorUserId", authenticatedRequestorUserId);
+        List<RoleAssignment> roleAssignments = getRoleAssignments(authenticatedRequestorUserId);
 
         String accountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
         logger.info(LOGTAG + "accountId is: " + accountId);
