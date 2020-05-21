@@ -90,13 +90,13 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         logger.info(LOGTAG + "adminRoleDnTemplate is: " + adminRoleDnTemplate);
 
         String adminRoleDn = this.getAdminRoleDn(accountId);
-        List<String> adminIds = getAccountIdsAssignedToRole(adminRoleDn);
+        List<String> adminRoleDns = getAccountIdsAssignedToRole(adminRoleDn);
 
         // only attempt to remove accounts if there are accounts to be removed
-        if (adminIds.size() > 0) {
-            logger.info(LOGTAG + "Removing " + adminIds.size() + " admin(s) from admin role");
-            for (int index = 0; index < adminIds.size(); index++) {
-                this.deleteAdminFromRole(adminIds.get(index), adminRoleDnTemplate);
+        if (adminRoleDns.size() > 0) {
+            logger.info(LOGTAG + "Removing " + adminRoleDns.size() + " admin(s) from admin role");
+            for (int index = 0; index < adminRoleDns.size(); index++) {
+                this.deleteAdminFromRole(adminRoleDns.get(index));
             }
         } else {
             logger.info(LOGTAG + "No admin accounts to be removed");
@@ -120,11 +120,11 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         return this.adminRoleDnTemplate.replace("ACCOUNT_NUMBER", accountId);
     }
 
-    private void deleteAdminFromRole(String accountId, String adminRoleDnTemplate) throws StepException {
+    private void deleteAdminFromRole(String adminRoleDn) throws StepException {
         String LOGTAG = this.createLogTag("deleteAdminFromRole");
 
-        String adminRoleDn = getAdminRoleDn(accountId);
-        logger.info(LOGTAG + "Deleting admin role: " + adminRoleDn);
+        logger.info(LOGTAG + "Preparing to delete admin role");
+        logger.info(LOGTAG + "adminRoleDn is: " + adminRoleDn);
 
         RoleAssignment roleRevokation = null;
         RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
@@ -138,8 +138,8 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             throw new StepException(message, error);
         }
 
-        String identityDn = getIdentityDN(accountId);
-        logger.info(LOGTAG + "Preparing to revoke admin for identityDn: " + identityDn);
+        String identityDn = getIdentityDN(adminRoleDn);
+        logger.info(LOGTAG + "Preparing to revoke admin: " + identityDn);
 
         try {
             roleRevokation.setRoleAssignmentActionType("revoke");
