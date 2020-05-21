@@ -13,9 +13,7 @@ import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteAdminsFromAdminRole";
@@ -62,7 +60,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         long startTime = System.currentTimeMillis();
 
         String LOGTAG = createLogTag("run");
-        logger.info(LOGTAG + "Begin step simulation.");
+        logger.info(LOGTAG + "Begin running the step.");
 
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
@@ -88,7 +86,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         update(COMPLETED_STATUS, SUCCESS_RESULT);
 
         long time = System.currentTimeMillis() - startTime;
-        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+        logger.info(LOGTAG + "Step completed in " + time + "ms.");
 
         return getResultProperties();
     }
@@ -149,13 +147,15 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         try {
             List<RoleAssignment> roleAssignments = roleAssignment.query(roleAssignmentQuerySpecification, requestService);
-            logger.info(LOGTAG + "Number of account ids returned: " + result.size());
-            logger.info(LOGTAG + "totalRoleAssignments is:" + String.valueOf(result.size()));
+            Set<String> uniqueIds = new HashSet<>();
             for (int index = 0; index < roleAssignments.size(); index++) {
-                String propertyLabel = "roleAssignment" + String.valueOf(index);
                 RoleAssignment role = roleAssignments.get(index);
-                logger.info(LOGTAG + propertyLabel + " is: " + role.getRoleDN());
-                result.add(role.getRoleDN());
+                uniqueIds.add(role.getRoleDN());
+            }
+            result.addAll(uniqueIds);
+            logger.info(LOGTAG + "Number of unique account ids returned: " + result.size());
+            for (int index = 0; index < result.size(); index++) {
+                logger.info(LOGTAG + "Account ID[" + index + "] is: " + result.get(index));
             }
         } catch (EnterpriseObjectQueryException error) {
             String message = error.getMessage();
