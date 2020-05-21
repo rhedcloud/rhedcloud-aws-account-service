@@ -41,8 +41,7 @@ public class AuthorizeRequestor extends AbstractStep implements Step {
         // to authorize requestors.
         ProducerPool p2p1 = null;
         try {
-            p2p1 = (ProducerPool) getAppConfig()
-                    .getObject("IdmServiceProducerPool");
+            p2p1 = (ProducerPool) getAppConfig().getObject("IdmServiceProducerPool");
             setIdmServiceProducerPool(p2p1);
         } catch (EnterpriseConfigurationObjectException error) {
             String message = "An error occurred retrieving an object from AppConfig. The exception is: " + error.getMessage();
@@ -148,6 +147,8 @@ public class AuthorizeRequestor extends AbstractStep implements Step {
         String accountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
         logger.info(LOGTAG + "accountId is: " + accountId);
         addResultProperty("accountId", accountId);
+
+        addResultProperty("adminRoleDnTemplate", this.adminRoleDnTemplate);
 
         String adminRoleDn = getAdminRoleDn(accountId);
         logger.info(LOGTAG + "adminRoleDn is: " + adminRoleDn);

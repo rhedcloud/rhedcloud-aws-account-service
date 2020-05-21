@@ -273,10 +273,10 @@ public class AssignAdminsToAdminRole extends AbstractStep implements Step {
 		    req.setRoleDNs(roleDns);
 	    }
 	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting field values of the " +
-	    		"requisition. The exception is " + efe.getMessage();
-	    	logger.error(LOGTAG + "errMsg");
-	    	throw new StepException(errMsg, efe);
+            String errMsg = "An error occurred setting field values of the " +
+                "requisition. The exception is " + efe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, efe);
 	    }
 	    
 	    // Log the state of the RoleRequisition.
