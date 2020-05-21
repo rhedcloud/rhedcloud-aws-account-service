@@ -9,7 +9,9 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
@@ -76,9 +78,14 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         String adminRoleDn = this.getAdminRoleDn(accountId);
         List<String> adminIds = getAccountIdsAssignedToRole(adminRoleDn);
 
-        logger.info(LOGTAG + "Removing " + adminIds.size() + " admin(s) from admin role");
-        for (int index = 0; index < adminIds.size(); index++) {
-            this.deleteAdminFromRole(adminIds.get(index), adminRoleDnTemplate);
+        // only attempt to remove accounts if there are accounts to be removed
+        if (adminIds.size() > 0) {
+            logger.info(LOGTAG + "Removing " + adminIds.size() + " admin(s) from admin role");
+            for (int index = 0; index < adminIds.size(); index++) {
+                this.deleteAdminFromRole(adminIds.get(index), adminRoleDnTemplate);
+            }
+        } else {
+            logger.info(LOGTAG + "No admin accounts to be removed");
         }
 
         /* end business logic */
@@ -99,11 +106,61 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         return this.adminRoleDnTemplate.replace("ACCOUNT_NUMBER", accountId);
     }
 
-    private void deleteAdminFromRole(String accountId, String adminRoleDnTemplate) {
-        String LOGTAG = createLogTag("deleteAdminFromRole");
+    private void deleteAdminFromRole(String accountId, String adminRoleDnTemplate) throws StepException {
+        String LOGTAG = this.createLogTag("deleteAdminFromRole");
 
         String adminRoleDn = getAdminRoleDn(accountId);
         logger.info(LOGTAG + "Deleting admin role: " + adminRoleDn);
+
+        RoleAssignment roleRevokation = null;
+        RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
+
+        try {
+            roleRevokation = (RoleAssignment) getAppConfig().getObjectByType(RoleAssignment.class.getName());
+            roleAssignmentQuerySpecification = (RoleAssignmentQuerySpecification) getAppConfig().getObjectByType(RoleAssignmentQuerySpecification.class.getName());
+        } catch (EnterpriseConfigurationObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            roleRevokation.setRoleAssignmentActionType("revoke");
+            roleRevokation.setRoleAssignmentType("USER_TO_ROLE");
+            roleRevokation.setIdentityDN(adminRoleDn);
+            roleRevokation.setReason("Account deprovisioning");
+            logger.info(LOGTAG + "Role revokation XML is: " + roleRevokation.toXmlString());
+        } catch (EnterpriseFieldException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } catch (XmlEnterpriseObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        RequestService requestService = null;
+
+        try {
+            logger.info(LOGTAG + "Getting request service");
+            requestService = (RequestService) this.idmServiceProducerPool.getExclusiveProducer();
+        } catch (JMSException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            logger.info(LOGTAG + "Deleting admin role: " + adminRoleDn);
+            roleRevokation.delete("Delete", requestService);
+        } catch (EnterpriseObjectDeleteException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        logger.info(LOGTAG + "Role successfully deleted");
     }
 
     private List<String> getAccountIdsAssignedToRole(String roleDn) throws StepException {
