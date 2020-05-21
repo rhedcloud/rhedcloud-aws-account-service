@@ -21,6 +21,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteAdminsFromAdminRole";
     private ProducerPool idmServiceProducerPool;
     private String adminRoleDnTemplate;
+    private String identityDnTemplate;
 
     @Override
     public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
@@ -37,6 +38,19 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             logger.fatal(LOGTAG + message);
             throw new StepException(message);
         }
+
+        String identityDnTemplate = getProperties().getProperty("identityDnTemplate");
+        setIdentityDnTemplate(identityDnTemplate);
+        logger.info(LOGTAG + "identityDnTemplate is: " + identityDnTemplate);
+
+    }
+
+    private void setIdentityDnTemplate(String template) throws StepException {
+        if (template == null) {
+            throw new StepException("identityDnTemplate cannot be null");
+        }
+
+        this.identityDnTemplate = template;
     }
 
     @Override
@@ -124,10 +138,14 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             throw new StepException(message, error);
         }
 
+        String identityDn = getIdentityDN(accountId);
+        logger.info(LOGTAG + "Preparing to revoke admin for identityDn: " + identityDn);
+
         try {
             roleRevokation.setRoleAssignmentActionType("revoke");
             roleRevokation.setRoleAssignmentType("USER_TO_ROLE");
-            roleRevokation.setIdentityDN(adminRoleDn);
+            roleRevokation.setIdentityDN(identityDn);
+            roleRevokation.setRoleDN(adminRoleDn);
             roleRevokation.setReason("Account deprovisioning");
             logger.info(LOGTAG + "Role revokation XML is: " + roleRevokation.toXmlString());
         } catch (EnterpriseFieldException error) {
@@ -161,6 +179,10 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         }
 
         logger.info(LOGTAG + "Role successfully deleted");
+    }
+
+    private String getIdentityDN(String accountId) {
+        return this.identityDnTemplate.replace("USER_ID", accountId);
     }
 
     private List<String> getAccountIdsAssignedToRole(String roleDn) throws StepException {
