@@ -85,7 +85,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         if (!roleAssignments.isEmpty()) {
             for (int index = 0; index < roleAssignments.size(); index++) {
                 RoleAssignment assignment = roleAssignments.get(index);
-                String identityDn = assignment.getIdentityDN();
+                String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
                 this.deleteAdminFromRole(identityDn, adminRoleDn);
             }
