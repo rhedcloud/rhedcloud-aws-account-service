@@ -91,20 +91,25 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         String adminRoleDn = this.getAdminRoleDn(accountId);
         List<String> adminRoleDns = getUniqueRoleAssignments(adminRoleDn);
 
-        // only attempt to remove accounts if there are accounts to be removed
+        // only attempt to remove accounts if there are any to be removed
         if (adminRoleDns.size() > 0) {
-            logger.info(LOGTAG + "Removing " + adminRoleDns.size() + " admin(s) from admin role");
             for (int index = 0; index < adminRoleDns.size(); index++) {
                 String roleDn = adminRoleDns.get(index);
                 List<String> adminIds = getListOfAdminsInRole(roleDn);
 
-                for (int aindex = 0; aindex < adminIds.size(); aindex++) {
-                    String adminDn = getIdentityDN(adminIds.get(aindex));
-                    this.deleteAdminFromRole(adminDn, roleDn);
+                if (!adminIds.isEmpty()) {
+                    for (int aindex = 0; aindex < adminIds.size(); aindex++) {
+                        String adminId = adminIds.get(aindex);
+                        logger.info("Processing adminId: " + adminId);
+                        String adminDn = getIdentityDN(adminId);
+                        this.deleteAdminFromRole(adminDn, roleDn);
+                    }
+                } else {
+                    logger.info(LOGTAG + "No admin accounts to be removed from role: " + roleDn);
                 }
             }
         } else {
-            logger.info(LOGTAG + "No admin accounts to be removed");
+            logger.info(LOGTAG + "No admin roles to be processed");
         }
 
         /* end business logic */
@@ -138,7 +143,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             roleAssignmentQuerySpecification.setRoleDN(roleDn);
             roleAssignmentQuerySpecification.setIdentityType("USER");
             roleAssignmentQuerySpecification.setDirectAssignOnly("true");
-            logger.info(LOGTAG + "query XML is: " + roleAssignmentQuerySpecification.toXmlString());
+            logger.info(LOGTAG + "role assignment query XML is: " + roleAssignmentQuerySpecification.toXmlString());
         } catch (EnterpriseFieldException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -171,6 +176,10 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
                 uniqueIds.add(assignees.get(index).getIdentityDN());
             }
             result.addAll(uniqueIds);
+            logger.info(LOGTAG + "Number of unique admins in role returned: " + result.size());
+            for (int index = 0; index < result.size(); index++) {
+                logger.info(LOGTAG + "ID[" + index + "] is: " + result.get(index));
+            }
         } catch (EnterpriseObjectQueryException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -278,7 +287,12 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             roleAssignmentQuerySpecification.setRoleDN(roleDn);
             roleAssignmentQuerySpecification.setIdentityType("USER");
             roleAssignmentQuerySpecification.setDirectAssignOnly("true");
+            logger.info(LOGTAG + "Query role assignments XML is: " + roleAssignmentQuerySpecification.toXmlString());
         } catch (EnterpriseFieldException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } catch (XmlEnterpriseObjectException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
             throw new StepException(message, error);
