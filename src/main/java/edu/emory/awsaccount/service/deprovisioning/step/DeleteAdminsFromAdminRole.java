@@ -9,12 +9,16 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteAdminsFromAdminRole";
@@ -156,12 +160,11 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         try {
             logger.info(LOGTAG + "Deleting admin role");
-            // TODO fix this
-            //  roleAssignment.delete("Delete", requestService);
-            //        } catch (EnterpriseObjectDeleteException error) {
-            //            String message = error.getMessage();
-            //            logger.error(LOGTAG + message);
-            //            throw new StepException(message, error);
+            roleAssignment.delete("Delete", requestService);
+        } catch (EnterpriseObjectDeleteException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
         } finally {
             this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
         }
