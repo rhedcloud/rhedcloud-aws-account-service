@@ -9,7 +9,6 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -180,7 +179,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
         }
 
-        logger.info(LOGTAG + "Returning " + result.size() + " ids");
+        logger.info(LOGTAG + "Returning " + result.size() + " id(s)");
         return result;
     }
 
@@ -241,11 +240,12 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         try {
             logger.info(LOGTAG + "Deleting admin role: " + roleDn);
-            roleRevokation.delete("Delete", requestService);
-        } catch (EnterpriseObjectDeleteException error) {
-            String message = error.getMessage();
-            logger.error(LOGTAG + message);
-            throw new StepException(message, error);
+            // TODO fix this
+            //  roleRevokation.delete("Delete", requestService);
+            //        } catch (EnterpriseObjectDeleteException error) {
+            //            String message = error.getMessage();
+            //            logger.error(LOGTAG + message);
+            //            throw new StepException(message, error);
         } finally {
             this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
         }
