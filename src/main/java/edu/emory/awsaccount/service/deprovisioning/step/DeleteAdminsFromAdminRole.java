@@ -4,6 +4,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -134,7 +135,9 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             roleAssignment.setRoleAssignmentActionType("revoke");
             roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
             roleAssignment.setIdentityDN(identityDn);
-            roleAssignment.setRoleDN(adminRoleDn);
+            RoleDNs roleDNs = roleAssignment.newRoleDNs();
+            roleDNs.addDistinguishedName(adminRoleDn);
+            roleAssignment.setRoleDNs(roleDNs);
             roleAssignment.setReason("Account deprovisioning");
             logger.info(LOGTAG + "Role assignment XML is: " + roleAssignment.toXmlString());
         } catch (EnterpriseFieldException error) {
