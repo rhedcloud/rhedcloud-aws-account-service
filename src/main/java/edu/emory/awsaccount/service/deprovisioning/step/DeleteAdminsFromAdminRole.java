@@ -3,6 +3,7 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import org.openeai.config.AppConfig;
@@ -134,7 +135,10 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         try {
             roleAssignment.setRoleAssignmentActionType("revoke");
             roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
-            roleAssignment.setIdentityDN(identityDn);
+            ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
+            identityDNs.addDistinguishedName(identityDn);
+            roleAssignment.setExplicitIdentityDNs(identityDNs);
+//            roleAssignment.setIdentityDN(identityDn);
             RoleDNs roleDNs = roleAssignment.newRoleDNs();
             roleDNs.addDistinguishedName(adminRoleDn);
             roleAssignment.setRoleDNs(roleDNs);
