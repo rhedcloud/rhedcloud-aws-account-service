@@ -15,13 +15,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
+
+import javax.jms.JMSException;
+
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
+import org.openeai.config.EnterpriseFieldException;
+import org.openeai.jms.producer.MessageProducer;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectQueryException;
+import org.openeai.moa.XmlEnterpriseObjectException;
+import org.openeai.transport.RequestService;
+
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
 
 /**
  * Deprovision VPN connections for all VPCs associated with an account.
@@ -399,4 +411,103 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		return;
 	}
 	
+	private VpnConnectionDeprovisioning queryForVpnDeprovisioning(String deprovisioningId)
+			throws StepException {
+			
+		String LOGTAG = getStepTag() + "[DeprovisionVpnConnections.queryForVpnDeprovisioning] ";
+		
+	    // Get a configured VpnConnectionDeprovisioning object and
+	    // VpnConnectionDeprovisioningQuerySpecification object from AppConfig
+	    VpnConnectionDeprovisioning vpnDeprovisioning = new 
+			VpnConnectionDeprovisioning();
+		VpnConnectionDeprovisioningQuerySpecification querySpec = 
+			new VpnConnectionDeprovisioningQuerySpecification();
+	    try {
+	    	vpnDeprovisioning = (VpnConnectionDeprovisioning)getAppConfig()
+		    		.getObjectByType(vpnDeprovisioning.getClass().getName());
+	    	querySpec = (VpnConnectionDeprovisioningQuerySpecification)getAppConfig()
+		    		.getObjectByType(querySpec.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
+		
+	    // Set the values of the query spec.
+	    try {
+	    	querySpec.setProvisioningId(deprovisioningId);
+	    }
+	    catch (EnterpriseFieldException efe) {
+	    	String errMsg = "An error occurred setting the values of the " +
+	  	    	  "object. The exception is: " + efe.getMessage();
+	  	    logger.error(LOGTAG + errMsg);
+	  	    throw new StepException(errMsg, efe);
+	    }
+	    
+	    // Log the state of the object.
+	    try {
+	    	logger.info(LOGTAG + "query spec is: " 
+	    		+ querySpec.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the " +
+	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new StepException(errMsg, xeoe);
+	    }    
+		
+		// Get a producer from the pool
+		RequestService rs = null;
+		try {
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, jmse);
+		}
+	    
+		List results = null;
+		try { 
+			long queryStartTime = System.currentTimeMillis();
+			results = vpnDeprovisioning.query(querySpec, rs);
+			long queryTime = System.currentTimeMillis() - queryStartTime;
+			logger.info(LOGTAG + "Queried for VpnConnectionDeprovisioning" +
+				" with ProvisioningId " + deprovisioningId + "in " + queryTime +
+				"ms. There are " + results.size() + " result(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the  " +
+	    	  "VpnConnectionProvisinoing object. The " +
+	    	  "exception is: " + eoqe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, eoqe);
+		}
+		finally {
+			// Release the producer back to the pool
+			getNetworkOpsServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
+		}
+		
+		if (results.size() == 1) {
+			VpnConnectionDeprovisioning dep = 
+				(VpnConnectionDeprovisioning)results.get(0);
+			return dep;
+		}
+		else {
+			String errMsg = "Invalid number of results returned from " +
+				"VpnConnectionDeProvisioning.Query-Request. " +
+				results.size() + " results returned. " +
+				"Expected exactly 1.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}	
+	}
 }
