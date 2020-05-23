@@ -24,6 +24,7 @@ import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -34,6 +35,8 @@ import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionQuerySpecification;
 
 /**
  * Deprovision VPN connections for all VPCs associated with an account.
@@ -45,9 +48,8 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpec
 public class DeprovisionVpnConnections extends AbstractStep implements Step {
 
 	private ProducerPool m_networkOpsServiceProducerPool = null;
-	private String m_remoteVpnIpAddressForTesting = null;
-	private String m_presharedKeyTemplateForTesting = null;
-	private String m_vpnConnectionProfileId = null;
+	int m_sleepTimeInMillis = 5000;
+	int m_maxWaitTimeInMillis = 600000;
 	private int m_requestTimeoutIntervalInMillis = 600000;
 	
 	public void init (String provisioningId, Properties props, 
@@ -75,19 +77,23 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 			addResultProperty("errorMessage", errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
+		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-		String remoteVpnIpAddressForTesting = getProperties()
-				.getProperty("remoteVpnIpAddressForTesting", null);
-		setRemoteVpnIpAddressForTesting(remoteVpnIpAddressForTesting);
-		logger.info(LOGTAG + "remoteVpnIpAddressForTesting is: " + 
-				getRemoteVpnIpAddressForTesting());
 		
-		String presharedKeyTemplateForTesting = getProperties()
-				.getProperty("presharedKeyTemplateForTesting", null);
-		setPresharedKeyTemplateForTesting(presharedKeyTemplateForTesting);
-		logger.info(LOGTAG + "presharedKeyTemplateForTesting is: " + 
-				getPresharedKeyTemplateForTesting());
+		String sleepTime = getProperties()
+			.getProperty("sleepTimeInMillis", "5000");
+		int sleepTimeInMillis = Integer.parseInt(sleepTime);
+		setSleepTimeInMillis(sleepTimeInMillis);
+		logger.info(LOGTAG + "sleepTimeInMillis is: " + 
+			getSleepTimeInMillis());
+		
+		String maxWaitTime = getProperties()
+				.getProperty("maxWaitTimeInMillis", "600000");
+			int maxWaitTimeInMillis = Integer.parseInt(maxWaitTime);
+			setMaxWaitTimeInMillis(maxWaitTimeInMillis);
+			logger.info(LOGTAG + "maxWaitTimeInMillis is: " + 
+				getMaxWaitTimeInMillis());
 		
 		String requestTimeoutInterval = getProperties()
 			.getProperty("requestTimeoutIntervalInMillis", "600000");
@@ -305,70 +311,9 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	private ProducerPool getNetworkOpsServiceProducerPool() {
 		return m_networkOpsServiceProducerPool;
 	}
-
-	private void setRemoteVpnIpAddressForTesting(String ipAddress)  
-		throws StepException {
-	
-		m_remoteVpnIpAddressForTesting = ipAddress;
-	}
-	
-	private String getRemoteVpnIpAddressForTesting() {
-		return m_remoteVpnIpAddressForTesting;
-	}
-	
-	private void setPresharedKeyTemplateForTesting(String template)  
-		throws StepException {
-	
-		m_presharedKeyTemplateForTesting = template;
-	}
-		
-	private String getPresharedKeyTemplateForTesting() {
-		return m_presharedKeyTemplateForTesting;
-	}
-	
-	private void setVpnConnectionProfileId(String id) {
-		m_vpnConnectionProfileId = id;
-	}
-	
-	private String getVpnConnectionProfileId() {
-		return m_vpnConnectionProfileId;
-	}
-	
-	private String getPresharedKey() {
-		
-		String LOGTAG = getStepTag() + "[ProvisionVpnConnection.getPresharedKey] ";
-		String key = null;
-		String keyPrefix = getPresharedKeyTemplateForTesting();
-		String keySuffix = null;
-		int vpnConnectionProfileId = Integer.parseInt(getVpnConnectionProfileId());
-		if (getActualPresharedKey() == null) {
-			logger.info(LOGTAG + "Formatting " + vpnConnectionProfileId + 
-				" as three padded characters...");
-			keySuffix =	String.format("%03d", vpnConnectionProfileId);
-			logger.info(LOGTAG + "keySuffix is: " + keySuffix);
-			key = keyPrefix + keySuffix;
-			logger.info(LOGTAG + "key is: " + key);
-		}
-		else {
-			key = getActualPresharedKey();
-		}
-		return key;	
-	}
 	
 	private String getActualPresharedKey() {
 		return null;
-	}
-	
-	private String getRemoteVpnIpAddress() {
-		
-		String ip = null;
-		if (getActualRemoteVpnIpAddress() == null) {
-			ip = getRemoteVpnIpAddressForTesting();
-		}
-		else {
-			ip = getActualRemoteVpnIpAddress();
-		}
-		return ip;	
 	}
 	
 	private String getActualRemoteVpnIpAddress() {
@@ -386,17 +331,200 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	private VpnConnectionProfileAssignment queryForVpnConnectionProfileAssignment(String vpcId) 
 		throws StepException {
 		
-		VpnConnectionProfileAssignment vcpa = new VpnConnectionProfileAssignment();
-		return vcpa;
+		String LOGTAG = getStepTag() + 
+			"[DeprovisionVpnConnections.queryForVpnConnectionProfileAssignment] ";
 		
+	    // Get a configured VpnConnectionProfileAssignment object and
+	    // VpnConnectionProfileAssignmentQuerySpecification object 
+		// from AppConfig
+	    VpnConnectionProfileAssignment assignment = new 
+			VpnConnectionProfileAssignment();
+		VpnConnectionProfileAssignmentQuerySpecification querySpec = 
+			new VpnConnectionProfileAssignmentQuerySpecification();
+	    try {
+	    	assignment = (VpnConnectionProfileAssignment)getAppConfig()
+		    		.getObjectByType(assignment.getClass().getName());
+	    	querySpec = (VpnConnectionProfileAssignmentQuerySpecification)getAppConfig()
+		    		.getObjectByType(querySpec.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
+		
+	    // Set the values of the query spec.
+	    try {
+	    	querySpec.setOwnerId(vpcId);
+	    }
+	    catch (EnterpriseFieldException efe) {
+	    	String errMsg = "An error occurred setting the values of the " +
+	  	    	  "object. The exception is: " + efe.getMessage();
+	  	    logger.error(LOGTAG + errMsg);
+	  	    throw new StepException(errMsg, efe);
+	    }
+	    
+	    // Log the state of the object.
+	    try {
+	    	logger.info(LOGTAG + "query spec is: " 
+	    		+ querySpec.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the " +
+	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new StepException(errMsg, xeoe);
+	    }    
+		
+		// Get a producer from the pool
+		RequestService rs = null;
+		try {
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, jmse);
+		}
+	    
+		List results = null;
+		try { 
+			long queryStartTime = System.currentTimeMillis();
+			results = assignment.query(querySpec, rs);
+			long queryTime = System.currentTimeMillis() - queryStartTime;
+			logger.info(LOGTAG + "Queried for VpnConnectionProfileAssignment" +
+				" for ownerId " + vpcId + "in " + queryTime +
+				"ms. There are " + results.size() + " result(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the  " +
+	    	  "VpnConnectionProfileAssignment object. The " +
+	    	  "exception is: " + eoqe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, eoqe);
+		}
+		finally {
+			// Release the producer back to the pool
+			getNetworkOpsServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
+		}
+		
+		if (results.size() == 1) {
+			VpnConnectionProfileAssignment result = 
+				(VpnConnectionProfileAssignment)results.get(0);
+			return result;
+		}
+		else {
+			String errMsg = "Invalid number of results returned from " +
+				"VpnConnectionProfileAssignment.Query-Request. " +
+				results.size() + " results returned. " +
+				"Expected exactly 1.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}	
 	}
 	
 	private VpnConnection queryForVpnConnection(String ownerId) throws StepException {
 		
-		VpnConnection vpnc = new VpnConnection();
-		return vpnc;
+		String LOGTAG = getStepTag() + 
+			"[DeprovisionVpnConnections.queryForVpnConnection] ";
+		
+	    // Get a configured VpnConnection object and query spec from AppConfig
+	    VpnConnection connection = new VpnConnection();
+		VpnConnectionQuerySpecification querySpec = 
+			new VpnConnectionQuerySpecification();
+	    try {
+	    	connection = (VpnConnection)getAppConfig()
+		    	.getObjectByType(connection.getClass().getName());
+	    	querySpec = (VpnConnectionQuerySpecification)getAppConfig()
+		    	.getObjectByType(querySpec.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
+		
+	    // Set the values of the query spec.
+	    try {
+	    	querySpec.setVpcId(ownerId);
+	    }
+	    catch (EnterpriseFieldException efe) {
+	    	String errMsg = "An error occurred setting the values of the " +
+	  	    	  "object. The exception is: " + efe.getMessage();
+	  	    logger.error(LOGTAG + errMsg);
+	  	    throw new StepException(errMsg, efe);
+	    }
+	    
+	    // Log the state of the object.
+	    try {
+	    	logger.info(LOGTAG + "query spec is: " 
+	    		+ querySpec.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the " +
+	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new StepException(errMsg, xeoe);
+	    }    
+		
+		// Get a producer from the pool
+		RequestService rs = null;
+		try {
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, jmse);
+		}
+	    
+		List results = null;
+		try { 
+			long queryStartTime = System.currentTimeMillis();
+			results = connection.query(querySpec, rs);
+			long queryTime = System.currentTimeMillis() - queryStartTime;
+			logger.info(LOGTAG + "Queried for the VpnConnection" +
+				" for VpcId " + ownerId + "in " + queryTime +
+				"ms. There are " + results.size() + " result(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the  " +
+	    	  "VpnConnection object. The exception is: " + eoqe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, eoqe);
+		}
+		finally {
+			// Release the producer back to the pool
+			getNetworkOpsServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
+		}
+		
+		if (results.size() == 1) {
+			VpnConnection result = (VpnConnection)results.get(0);
+			return result;
+		}
+		else {
+			String errMsg = "Invalid number of results returned from " +
+				"VpnConnection.Query-Request. " + results.size() +
+				" results returned. Expected exactly 1.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}	
 	}
-	
+//TODO	
 	private VpnConnectionProfileAssignment 
 		getVpnConnectionProfileAssignmentForConnection(List<VpnConnectionProfileAssignment> 
 		assignments, VpnConnection vpnc) throws StepException {
@@ -405,10 +533,126 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		return assignment;
 	}
 	
-	private void deprovisionVpnConnection(VpnConnectionProfileAssignment assignment)
+	private VpnConnectionDeprovisioning 
+		deprovisionVpnConnection(VpnConnectionProfileAssignment assignment)
 		throws StepException {
 		
-		return;
+		String LOGTAG = getStepTag() + 
+				"[DeprovisionVpnConnections.deprovisionVpnConnection] ";
+			
+	    // Get a configured VpnConnectionDeprovisioning object from AppConfig
+	    VpnConnectionDeprovisioning dep = new VpnConnectionDeprovisioning();
+	    try {
+	    	dep = (VpnConnectionDeprovisioning)getAppConfig()
+		    	.getObjectByType(dep.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
+	    
+	    // Log the state of the assignment object.
+	    try {
+	    	logger.info(LOGTAG + "Generate object (VpnConnectionProfileAssignment) is: " 
+	    		+ assignment.toXmlString());
+	    }
+	    catch (XmlEnterpriseObjectException xeoe) {
+	    	String errMsg = "An error occurred serializing the " +
+	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
+  	    	logger.error(LOGTAG + errMsg);
+  	    	throw new StepException(errMsg, xeoe);
+	    }    
+		
+		// Get a producer from the pool
+		RequestService rs = null;
+		try {
+			PointToPointProducer p2p = 
+				(PointToPointProducer)getNetworkOpsServiceProducerPool()
+				.getExclusiveProducer();
+			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+			rs = (RequestService)p2p;
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, jmse);
+		}
+		
+		// Generate the deprovisioning object
+		List results = null;
+		long generateStartTime = System.currentTimeMillis();
+		try { 	
+			results = dep.generate(assignment, rs);
+			long generateTime = System.currentTimeMillis() - generateStartTime;
+			logger.info(LOGTAG + "Generated the VpnConnection Deprovisioning " +
+				" for VPC " + assignment.getOwnerId() + " and profile ID " +
+				assignment.getVpnConnectionProfileId() + " in " + generateTime +
+				"ms. There are " + results.size() + " result(s).");
+		}
+		catch (EnterpriseObjectGenerateException eoge) {
+			String errMsg = "An error occurred generating the  " +
+	    	  "VpnConnectionDeprovisioning object. The exception is: "
+	    	  + eoge.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, eoge);
+		}
+		finally {
+			// Release the producer back to the pool
+			getNetworkOpsServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
+		}
+		if (results.size() == 1) {
+			dep = (VpnConnectionDeprovisioning)results.get(0);
+			logger.info(LOGTAG + "The VpnConnectionDeprovisioning ID is: " +
+				dep.getProvisioningId());
+		}
+		else {
+			String errMsg = "Invalid number of results returned from " +
+				"VpnConnectionDeprovisioning.Generate-Request. " + results.size() +
+				" results returned. Expected exactly 1.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
+		}	
+		
+		// While the deprovisioning time is less that the maxWaitTime,
+		// query for the VpnConnectionDeprovisioning object and
+		// evaluate it for success or failure.
+		while (System.currentTimeMillis() - generateStartTime < getMaxWaitTimeInMillis()) {
+
+			// Sleep for the sleep interval.
+			logger.info(LOGTAG + "Sleeping for " + getSleepTimeInMillis() +
+					" prior to next VpnConnectionDeprovisioning query.");
+			try {
+				Thread.sleep(getSleepTimeInMillis());
+			} catch (InterruptedException ie) {
+				String errMsg = "Error occurred sleeping.";
+				logger.error(LOGTAG + errMsg + ie.getMessage());
+				throw new StepException(errMsg, ie);
+			}
+
+			// Query for the VpnConnectionDeprovisioning object.
+			dep = queryForVpnDeprovisioning(dep.getProvisioningId());
+
+			// If the VpnConnectionDeprovisioning is successful, log it,
+			// and set result properties.
+			if (isSuccess(dep)) {
+				logger.info(LOGTAG + "VPN connection deprovisioning successful for " +
+					"VPN " + assignment.getOwnerId() + " and VPN connection profile ID " +
+					assignment.getVpnConnectionProfileAssignmentId());
+				break;
+			} 
+			else if (isFailure(dep)) {
+				logger.info(LOGTAG + "VPN connection deprovisioning successful for " +
+					"VPN " + assignment.getOwnerId() + " and VPN connection profile ID " +
+					assignment.getVpnConnectionProfileAssignmentId());
+				break;
+			}
+		}
+		
+		return dep;
 	}
 	
 	private VpnConnectionDeprovisioning queryForVpnDeprovisioning(String deprovisioningId)
@@ -485,7 +729,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the  " +
-	    	  "VpnConnectionProvisinoing object. The " +
+	    	  "VpnConnectionProvisioning object. The " +
 	    	  "exception is: " + eoqe.getMessage();
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException(errMsg, eoqe);
@@ -503,11 +747,50 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		}
 		else {
 			String errMsg = "Invalid number of results returned from " +
-				"VpnConnectionDeProvisioning.Query-Request. " +
+				"VpnConnectionDeprovisioning.Query-Request. " +
 				results.size() + " results returned. " +
 				"Expected exactly 1.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}	
+	}
+	
+	private boolean isSuccess(VpnConnectionDeprovisioning dep) {
+		
+		if (dep.getProvisioningResult() != null) {
+			if (dep.getProvisioningResult().equalsIgnoreCase(SUCCESS_RESULT)) {
+				return true;
+			}
+			else return false;
+		}
+		
+		else return false;
+	}
+	
+	private boolean isFailure(VpnConnectionDeprovisioning dep) {
+		
+		if (dep.getProvisioningResult() != null) {
+			if (dep.getProvisioningResult().equalsIgnoreCase(FAILURE_RESULT)) {
+				return true;
+			}
+			else return false;
+		}
+		else return false;
+	}
+	
+	private void setSleepTimeInMillis(int time) {
+		m_sleepTimeInMillis = time;
+	}
+	
+	private int getSleepTimeInMillis() {
+		return m_sleepTimeInMillis;
+	}
+	
+	private void setMaxWaitTimeInMillis(int time) {
+		m_maxWaitTimeInMillis = time;
+	}
+	
+	private int getMaxWaitTimeInMillis() {
+		return m_maxWaitTimeInMillis;
 	}
 }
