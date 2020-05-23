@@ -114,6 +114,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		// Get the VpcIds property from a previous step.
 		String vpcIds =
 				getStepPropertyValue("LIST_VPC_IDS", "VpcIds");
+		addResultProperty("VpcIds", vpcIds);
 		
 		// If there are no VPCs there is nothing to do and the step is complete.
 		if (vpcIds == null || vpcIds.equalsIgnoreCase("none")) {
@@ -159,8 +160,10 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 				vpnConnectionProfileAssignments.add(vcpa);
 			}
 		}
-		logger.info(LOGTAG + "There are " + vpnConnectionProfileAssignments.size() + 
+		String assignmentCount = Integer.toString(vpnConnectionProfileAssignments.size());
+		logger.info(LOGTAG + "There are " + assignmentCount + 
 			" VpnConnectionProfileAssignments to check for VpnConnections.");
+		addResultProperty("vpnConnectionProfileAssignments", assignmentCount);
 		
 		// If there are no VpnConnectionProfileAssignments to check, there is nothing
 		// to do and the step is complete.
@@ -191,6 +194,9 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 				vpnConnections.add(vpnc);
 			}
 		}
+		String connectionCount = Integer.toString(vpnConnections.size());
+		addResultProperty("vpnConnections", connectionCount);
+		
 		if (vpnConnections.size() == 0) {
 			logger.info(LOGTAG + "There are no VpnConnections to deprovision. " +
 				"There is nothing more to do.");
@@ -214,13 +220,16 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 			
 		// Deprovision each VpnConnection in the list.
 		ListIterator<VpnConnection> vcli = vpnConnections.listIterator();
+		VpnConnectionDeprovisioning result = null;
 		int vpnCount = 1;
+		int failureCount = 0;
 		while (vcli.hasNext()) {
 			VpnConnection vpnc = vcli.next();
 			VpnConnectionProfileAssignment vcpa = 
 					getVpnConnectionProfileAssignmentForConnection(vpnConnectionProfileAssignments, vpnc);
 			try {
-				deprovisionVpnConnection(vcpa);
+				result = deprovisionVpnConnection(vcpa);
+				logger.info(LOGTAG + "Deprovisioning result is: " + result.getProvisioningResult());
 				String msg = "Successfully deprovisioned a VPN connection for " +
 						"VpcId " + vcpa.getOwnerId() + " and VpnConnectionProfileId " +
 						vcpa.getVpnConnectionProfileId() + ".";
@@ -229,6 +238,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 				vpnCount++;
 			}
 			catch (StepException se) {
+				failureCount++;
 				String errMsg = "An error occurred deprovisioning a VPN connection for " +
 					"VpcId " + vcpa.getOwnerId() + " and VpnConnectionProfileId " +
 					vcpa.getVpnConnectionProfileId() + ". The exception is: " + 
@@ -237,6 +247,9 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 				addResultProperty("vpnStatus" + vpnCount, errMsg);
 			}
 		}
+		logger.info(LOGTAG + "Successfully deprovisioned " + vpnCount + " connections.");
+		addResultProperty("deprovisioningSuccesses", Integer.toString(vpnCount));
+		addResultProperty("deprovisioningFailures", Integer.toString(failureCount));
 		
 		// The step is done. Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
@@ -253,7 +266,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[ProvisionVpnConnection.simulate] ";
+			"[DeprovisionVpnConnections.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -273,7 +286,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[ProvisionVpnConnection.fail] ";
+			"[DeprovisionVpnConnections.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -293,9 +306,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	public void rollback() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[ProvisiongVpnConnection.rollback] ";
-		
-// TODO: Implement deprovisioning
+			"[DeprovisiongVpnConnections.rollback] ";
 		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
@@ -524,13 +535,24 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 			throw new StepException(errMsg);
 		}	
 	}
-//TODO	
+
 	private VpnConnectionProfileAssignment 
 		getVpnConnectionProfileAssignmentForConnection(List<VpnConnectionProfileAssignment> 
 		assignments, VpnConnection vpnc) throws StepException {
 		
-		VpnConnectionProfileAssignment assignment = new VpnConnectionProfileAssignment();
-		return assignment;
+		String vpcId = vpnc.getVpcId();
+		String LOGTAG = "[DeprovisionVpnConnections.getVpnConnectionProfileAssignmentForConnection] ";
+		logger.info(LOGTAG + "Checking the list for an assignment for connection for vpcId: " + vpcId);
+		VpnConnectionProfileAssignment result = null;
+		ListIterator<VpnConnectionProfileAssignment> li = assignments.listIterator();
+		while(li.hasNext()) {
+			VpnConnectionProfileAssignment assignment = li.next();
+			if (assignment.getOwnerId().equalsIgnoreCase(vpcId)) {
+				logger.info(LOGTAG + "Found assignment for connection for vpcId: " + vpcId);
+				result = assignment;
+			}
+		}
+		return result;
 	}
 	
 	private VpnConnectionDeprovisioning 
