@@ -22,7 +22,7 @@ import java.util.Set;
 public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteCentralAdminsFromAdminRole";
     private ProducerPool idmServiceProducerPool;
-    private String centralAdminRoleDn;
+    private String centralAdminRoleDnTemplate;
 
     @Override
     public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
@@ -40,16 +40,16 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
             throw new StepException(message);
         }
 
-        String centralAdminRoleDn = getProperties().getProperty("centralAdminRoleDn", null);
-        logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
-        setCentralAdminRoleDn(centralAdminRoleDn);
+        String centralAdminRoleDnTemplate = getProperties().getProperty("centralAdminRoleDnTemplate", null);
+        logger.info(LOGTAG + "centralAdminRoleDnTemplate is: " + centralAdminRoleDnTemplate);
+        setCentralAdminRoleDnTemplate(centralAdminRoleDnTemplate);
     }
 
-    private void setCentralAdminRoleDn(String centralAdminRoleDn) throws StepException {
-        if (centralAdminRoleDn == null) {
+    private void setCentralAdminRoleDnTemplate(String centralAdminRoleDnTemplate) throws StepException {
+        if (centralAdminRoleDnTemplate == null) {
             throw new StepException("centralAdminRoleDnTemplate cannot be null");
         }
-        this.centralAdminRoleDn = centralAdminRoleDn;
+        this.centralAdminRoleDnTemplate = centralAdminRoleDnTemplate;
     }
 
     private void setIdmServiceProducerPool(ProducerPool producerPool) {
@@ -93,13 +93,16 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
         /* begin business logic */
 
         // get the list of central admins
-        List<RoleAssignment> centralAdmins = this.getCentralAdmins(this.centralAdminRoleDn);
+        String centralAdminRoleDn = this.getCentralAdminRoleDn(accountId);
+        List<RoleAssignment> centralAdmins = this.getCentralAdmins(centralAdminRoleDn);
         logger.info(LOGTAG + "Found " + centralAdmins.size() + " central administrator(s)");
 
         // delete the central admins from the central admin role
         if (centralAdmins.size() > 0) {
             for (int index = 0; index < centralAdmins.size(); index++) {
-                this.deleteCentralAdmin(this.centralAdminRoleDn, centralAdmins.get(index));
+                RoleAssignment assignment = centralAdmins.get(index);
+                String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
+                this.deleteCentralAdmin(centralAdminRoleDn, identityDn);
             }
         } else {
             logger.info(LOGTAG + " No admins to be removed");
@@ -115,11 +118,18 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
         return getResultProperties();
     }
 
-    private void deleteCentralAdmin(String centralAdminRoleDn, RoleAssignment roleAssignment) {
+    private String getCentralAdminRoleDn(String accountId) {
+        return this.centralAdminRoleDnTemplate.replace("ACCOUNT_NUMBER", accountId);
+    }
+
+    private void deleteCentralAdmin(String centralAdminRoleDn, String identityDn) {
         long startTime = System.currentTimeMillis();
 
         String LOGTAG = createLogTag("deleteCentralAdmin");
 
+        logger.info(LOGTAG + "Preparing to delete central admin roles:");
+        logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
+        logger.info(LOGTAG + "identityDn is: " + identityDn);
 
         long started = System.currentTimeMillis();
         long time = System.currentTimeMillis() - started;
@@ -131,6 +141,7 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
 
         String LOGTAG = createLogTag("getCentralAdmins");
         logger.info(LOGTAG + "Begin getting list of central admin assignments.");
+        logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
 
         RoleAssignment roleAssignment = null;
         RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
