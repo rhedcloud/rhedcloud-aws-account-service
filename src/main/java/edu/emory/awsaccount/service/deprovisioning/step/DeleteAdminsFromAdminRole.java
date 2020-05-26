@@ -225,7 +225,6 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         try {
             result = roleAssignment.query(roleAssignmentQuerySpecification, requestService);
-            Set<String> uniqueIds = new HashSet<>();
             logger.info(LOGTAG + "Number of role assignments returned: " + result.size());
             for (int index = 0; index < result.size(); index++) {
                 logger.info(LOGTAG + "Assignment[" + index + "] is: " + result.get(index));
@@ -240,7 +239,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         long started = System.currentTimeMillis();
         long time = System.currentTimeMillis() - started;
-        logger.info(LOGTAG + "Query for unique role assignments completed in " + time + "ms.");
+        logger.info(LOGTAG + "Completed in " + time + "ms.");
 
         return result;
     }

@@ -14,10 +14,8 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteCentralAdminsFromAdminRole";
@@ -46,6 +44,9 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
     }
 
     private void setCentralAdminRoleDnTemplate(String centralAdminRoleDnTemplate) throws StepException {
+        String LOGTAG = createLogTag("centralAdminRoleDn");
+        logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDnTemplate);
+
         if (centralAdminRoleDnTemplate == null) {
             throw new StepException("centralAdminRoleDnTemplate cannot be null");
         }
@@ -85,15 +86,19 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
         String LOGTAG = createLogTag("run");
         logger.info(LOGTAG + "Begin running the step.");
 
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+
         String accountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
+        addResultProperty("accountId", accountId);
         logger.info(LOGTAG + "accountId is: " + accountId);
 
-        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        String centralAdminRoleDn = this.getCentralAdminRoleDn(accountId);
+        addResultProperty("centralAdminRoleDn", centralAdminRoleDn);
+        logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
 
         /* begin business logic */
 
         // get the list of central admins
-        String centralAdminRoleDn = this.getCentralAdminRoleDn(accountId);
         List<RoleAssignment> centralAdmins = this.getCentralAdmins(centralAdminRoleDn);
         logger.info(LOGTAG + "Found " + centralAdmins.size() + " central administrator(s)");
 
@@ -102,11 +107,13 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
             for (int index = 0; index < centralAdmins.size(); index++) {
                 RoleAssignment assignment = centralAdmins.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
-                this.deleteCentralAdmin(centralAdminRoleDn, identityDn);
+                this.deleteCentralAdmin(centralAdminRoleDnTemplate, identityDn);
             }
         } else {
             logger.info(LOGTAG + " No admins to be removed");
         }
+
+        addResultProperty("centralAdminsRemoved", String.valueOf(centralAdmins.size()));
 
         /* end business logic */
 
@@ -136,12 +143,12 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
         logger.info(LOGTAG + "Completed in " + time + "ms.");
     }
 
-    private List<RoleAssignment> getCentralAdmins(String centralAdminRoleDn) throws StepException {
+    private List<RoleAssignment> getCentralAdmins(String roleDn) throws StepException {
         long startTime = System.currentTimeMillis();
 
         String LOGTAG = createLogTag("getCentralAdmins");
         logger.info(LOGTAG + "Begin getting list of central admin assignments.");
-        logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
+        logger.info(LOGTAG + "roleDn is: " + roleDn);
 
         RoleAssignment roleAssignment = null;
         RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
@@ -156,7 +163,7 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
         }
 
         try {
-            roleAssignmentQuerySpecification.setRoleDN(centralAdminRoleDn);
+            roleAssignmentQuerySpecification.setRoleDN(roleDn);
             roleAssignmentQuerySpecification.setIdentityType("USER");
             roleAssignmentQuerySpecification.setDirectAssignOnly("true");
             logger.info(LOGTAG + "Query role assignments XML is: " + roleAssignmentQuerySpecification.toXmlString());
@@ -184,7 +191,6 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
 
         try {
             result = roleAssignment.query(roleAssignmentQuerySpecification, requestService);
-            Set<String> uniqueIds = new HashSet<>();
             logger.info(LOGTAG + "Number of role assignments returned: " + result.size());
             for (int index = 0; index < result.size(); index++) {
                 logger.info(LOGTAG + "Assignment[" + index + "] is: " + result.get(index));
