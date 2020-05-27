@@ -3,12 +3,15 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -129,14 +132,68 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
         return this.centralAdminRoleDnTemplate.replace("ACCOUNT_NUMBER", accountId);
     }
 
-    private void deleteCentralAdmin(String centralAdminRoleDn, String identityDn) {
+    private void deleteCentralAdmin(String centralAdminRoleDn, String identityDn) throws StepException {
         long startTime = System.currentTimeMillis();
-
         String LOGTAG = createLogTag("deleteCentralAdmin");
 
         logger.info(LOGTAG + "Preparing to delete central admin roles:");
         logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
         logger.info(LOGTAG + "identityDn is: " + identityDn);
+
+        RoleAssignment roleAssignment = null;
+        RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
+
+        try {
+            roleAssignment = (RoleAssignment) getAppConfig().getObjectByType(RoleAssignment.class.getName());
+            roleAssignmentQuerySpecification = (RoleAssignmentQuerySpecification) getAppConfig().getObjectByType(RoleAssignmentQuerySpecification.class.getName());
+        } catch (EnterpriseConfigurationObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            roleAssignment.setRoleAssignmentActionType("revoke");
+            roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
+            ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
+            identityDNs.addDistinguishedName(identityDn);
+            roleAssignment.setExplicitIdentityDNs(identityDNs);
+            RoleDNs roleDNs = roleAssignment.newRoleDNs();
+            roleDNs.addDistinguishedName(centralAdminRoleDn);
+            roleAssignment.setRoleDNs(roleDNs);
+            roleAssignment.setReason("Account deprovisioning");
+            logger.info(LOGTAG + "Role assignment XML is: " + roleAssignment.toXmlString());
+        } catch (EnterpriseFieldException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } catch (XmlEnterpriseObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        RequestService requestService = null;
+
+        try {
+            logger.info(LOGTAG + "Getting request service");
+            requestService = (RequestService) this.idmServiceProducerPool.getExclusiveProducer();
+        } catch (JMSException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            logger.info(LOGTAG + "Deleting central admin role");
+            roleAssignment.delete("Delete", requestService);
+        } catch (EnterpriseObjectDeleteException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } finally {
+            this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
+        }
 
         long started = System.currentTimeMillis();
         long time = System.currentTimeMillis() - started;
