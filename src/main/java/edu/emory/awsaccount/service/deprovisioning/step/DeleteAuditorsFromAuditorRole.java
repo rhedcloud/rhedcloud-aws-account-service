@@ -111,7 +111,7 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
                 this.deleteAuditorFromRole(identityDn, auditorRoleDn);
             }
         } else {
-            logger.info(LOGTAG + "No admin roles to be processed");
+            logger.info(LOGTAG + "No auditor roles to be processed");
         }
 
         /* end business logic */
