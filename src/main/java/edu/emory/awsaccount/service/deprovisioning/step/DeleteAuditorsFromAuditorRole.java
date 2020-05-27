@@ -3,12 +3,15 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -121,12 +124,67 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
         return getResultProperties();
     }
 
-    private void deleteAuditorFromRole(String identityDn, String auditorRoleDn) {
+    private void deleteAuditorFromRole(String identityDn, String auditorRoleDn) throws StepException {
         String LOGTAG = this.createLogTag("deleteAuditorFromRole");
 
-        logger.info(LOGTAG + "Preparing to delete admin role");
+        logger.info(LOGTAG + "Preparing to delete auditor role");
         logger.info(LOGTAG + "identityDn is: " + identityDn);
         logger.info(LOGTAG + "auditorRoleDn is: " + auditorRoleDn);
+
+        RoleAssignment roleAssignment = null;
+        RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
+
+        try {
+            roleAssignment = (RoleAssignment) getAppConfig().getObjectByType(RoleAssignment.class.getName());
+            roleAssignmentQuerySpecification = (RoleAssignmentQuerySpecification) getAppConfig().getObjectByType(RoleAssignmentQuerySpecification.class.getName());
+        } catch (EnterpriseConfigurationObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            roleAssignment.setRoleAssignmentActionType("revoke");
+            roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
+            ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
+            identityDNs.addDistinguishedName(identityDn);
+            roleAssignment.setExplicitIdentityDNs(identityDNs);
+            RoleDNs roleDNs = roleAssignment.newRoleDNs();
+            roleDNs.addDistinguishedName(auditorRoleDn);
+            roleAssignment.setRoleDNs(roleDNs);
+            roleAssignment.setReason("Account deprovisioning");
+            logger.info(LOGTAG + "Role assignment XML is: " + roleAssignment.toXmlString());
+        } catch (EnterpriseFieldException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } catch (XmlEnterpriseObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        RequestService requestService = null;
+
+        try {
+            logger.info(LOGTAG + "Getting request service");
+            requestService = (RequestService) this.idmServiceProducerPool.getExclusiveProducer();
+        } catch (JMSException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            logger.info(LOGTAG + "Deleting admin role");
+            roleAssignment.delete("Delete", requestService);
+        } catch (EnterpriseObjectDeleteException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } finally {
+            this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
+        }
 
         logger.info(LOGTAG + "Role successfully revoked");
     }
