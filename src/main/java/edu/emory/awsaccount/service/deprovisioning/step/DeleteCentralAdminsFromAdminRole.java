@@ -107,7 +107,7 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
             for (int index = 0; index < centralAdmins.size(); index++) {
                 RoleAssignment assignment = centralAdmins.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
-                this.deleteCentralAdmin(centralAdminRoleDnTemplate, identityDn);
+                this.deleteCentralAdmin(centralAdminRoleDn, identityDn);
             }
         } else {
             logger.info(LOGTAG + " No admins to be removed");
