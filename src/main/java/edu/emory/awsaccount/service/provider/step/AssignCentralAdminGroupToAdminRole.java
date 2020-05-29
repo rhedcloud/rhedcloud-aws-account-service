@@ -29,19 +29,16 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-import edu.emory.moa.jmsobjects.identity.v1_0.Role;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
-import edu.emory.moa.objects.resources.v1_0.RoleRequisition;
 
 public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements Step {
     private ProducerPool m_idmServiceProducerPool = null;
     private int m_requestTimeoutIntervalInMillis = 10000;
-    private String m_identityDnEntry = null;
+    private String m_identityDn = null;
     private String m_roleDnTemplate = null;
 
     public void init(String provisioningId, Properties props,
@@ -78,11 +75,11 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
         logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
                 getRequestTimeoutIntervalInMillis());
 
-        String identityDnEntry = getProperties()
-                .getProperty("identityDnEntry");
-        setIdentityDnEntry(identityDnEntry);
-        logger.info(LOGTAG + "identityDnEntry is: " +
-                getIdentityDnEntry());
+        String identityDn = getProperties()
+                .getProperty("identityDn");
+        setIdentityDn(identityDn);
+        logger.info(LOGTAG + "identityDn is: " +
+                getIdentityDn());
 
         String roleDnTemplate = getProperties()
                 .getProperty("roleDnTemplate");
@@ -122,7 +119,7 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
                     getVirtualPrivateCloudProvisioningProvider();
 
             // call the generate assignment
-            this.generateRoleAssignment(this.getIdentityDnEntry(), newAccountId);
+            this.generateRoleAssignment(this.getIdentityDn(), newAccountId);
 
             logger.info(LOGTAG + "Generated central admin RoleAssignment.");
             addResultProperty("addedCentralAdminGroupToAdminRole", "true");
@@ -228,7 +225,7 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
             req.setRoleAssignmentActionType("grant");
             req.setRoleAssignmentType("GROUP_TO_ROLE");
             // TODO change this, get DN from config property
-            req.setIdentityDN(this.getIdentityDnEntry());
+            req.setIdentityDN(this.getIdentityDn());
             req.setReason("adding central administrator group to central administrator");
             RoleDNs roleDns = req.newRoleDNs();
             roleDns.addDistinguishedName(buildRoleDnFromTemplate(accountId));
@@ -315,7 +312,7 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
         return m_requestTimeoutIntervalInMillis;
     }
 
-    private void setIdentityDnEntry(String template) throws
+    private void setIdentityDn(String template) throws
             StepException {
 
         if (template == null) {
@@ -324,11 +321,11 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
             throw new StepException(errMsg);
         }
 
-        m_identityDnEntry = template;
+        m_identityDn = template;
     }
 
-    private String getIdentityDnEntry() {
-        return m_identityDnEntry;
+    private String getIdentityDn() {
+        return m_identityDn;
     }
 
     private void setRoleDnTemplate(String template) throws
