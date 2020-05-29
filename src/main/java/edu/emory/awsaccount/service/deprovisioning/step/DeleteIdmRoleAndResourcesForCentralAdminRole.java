@@ -3,14 +3,20 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
-import edu.emory.moa.jmsobjects.identity.v1_0.Role;
-import edu.emory.moa.objects.resources.v1_0.RoleRequisition;
+import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
+import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
+import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.XmlEnterpriseObjectException;
+import org.openeai.transport.RequestService;
 
+import javax.jms.JMSException;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,6 +27,7 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
     private String resource5EntitlementDn;
     private String roleNameTemplate;
     private ProducerPool idmServiceProducerPool;
+    private String identityDnTemplate;
 
     @Override
     public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
@@ -50,9 +57,18 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 //        setResource5EntitlementDn(resource5EntitlementDn);
 //        logger.info(LOGTAG + "resource5EntitlementDn is: " + resource5EntitlementDn);
 
+        String identityDnTemplate = getProperties().getProperty("identityDnTemplate", null);
+        setIdentityDnTemplate(identityDnTemplate);
+        logger.info(LOGTAG + "identityDnTemplate is: " + identityDnTemplate);
+
         String roleNameTemplate = getProperties().getProperty("roleNameTemplate", null);
         setRoleNameTemplate(roleNameTemplate);
         logger.info(LOGTAG + "roleNameTemplate is: " + roleNameTemplate);
+    }
+
+    private void setIdentityDnTemplate(String template) throws StepException {
+        if (template == null) throw new StepException("identityDnTemplate cannot be null");
+        this.identityDnTemplate = template;
     }
 
     private void setIdmServiceProducerPool(ProducerPool idmServiceProducerPool) {
@@ -108,16 +124,22 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         logger.info(LOGTAG + "accountId is: " + accountId);
         addResultProperty("accountId", accountId);
 
+        String roleName = getRoleName(accountId);
+        logger.info(LOGTAG + "roleName is: " + roleName);
+        addResultProperty("roleName", roleName);
+
+        String identityDn = getIdentityDn(accountId);
+
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         /* begin business logic */
 
-        Role role = null;
-        RoleRequisition requisition = null;
+        RoleAssignment roleAssignment = null;
+        RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
 
         try {
-            role = (Role) getAppConfig().getObjectByType(Role.class.getName());
-            requisition = (RoleRequisition) getAppConfig().getObjectByType(RoleRequisition.class.getName());
+            roleAssignment = (RoleAssignment) getAppConfig().getObjectByType(RoleAssignment.class.getName());
+            roleAssignmentQuerySpecification = (RoleAssignmentQuerySpecification) getAppConfig().getObjectByType(RoleAssignmentQuerySpecification.class.getName());
         } catch (EnterpriseConfigurationObjectException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -125,22 +147,46 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         }
 
         try {
-            String roleName = getRoleName(accountId);
-            logger.info(LOGTAG + "roleName is: " + roleName);
-            requisition.setRoleName(roleName);
-            requisition.setRoleDescription("Removing the role during eprovisioning");
+            roleAssignment.setRoleAssignmentActionType("revoke");
+            roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
+            ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
+            identityDNs.addDistinguishedName(identityDn);
+            roleAssignment.setExplicitIdentityDNs(identityDNs);
+            RoleDNs roleDNs = roleAssignment.newRoleDNs();
+            roleDNs.addDistinguishedName(roleName);
+            roleAssignment.setRoleDNs(roleDNs);
+            roleAssignment.setReason("Account deprovisioning");
+            logger.info(LOGTAG + "Role assignment XML is: " + roleAssignment.toXmlString());
         } catch (EnterpriseFieldException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } catch (XmlEnterpriseObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        RequestService requestService = null;
+
+        try {
+            logger.info(LOGTAG + "Getting request service");
+            requestService = (RequestService) this.idmServiceProducerPool.getExclusiveProducer();
+        } catch (JMSException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
             throw new StepException(message, error);
         }
 
         try {
-            logger.info(LOGTAG + "Requisition XML is: " + requisition.toXmlString());
-        } catch (XmlEnterpriseObjectException error) {
+            logger.info(LOGTAG + "Deleting IDM role");
+            roleAssignment.delete("Delete", requestService);
+        } catch (EnterpriseObjectDeleteException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
             throw new StepException(message, error);
+        } finally {
+            this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
         }
 
         /* end business logic */
@@ -151,6 +197,10 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         logger.info(LOGTAG + "Step completed in " + time + "ms.");
 
         return getResultProperties();
+    }
+
+    private String getIdentityDn(String accountId) {
+        return this.identityDnTemplate.replace("USER_ID", accountId);
     }
 
     private String getRoleName(String accountId) {
