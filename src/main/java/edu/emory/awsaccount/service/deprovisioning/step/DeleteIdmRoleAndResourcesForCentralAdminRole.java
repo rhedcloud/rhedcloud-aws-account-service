@@ -3,16 +3,14 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
-import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
-import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
-import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.RoleDNs;
+import edu.emory.moa.jmsobjects.identity.v1_0.Role;
+import edu.emory.moa.objects.resources.v1_0.RoleQuerySpecification;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.moa.EnterpriseObjectDeleteException;
+import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
@@ -22,9 +20,6 @@ import java.util.Properties;
 
 public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteIdmRoleAndResourcesForCentralAdminRole";
-    private String resource3EntitlementDnTemplate;
-    private String resource4EntitlementDn;
-    private String resource5EntitlementDn;
     private String roleNameTemplate;
     private ProducerPool idmServiceProducerPool;
     private String identityDnTemplate;
@@ -44,18 +39,6 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
             logger.fatal(LOGTAG + message);
             throw new StepException(message);
         }
-
-//        String resource3EntitlementDnTemplate = getProperties().getProperty("resource3EntitlementDnTemplate");
-//        setResource3EntitlementDnTemplate(resource3EntitlementDnTemplate);
-//        logger.info(LOGTAG + "resource3EntitlementDnTemplate is: " + resource3EntitlementDnTemplate);
-//
-//        String resource4EntitlementDn = getProperties().getProperty("resource4EntitlementDn");
-//        setResource4EntitlementDn(resource4EntitlementDn);
-//        logger.info(LOGTAG + "resource4EntitlementDn is: " + resource4EntitlementDn);
-//
-//        String resource5EntitlementDn = getProperties().getProperty("resource5EntitlementDn");
-//        setResource5EntitlementDn(resource5EntitlementDn);
-//        logger.info(LOGTAG + "resource5EntitlementDn is: " + resource5EntitlementDn);
 
         String identityDnTemplate = getProperties().getProperty("identityDnTemplate", null);
         setIdentityDnTemplate(identityDnTemplate);
@@ -78,21 +61,6 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
     private void setRoleNameTemplate(String template) throws StepException {
         if (template == null) throw new StepException("getProperty cannot be null");
         this.roleNameTemplate = template;
-    }
-
-    private void setResource5EntitlementDn(String template) throws StepException {
-        if (template == null) throw new StepException("resource5EntitlementDn cannot be null");
-        this.resource5EntitlementDn = template;
-    }
-
-    private void setResource4EntitlementDn(String template) throws StepException {
-        if (template == null) throw new StepException("resource4EntitlementDn cannot be null");
-        this.resource4EntitlementDn = template;
-    }
-
-    private void setResource3EntitlementDnTemplate(String template) throws StepException {
-        if (template == null) throw new StepException("resource3EntitlementTemplate cannot be null");
-        this.resource3EntitlementDnTemplate = template;
     }
 
     @Override
@@ -134,12 +102,31 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 
         /* begin business logic */
 
-        RoleAssignment roleAssignment = null;
-        RoleAssignmentQuerySpecification roleAssignmentQuerySpecification = null;
+        List<Role> roles = getRolesForRoleName(roleName);
+
+        /* end business logic */
+
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
+
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step completed in " + time + "ms.");
+
+        return getResultProperties();
+    }
+
+    private List<Role> getRolesForRoleName(String roleName) throws StepException {
+        long startTime = System.currentTimeMillis();
+
+        String LOGTAG = createLogTag("getRolesForRoleName");
+        logger.info(LOGTAG + "Begin getting list of roles.");
+        logger.info(LOGTAG + "roleName is: " + roleName);
+
+        Role role = null;
+        RoleQuerySpecification roleQuerySpecification = null;
 
         try {
-            roleAssignment = (RoleAssignment) getAppConfig().getObjectByType(RoleAssignment.class.getName());
-            roleAssignmentQuerySpecification = (RoleAssignmentQuerySpecification) getAppConfig().getObjectByType(RoleAssignmentQuerySpecification.class.getName());
+            role = (Role) getAppConfig().getObjectByType(Role.class.getName());
+            roleQuerySpecification = (RoleQuerySpecification) getAppConfig().getObjectByType(RoleQuerySpecification.class.getName());
         } catch (EnterpriseConfigurationObjectException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -147,16 +134,8 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         }
 
         try {
-            roleAssignment.setRoleAssignmentActionType("revoke");
-            roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
-            ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
-            identityDNs.addDistinguishedName(identityDn);
-            roleAssignment.setExplicitIdentityDNs(identityDNs);
-            RoleDNs roleDNs = roleAssignment.newRoleDNs();
-            roleDNs.addDistinguishedName(roleName);
-            roleAssignment.setRoleDNs(roleDNs);
-            roleAssignment.setReason("Account deprovisioning");
-            logger.info(LOGTAG + "Role assignment XML is: " + roleAssignment.toXmlString());
+            roleQuerySpecification.setRoleDN(roleName);
+            logger.info(LOGTAG + "Query role assignments XML is: " + roleQuerySpecification.toXmlString());
         } catch (EnterpriseFieldException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -170,7 +149,6 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         RequestService requestService = null;
 
         try {
-            logger.info(LOGTAG + "Getting request service");
             requestService = (RequestService) this.idmServiceProducerPool.getExclusiveProducer();
         } catch (JMSException error) {
             String message = error.getMessage();
@@ -178,10 +156,15 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
             throw new StepException(message, error);
         }
 
+        List<Role> result = null;
+
         try {
-            logger.info(LOGTAG + "Deleting IDM role");
-            roleAssignment.delete("Delete", requestService);
-        } catch (EnterpriseObjectDeleteException error) {
+            result = role.query(roleQuerySpecification, requestService);
+            logger.info(LOGTAG + "Number of roles returned: " + result.size());
+            for (int index = 0; index < result.size(); index++) {
+                logger.info(LOGTAG + "Role[" + index + "] is: " + result.get(index));
+            }
+        } catch (EnterpriseObjectQueryException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
             throw new StepException(message, error);
@@ -189,14 +172,12 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
             this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
         }
 
-        /* end business logic */
 
-        update(COMPLETED_STATUS, SUCCESS_RESULT);
+        long started = System.currentTimeMillis();
+        long time = System.currentTimeMillis() - started;
+        logger.info(LOGTAG + "Completed in " + time + "ms.");
 
-        long time = System.currentTimeMillis() - startTime;
-        logger.info(LOGTAG + "Step completed in " + time + "ms.");
-
-        return getResultProperties();
+        return result;
     }
 
     private String getIdentityDn(String accountId) {
