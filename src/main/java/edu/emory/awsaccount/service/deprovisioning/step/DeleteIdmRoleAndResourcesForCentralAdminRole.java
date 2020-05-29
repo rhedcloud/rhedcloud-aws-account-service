@@ -38,17 +38,17 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
             throw new StepException(message);
         }
 
-        String resource3EntitlementDnTemplate = getProperties().getProperty("resource3EntitlementDnTemplate");
-        setResource3EntitlementDnTemplate(resource3EntitlementDnTemplate);
-        logger.info(LOGTAG + "resource3EntitlementDnTemplate is: " + resource3EntitlementDnTemplate);
-
-        String resource4EntitlementDn = getProperties().getProperty("resource4EntitlementDn");
-        setResource4EntitlementDn(resource4EntitlementDn);
-        logger.info(LOGTAG + "resource4EntitlementDn is: " + resource4EntitlementDn);
-
-        String resource5EntitlementDn = getProperties().getProperty("resource5EntitlementDn");
-        setResource5EntitlementDn(resource5EntitlementDn);
-        logger.info(LOGTAG + "resource5EntitlementDn is: " + resource5EntitlementDn);
+//        String resource3EntitlementDnTemplate = getProperties().getProperty("resource3EntitlementDnTemplate");
+//        setResource3EntitlementDnTemplate(resource3EntitlementDnTemplate);
+//        logger.info(LOGTAG + "resource3EntitlementDnTemplate is: " + resource3EntitlementDnTemplate);
+//
+//        String resource4EntitlementDn = getProperties().getProperty("resource4EntitlementDn");
+//        setResource4EntitlementDn(resource4EntitlementDn);
+//        logger.info(LOGTAG + "resource4EntitlementDn is: " + resource4EntitlementDn);
+//
+//        String resource5EntitlementDn = getProperties().getProperty("resource5EntitlementDn");
+//        setResource5EntitlementDn(resource5EntitlementDn);
+//        logger.info(LOGTAG + "resource5EntitlementDn is: " + resource5EntitlementDn);
 
         String roleNameTemplate = getProperties().getProperty("roleNameTemplate", null);
         setRoleNameTemplate(roleNameTemplate);
