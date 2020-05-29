@@ -128,6 +128,7 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
             String roleName = getRoleName(accountId);
             logger.info(LOGTAG + "roleName is: " + roleName);
             requisition.setRoleName(roleName);
+            requisition.setRoleDescription("Removing the role during eprovisioning");
         } catch (EnterpriseFieldException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
