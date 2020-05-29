@@ -399,14 +399,14 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	}
 	
 	private String getAccountAlias() {
-		String alias = getAccountSeriesPrefix() + "-" 
+		String alias = emailDistroListUserNamePrefix + getAccountSeriesPrefix() + "-"
 			+ getAccountSequenceNumber();
 				
 		return alias;
 	}
 	
 	private String getAccountEmailAddress() {
-		String emailAddress = emailDistroListUserNamePrefix + getAccountAlias() + emailDistroListDomainName;
+		String emailAddress = getAccountAlias() + emailDistroListDomainName;
 				
 		return emailAddress;
 	}
