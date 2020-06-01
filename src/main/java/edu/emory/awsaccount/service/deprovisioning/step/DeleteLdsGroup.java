@@ -39,7 +39,7 @@ import edu.emory.moa.objects.resources.v1_0.GroupQuerySpecification;
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 21 May 2017
  * @author Tom Cervenka (tcerven@emory.edu)
- * @version 1.0 - 26 May 2020
+ * @version 1.0 - 29 May 2020
  * 
  **/
 public class DeleteLdsGroup extends AbstractStep implements Step {
@@ -50,7 +50,7 @@ public class DeleteLdsGroup extends AbstractStep implements Step {
 	private ProducerPool m_ldsServiceProducerPool;
 	private AppConfig m_aConfig;
 	private String m_groupDnTemplate;
-	
+
 	private final String GROUP = "Group.v1_0";
 	private final String GROUP_QUERY_SPEC = "GroupQuerySpecification.v1_0";
 
@@ -238,8 +238,8 @@ public class DeleteLdsGroup extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[DeleteLdsGroup.run] ";
 		logger.info(LOGTAG + "Begin deleting group.");
 
-        String accountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
- 		String distinguishedName = buildDnValueFromTemplate(accountId);
+		String accountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
+		String distinguishedName = buildDnValueFromTemplate(accountId);
 		logger.info(LOGTAG + "distinguishedName is "+distinguishedName);
 		addResultProperty("distinguishedName", distinguishedName);
 
