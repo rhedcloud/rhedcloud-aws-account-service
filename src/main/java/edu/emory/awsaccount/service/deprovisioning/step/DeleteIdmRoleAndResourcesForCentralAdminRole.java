@@ -10,6 +10,7 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
@@ -104,8 +105,18 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 
         try {
             List<Role> roles = getRolesForRoleName(roleName);
-        } catch (StepException error) {
 
+            if (!roles.isEmpty()) {
+                for (int index = 0; index < roles.size(); index++) {
+                    this.deleteRole(roles.get(index).getRoleDN(), roleName);
+                }
+            } else {
+                logger.info(LOGTAG + "No central admin roles to delete");
+            }
+        } catch (StepException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
         }
 
         /* end business logic */
@@ -116,6 +127,56 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         logger.info(LOGTAG + "Step completed in " + time + "ms.");
 
         return getResultProperties();
+    }
+
+    private void deleteRole(String roleDN, String roleName) throws StepException {
+        long startTime = System.currentTimeMillis();
+
+        String LOGTAG = createLogTag("deleteRole");
+        logger.info(LOGTAG + "Deleting role.");
+        logger.info(LOGTAG + "roleDN is: " + roleDN);
+        logger.info(LOGTAG + "roleName is: " + roleName);
+
+        Role role = null;
+
+        try {
+            role = (Role) getAppConfig().getObjectByType(Role.class.getName());
+        } catch (EnterpriseConfigurationObjectException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        try {
+            role.setRoleName(roleName);
+            role.setRoleDN(roleDN);
+        } catch (EnterpriseFieldException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        }
+
+        RequestService requestService = null;
+
+        try {
+            logger.info(LOGTAG + "Getting request service");
+            requestService = (RequestService) this.idmServiceProducerPool.getExclusiveProducer();
+
+            logger.info(LOGTAG + "Deleting IDM role");
+            role.delete("Delete", requestService);
+        } catch (JMSException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } catch (EnterpriseObjectDeleteException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
+        } finally {
+            this.idmServiceProducerPool.releaseProducer((PointToPointProducer) requestService);
+        }
+
+        logger.info("Role successfully deleted.");
     }
 
     private List<Role> getRolesForRoleName(String roleName) throws StepException {
