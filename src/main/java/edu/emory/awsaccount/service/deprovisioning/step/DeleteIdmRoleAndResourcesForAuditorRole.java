@@ -148,6 +148,7 @@ public class DeleteIdmRoleAndResourcesForAuditorRole extends AbstractStep implem
 
         try {
             role.setRoleName(roleName);
+            role.setRoleDescription("Removing role");
             role.setRoleDN(roleDN);
         } catch (EnterpriseFieldException error) {
             String message = error.getMessage();
