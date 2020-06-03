@@ -1,6 +1,5 @@
 package edu.emory.awsaccount.service.deprovisioning.step;
 
-
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
@@ -18,8 +17,8 @@ import javax.jms.JMSException;
 import java.util.List;
 import java.util.Properties;
 
-public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep implements Step {
-    private static final String LOGTAG_NAME = "DeleteIdmRoleAndResourcesForCentralAdminRole";
+public class DeleteIdmRoleAndResourcesForAdminRole extends AbstractStep implements Step {
+    private static final String LOGTAG_NAME = "DeleteIdmRoleAndResourcesForAdminRole";
     private String roleNameTemplate;
     private ProducerPool idmServiceProducerPool;
     private String identityDnTemplate;
