@@ -18,6 +18,7 @@ import javax.jms.JMSException;
 
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
+import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectDeleteException;
@@ -127,6 +128,7 @@ public class DeleteLdsOrganizationalUnit extends AbstractStep implements Step {
 			OrganizationalUnit ou = (OrganizationalUnit) m_aConfig.getObject(OU);
 			OrganizationalUnitQuerySpecification querySpec = 
 					(OrganizationalUnitQuerySpecification) m_aConfig.getObject(OU_QUERY_SPEC);
+			querySpec.setdistinguishedName(distinguishedName);
 			results = ou.query(querySpec, rs);
 			long queryTime = System.currentTimeMillis() - queryStartTime;
 			logger.info(LOGTAG + "Queried for OrganizationUnit in "
@@ -145,6 +147,12 @@ public class DeleteLdsOrganizationalUnit extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			addResultProperty("errorMessage", errMsg);
 			throw new StepException(errMsg);
+		} catch (EnterpriseFieldException e) {
+			String errMsg = "An error occurred seting the DN in the  " +
+					"OrganizationalUnitQuerySpec object. " +
+					"The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
 		}
 		finally {
 			// Release the producer back to the pool
