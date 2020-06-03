@@ -131,10 +131,25 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
 			String vpnInsideIpCidr2 =
 					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
-			String remoteVpnIpAddress1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-					"vpn1RemoteIpAddress");
-			String remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-					"vpn2RemoteIpAddress");
+			String remoteVpnIpAddress1 = null;
+			String remoteVpnIpAddress2 = null;
+			if (getRemoteVpnIpAddressForTesting() != null ) {
+				logger.info(LOGTAG + "There is a remote VPN IP address for testing. " +
+					"Using dummy IP: " + getRemoteVpnIpAddressForTesting());
+				addResultProperty("useDummyRemoteIp", "true");
+				addResultProperty("dummyRemoteIp", getRemoteVpnIpAddressForTesting());
+				remoteVpnIpAddress1 = getRemoteVpnIpAddressForTesting();
+				remoteVpnIpAddress2 = getRemoteVpnIpAddressForTesting();
+			}
+			else {
+				logger.info(LOGTAG + "There is no remote VPN IP address for testing. " +
+					"Using real address.");
+				addResultProperty("useDummyRemoteIp", "false");
+				remoteVpnIpAddress1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+						"vpn1RemoteIpAddress");
+				remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+						"vpn2RemoteIpAddress");
+			}
 			
 			String presharedKey1 = null;
 			String presharedKey2 = null;
