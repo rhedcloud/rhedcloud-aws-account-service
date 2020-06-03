@@ -150,6 +150,7 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         try {
             role.setRoleName(roleName);
             role.setRoleDescription("Removing role");
+            role.setRoleCategoryKey("aws");
             role.setRoleDN(roleDN);
         } catch (EnterpriseFieldException error) {
             String message = error.getMessage();
