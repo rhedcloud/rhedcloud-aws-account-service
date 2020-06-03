@@ -135,11 +135,26 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 					"vpn1RemoteIpAddress");
 			String remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
 					"vpn2RemoteIpAddress");
-			String presharedKey1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-					"vpn1PresharedKey");
-			String presharedKey2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
-					"vpn2PresharedKey");
-
+			
+			String presharedKey1 = null;
+			String presharedKey2 = null;
+			if (getPresharedKeyTemplateForTesting() != null ) {
+				logger.info(LOGTAG + "There is a preshared key template for testing. " +
+					"Using dummy key: " + getPresharedKeyForTesting(vpnConnectionProfileId));
+				addResultProperty("useDummyPresharedKey", "true");
+				presharedKey1 = getPresharedKeyForTesting(vpnConnectionProfileId);
+				presharedKey2 = getPresharedKeyForTesting(vpnConnectionProfileId);
+			}
+			else {
+				logger.info(LOGTAG + "There is no preshared key template for testing. " +
+					"Using real key.");
+				addResultProperty("useDummyPresharedKey", "false");
+				presharedKey1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+						"vpn1PresharedKey");
+				presharedKey2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION",
+						"vpn2PresharedKey");
+			}
+			
 			// Compute the local tunnel ids
 			int tunnelId1 = 10000 + Integer.parseInt(vpnConnectionProfileId);
 			String localTunnelId1 = Integer.toString(tunnelId1);
@@ -537,6 +552,16 @@ public class ProvisionVpnConnection extends AbstractStep implements Step {
 	
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
+	}
+	
+	private String getPresharedKeyForTesting(String vpnConnectionProfileId) {
+		
+		int number = Integer.valueOf(vpnConnectionProfileId);        
+		String str = String.format("%03d", number); 
+		
+		String key = getPresharedKeyTemplateForTesting() + str;
+		return str;
+
 	}
 	
 }
