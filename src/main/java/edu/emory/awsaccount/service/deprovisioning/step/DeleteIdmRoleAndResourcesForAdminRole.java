@@ -106,7 +106,9 @@ public class DeleteIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
 
         if (!roles.isEmpty()) {
             for (int index = 0; index < roles.size(); index++) {
-                this.deleteRole(roles.get(index).getRoleDN(), roleName);
+                Role role = roles.get(index);
+                this.deleteRole(role, roleName);
+                addResultProperty("adminIdmRole", role.getRoleDN());
             }
         } else {
             logger.info(LOGTAG + "No admin roles to delete from IDM");
@@ -122,34 +124,13 @@ public class DeleteIdmRoleAndResourcesForAdminRole extends AbstractStep implemen
         return getResultProperties();
     }
 
-    private void deleteRole(String roleDN, String roleName) throws StepException {
+    private void deleteRole(Role role, String roleName) throws StepException {
         long startTime = System.currentTimeMillis();
 
         String LOGTAG = createLogTag("deleteRole");
         logger.info(LOGTAG + "Deleting role.");
-        logger.info(LOGTAG + "roleDN is: " + roleDN);
+        logger.info(LOGTAG + "roleDN is: " + role.getRoleDN());
         logger.info(LOGTAG + "roleName is: " + roleName);
-
-        Role role = null;
-
-        try {
-            role = (Role) getAppConfig().getObjectByType(Role.class.getName());
-        } catch (EnterpriseConfigurationObjectException error) {
-            String message = error.getMessage();
-            logger.error(LOGTAG + message);
-            throw new StepException(message, error);
-        }
-
-        try {
-            role.setRoleName(roleName);
-            role.setRoleDescription("Removing role");
-            role.setRoleCategoryKey("aws");
-            role.setRoleDN(roleDN);
-        } catch (EnterpriseFieldException error) {
-            String message = error.getMessage();
-            logger.error(LOGTAG + message);
-            throw new StepException(message, error);
-        }
 
         RequestService requestService = null;
 
