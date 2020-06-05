@@ -180,8 +180,10 @@ public class NotifyAdmins extends AbstractStep implements Step {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
             throw new StepException(message, error);
-        } catch (ProviderException e) {
-            e.printStackTrace();
+        } catch (ProviderException error) {
+            String message = error.getMessage();
+            logger.error(LOGTAG + message);
+            throw new StepException(message, error);
         } catch (EnterpriseFieldException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
