@@ -26,6 +26,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
     private String contactType;
     private String cmdbCi;
     private String incidentRequisitionCallerId;
+    private String assignmentGroup;
 
     @Override
     public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
@@ -76,6 +77,15 @@ public class NotifyAdmins extends AbstractStep implements Step {
         String incidentRequisitionCallerId = getProperties().getProperty("incidentRequisitionCallerId", null);
         logger.info(LOGTAG + "incidentRequisitionCallerId is: " + incidentRequisitionCallerId);
         setIncidentRequisitionCallerId(incidentRequisitionCallerId);
+
+        String assignmentGroup = getProperties().getProperty("assignmentGroup", null);
+        logger.info(LOGTAG + "assignmentGroup is: " + assignmentGroup);
+        setAssignmentGroup(assignmentGroup);
+    }
+
+    private void setAssignmentGroup(String assignmentGroup) throws StepException {
+        if (assignmentGroup == null) throw new StepException("assignmentGroup cannot be null");
+        this.assignmentGroup = assignmentGroup;
     }
 
     private void setIncidentRequisitionCallerId(String id) throws StepException {
@@ -180,7 +190,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
             requisition.setRecordType(this.recordType);
             requisition.setContactType(this.contactType);
             requisition.setCmdbCi(this.cmdbCi);
-            requisition.setCallerId(incidentRequisitionCallerId);
+            requisition.setCallerId(this.incidentRequisitionCallerId);
+            requisition.setAssignmentGroup(this.assignmentGroup);
 
             Incident incident = getAccountDeprovisioningProvider().generateIncident(requisition);
             String incidentNumber = incident.getNumber();
