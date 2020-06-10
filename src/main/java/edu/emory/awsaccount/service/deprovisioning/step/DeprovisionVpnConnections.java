@@ -210,29 +210,30 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	    	// Return the properties.
 	    	return getResultProperties();
 		}
-		if (vpnConnections.size() == 1) {
-			logger.info(LOGTAG + "There is 1 VpnConnection to deprovision.");
+		if (vpnConnections.size() == 2) {
+			logger.info(LOGTAG + "There is 2 VpnConnection to deprovision.");
 		}
 		else {
-			logger.info(LOGTAG + "There are " + vpnConnections.size() + 
-				" VpnConnections to deprovision.");
+			String errMsg = "Unexpected number of VPN connections: got " +
+				vpnConnections.size() + " Expected: 2.";
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg);
 		}
 			
-		// Deprovision each VpnConnection in the list.
-		ListIterator<VpnConnection> vcli = vpnConnections.listIterator();
+		// Deprovision the VpnConnection for each profile assignment in the list.
+		ListIterator<VpnConnectionProfileAssignment> assignmentIterator = 
+			vpnConnectionProfileAssignments.listIterator();
 		VpnConnectionDeprovisioning result = null;
 		int vpnCount = 1;
 		int failureCount = 0;
-		while (vcli.hasNext()) {
-			VpnConnection vpnc = vcli.next();
-			VpnConnectionProfileAssignment vcpa = 
-					getVpnConnectionProfileAssignmentForConnection(vpnConnectionProfileAssignments, vpnc);
+		while (assignmentIterator.hasNext()) {
+			VpnConnectionProfileAssignment assignment = assignmentIterator.next();
 			try {
-				result = deprovisionVpnConnection(vcpa);
+				result = deprovisionVpnConnection(assignment);
 				logger.info(LOGTAG + "Deprovisioning result is: " + result.getProvisioningResult());
 				String msg = "Successfully deprovisioned a VPN connection for " +
-						"VpcId " + vcpa.getOwnerId() + " and VpnConnectionProfileId " +
-						vcpa.getVpnConnectionProfileId() + ".";
+						"VpcId " + assignment.getOwnerId() + " and VpnConnectionProfileId " +
+						assignment.getVpnConnectionProfileId() + ".";
 				logger.info(LOGTAG + msg);
 				addResultProperty("vpnStatus" + vpnCount, msg);
 				vpnCount++;
@@ -240,8 +241,8 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 			catch (StepException se) {
 				failureCount++;
 				String errMsg = "An error occurred deprovisioning a VPN connection for " +
-					"VpcId " + vcpa.getOwnerId() + " and VpnConnectionProfileId " +
-					vcpa.getVpnConnectionProfileId() + ". The exception is: " + 
+					"VpcId " + assignment.getOwnerId() + " and VpnConnectionProfileId " +
+					assignment.getVpnConnectionProfileId() + ". The exception is: " + 
 					se.getMessage();
 				logger.info(LOGTAG + errMsg);
 				addResultProperty("vpnStatus" + vpnCount, errMsg);
