@@ -17,10 +17,8 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteAdminsFromAdminRole";
@@ -85,12 +83,16 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         // only attempt to remove accounts if there are any to be removed
         if (!roleAssignments.isEmpty()) {
+            int count = 0;
             for (int index = 0; index < roleAssignments.size(); index++) {
                 RoleAssignment assignment = roleAssignments.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
                 this.deleteAdminFromRole(identityDn, adminRoleDn);
+                addResultProperty("deletedIdentityDn" + count, identityDn);
+                count++;
             }
+            addResultProperty("deletedIdentityDnCount", String.valueOf(count));
         } else {
             logger.info(LOGTAG + "No admin roles to be processed");
         }
@@ -138,7 +140,6 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
             ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
             identityDNs.addDistinguishedName(identityDn);
             roleAssignment.setExplicitIdentityDNs(identityDNs);
-//            roleAssignment.setIdentityDN(identityDn);
             RoleDNs roleDNs = roleAssignment.newRoleDNs();
             roleDNs.addDistinguishedName(adminRoleDn);
             roleAssignment.setRoleDNs(roleDNs);
