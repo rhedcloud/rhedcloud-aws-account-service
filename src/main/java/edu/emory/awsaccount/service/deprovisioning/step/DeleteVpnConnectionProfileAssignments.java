@@ -168,10 +168,10 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
 			" VpnConnectionProfileAssignments to check for VpnConnections.");
 		addResultProperty("vpnConnectionProfileAssignments", assignmentCount);
 		
-		// If there are no VpnConnectionProfileAssignments to check, there is nothing
+		// If there are no VpnConnectionProfileAssignments to delete, there is nothing
 		// to do and the step is complete.
 		if (vpnConnectionProfileAssignments.size() == 0) {
-			logger.info(LOGTAG + "There are no VpnConnectionProfileAssignments to check. " +
+			logger.info(LOGTAG + "There are no VpnConnectionProfileAssignments to delete. " +
 				"There is nothing to do.");
 			// Update the step.
 			update(COMPLETED_STATUS, SUCCESS_RESULT);
@@ -187,6 +187,7 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
 		// Delete each VpnConnectionProfileAssignment
 		ListIterator<VpnConnectionProfileAssignment> assignmentIterator = 
 			vpnConnectionProfileAssignments.listIterator();
+		int assignmentsDeleted = 0;
 		while (assignmentIterator.hasNext()) {
 			VpnConnectionProfileAssignment assignment = assignmentIterator.next();
 			
@@ -212,6 +213,7 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
 				logger.info(LOGTAG + "Deleted for VpnConnectionProfileAssignment " +
 						"for VpnConnectionProfileId " + assignment.getVpnConnectionProfileId() 
 						+ " in " + deleteTime + " ms.");
+				assignmentsDeleted++;
 			} catch (EnterpriseObjectDeleteException eode) {
 				String errMsg = "An error occurred deleting the  " +
 						"VpnConnectionProfileAssignment object. " +
@@ -226,9 +228,9 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
 		}
 		
 		
-		//logger.info(LOGTAG + "Successfully deprovisioned " + vpnCount + " connections.");
-		//addResultProperty("deprovisioningSuccesses", Integer.toString(vpnCount));
-		//addResultProperty("deprovisioningFailures", Integer.toString(failureCount));
+		logger.info(LOGTAG + "Successfully deleted " + assignmentsDeleted + 
+			" VpnConnectionProfileAssignments.");
+		addResultProperty("assignmentDeleted", Integer.toString(assignmentsDeleted));
 		
 		// The step is done. Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
@@ -503,270 +505,6 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
 		}
 		
 		return results;
-	}
-
-	private VpnConnectionProfileAssignment 
-		getVpnConnectionProfileAssignmentForConnection(List<VpnConnectionProfileAssignment> 
-		assignments, VpnConnection vpnc) throws StepException {
-		
-		String vpcId = vpnc.getVpcId();
-		String LOGTAG = "[DeprovisionVpnConnections.getVpnConnectionProfileAssignmentForConnection] ";
-		logger.info(LOGTAG + "Checking the list for an assignment for connection for vpcId: " + vpcId);
-		VpnConnectionProfileAssignment result = null;
-		ListIterator<VpnConnectionProfileAssignment> li = assignments.listIterator();
-		while(li.hasNext()) {
-			VpnConnectionProfileAssignment assignment = li.next();
-			if (assignment.getOwnerId().equalsIgnoreCase(vpcId)) {
-				logger.info(LOGTAG + "Found assignment for connection for vpcId: " + vpcId);
-				result = assignment;
-			}
-		}
-		return result;
-	}
-	
-	private VpnConnectionDeprovisioning 
-		deprovisionVpnConnection(VpnConnectionProfileAssignment assignment)
-		throws StepException {
-		
-		String LOGTAG = getStepTag() + 
-				"[DeprovisionVpnConnections.deprovisionVpnConnection] ";
-			
-	    // Get a configured VpnConnectionDeprovisioning object from AppConfig
-	    VpnConnectionDeprovisioning dep = new VpnConnectionDeprovisioning();
-	    try {
-	    	dep = (VpnConnectionDeprovisioning)getAppConfig()
-		    	.getObjectByType(dep.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-	    
-	    // Log the state of the assignment object.
-	    try {
-	    	logger.info(LOGTAG + "Generate object (VpnConnectionProfileAssignment) is: " 
-	    		+ assignment.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the " +
-	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			PointToPointProducer p2p = 
-				(PointToPointProducer)getNetworkOpsServiceProducerPool()
-				.getExclusiveProducer();
-			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-			rs = (RequestService)p2p;
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-		
-		// Generate the deprovisioning object
-		List results = null;
-		long generateStartTime = System.currentTimeMillis();
-		try { 	
-			results = dep.generate(assignment, rs);
-			long generateTime = System.currentTimeMillis() - generateStartTime;
-			logger.info(LOGTAG + "Generated the VpnConnection Deprovisioning " +
-				" for VPC " + assignment.getOwnerId() + " and profile ID " +
-				assignment.getVpnConnectionProfileId() + " in " + generateTime +
-				"ms. There are " + results.size() + " result(s).");
-		}
-		catch (EnterpriseObjectGenerateException eoge) {
-			String errMsg = "An error occurred generating the  " +
-	    	  "VpnConnectionDeprovisioning object. The exception is: "
-	    	  + eoge.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoge);
-		}
-		finally {
-			// Release the producer back to the pool
-			getNetworkOpsServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
-		if (results.size() == 1) {
-			dep = (VpnConnectionDeprovisioning)results.get(0);
-			logger.info(LOGTAG + "The VpnConnectionDeprovisioning ID is: " +
-				dep.getProvisioningId());
-		}
-		else {
-			String errMsg = "Invalid number of results returned from " +
-				"VpnConnectionDeprovisioning.Generate-Request. " + results.size() +
-				" results returned. Expected exactly 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}	
-		
-		// While the deprovisioning time is less that the maxWaitTime,
-		// query for the VpnConnectionDeprovisioning object and
-		// evaluate it for success or failure.
-		while (System.currentTimeMillis() - generateStartTime < getMaxWaitTimeInMillis()) {
-
-			// Sleep for the sleep interval.
-			logger.info(LOGTAG + "Sleeping for " + getSleepTimeInMillis() +
-					" prior to next VpnConnectionDeprovisioning query.");
-			try {
-				Thread.sleep(getSleepTimeInMillis());
-			} catch (InterruptedException ie) {
-				String errMsg = "Error occurred sleeping.";
-				logger.error(LOGTAG + errMsg + ie.getMessage());
-				throw new StepException(errMsg, ie);
-			}
-
-			// Query for the VpnConnectionDeprovisioning object.
-			dep = queryForVpnDeprovisioning(dep.getProvisioningId());
-
-			// If the VpnConnectionDeprovisioning is successful, log it,
-			// and set result properties.
-			if (isSuccess(dep)) {
-				logger.info(LOGTAG + "VPN connection deprovisioning successful for " +
-					"VPN " + assignment.getOwnerId() + " and VPN connection profile ID " +
-					assignment.getVpnConnectionProfileAssignmentId());
-				break;
-			} 
-			else if (isFailure(dep)) {
-				logger.info(LOGTAG + "VPN connection deprovisioning successful for " +
-					"VPN " + assignment.getOwnerId() + " and VPN connection profile ID " +
-					assignment.getVpnConnectionProfileAssignmentId());
-				break;
-			}
-		}
-		
-		return dep;
-	}
-	
-	private VpnConnectionDeprovisioning queryForVpnDeprovisioning(String deprovisioningId)
-			throws StepException {
-			
-		String LOGTAG = getStepTag() + "[DeprovisionVpnConnections.queryForVpnDeprovisioning] ";
-		
-	    // Get a configured VpnConnectionDeprovisioning object and
-	    // VpnConnectionDeprovisioningQuerySpecification object from AppConfig
-	    VpnConnectionDeprovisioning vpnDeprovisioning = new 
-			VpnConnectionDeprovisioning();
-		VpnConnectionDeprovisioningQuerySpecification querySpec = 
-			new VpnConnectionDeprovisioningQuerySpecification();
-	    try {
-	    	vpnDeprovisioning = (VpnConnectionDeprovisioning)getAppConfig()
-		    		.getObjectByType(vpnDeprovisioning.getClass().getName());
-	    	querySpec = (VpnConnectionDeprovisioningQuerySpecification)getAppConfig()
-		    		.getObjectByType(querySpec.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-		
-	    // Set the values of the query spec.
-	    try {
-	    	querySpec.setProvisioningId(deprovisioningId);
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting the values of the " +
-	  	    	  "object. The exception is: " + efe.getMessage();
-	  	    logger.error(LOGTAG + errMsg);
-	  	    throw new StepException(errMsg, efe);
-	    }
-	    
-	    // Log the state of the object.
-	    try {
-	    	logger.info(LOGTAG + "query spec is: " 
-	    		+ querySpec.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the " +
-	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			PointToPointProducer p2p = 
-				(PointToPointProducer)getNetworkOpsServiceProducerPool()
-				.getExclusiveProducer();
-			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-			rs = (RequestService)p2p;
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-	    
-		List results = null;
-		try { 
-			long queryStartTime = System.currentTimeMillis();
-			results = vpnDeprovisioning.query(querySpec, rs);
-			long queryTime = System.currentTimeMillis() - queryStartTime;
-			logger.info(LOGTAG + "Queried for VpnConnectionDeprovisioning" +
-				" with ProvisioningId " + deprovisioningId + "in " + queryTime +
-				"ms. There are " + results.size() + " result(s).");
-		}
-		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the  " +
-	    	  "VpnConnectionProvisioning object. The " +
-	    	  "exception is: " + eoqe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoqe);
-		}
-		finally {
-			// Release the producer back to the pool
-			getNetworkOpsServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
-		
-		if (results.size() == 1) {
-			VpnConnectionDeprovisioning dep = 
-				(VpnConnectionDeprovisioning)results.get(0);
-			return dep;
-		}
-		else {
-			String errMsg = "Invalid number of results returned from " +
-				"VpnConnectionDeprovisioning.Query-Request. " +
-				results.size() + " results returned. " +
-				"Expected exactly 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}	
-	}
-	
-	private boolean isSuccess(VpnConnectionDeprovisioning dep) {
-		
-		if (dep.getProvisioningResult() != null) {
-			if (dep.getProvisioningResult().equalsIgnoreCase(SUCCESS_RESULT)) {
-				return true;
-			}
-			else return false;
-		}
-		
-		else return false;
-	}
-	
-	private boolean isFailure(VpnConnectionDeprovisioning dep) {
-		
-		if (dep.getProvisioningResult() != null) {
-			if (dep.getProvisioningResult().equalsIgnoreCase(FAILURE_RESULT)) {
-				return true;
-			}
-			else return false;
-		}
-		else return false;
 	}
 	
 	private void setSleepTimeInMillis(int time) {
