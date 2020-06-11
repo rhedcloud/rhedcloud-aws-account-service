@@ -33,6 +33,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionDeprovisioning;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
@@ -181,48 +182,44 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 	    	return getResultProperties();
 		}
 		
-		// For each VpnConnectionProfileAssignment, query for a site-to-site VPN
-		// connection on the routers.
-		List<VpnConnection> vpnConnections = new ArrayList<VpnConnection>();
+		// For each VpnConnectionProfileAssignment, query for the site-to-site VPN
+		// connections on the routers. If there are two connections on the routers
+		// then the connections can be deprovisioned.
+		List<VpnConnectionProfileAssignment> vpnConnectionProfileAssignmentsToDeprovision = 
+			new ArrayList<VpnConnectionProfileAssignment>();
+		List<VpnConnection> vpnConnections = null;
 		ListIterator<VpnConnectionProfileAssignment> vpncpai = 
 			vpnConnectionProfileAssignments.listIterator();
 		while (vpncpai.hasNext()) {
-			VpnConnectionProfileAssignment vpncpa = vpncpai.next();
-			String ownerId = vpncpa.getOwnerId();
-			VpnConnection vpnc = queryForVpnConnection(ownerId);
-			if (vpnc != null) {
-				vpnConnections.add(vpnc);
+			VpnConnectionProfileAssignment vpnConnectionProfileAssignment = vpncpai.next();
+			String ownerId = vpnConnectionProfileAssignment.getOwnerId();
+			vpnConnections = queryForVpnConnection(ownerId);
+			if (vpnConnections != null) {
+				String connectionCount = Integer.toString(vpnConnections.size());
+				logger.info(LOGTAG + "VpnConnectionProfile " + 
+					vpnConnectionProfileAssignment.getVpnConnectionProfileId() + 
+					" for VPC " + vpnConnectionProfileAssignment.getOwnerId() + 
+					" has " + connectionCount + " connections on the routers.");
+				if (vpnConnections.size() == 2) {
+					logger.info(LOGTAG + "Adding the VpnConnectionProfileAssignment " +
+						"to the list of assignments to deprovision.");
+					vpnConnectionProfileAssignmentsToDeprovision
+						.add(vpnConnectionProfileAssignment);
+				}
+				else {
+					logger.info(LOGTAG + "The profile does not have two connections " +
+						"on the routers. Not adding the VpnConnectionProfileAssignment " +
+						"to the list to deprovision.");
+				}
+				addResultProperty("profileId" + 
+						vpnConnectionProfileAssignment.getVpnConnectionProfileId() +
+						"ConnectionCount", connectionCount);
 			}
-		}
-		String connectionCount = Integer.toString(vpnConnections.size());
-		addResultProperty("vpnConnections", connectionCount);
-		
-		if (vpnConnections.size() == 0) {
-			logger.info(LOGTAG + "There are no VpnConnections to deprovision. " +
-				"There is nothing more to do.");
-			// Update the step.
-			update(COMPLETED_STATUS, SUCCESS_RESULT);
-	    	
-	    	// Log completion time.
-	    	long time = System.currentTimeMillis() - startTime;
-	    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-	    	
-	    	// Return the properties.
-	    	return getResultProperties();
-		}
-		if (vpnConnections.size() == 2) {
-			logger.info(LOGTAG + "There is 2 VpnConnection to deprovision.");
-		}
-		else {
-			String errMsg = "Unexpected number of VPN connections: got " +
-				vpnConnections.size() + " Expected: 2.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
 		}
 			
 		// Deprovision the VpnConnection for each profile assignment in the list.
 		ListIterator<VpnConnectionProfileAssignment> assignmentIterator = 
-			vpnConnectionProfileAssignments.listIterator();
+			vpnConnectionProfileAssignmentsToDeprovision.listIterator();
 		VpnConnectionDeprovisioning result = null;
 		int vpnCount = 1;
 		int failureCount = 0;
@@ -442,7 +439,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		}	
 	}
 	
-	private VpnConnection queryForVpnConnection(String ownerId) throws StepException {
+	private List<VpnConnection> queryForVpnConnection(String ownerId) throws StepException {
 		
 		String LOGTAG = getStepTag() + 
 			"[DeprovisionVpnConnections.queryForVpnConnection] ";
@@ -503,7 +500,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 			throw new StepException(errMsg, jmse);
 		}
 	    
-		List results = null;
+		List<VpnConnection> results = null;
 		try { 
 			long queryStartTime = System.currentTimeMillis();
 			results = connection.query(querySpec, rs);
@@ -524,17 +521,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 				.releaseProducer((MessageProducer)rs);
 		}
 		
-		if (results.size() == 1) {
-			VpnConnection result = (VpnConnection)results.get(0);
-			return result;
-		}
-		else {
-			String errMsg = "Invalid number of results returned from " +
-				"VpnConnection.Query-Request. " + results.size() +
-				" results returned. Expected exactly 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}	
+		return results;
 	}
 
 	private VpnConnectionProfileAssignment 
