@@ -100,19 +100,40 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
 
         String auditorRoleDn = this.getAuditorRoleDn(accountId);
         logger.info(LOGTAG + "auditorRoleDn is: " + auditorRoleDn);
-        List<RoleAssignment> roleAssignments = getRoleAssignments(auditorRoleDn);
+        List<RoleAssignment> roleAssignments;
+        int count;
 
-        // only attempt to remove accounts if there are any to be removed
+        roleAssignments = getRoleAssignments(auditorRoleDn, "USER");
+        count = 0;
         if (!roleAssignments.isEmpty()) {
             for (int index = 0; index < roleAssignments.size(); index++) {
                 RoleAssignment assignment = roleAssignments.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + auditorRoleDn);
-                this.deleteAuditorFromRole(identityDn, auditorRoleDn);
+                this.deleteAuditorFromRole(identityDn, auditorRoleDn, "USER_TO_ROLE");
+                addResultProperty("deletedUserAuditorIdentityDn" + count, identityDn);
+                count++;
             }
         } else {
             logger.info(LOGTAG + "No auditor roles to be processed");
         }
+        addResultProperty("deletedUserAuditorIdentityDnCount", String.valueOf(count));
+
+        roleAssignments = getRoleAssignments(auditorRoleDn, "GROUP");
+        count = 0;
+        if (!roleAssignments.isEmpty()) {
+            for (int index = 0; index < roleAssignments.size(); index++) {
+                RoleAssignment assignment = roleAssignments.get(index);
+                String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
+                logger.info(LOGTAG + "Removing " + identityDn + " from role " + auditorRoleDn);
+                this.deleteAuditorFromRole(identityDn, auditorRoleDn, "GROUP_TO_ROLE");
+                addResultProperty("deletedGroupAuditorIdentityDn" + count, identityDn);
+                count++;
+            }
+        } else {
+            logger.info(LOGTAG + "No auditor roles to be processed");
+        }
+        addResultProperty("deletedGroupAuditorIdentityDnCount", String.valueOf(count));
 
         /* end business logic */
 
@@ -124,7 +145,7 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
         return getResultProperties();
     }
 
-    private void deleteAuditorFromRole(String identityDn, String auditorRoleDn) throws StepException {
+    private void deleteAuditorFromRole(String identityDn, String auditorRoleDn, String roleIdentitType) throws StepException {
         String LOGTAG = this.createLogTag("deleteAuditorFromRole");
 
         logger.info(LOGTAG + "Preparing to delete auditor role");
@@ -145,7 +166,7 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
 
         try {
             roleAssignment.setRoleAssignmentActionType("revoke");
-            roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
+            roleAssignment.setRoleAssignmentType(roleIdentitType);
             ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
             identityDNs.addDistinguishedName(identityDn);
             roleAssignment.setExplicitIdentityDNs(identityDNs);
@@ -189,7 +210,7 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
         logger.info(LOGTAG + "Role successfully revoked");
     }
 
-    private List<RoleAssignment> getRoleAssignments(String roleDn) throws StepException {
+    private List<RoleAssignment> getRoleAssignments(String roleDn, String identityType) throws StepException {
         String LOGTAG = this.createLogTag("getRoleAssignments");
 
         logger.info(LOGTAG + "Getting list of account ids assigned to auditor role: " + roleDn);
@@ -208,7 +229,7 @@ public class DeleteAuditorsFromAuditorRole extends AbstractStep implements Step 
 
         try {
             roleAssignmentQuerySpecification.setRoleDN(roleDn);
-            roleAssignmentQuerySpecification.setIdentityType("USER");
+            roleAssignmentQuerySpecification.setIdentityType(identityType);
             roleAssignmentQuerySpecification.setDirectAssignOnly("true");
             logger.info(LOGTAG + "Query role assignments XML is: " + roleAssignmentQuerySpecification.toXmlString());
         } catch (EnterpriseFieldException error) {

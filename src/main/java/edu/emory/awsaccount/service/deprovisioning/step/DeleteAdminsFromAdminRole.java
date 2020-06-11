@@ -91,13 +91,13 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
                 this.deleteAdminFromRole(identityDn, adminRoleDn, "USER_TO_ROLE");
-                addResultProperty("deletedUserIdentityDn" + deletedCount, identityDn);
+                addResultProperty("deletedUserAdminIdentityDn" + deletedCount, identityDn);
                 deletedCount++;
             }
         } else {
             logger.info(LOGTAG + "No user roles to be processed");
         }
-        addResultProperty("deletedUserIdentityDnCount", String.valueOf(deletedCount));
+        addResultProperty("deletedUserAdminIdentityDnCount", String.valueOf(deletedCount));
 
         roleAssignments = getRoleAssignments(adminRoleDn, "GROUP");
 
@@ -108,13 +108,13 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
                 this.deleteAdminFromRole(identityDn, adminRoleDn, "GROUP_TO_ROLE");
-                addResultProperty("deletedGroupIdentityDn" + deletedCount, identityDn);
+                addResultProperty("deletedGroupAdminIdentityDn" + deletedCount, identityDn);
                 deletedCount++;
             }
         } else {
             logger.info(LOGTAG + "No group roles to be processed");
         }
-        addResultProperty("deletedGroupIdentityDnCount", String.valueOf(deletedCount));
+        addResultProperty("deletedGroupAdminIdentityDnCount", String.valueOf(deletedCount));
 
         /* end business logic */
 
