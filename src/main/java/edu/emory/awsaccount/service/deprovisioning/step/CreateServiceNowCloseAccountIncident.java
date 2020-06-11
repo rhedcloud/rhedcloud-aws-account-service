@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class NotifyAdmins extends AbstractStep implements Step {
-    private static final String LOGTAG_NAME = "NotifyAdmins";
+public class CreateServiceNowCloseAccountIncident extends AbstractStep implements Step {
+    private static final String LOGTAG_NAME = "CreateServiceNowCloseAccountIncident";
     private String shortDescription;
     private String longDescription;
     private String urgency;
