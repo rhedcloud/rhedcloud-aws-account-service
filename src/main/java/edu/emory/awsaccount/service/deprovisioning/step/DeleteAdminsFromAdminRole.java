@@ -82,20 +82,20 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         List<RoleAssignment> roleAssignments = getRoleAssignments(adminRoleDn);
 
         // only attempt to remove accounts if there are any to be removed
+        int deletedCount = 0;
         if (!roleAssignments.isEmpty()) {
-            int count = 0;
             for (int index = 0; index < roleAssignments.size(); index++) {
                 RoleAssignment assignment = roleAssignments.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
                 this.deleteAdminFromRole(identityDn, adminRoleDn);
-                addResultProperty("deletedIdentityDn" + count, identityDn);
-                count++;
+                addResultProperty("deletedIdentityDn" + deletedCount, identityDn);
+                deletedCount++;
             }
-            addResultProperty("deletedIdentityDnCount", String.valueOf(count));
         } else {
             logger.info(LOGTAG + "No admin roles to be processed");
         }
+        addResultProperty("deletedIdentityDnCount", String.valueOf(deletedCount));
 
         /* end business logic */
 
