@@ -221,19 +221,24 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		ListIterator<VpnConnectionProfileAssignment> assignmentIterator = 
 			vpnConnectionProfileAssignmentsToDeprovision.listIterator();
 		VpnConnectionDeprovisioning result = null;
-		int vpnCount = 1;
+		int vpnCount = 0;
 		int failureCount = 0;
+		if (assignmentIterator.hasNext() == false) {
+			String msg = "There are no VPN connections to deprovision.";
+			logger.info(LOGTAG + msg);
+			addResultProperty("message", msg);
+		}
 		while (assignmentIterator.hasNext()) {
 			VpnConnectionProfileAssignment assignment = assignmentIterator.next();
 			try {
 				result = deprovisionVpnConnection(assignment);
+				vpnCount++;
 				logger.info(LOGTAG + "Deprovisioning result is: " + result.getProvisioningResult());
 				String msg = "Successfully deprovisioned a VPN connection for " +
 						"VpcId " + assignment.getOwnerId() + " and VpnConnectionProfileId " +
 						assignment.getVpnConnectionProfileId() + ".";
 				logger.info(LOGTAG + msg);
 				addResultProperty("vpnStatus" + vpnCount, msg);
-				vpnCount++;
 			}
 			catch (StepException se) {
 				failureCount++;
