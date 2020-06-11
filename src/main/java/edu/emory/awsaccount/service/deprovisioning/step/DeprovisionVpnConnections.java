@@ -156,9 +156,19 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		ListIterator<String> li = vpcList.listIterator();
 		while (li.hasNext()) {
 			String vpcId = li.next();
-			VpnConnectionProfileAssignment vcpa = queryForVpnConnectionProfileAssignment(vpcId);
-			if (vcpa != null) {
-				vpnConnectionProfileAssignments.add(vcpa);
+			List<VpnConnectionProfileAssignment> assignments = queryForVpnConnectionProfileAssignment(vpcId);
+			if (assignments.size() == 1) {
+				logger.info(LOGTAG + "Found a VpnConnectionProfileAssignment for VpcId: " + vpcId);
+				vpnConnectionProfileAssignments.add(assignments.get(0));
+			}
+			else if (assignments.size() == 0) {
+				logger.info(LOGTAG + "No VpnConnectionProfileAssignment for VpcId: " + vpcId);
+			}
+			else if (assignments.size() > 1) {
+				String errMsg = "Unexpected number of VpnConnectionProfileAssignments. Found " +
+					assignments.size() + ". Expected 0 or 1.";
+				logger.error(LOGTAG + errMsg);
+				throw new StepException(errMsg);
 			}
 		}
 		String assignmentCount = Integer.toString(vpnConnectionProfileAssignments.size());
@@ -342,7 +352,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 		return m_requestTimeoutIntervalInMillis;
 	}
 	
-	private VpnConnectionProfileAssignment queryForVpnConnectionProfileAssignment(String vpcId) 
+	private List<VpnConnectionProfileAssignment> queryForVpnConnectionProfileAssignment(String vpcId) 
 		throws StepException {
 		
 		String LOGTAG = getStepTag() + 
@@ -429,19 +439,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 				.releaseProducer((MessageProducer)rs);
 		}
 		
-		if (results.size() == 1) {
-			VpnConnectionProfileAssignment result = 
-				(VpnConnectionProfileAssignment)results.get(0);
-			return result;
-		}
-		else {
-			String errMsg = "Invalid number of results returned from " +
-				"VpnConnectionProfileAssignment.Query-Request. " +
-				results.size() + " results returned. " +
-				"Expected exactly 1.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}	
+		return results;
 	}
 	
 	private List<VpnConnection> queryForVpnConnection(String ownerId) throws StepException {
