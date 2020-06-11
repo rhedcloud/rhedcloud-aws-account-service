@@ -52,7 +52,7 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 30 August 2018
  **/
-public class CreateServiceNowCloseAccountIncident extends AbstractStep implements Step {
+public class NotifyAdmins extends AbstractStep implements Step {
 	
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private String m_notificationTemplate;
