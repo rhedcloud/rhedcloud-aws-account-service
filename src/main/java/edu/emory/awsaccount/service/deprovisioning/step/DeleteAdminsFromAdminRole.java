@@ -79,23 +79,42 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         logger.info(LOGTAG + "adminRoleDnTemplate is: " + adminRoleTemplate);
 
         String adminRoleDn = this.getAdminRoleDn(accountId);
-        List<RoleAssignment> roleAssignments = getRoleAssignments(adminRoleDn);
+        List<RoleAssignment> roleAssignments;
+        int deletedCount;
 
-        // only attempt to remove accounts if there are any to be removed
-        int deletedCount = 0;
+        roleAssignments = getRoleAssignments(adminRoleDn, "USER");
+
+        deletedCount = 0;
         if (!roleAssignments.isEmpty()) {
             for (int index = 0; index < roleAssignments.size(); index++) {
                 RoleAssignment assignment = roleAssignments.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
-                this.deleteAdminFromRole(identityDn, adminRoleDn);
-                addResultProperty("deletedIdentityDn" + deletedCount, identityDn);
+                this.deleteAdminFromRole(identityDn, adminRoleDn, "USER_TO_ROLE");
+                addResultProperty("deletedUserIdentityDn" + deletedCount, identityDn);
                 deletedCount++;
             }
         } else {
-            logger.info(LOGTAG + "No admin roles to be processed");
+            logger.info(LOGTAG + "No user roles to be processed");
         }
-        addResultProperty("deletedIdentityDnCount", String.valueOf(deletedCount));
+        addResultProperty("deletedUserIdentityDnCount", String.valueOf(deletedCount));
+
+        roleAssignments = getRoleAssignments(adminRoleDn, "GROUP");
+
+        deletedCount = 0;
+        if (!roleAssignments.isEmpty()) {
+            for (int index = 0; index < roleAssignments.size(); index++) {
+                RoleAssignment assignment = roleAssignments.get(index);
+                String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
+                logger.info(LOGTAG + "Removing " + identityDn + " from role " + adminRoleDn);
+                this.deleteAdminFromRole(identityDn, adminRoleDn, "GROUP_TO_ROLE");
+                addResultProperty("deletedGroupIdentityDn" + deletedCount, identityDn);
+                deletedCount++;
+            }
+        } else {
+            logger.info(LOGTAG + "No group roles to be processed");
+        }
+        addResultProperty("deletedGroupIdentityDnCount", String.valueOf(deletedCount));
 
         /* end business logic */
 
@@ -115,7 +134,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         return this.adminRoleDnTemplate.replace("ACCOUNT_NUMBER", accountId);
     }
 
-    private void deleteAdminFromRole(String identityDn, String adminRoleDn) throws StepException {
+    private void deleteAdminFromRole(String identityDn, String adminRoleDn, String roleIdentityType) throws StepException {
         String LOGTAG = this.createLogTag("deleteAdminFromRole");
 
         logger.info(LOGTAG + "Preparing to delete admin role");
@@ -136,7 +155,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         try {
             roleAssignment.setRoleAssignmentActionType("revoke");
-            roleAssignment.setRoleAssignmentType("USER_TO_ROLE");
+            roleAssignment.setRoleAssignmentType(roleIdentityType);
             ExplicitIdentityDNs identityDNs = roleAssignment.newExplicitIdentityDNs();
             identityDNs.addDistinguishedName(identityDn);
             roleAssignment.setExplicitIdentityDNs(identityDNs);
@@ -180,7 +199,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
         logger.info(LOGTAG + "Role successfully revoked");
     }
 
-    private List<RoleAssignment> getRoleAssignments(String roleDn) throws StepException {
+    private List<RoleAssignment> getRoleAssignments(String roleDn, String roleIdentityType) throws StepException {
         String LOGTAG = this.createLogTag("getRoleAssignments");
 
         logger.info(LOGTAG + "Getting list of account ids assigned to role: " + roleDn);
@@ -199,7 +218,7 @@ public class DeleteAdminsFromAdminRole extends AbstractStep implements Step {
 
         try {
             roleAssignmentQuerySpecification.setRoleDN(roleDn);
-            roleAssignmentQuerySpecification.setIdentityType("USER");
+            roleAssignmentQuerySpecification.setIdentityType(roleIdentityType);
             roleAssignmentQuerySpecification.setDirectAssignOnly("true");
             logger.info(LOGTAG + "Query role assignments XML is: " + roleAssignmentQuerySpecification.toXmlString());
         } catch (EnterpriseFieldException error) {
