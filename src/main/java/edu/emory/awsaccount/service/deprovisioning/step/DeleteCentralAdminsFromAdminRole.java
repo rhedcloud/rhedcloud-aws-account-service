@@ -114,14 +114,14 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
                 RoleAssignment assignment = roleAssignments.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 this.deleteCentralAdmin(centralAdminRoleDn, identityDn, "USER_TO_ROLE");
-                addResultProperty("deletedCentralAdminGroupIdentityDn" + count, identityDn);
+                addResultProperty("deletedUserCentralAdminUserIdentityDn" + count, identityDn);
                 count++;
             }
         } else {
             logger.info(LOGTAG + " No users to be removed");
         }
 
-        addResultProperty("centralAdminsUsersRemoved", String.valueOf(roleAssignments.size()));
+        addResultProperty("deletedCentralAdminsUserIdentityDnCount", String.valueOf(roleAssignments.size()));
 
         roleAssignments = this.getCentralAdmins(centralAdminRoleDn, "GROUP");
         logger.info(LOGTAG + "Found " + roleAssignments.size() + " group roles");
@@ -132,14 +132,14 @@ public class DeleteCentralAdminsFromAdminRole extends AbstractStep implements St
                 RoleAssignment assignment = roleAssignments.get(index);
                 String identityDn = assignment.getExplicitIdentityDNs().getDistinguishedName(0);
                 this.deleteCentralAdmin(centralAdminRoleDn, identityDn, "GROUP_TO_ROLE");
-                addResultProperty("deletedCentralAdminGroupIdentityDn" + count, identityDn);
+                addResultProperty("deletedUserCentralAdminGroupIdentityDn" + count, identityDn);
                 count++;
             }
         } else {
             logger.info(LOGTAG + " No groups to be removed");
         }
 
-        addResultProperty("centralAdminGroupsRemoved", String.valueOf(roleAssignments.size()));
+        addResultProperty("deletedCentralAdminsGroupIdentityDnCount", String.valueOf(roleAssignments.size()));
 
         /* end business logic */
 
