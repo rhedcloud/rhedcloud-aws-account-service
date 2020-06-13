@@ -1,6 +1,6 @@
 package edu.emory.awsaccount.service.deprovisioning.step;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
@@ -16,6 +16,7 @@ import javax.jms.JMSException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 public class NotifyAdmins extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "NotifyAdmins";
@@ -195,10 +196,10 @@ public class NotifyAdmins extends AbstractStep implements Step {
     private void sendNotification(String publicId) throws StepException {
         String LOGTAG = createLogTag("sendNotification");
 
-        AccountNotification notification;
+        UserNotification notification;
 
         try {
-            notification = (AccountNotification) getAppConfig().getObjectByType(AccountNotification.class.getName());
+            notification = (UserNotification) getAppConfig().getObjectByType(UserNotification.class.getName());
         } catch (EnterpriseConfigurationObjectException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -208,9 +209,11 @@ public class NotifyAdmins extends AbstractStep implements Step {
         this.logger.info(LOGTAG + "Creating the notification");
 
         try {
+            notification.setAccountNotificationId(this.getAccountIdFromPublicId(publicId));
             notification.setType(this.notificationType);
             notification.setPriority(this.notificationPriority);
             notification.setSubject(this.notificationSubject);
+            notification.setRead("false");
             String notificationBody = this.getNotificationBody(publicId);
             notification.setText(notificationBody);
             notification.setCreateUser("AwsAccountService");
@@ -242,6 +245,15 @@ public class NotifyAdmins extends AbstractStep implements Step {
             this.awsAccountServiceProducerPool
                     .releaseProducer((MessageProducer) requestService);
         }
+    }
+
+    private String getAccountIdFromPublicId(String publicId) {
+        StringTokenizer tokens1 = new StringTokenizer(publicId, ",");
+        StringTokenizer tokens2 = new StringTokenizer(tokens1.nextToken(), "=");
+        String result = null;
+        while (tokens2.hasMoreElements()) result = tokens2.nextToken();
+
+        return result;
     }
 
     private String getNotificationBody(String publicId) {
