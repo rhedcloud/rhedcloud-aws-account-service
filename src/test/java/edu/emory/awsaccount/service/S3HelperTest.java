@@ -4,20 +4,20 @@ package edu.emory.awsaccount.service;
 
 import org.junit.Test;
 
-class S3HelperTest {
+public class S3HelperTest {
 
     // @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
     }
 
     @Test
-    void testRead() {
+    public void testRead() {
         S3Helper helper = new S3Helper(null);
         helper.readDeletedAccounts("DEV-" + AccountCsvSyncCommand.deletedAccountsFileName);
     }
 
     @Test
-    void testUpload() {
-        new S3Helper(null).uploadToS3("MobileAppReviewApprovalStat2.jpg", "MobileAppReviewApprovalStat2.jpg");
+    public void testUpload() {
+        new S3Helper(null).uploadToS3("GeorgeTest.txt", "README.md");
     }
 }
