@@ -96,7 +96,7 @@
    <artifactId>servicenow-moa</artifactId>
    <version>1</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/servicenow-moa.jar</systemPath>
+   <systemPath>${project.basedir}/lib/rhedcloud-servicenow-moas-master-4.jar</systemPath>
   </dependency>
 
   <dependency>
