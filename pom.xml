@@ -88,7 +88,7 @@
    <artifactId>peoplesoft-moa</artifactId>
    <version>1.2</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/peoplesoft-moa.jar</systemPath>
+   <systemPath>${project.basedir}/lib/rhedcloud-peoplesoft-moas-master-2.jar</systemPath>
   </dependency>
   
   <dependency>
