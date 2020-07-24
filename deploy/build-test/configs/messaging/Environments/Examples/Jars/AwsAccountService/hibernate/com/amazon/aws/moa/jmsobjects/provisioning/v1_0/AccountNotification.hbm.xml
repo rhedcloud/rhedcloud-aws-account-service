@@ -16,7 +16,7 @@
 <bag name="Annotation" table="ACCOUNT_NOTIF_ANNOTATION" batch-size="50">
 <key column="ACCOUNT_NOTIFICATION_ID"/>
 <composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Annotation">
-<property name="Text" column="TEXT"/>
+<property name="Text" column="TEXT" length="512"/>
 <property name="CreateUser" column="CREATE_USER"/>
 <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
 <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
