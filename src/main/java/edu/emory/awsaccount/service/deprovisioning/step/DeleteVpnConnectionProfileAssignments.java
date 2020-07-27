@@ -133,6 +133,30 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
 	    	return getResultProperties();
 		}
 		
+		// Get the vpnConnectionProfileAssignments property from a previous step.
+		String vpnConnectionProfileAssignmentCount =
+				getStepPropertyValue("DEPROVISION_VPN_CONNECTIONS", 
+					"vpnConnectionProfileAssignments");
+		addResultProperty("vpnConnectionProfileAssignments", vpnConnectionProfileAssignmentCount);
+		
+		// If there are no VpnConnectionProfileAssignments there is nothing to do and
+		// the step is complete.
+		if (vpnConnectionProfileAssignmentCount == null || 
+			vpnConnectionProfileAssignmentCount.equalsIgnoreCase("0")) {
+			
+			logger.info(LOGTAG + "There are no VPN connection profile assignments. " +
+				"There is nothing to do.");
+			// Update the step.
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
+	    	
+	    	// Log completion time.
+	    	long time = System.currentTimeMillis() - startTime;
+	    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+	    	
+	    	// Return the properties.
+	    	return getResultProperties();
+		}
+		
 		// Get the VPCs as a list.
 		List<String> vpcList = Arrays.asList(vpcIds.split("\\s*,\\s*"));
 		logger.info(LOGTAG + "There are " + vpcList.size() + " VPCs.");

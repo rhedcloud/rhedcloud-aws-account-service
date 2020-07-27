@@ -226,6 +226,9 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
 						"ConnectionCount", connectionCount);
 			}
 		}
+		
+		// Update the step, so step properties appear
+		update(IN_PROGRESS_STATUS, NO_RESULT);
 			
 		// Deprovision the VpnConnection for each profile assignment in the list.
 		ListIterator<VpnConnectionProfileAssignment> assignmentIterator = 
