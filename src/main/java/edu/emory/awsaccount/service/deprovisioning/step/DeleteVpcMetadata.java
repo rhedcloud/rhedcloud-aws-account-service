@@ -12,6 +12,7 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -44,11 +45,11 @@ import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If this is a new account request, create account metadata
+ * If there is delete 
  * <P>
  * 
  * @author Steve Wheat (swheat@emory.edu)
- * @version 1.0 - 30 August 2018
+ * @version 1.0 - 27 July 2020
  **/
 public class DeleteVpcMetadata extends AbstractStep implements Step {
 	
@@ -88,133 +89,133 @@ public class DeleteVpcMetadata extends AbstractStep implements Step {
 		String LOGTAG = getStepTag() + "[DeleteAccountMetadata.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
 
-		String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
-		logger.info(LOGTAG + "createVpc=" + createVpc);
-		if(!Boolean.valueOf(createVpc)) {
-			logger.info(LOGTAG + "Bypassing: no VPC created");
-			addResultProperty("createVpc", String.valueOf(false));
-		} else {
-			addResultProperty("createVpc", String.valueOf(true));
-            boolean vpcMetadataCreated = false;
+		// Get the accountId from the requisition
+		String accountId = getAccountDeprovisioning()
+			.getAccountDeprovisioningRequisition()
+			.getAccountId();
 		
-		    // Return properties
-		    addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-
-			// Get some properties from previous steps.
-			String accountId =
-					getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-			if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
-				accountId = getAccountDeprovisioning()
-						.getAccountDeprovisioningRequisition()
-						.getAccountId();
-				if (accountId == null || accountId.equals("")) {
-					String errMsg = "No account number for the new VPC " +
-							"can be found. Can't continue.";
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg);
-				}
-			}
-/**		
-			String vpcId =
-					getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
-			String region = getAccountDeprovisioning()
-					.getAccountDeprovisioningRequisition()
-					.getRegion();
-			String vpcType = getVirtualPrivateCloudProvisioning()
-					.getVirtualPrivateCloudRequisition()
-					.getType();
-			String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS",
-					"vpcNetwork");
-			String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR",
-					"vpnConnectionProfileId");
-
-			// Get the VirtualPrivateCloudRequisition
-			VirtualPrivateCloudRequisition req =
-					getVirtualPrivateCloudProvisioning()
-							.getVirtualPrivateCloudRequisition();
-
-			// Get a configured VPC object from AppConfig.
-			VirtualPrivateCloud vpc = new VirtualPrivateCloud();
-			try {
-				vpc = (VirtualPrivateCloud) getAppConfig()
-						.getObjectByType(vpc.getClass().getName());
-			} catch (EnterpriseConfigurationObjectException ecoe) {
-				String errMsg = "An error occurred retrieving an object from " +
-						"AppConfig. The exception is: " + ecoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, ecoe);
-			}
-
-			// Set the values of the VPC.
-			try {
-				vpc.setAccountId(accountId);
-				vpc.setVpcId(vpcId);
-				vpc.setRegion(region);
-				vpc.setType(vpcType);
-				vpc.setCidr(vpcCidr);
-				vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
-				vpc.setPurpose(req.getPurpose());
-				vpc.setCreateUser(req.getAuthenticatedRequestorUserId());
-				Datetime createDatetime = new Datetime("Create",
-						System.currentTimeMillis());
-				vpc.setCreateDatetime(createDatetime);
-			} catch (EnterpriseFieldException efe) {
-				String errMsg = "An error occurred setting the values of the " +
-						"query spec. The exception is: " + efe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, efe);
-			}
-
-			// Log the state of the account.
-			try {
-				logger.info(LOGTAG + "VPC to create is: " + vpc.toXmlString());
-			} catch (XmlEnterpriseObjectException xeoe) {
-				String errMsg = "An error occurred serializing the query spec " +
-						"to XML. The exception is: " + xeoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, xeoe);
-			}
-
-			// Get a producer from the pool
-			RequestService rs = null;
-			try {
-				rs = (RequestService) getAwsAccountServiceProducerPool()
-						.getExclusiveProducer();
-			} catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-						"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
-
-			try {
-				long createStartTime = System.currentTimeMillis();
-				vpc.create(rs);
-				long createTime = System.currentTimeMillis() - createStartTime;
-				logger.info(LOGTAG + "Create Account in " + createTime +
-						" ms.");
-				vpcMetadataCreated = true;
-				addResultProperty("vpcMetadataCreated",
-						Boolean.toString(vpcMetadataCreated));
-				addResultProperty("accountId", accountId);
-				addResultProperty("vpcId", vpcId);
-				addResultProperty("region", region);
-				addResultProperty("vpcType", vpcType);
-				addResultProperty("vpcCidr", vpcCidr);
-				addResultProperty("vpnConnectionProfileId",
-						vpnConnectionProfileId);
-			} catch (EnterpriseObjectCreateException eoce) {
-				String errMsg = "An error occurred creating the object. " +
-						"The exception is: " + eoce.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, eoce);
-			} finally {
-				// Release the producer back to the pool
-				getAwsAccountServiceProducerPool()
-						.releaseProducer((MessageProducer) rs);
+		// Query for the VPCs for this accountId
+		// Get a configured VPC object and account query spec
+		// from AppConfig.
+		VirtualPrivateCloud vpc = new VirtualPrivateCloud();
+		VirtualPrivateCloudQuerySpecification querySpec = 
+			new VirtualPrivateCloudQuerySpecification();
+	    try {
+	    	vpc = (VirtualPrivateCloud)getAppConfig()
+		    	.getObjectByType(vpc.getClass().getName());
+	    	querySpec = (VirtualPrivateCloudQuerySpecification)getAppConfig()
+			    	.getObjectByType(querySpec.getClass().getName());
+	    }
+	    catch (EnterpriseConfigurationObjectException ecoe) {
+	    	String errMsg = "An error occurred retrieving an object from " +
+	    	  "AppConfig. The exception is: " + ecoe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, ecoe);
+	    }
+	    
+	    // Set the values of the query spec
+	    try {
+	    	querySpec.setAccountId(accountId);
+	    }
+	    catch (EnterpriseFieldException efe) {
+	    	String errMsg = "An error occurred setting a field value. " +
+	    		"The exception is: " + efe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException();
+	    }
+	    
+	    // Get a producer from the pool
+		RequestService rs = null;
+		try {
+			rs = (RequestService)getAwsAccountServiceProducerPool()
+				.getExclusiveProducer();
+		}
+		catch (JMSException jmse) {
+			String errMsg = "An error occurred getting a producer " +
+				"from the pool. The exception is: " + jmse.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, jmse);
+		}
+		
+		// Query for the VPC metadata
+		List results = null;
+		try { 
+			long queryStartTime = System.currentTimeMillis();
+			results = vpc.query(querySpec, rs);
+			long createTime = System.currentTimeMillis() - queryStartTime;
+			logger.info(LOGTAG + "Queried for VPC in " + createTime +
+				" ms. Got " + results.size() + " result(s).");
+		}
+		catch (EnterpriseObjectQueryException eoqe) {
+			String errMsg = "An error occurred querying for the object. " +
+	    	  "The exception is: " + eoqe.getMessage();
+	    	logger.error(LOGTAG + errMsg);
+	    	throw new StepException(errMsg, eoqe);
+		}
+		finally {
+			// Release the producer back to the pool
+			getAwsAccountServiceProducerPool()
+				.releaseProducer((MessageProducer)rs);
+		}
+		
+		// If there is a result, delete the VPC metadata
+		if (results.size() > 0) {
+			String deletedVpcMetadata = "";
+			ListIterator li = results.listIterator();
+			while (li.hasNext()) {
+				vpc = (VirtualPrivateCloud)li.next();
+				
+				// Get a producer from the pool
+	 			rs = null;
+	 			try {
+	 				rs = (RequestService)getAwsAccountServiceProducerPool()
+	 					.getExclusiveProducer();
+	 			}
+	 			catch (JMSException jmse) {
+	 				String errMsg = "An error occurred getting a producer " +
+	 					"from the pool. The exception is: " + jmse.getMessage();
+	 				logger.error(LOGTAG + errMsg);
+	 				throw new StepException(errMsg, jmse);
+	 			}
+	 		    
+	 			// Delete the VPC metadata
+	 			try { 
+	 				long deleteStartTime = System.currentTimeMillis();
+	 				vpc.delete("Delete", rs);
+	 				long deleteTime = System.currentTimeMillis() - deleteStartTime;
+	 				logger.info(LOGTAG + "Deleted VPC with VpcId " + vpc.getVpcId() + 
+	 					"in " + deleteTime + " ms. ");
+	 				if (deletedVpcMetadata.equals("")) {
+	 					deletedVpcMetadata = vpc.getVpcId();
+	 				}
+	 				else {
+	 					deletedVpcMetadata = deletedVpcMetadata + ", " 
+	 						+ vpc.getVpcId();
+	 				}
+	 			}
+	 			catch (EnterpriseObjectDeleteException eode) {
+	 				String errMsg = "An error occurred deleting the object. " +
+	 		    	  "The exception is: " + eode.getMessage();
+	 		    	logger.error(LOGTAG + errMsg);
+	 		    	throw new StepException(errMsg, eode);
+	 			}
+	 			finally {
+	 				// Release the producer back to the pool
+	 				getAwsAccountServiceProducerPool()
+	 					.releaseProducer((MessageProducer)rs);
+	 			}
 			}
 			
-**/			
+			// Add a result property with the vpcIds of the removed VPC metadata.
+			addResultProperty("deletedVpcMetadata", deletedVpcMetadata);
+		}
+		
+		// There is no VPC metadata, there is nothing to do.
+		else {
+			String msg = "Account " + accountId + 
+				" has no VPC metadata. No VPC metadata to delete.";
+			logger.info(LOGTAG + msg);
+			addResultProperty("message", msg);
 		}
 	
 		// Update the step.
@@ -232,7 +233,7 @@ public class DeleteVpcMetadata extends AbstractStep implements Step {
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateVpcMetadata.simulate] ";
+			"[DeleteVpcMetadata.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
 		
 		// Set return properties.
@@ -253,7 +254,7 @@ public class DeleteVpcMetadata extends AbstractStep implements Step {
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + 
-			"[CreateVpcMetadata.fail] ";
+			"[DeleteVpcMetadata.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
 		
 		// Set return properties.
@@ -275,129 +276,8 @@ public class DeleteVpcMetadata extends AbstractStep implements Step {
 		super.rollback();
 		
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[CreateVpcMetadata.rollback] ";
-		logger.info(LOGTAG + "Rollback called, deleting account metadata.");
-		
-		// Get the result props
-		List<Property> props = getResultProperties();
-		
-		// Get the VpcId
-		String vpcId = getResultProperty("vpcId");
-		
-		// If the vpcId is not null, query for the VPC object
-		// and then delete it.
-		if (vpcId != null) {
-		
-			// Query for the VPC
-			// Get a configured VPC object and account query spec
-			// from AppConfig.
-			VirtualPrivateCloud vpc = new VirtualPrivateCloud();
-			VirtualPrivateCloudQuerySpecification querySpec = 
-				new VirtualPrivateCloudQuerySpecification();
-		    try {
-		    	vpc = (VirtualPrivateCloud)getAppConfig()
-			    	.getObjectByType(vpc.getClass().getName());
-		    	querySpec = (VirtualPrivateCloudQuerySpecification)getAppConfig()
-				    	.getObjectByType(querySpec.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-		    
-		    // Set the values of the query spec
-		    try {
-		    	querySpec.setVpcId(vpcId);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting a field value. " +
-		    		"The exception is: " + efe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException();
-		    }
-		    
-		    // Get a producer from the pool
- 			RequestService rs = null;
- 			try {
- 				rs = (RequestService)getAwsAccountServiceProducerPool()
- 					.getExclusiveProducer();
- 			}
- 			catch (JMSException jmse) {
- 				String errMsg = "An error occurred getting a producer " +
- 					"from the pool. The exception is: " + jmse.getMessage();
- 				logger.error(LOGTAG + errMsg);
- 				throw new StepException(errMsg, jmse);
- 			}
- 		    
- 			// Query for the account metadata
- 			List results = null;
- 			try { 
- 				long queryStartTime = System.currentTimeMillis();
- 				results = vpc.query(querySpec, rs);
- 				long createTime = System.currentTimeMillis() - queryStartTime;
- 				logger.info(LOGTAG + "Queried for VPC in " + createTime +
- 					" ms. Got " + results.size() + " result(s).");
- 			}
- 			catch (EnterpriseObjectQueryException eoqe) {
- 				String errMsg = "An error occurred querying for the object. " +
- 		    	  "The exception is: " + eoqe.getMessage();
- 		    	logger.error(LOGTAG + errMsg);
- 		    	throw new StepException(errMsg, eoqe);
- 			}
- 			finally {
- 				// Release the producer back to the pool
- 				getAwsAccountServiceProducerPool()
- 					.releaseProducer((MessageProducer)rs);
- 			}
- 			
- 			// If there is a result, delete the account metadata
- 			if (results.size() > 0) {
- 				vpc = (VirtualPrivateCloud)results.get(0);
- 				
- 				// Get a producer from the pool
- 	 			rs = null;
- 	 			try {
- 	 				rs = (RequestService)getAwsAccountServiceProducerPool()
- 	 					.getExclusiveProducer();
- 	 			}
- 	 			catch (JMSException jmse) {
- 	 				String errMsg = "An error occurred getting a producer " +
- 	 					"from the pool. The exception is: " + jmse.getMessage();
- 	 				logger.error(LOGTAG + errMsg);
- 	 				throw new StepException(errMsg, jmse);
- 	 			}
- 	 		    
- 	 			// Delete the account metadata
- 	 			try { 
- 	 				long deleteStartTime = System.currentTimeMillis();
- 	 				vpc.delete("Delete", rs);
- 	 				long deleteTime = System.currentTimeMillis() - deleteStartTime;
- 	 				logger.info(LOGTAG + "Deleted VPC in " + deleteTime +
- 	 					" ms. Got " + results.size() + " result(s).");
- 	 				addResultProperty("deletedVpcMetadataOnRollback", "true");
- 	 			}
- 	 			catch (EnterpriseObjectDeleteException eode) {
- 	 				String errMsg = "An error occurred deleting the object. " +
- 	 		    	  "The exception is: " + eode.getMessage();
- 	 		    	logger.error(LOGTAG + errMsg);
- 	 		    	throw new StepException(errMsg, eode);
- 	 			}
- 	 			finally {
- 	 				// Release the producer back to the pool
- 	 				getAwsAccountServiceProducerPool()
- 	 					.releaseProducer((MessageProducer)rs);
- 	 			}
- 			}
-		}
-		// If vpcId is null, there is nothing to roll back.
-		// Log it.
-		else {
-			logger.info(LOGTAG + "No VPC metadata was created by this " +
-				"step, so there is nothing to roll back.");
-			addResultProperty("deletedVpcMetadataOnRollback", "not applicable");
-		}
+		String LOGTAG = getStepTag() + "[DeleteVpcMetadata.rollback] ";
+		logger.info(LOGTAG + "Rollback called, nothing to roll back.");
 		
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 		
