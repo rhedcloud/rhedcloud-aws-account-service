@@ -153,9 +153,12 @@ public class NotifyAdmins extends AbstractStep implements Step {
             publicIdsToNotify.add(publicId);
         }
 
+        // Get a list of central administrators
         try {
         	List<String> centralAdministratorList = getAccountDeprovisioningProvider()
         		.getCentralAdministrators();
+        	addResultProperty("centralAdministratorCount", 
+        		Integer.toString(centralAdministratorList.size()));
         	ListIterator<String> li = centralAdministratorList.listIterator();
         	while (li.hasNext()) {
         		String id = (String)li.next();
@@ -168,8 +171,9 @@ public class NotifyAdmins extends AbstractStep implements Step {
         	logger.error(LOGTAG + errMsg);
         	throw new StepException(errMsg, pe);
         }
-
-        logger.info(LOGTAG + "Sending notifications to " + publicIdsToNotify + " public ids:");
+        
+        logger.info(LOGTAG + "Sending notifications to " + publicIdsToNotify.size() + " public ids.");
+        addResultProperty("totalUsersToNotify", Integer.toString(publicIdsToNotify.size()));
 
         for (int index = 0; index < publicIdsToNotify.size(); index++) {
             String publicId = publicIdsToNotify.get(index);
@@ -228,8 +232,11 @@ public class NotifyAdmins extends AbstractStep implements Step {
         }
 
         try {
+        	long startTime = System.currentTimeMillis();
             notification.create(requestService);
-            this.logger.info(LOGTAG + "Notification sent to: " + publicId);
+            long time = System.currentTimeMillis() - startTime;
+            this.logger.info(LOGTAG + "Sent notification to user " + publicId +
+            	" in " + time + " ms.");
         } catch (EnterpriseObjectCreateException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
