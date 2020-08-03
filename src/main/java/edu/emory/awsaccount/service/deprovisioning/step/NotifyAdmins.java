@@ -4,6 +4,8 @@ import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
+import edu.emory.awsaccount.service.provider.ProviderException;
+
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -15,6 +17,7 @@ import org.openeai.transport.RequestService;
 import javax.jms.JMSException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -122,7 +125,12 @@ public class NotifyAdmins extends AbstractStep implements Step {
         String countStr;
         Integer count;
 
+        // Get all the deleted user admins.
         countStr = getStepPropertyValue("DELETE_ADMINS_FROM_ADMIN_ROLE", "deletedUserAdminIdentityDnCount");
+        if (countStr == null || countStr.equalsIgnoreCase("not available")) {
+        	logger.info("deletedUserAdminIdentityDnCount is 'not available' or null, setting its value to 0.");
+        	countStr = "0";
+        }
         logger.info(LOGTAG + "countStr is: " + countStr);
         count = Integer.valueOf(countStr);
         logger.info(LOGTAG + "Loading " + count + " admin public ids");
@@ -131,49 +139,34 @@ public class NotifyAdmins extends AbstractStep implements Step {
             publicIdsToNotify.add(publicId);
         }
 
-        countStr = getStepPropertyValue("DELETE_ADMINS_FROM_ADMIN_ROLE", "deletedGroupAdminIdentityDnCount");
-        logger.info(LOGTAG + "countStr is: " + countStr);
-        count = Integer.valueOf(countStr);
-        logger.info(LOGTAG + "Loading " + count + " admin public ids");
-        for (int index = 0; index < count; index++) {
-            String publicId = getStepPropertyValue("DELETE_ADMINS_FROM_ADMIN_ROLE", "deletedUserAdminIdentityDn" + index);
-            publicIdsToNotify.add(publicId);
+        // Get all the deleted auditors
+        countStr = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedUserAuditorIdentityDnCount");
+        if (countStr == null || countStr.equalsIgnoreCase("not available")) {
+        	logger.info("deletedUserAuditorIdentityDnCount is 'not available' or null, setting its value to 0.");
+        	countStr = "0";
         }
-
-        countStr = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedUserAdminIdentityDnCount");
         logger.info(LOGTAG + "countStr is: " + countStr);
         count = Integer.valueOf(countStr);
-        logger.info(LOGTAG + "Loading " + count + " admin public ids");
+        logger.info(LOGTAG + "Loading " + count + " auditor public ids");
         for (int index = 0; index < count; index++) {
             String publicId = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedUserAuditorIdentityDn" + index);
             publicIdsToNotify.add(publicId);
         }
 
-        countStr = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedGroupAuditorIdentityDnCount");
-        logger.info(LOGTAG + "countStr is: " + countStr);
-        count = Integer.valueOf(countStr);
-        logger.info(LOGTAG + "Loading " + count + " admin public ids");
-        for (int index = 0; index < count; index++) {
-            String publicId = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedGroupAuditorIdentityDn" + index);
-            publicIdsToNotify.add(publicId);
+        try {
+        	List<String> centralAdministratorList = getAccountDeprovisioningProvider()
+        		.getCentralAdministrators();
+        	ListIterator<String> li = centralAdministratorList.listIterator();
+        	while (li.hasNext()) {
+        		String id = (String)li.next();
+        		publicIdsToNotify.add(id);
+        	}
         }
-
-        countStr = getStepPropertyValue("DELETE_CENTRAL_ADMINS_FROM_ADMIN_ROLE", "deletedCentralAdminsUserIdentityDnCount");
-        logger.info(LOGTAG + "countStr is: " + countStr);
-        count = Integer.valueOf(countStr);
-        logger.info(LOGTAG + "Loading " + count + " admin public ids");
-        for (int index = 0; index < count; index++) {
-            String publicId = getStepPropertyValue("DELETE_CENTRAL_ADMINS_FROM_ADMIN_ROLE", "deletedUserCentralAdminUserIdentityDn" + index);
-            publicIdsToNotify.add(publicId);
-        }
-
-        countStr = getStepPropertyValue("DELETE_CENTRAL_ADMINS_FROM_ADMIN_ROLE", "deletedCentralAdminsGroupIdentityDnCount");
-        logger.info(LOGTAG + "countStr is: " + countStr);
-        count = Integer.valueOf(countStr);
-        logger.info(LOGTAG + "Loading " + count + " admin public ids");
-        for (int index = 0; index < count; index++) {
-            String publicId = getStepPropertyValue("DELETE_CENTRAL_ADMINS_FROM_ADMIN_ROLE", "deletedUserCentralAdminGroupIdentityDn" + index);
-            publicIdsToNotify.add(publicId);
+        catch (ProviderException pe) {
+        	String errMsg = "An error occurred retrieving a list of central administrators. The exception " +
+        		"is: " + pe.getMessage();
+        	logger.error(LOGTAG + errMsg);
+        	throw new StepException(errMsg, pe);
         }
 
         logger.info(LOGTAG + "Sending notifications to " + publicIdsToNotify + " public ids:");
