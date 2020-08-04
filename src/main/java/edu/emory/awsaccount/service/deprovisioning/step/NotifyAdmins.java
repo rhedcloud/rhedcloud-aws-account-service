@@ -135,7 +135,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
         count = Integer.valueOf(countStr);
         logger.info(LOGTAG + "Loading " + count + " admin public ids");
         for (int index = 0; index < count; index++) {
-            String publicId = getStepPropertyValue("DELETE_ADMINS_FROM_ADMIN_ROLE", "deletedUserAdminIdentityDn" + index);
+            String dn = getStepPropertyValue("DELETE_ADMINS_FROM_ADMIN_ROLE", "deletedUserAdminIdentityDn" + index);
+            String publicId = parseDnForUserId(dn);
             publicIdsToNotify.add(publicId);
         }
 
@@ -149,7 +150,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
         count = Integer.valueOf(countStr);
         logger.info(LOGTAG + "Loading " + count + " auditor public ids");
         for (int index = 0; index < count; index++) {
-            String publicId = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedUserAuditorIdentityDn" + index);
+            String dn = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedUserAuditorIdentityDn" + index);
+            String publicId = parseDnForUserId(dn);
             publicIdsToNotify.add(publicId);
         }
 
@@ -288,4 +290,14 @@ public class NotifyAdmins extends AbstractStep implements Step {
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
+    
+    String parseDnForUserId(String dn) {
+    	String LOGTAG = "[NotifyAdmins.parseDnForUserId] ";
+    	logger.info(LOGTAG + "User dn is: " + dn);
+    	String[] elements = dn.split(",");
+    	String userId = elements[0];
+    	logger.info(LOGTAG + "UserId is: " + userId);
+    	return userId;
+    }
+    
 }
