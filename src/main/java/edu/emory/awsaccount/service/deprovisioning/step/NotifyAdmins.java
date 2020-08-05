@@ -1,6 +1,7 @@
 package edu.emory.awsaccount.service.deprovisioning.step;
 
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
@@ -225,6 +226,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
             notification.setSubject(this.notificationSubject);
             String notificationBody = this.getNotificationBody(accountId, accountName);
             notification.setText(notificationBody);
+            notification.setRead("false");
             notification.setCreateUser("AwsAccountService");
             notification.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
         } catch (EnterpriseFieldException error) {
