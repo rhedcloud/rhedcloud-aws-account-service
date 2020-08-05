@@ -158,6 +158,65 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 		String accountId = req.getAccountId();
 		addResultProperty("accountId", accountId);
 		
+		// Query to determine if the account is already in the destination org unit.
+		
+		// Build the request.
+		ListAccountsForParentRequest listAccountsForParentRequest = new ListAccountsForParentRequest();
+		listAccountsForParentRequest.setParentId(getDestinationParentId());
+		
+		// Send the request.
+		ListAccountsForParentResult listAccountsForParentResult = null;
+		try {
+			logger.info(LOGTAG + "Sending the list accounts for parent request...");
+			long queryStartTime = System.currentTimeMillis();
+			listAccountsForParentResult = getAwsOrganizationsClient().listAccountsForParent(listAccountsForParentRequest);
+			long queryTime = System.currentTimeMillis() - queryStartTime;
+			logger.info(LOGTAG + "received response to move account request in " +
+				queryTime + " ms.");
+		}
+		catch (Exception e) {
+			String errMsg = "An error occurred moving the account. " +
+				"The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+		
+		List<com.amazonaws.services.organizations.model.Account> accounts =
+			listAccountsForParentResult.getAccounts();
+		
+		// Determine if the account is already in the organizational unit.
+		boolean isAlreadyInDestinationOrgUnit = false;
+		logger.info(LOGTAG + "There are " + accounts.size() + " accounts in the " +
+			"destination org unit.");
+		ListIterator li = accounts.listIterator();
+		while (li.hasNext()) {
+			com.amazonaws.services.organizations.model.Account account = 
+			(com.amazonaws.services.organizations.model.Account)li.next();
+		
+			if (account.getId().equalsIgnoreCase(accountId)) {
+				logger.info(LOGTAG + "Matched accountId. Account is already in " +
+					"destination org unit.");
+				isAlreadyInDestinationOrgUnit = true;
+			}
+		}
+		
+		// If the account is already in the destination org unit, there is nothing to do.
+		if (isAlreadyInDestinationOrgUnit) {
+			
+			addResultProperty("message", "Account is already in destination org unit. " +
+				"Nothing to move.");
+			
+			// Update the step.
+			update(COMPLETED_STATUS, SUCCESS_RESULT);
+			
+	    	// Log completion time.
+	    	long time = System.currentTimeMillis() - startTime;
+	    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+	    	
+	    	// Return the properties.
+	    	return getResultProperties();	
+		}
+		
 		// Query for the account metadata to get the compliance class.
 		Account account = queryForAccount(accountId);
 		if (account == null) {
