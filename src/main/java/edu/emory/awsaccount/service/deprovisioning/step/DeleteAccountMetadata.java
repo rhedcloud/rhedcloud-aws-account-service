@@ -165,6 +165,9 @@ public class DeleteAccountMetadata extends AbstractStep implements Step {
 		if (results.size() > 0) {
 			account = (Account)results.get(0);
 			
+			// Add the account name to the step properties.
+			addResultProperty("accountName", account.getAccountName());
+			
 			// Get a producer from the pool
  			rs = null;
  			try {

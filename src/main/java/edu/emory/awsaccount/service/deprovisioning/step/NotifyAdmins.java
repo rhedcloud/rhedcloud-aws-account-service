@@ -119,6 +119,17 @@ public class NotifyAdmins extends AbstractStep implements Step {
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         /* begin business logic */
+        
+        // Get the accountId and accountName from a previous step.
+        String accountId = getStepPropertyValue("DELETE_ACCOUNT_METADATA", "accountId");
+        String accountName = getStepPropertyValue("DELETE_ACCOUNT_METADATA", "accountName");
+        
+        if (accountId == null) {
+        	accountId = "not available";
+        }
+        if (accountName == null) {
+        	accountName = "not available";
+        }
 
         List<String> publicIdsToNotify = new ArrayList<>();
         logger.info(LOGTAG + "Getting the list of public ids to notify");
@@ -179,7 +190,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 
         for (int index = 0; index < publicIdsToNotify.size(); index++) {
             String publicId = publicIdsToNotify.get(index);
-            this.sendNotification(publicId);
+            this.sendNotification(publicId, accountId, accountName);
         }
 
         /* end business logic */
@@ -192,7 +203,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
         return getResultProperties();
     }
 
-    private void sendNotification(String publicId) throws StepException {
+    private void sendNotification(String userId, String accountId, String accountName) throws StepException {
         String LOGTAG = createLogTag("sendNotification");
 
         UserNotification notification;
@@ -208,12 +219,11 @@ public class NotifyAdmins extends AbstractStep implements Step {
         this.logger.info(LOGTAG + "Creating the notification");
 
         try {
-            notification.setAccountNotificationId(this.getAccountIdFromPublicId(publicId));
+            notification.setUserId(userId);
             notification.setType(this.notificationType);
             notification.setPriority(this.notificationPriority);
             notification.setSubject(this.notificationSubject);
-            notification.setRead("false");
-            String notificationBody = this.getNotificationBody(publicId);
+            String notificationBody = this.getNotificationBody(accountId, accountName);
             notification.setText(notificationBody);
             notification.setCreateUser("AwsAccountService");
             notification.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
@@ -237,7 +247,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
         	long startTime = System.currentTimeMillis();
             notification.create(requestService);
             long time = System.currentTimeMillis() - startTime;
-            this.logger.info(LOGTAG + "Sent notification to user " + publicId +
+            this.logger.info(LOGTAG + "Sent notification to user " + userId +
             	" in " + time + " ms.");
         } catch (EnterpriseObjectCreateException error) {
             String message = error.getMessage();
@@ -258,8 +268,11 @@ public class NotifyAdmins extends AbstractStep implements Step {
         return result;
     }
 
-    private String getNotificationBody(String publicId) {
-        return this.notificationTemplate.replace("USER_ID", publicId);
+    private String getNotificationBody(String accountId, String accountName) {
+        String notificationBody = this.notificationTemplate;
+        notificationBody.replace("ACCOUNT_NUMBER", accountId);
+        notificationBody.replace("ACCOUNT_NAME", accountName);
+        return notificationBody;
     }
 
     @Override
