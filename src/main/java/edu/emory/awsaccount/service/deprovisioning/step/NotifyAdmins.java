@@ -272,8 +272,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
 
     private String getNotificationBody(String accountId, String accountName) {
         String notificationBody = this.notificationTemplate;
-        notificationBody.replace("ACCOUNT_NUMBER", accountId);
-        notificationBody.replace("ACCOUNT_NAME", accountName);
+        notificationBody = notificationBody.replace("ACCOUNT_NUMBER", accountId);
+        notificationBody = notificationBody.replace("ACCOUNT_NAME", accountName);
         return notificationBody;
     }
 
