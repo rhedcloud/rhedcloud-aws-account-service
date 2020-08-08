@@ -71,6 +71,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
     private File tempDir = new File("temp");
     protected static String deletedAccountsFileName = "DeletedAccounts.csv";
     private S3Helper s3Helper;
+    private String deployEnv="";
     // private boolean cleanTempDir = true;
     DirectoryPerson PERSON_NOT_FOUND=new DirectoryPerson();
     CacheLoader<String, DirectoryPerson> loader = new CacheLoader<String, DirectoryPerson>() {
@@ -124,6 +125,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             awsAccountServiceRequestProducerPool = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
             directoryServiceProducerPool = (ProducerPool) getAppConfig().getObject("DirectoryServiceProducerPool");
             _verbose = new Boolean(getProperties().getProperty("verbose", "true")).booleanValue();
+            deployEnv=getProperties().getProperty("deployEnv");
             // cleanTempDir = new
             // Boolean(getProperties().getProperty("cleanTempDir",
             // "true")).booleanValue();
@@ -303,12 +305,17 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
     // return Stream.of(data).collect(Collectors.joining(","));
     // }
 
-    public static String getDeployEnv() {
+    protected String getDeployEnv() {
         // docUriBase.dev=https://dev-config.app.emory.edu/
         // docUriBase.qa=https://qa-config.app.emory.edu/
         // docUriBase.stage=https://staging-config.app.emory.edu/
         // docUriBase.prod=https://config.app.emory.edu
+        //Cimp would need this to distinguiahs bvetween Emory an Cimp
+        if(deployEnv!=null&&deployEnv.length()>0)
+            return deployEnv;
         String docUriBase = System.getProperty("docUriBase");
+        if(docUriBase==null||docUriBase.indexOf("https")<0)
+            docUriBase=System.getProperty("openeaiDeploymentDescriptorUri");
         if (docUriBase != null && docUriBase.length() > 0) {
             docUriBase = docUriBase.trim();
             if (docUriBase.startsWith("https://dev"))
