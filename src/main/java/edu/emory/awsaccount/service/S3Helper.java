@@ -35,8 +35,8 @@ public class S3Helper {
     String LOGTAG = "[S3Helper] ";
     final static Logger LOG = Logger.getLogger(S3Helper.class);
     private String bucketName = "edu.emory.awsbilling.accountmetadata";
-    private String accessKeyId = "***REMOVED***";
-    private String secretKey = "***REMOVED***";
+    private String accessKeyId = "";
+    private String secretKey = "";
     private File tempDir = new File("temp");
 
     public S3Helper(Properties properties) {
@@ -57,7 +57,7 @@ public class S3Helper {
             LOG.info(LOGTAG + file.getAbsolutePath() + " successfully uploaded");
             amazonS3.setObjectAcl(bucketName, keyName, CannedAccessControlList.BucketOwnerFullControl);
         } catch (Throwable e) {
-            LOG.error(e);
+            LOG.error(LOGTAG,e);
         }
     }
     public static void main(String[] args) throws IOException {
@@ -79,10 +79,8 @@ public class S3Helper {
                 line = br.readLine();
             }
             br.close();
-        } catch (AmazonS3Exception a) {
-            LOG.error(a);
         } catch (Throwable e) {
-            LOG.error(e);
+            LOG.error(LOGTAG,e);
         }
         return dataLines;
     }
