@@ -34,8 +34,8 @@ import com.amazonaws.services.s3.model.S3Object;
 public class S3Helper {
     String LOGTAG = "[S3Helper] ";
     final static Logger LOG = Logger.getLogger(S3Helper.class);
-    private String bucketName = "edu.emory.awsbilling.accountmetadata";
-    private String accessKeyId = "";
+    private String bucketName = "emory-rhedcloud-aws-<env>-accountmetadata";
+    private String accessKeyId = "***REMOVED***";
     private String secretKey = "";
     private File tempDir = new File("temp");
 
@@ -57,13 +57,13 @@ public class S3Helper {
             LOG.info(LOGTAG + file.getAbsolutePath() + " successfully uploaded");
             amazonS3.setObjectAcl(bucketName, keyName, CannedAccessControlList.BucketOwnerFullControl);
         } catch (Throwable e) {
-            LOG.error(LOGTAG,e);
+            LOG.error(LOGTAG+"bucketName="+bucketName+",accessKeyId="+accessKeyId,e);
         }
     }
     public static void main(String[] args) throws IOException {
         new S3Helper(null).uploadToS3("MobileAppReviewApprovalStat2.jpg", "MobileAppReviewApprovalStat2.jpg");
     }
-    private String accountStr = " <Account><AccountId>436693799073</AccountId><AccountName>Emory Dev 309</AccountName><ComplianceClass>Standard</ComplianceClass><PasswordLocation>AWS default</PasswordLocation><EmailAddress><Type>primary</Type><Email>aws-dev-309@emory.edu</Email></EmailAddress><EmailAddress><Type>operations</Type><Email>aws-dev-309@emory.edu</Email></EmailAddress><Property><Key>srdExempt</Key><Value>true</Value></Property><AccountOwnerId>P0934572</AccountOwnerId><FinancialAccountNumber>1521000000</FinancialAccountNumber><CreateUser>P0934572</CreateUser><CreateDatetime><Year>2019</Year><Month>2</Month><Day>13</Day><Hour>14</Hour><Minute>43</Minute><Second>47</Second><SubSecond>24</SubSecond><Timezone>America/New_York</Timezone></CreateDatetime><LastUpdateUser>P4883103</LastUpdateUser><LastUpdateDatetime><Year>2019</Year><Month>2</Month><Day>19</Day><Hour>14</Hour><Minute>49</Minute><Second>55</Second><SubSecond>80</SubSecond><Timezone>America/New_York</Timezone></LastUpdateDatetime></Account>";
+    //private String accountStr = " <Account><AccountId>436693799073</AccountId><AccountName>Emory Dev 309</AccountName><ComplianceClass>Standard</ComplianceClass><PasswordLocation>AWS default</PasswordLocation><EmailAddress><Type>primary</Type><Email>aws-dev-309@emory.edu</Email></EmailAddress><EmailAddress><Type>operations</Type><Email>aws-dev-309@emory.edu</Email></EmailAddress><Property><Key>srdExempt</Key><Value>true</Value></Property><AccountOwnerId>P0934572</AccountOwnerId><FinancialAccountNumber>1521000000</FinancialAccountNumber><CreateUser>P0934572</CreateUser><CreateDatetime><Year>2019</Year><Month>2</Month><Day>13</Day><Hour>14</Hour><Minute>43</Minute><Second>47</Second><SubSecond>24</SubSecond><Timezone>America/New_York</Timezone></CreateDatetime><LastUpdateUser>P4883103</LastUpdateUser><LastUpdateDatetime><Year>2019</Year><Month>2</Month><Day>19</Day><Hour>14</Hour><Minute>49</Minute><Second>55</Second><SubSecond>80</SubSecond><Timezone>America/New_York</Timezone></LastUpdateDatetime></Account>";
     public List<String[]> readDeletedAccounts(String deletedAccountsFileName) {
         List<String[]> dataLines = new ArrayList<>();
         try {
@@ -80,7 +80,7 @@ public class S3Helper {
             }
             br.close();
         } catch (Throwable e) {
-            LOG.error(LOGTAG,e);
+            LOG.error(LOGTAG+"bucketName="+bucketName+",deletedAccountsFileName="+deletedAccountsFileName+",accessKeyId="+accessKeyId,e);
         }
         return dataLines;
     }

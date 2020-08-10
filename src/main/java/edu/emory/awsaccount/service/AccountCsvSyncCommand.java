@@ -250,7 +250,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             dataLines.addAll(deletedAccountDataLines);
             String fileName = getDeployEnv() + "." + simpleDateFormat.format(new Date()) + ".csv";
             s3Helper.toCsvFileAndUploadToS3(dataLines, fileName);
-        } catch (EnterpriseConfigurationObjectException | EnterpriseObjectQueryException | EnterpriseFieldException | IOException e) {
+        } catch (Throwable e) {
             logger.error(LOGTAG, e);
         }
     }
@@ -418,7 +418,7 @@ class AccountCsvRow {
                 acountCsv.UpdateUserName = toName(directoryPersonCache.get(a.getLastUpdateUser()));
                 acountCsv.UpdateUserEmail = toEmail(directoryPersonCache.get(a.getLastUpdateUser()));
             }
-        } catch (ExecutionException e) {
+        } catch (Throwable e) {
             logger.error(LOGTAG, e);
         }
         return acountCsv;
