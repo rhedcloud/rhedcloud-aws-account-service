@@ -235,7 +235,7 @@ public class AccountCsvSyncCommand extends SyncCommandImpl implements SyncComman
             // TODO exclusive write???
             try {
                 s3Helper.writeDeletedAccounts(deletedAccountDataLines, getDeletedAccountsFileNameFull());
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 logger.error(LOGTAG, e);
             }
         }
@@ -434,7 +434,7 @@ class AccountCsvRow {
                 accountCsvRow.DeleteUserEmail = deletePerson.getEmail() == null ? "" : deletePerson.getEmail().getEmailAddress();
                 accountCsvRow.DeleteUserId = deletePerson.getKey();
             }
-        } catch (ExecutionException e) {
+        } catch (Throwable e) {
             logger.error(LOGTAG, e);
         }
         accountCsvRow.DeleteDatetime = format.format(new Date());
