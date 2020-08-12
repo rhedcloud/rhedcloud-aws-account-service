@@ -8,7 +8,7 @@
 
 <component name="AccountDeprovisioningRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningRequisition">
 <property name="AccountId" column="ACCOUNT_ID"/>
-<property name="AuthenticatedRequestorUserId" column="AUTHENTICATED_REQUESTOR_USER_ID"/>
+<property name="AuthenticatedRequestorUserId" column="AUTHEN_REQUESTOR_USER_ID"/>
 </component>
 
 <property name="Status" column="STATUS"/>
