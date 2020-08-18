@@ -44,7 +44,7 @@ import edu.emory.moa.objects.resources.v1_0.OrganizationalUnitQuerySpecification
 public class DeleteLdsOrganizationalUnit extends AbstractStep implements Step {
 
 	int m_sleepTimeInMillis = 5000;
-	private final String LOGTAG="DeleteLdsOrganizationalUnit";
+	private final String LOGTAG="DeleteLdsOrganizationalUnit says ";
 
 	private ProducerPool m_ldsServiceProducerPool;
 	private String m_organizationalUnitDnTemplate;
@@ -178,19 +178,6 @@ public class DeleteLdsOrganizationalUnit extends AbstractStep implements Step {
 	private void deleteOu(OrganizationalUnit ou) throws StepException {
 		// Get a producer from the pool
 		RequestService rs = null;
-		try {
-			rs = (RequestService)getLdsServiceProducerPool()
-					.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-
-		// Get a producer from the pool
-		rs = null;
 		try {
 			rs = (RequestService)getLdsServiceProducerPool()
 					.getExclusiveProducer();

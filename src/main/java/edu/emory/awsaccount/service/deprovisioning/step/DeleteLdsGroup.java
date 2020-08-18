@@ -45,7 +45,7 @@ import edu.emory.moa.objects.resources.v1_0.GroupQuerySpecification;
 public class DeleteLdsGroup extends AbstractStep implements Step {
 
 	int m_sleepTimeInMillis = 5000;
-	private final String LOGTAG="DeleteLdsGroup";
+	private final String LOGTAG="DeleteLdsGroup says ";
 
 	private ProducerPool m_ldsServiceProducerPool;
 	private AppConfig m_aConfig;
@@ -129,7 +129,7 @@ public class DeleteLdsGroup extends AbstractStep implements Step {
 			querySpec.setdistinguishedName(distinguishedName);
 			results = group.query(querySpec, rs);
 			long queryTime = System.currentTimeMillis() - queryStartTime;
-			logger.info(LOGTAG + "Queried for Group in "
+			logger.info(LOGTAG + " Queried for Group in "
 					+ queryTime + " ms. There are " + results.size() +
 					" result(s)."); 
 		}
@@ -198,19 +198,6 @@ public class DeleteLdsGroup extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, xeoe);
 		}    
-
-		// Get a producer from the pool
-		rs = null;
-		try {
-			rs = (RequestService)getLdsServiceProducerPool()
-					.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
 
 		try { 
 			long deleteStartTime = System.currentTimeMillis();
