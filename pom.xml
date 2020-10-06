@@ -168,7 +168,7 @@
    <artifactId>openeai-core</artifactId>
    <version>5.0.37</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/openeai-core-5.0.52.jar</systemPath>
+   <systemPath>${project.basedir}/lib/openeai-core-5.0.61.jar</systemPath>
   </dependency>
 
   <dependency>
