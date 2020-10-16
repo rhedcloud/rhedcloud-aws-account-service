@@ -208,6 +208,7 @@ pipelines:
 
      - step:
         name: Deploy to dev
+        trigger: manual
         script:
         - aws s3 cp s3://rhedcloud-pipeline-config/AwsAccountService-hibernate-dev.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes/hibernate.cfg.xml --no-progress
         - cd deploy/esb-dev/libs/Axis2
