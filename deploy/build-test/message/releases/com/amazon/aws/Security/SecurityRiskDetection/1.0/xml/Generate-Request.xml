@@ -33,6 +33,11 @@
 			<AccountId>727542611512</AccountId>
 			<SecurityRiskDetector>S3PublicBucketDetector</SecurityRiskDetector>
 			<SecurityRiskRemediator>S3PublicBucketRemediator</SecurityRiskRemediator>
+			<SecurityRiskResourceTaggingProfile>
+				<Namespace>cimp</Namespace>
+				<ProfileName>waitsanddelays</ProfileName>
+				<Revision>1</Revision>
+			</SecurityRiskResourceTaggingProfile>
 		</SecurityRiskDetectionRequisition>
 	</DataArea>
 </com.amazon.aws.Security.SecurityRiskDetection.Generate>

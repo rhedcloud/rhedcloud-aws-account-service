@@ -6,7 +6,7 @@
 <property name="connection.username">SA</property>
 <property name="connection.password"></property>
 <property name="connection.driver_class">jdbc.driverClassName=org.hsqldb.jdbc.JDBCDriver</property>
-<property name="dialect">hibernate.dialect=org.hibernate.dialect.HSQLDialect</property>
+<property name="dialect">org.hibernate.dialect.HSQLDialect</property>
 <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 <property name="hibernate.c3p0.acquire_increment">1</property>
 <property name="hibernate.c3p0.idle_test_period">60</property>
@@ -19,7 +19,6 @@
 <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 <property name="current_session_context_class">thread</property>
 <property name="hibernate.show_sql">true</property>
-<property name="hibernate.show_sql">true</property>
 <property name="hibernate.hbm2ddl.auto">create</property>
 <mapping resource="OpenEai.hbm.xml"/>
 <mapping resource="DbLock.hbm.xml"/>
@@ -31,11 +30,16 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/VirtualPrivateCloud.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/VirtualPrivateCloudProvisioning.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountDeprovisioning.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/ProvisioningStep.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/DeprovisioningStep.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleProvisioning.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleDeprovisioning.hbm.xml"/>
 
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/Service.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceSecurityAssessment.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/SecurityRisk.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceControl.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTestRequirement.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTest.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceTestStep.hbm.xml"/>
@@ -44,10 +48,6 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/TermsOfUseAgreement.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserProfile.hbm.xml"/>
-
-
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountDeprovisioning.hbm.xml"/>
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/DeprovisioningStep.hbm.xml"/>
 
 </session-factory>
 </hibernate-configuration>

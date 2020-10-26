@@ -11,7 +11,7 @@
         <MessageSeq>22</MessageSeq>
       </MessageId>
       <Authentication>
-        <AuthUserId>VirtualPrivateCloud</AuthUserId>
+        <AuthUserId>AccountDeprovisioning</AuthUserId>
       </Authentication>
     </Sender>
     <Datetime>

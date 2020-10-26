@@ -3,7 +3,7 @@
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
 <!DOCTYPE com.amazon.aws.Provisioning.AccountDeprovisioning.Delete SYSTEM "../dtd/Delete-Sync.dtd">
 <com.amazon.aws.Provisioning.AccountDeprovisioning.Delete>
-	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="VirtualPrivateCloud" messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="AccountDeprovisioning" messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
 		<Sender>
 			<MessageId>
 				<SenderAppId>org.usda.ars.TestSuiteApplication</SenderAppId>

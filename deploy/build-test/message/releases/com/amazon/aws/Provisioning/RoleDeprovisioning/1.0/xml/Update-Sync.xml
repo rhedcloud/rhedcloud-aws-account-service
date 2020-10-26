@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE com.amazon.aws.Provisioning.RoleProvisioning.Update SYSTEM "../dtd/Update-Sync.dtd">
+<com.amazon.aws.Provisioning.RoleProvisioning.Update>
+	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="RoleProvisioning"
+					 messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+				<ProducerId>9c6ce634-5a4b-4959-be67-52ef3e82847f </ProducerId>
+				<MessageSeq>324</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>paymaster</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<RoleProvisioning>
+				<RoleProvisioningId>custom-role-14</RoleProvisioningId>
+				<AccountId>123456789012</AccountId>
+				<RoleProvisioningRequisition>
+					<AccountId>123456789012</AccountId>
+					<SiteGroup>
+						<DistinguishedName>CN=EmoryAdministratorRole,OU=123456789012,OU=AWS,DC=emory,DC=edu</DistinguishedName>
+						<Description>EmoryAdministratorRole Group for IDM for Amazon Web Services</Description>
+						<ObjectClass>group</ObjectClass>
+						<ObjectClass>top</ObjectClass>
+					</SiteGroup>
+					<SiteRoleRequisition>
+						<RoleName>RGR_AWS-123456789012-EmoryAdministratorRole</RoleName>
+						<RoleDescription>Provisions member to groups</RoleDescription>
+						<RoleCategoryKey>aws</RoleCategoryKey>
+						<Resource>
+							<ResourceName>MDSG_AWS-123456789012-EmoryAdministratorRole</ResourceName>
+							<ResourceDescription>Provisions members to group EmoryAdministratorRole on MS LDS University Connector</ResourceDescription>
+							<ResourceCategoryKey>aws</ResourceCategoryKey>
+							<Entitlement>
+								<EntitlementDN>CN=EmoryAdministratorRole,OU=123456789012,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+								<EntitlementGuid>3999aced-f7f5-4021-a3ec-c79357509683</EntitlementGuid>
+								<EntitlementApplication>UMD</EntitlementApplication>
+							</Entitlement>
+						</Resource>
+						<Resource>
+							<ResourceName>EADG_aws-admin-24</ResourceName>
+							<ResourceDescription>Provisions members to group aws-admin-24 on Enterprise AD Connector</ResourceDescription>
+							<ResourceCategoryKey>aws</ResourceCategoryKey>
+							<Entitlement>
+								<EntitlementDN>CN=AWS-Admin-24,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+								<EntitlementGuid>B0F5D9C1-CFF9-42DE-ADB3-F2B69E60ADDA</EntitlementGuid>
+								<EntitlementApplication>EAD</EntitlementApplication>
+							</Entitlement>
+						</Resource>
+					</SiteRoleRequisition>
+					<AWSRole>
+						<Path>RHEDcloud-custom</Path>
+						<RoleName>customroleupto43chars</RoleName>
+						<Description>custom role description provided by the user</Description>
+					</AWSRole>
+					<SiteRoleAssignmentRequisition>
+						<RoleAssignmentActionType>grant</RoleAssignmentActionType>
+						<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+						<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+						<Reason>For Testing</Reason>
+						<RoleDNs>
+							<DistinguishedName>cn=RGR_AWS-123456789012-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+						</RoleDNs>
+					</SiteRoleAssignmentRequisition>
+				</RoleProvisioningRequisition>
+				<Status>pending</Status>
+				<ProvisioningResult>provisioning</ProvisioningResult>
+				<ActualTime>1</ActualTime>
+				<AnticipatedTime>1</AnticipatedTime>
+				<ProvisioningStep>
+					<ProvisioningId>custom-role-14</ProvisioningId>
+					<StepId>1</StepId>
+					<Type>VALIDATE_CUSTOM_ROLE_NAME</Type>
+					<Description>Validate role name.</Description>
+					<Status>complete</Status>
+					<ActualTime>3</ActualTime>
+					<AnticipatedTime>1</AnticipatedTime>
+					<CreateUser>AwsAccountService</CreateUser>
+					<CreateDatetime>
+						<Year>2016</Year>
+						<Month>2</Month>
+						<Day>3</Day>
+						<Hour>4</Hour>
+						<Minute>5</Minute>
+						<Second>6</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<ProvisioningStep>
+					<ProvisioningId>custom-role-14</ProvisioningId>
+					<StepId>2</StepId>
+					<Type>CREATE_LDS_GROUP</Type>
+					<Description>Create the group that backs the role in LDS.</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>84</AnticipatedTime>
+					<CreateUser>AwsAccountService</CreateUser>
+					<CreateDatetime>
+						<Year>2016</Year>
+						<Month>2</Month>
+						<Day>3</Day>
+						<Hour>4</Hour>
+						<Minute>5</Minute>
+						<Second>6</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</RoleProvisioning>
+		</NewData>
+		<BaselineData>
+			<RoleProvisioning>
+				<RoleProvisioningId>custom-role-14</RoleProvisioningId>
+				<AccountId>123456789012</AccountId>
+				<RoleProvisioningRequisition>
+					<AccountId>123456789012</AccountId>
+					<SiteGroup>
+						<DistinguishedName>CN=EmoryAdministratorRole,OU=123456789012,OU=AWS,DC=emory,DC=edu</DistinguishedName>
+						<Description>EmoryAdministratorRole Group for IDM for Amazon Web Services</Description>
+						<ObjectClass>group</ObjectClass>
+						<ObjectClass>top</ObjectClass>
+					</SiteGroup>
+					<SiteRoleRequisition>
+						<RoleName>RGR_AWS-123456789012-EmoryAdministratorRole</RoleName>
+						<RoleDescription>Provisions member to groups</RoleDescription>
+						<RoleCategoryKey>aws</RoleCategoryKey>
+						<Resource>
+							<ResourceName>MDSG_AWS-123456789012-EmoryAdministratorRole</ResourceName>
+							<ResourceDescription>Provisions members to group EmoryAdministratorRole on MS LDS University Connector</ResourceDescription>
+							<ResourceCategoryKey>aws</ResourceCategoryKey>
+							<Entitlement>
+								<EntitlementDN>CN=EmoryAdministratorRole,OU=123456789012,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+								<EntitlementGuid>3999aced-f7f5-4021-a3ec-c79357509683</EntitlementGuid>
+								<EntitlementApplication>UMD</EntitlementApplication>
+							</Entitlement>
+						</Resource>
+						<Resource>
+							<ResourceName>EADG_aws-admin-24</ResourceName>
+							<ResourceDescription>Provisions members to group aws-admin-24 on Enterprise AD Connector</ResourceDescription>
+							<ResourceCategoryKey>aws</ResourceCategoryKey>
+							<Entitlement>
+								<EntitlementDN>CN=AWS-Admin-24,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+								<EntitlementGuid>B0F5D9C1-CFF9-42DE-ADB3-F2B69E60ADDA</EntitlementGuid>
+								<EntitlementApplication>EAD</EntitlementApplication>
+							</Entitlement>
+						</Resource>
+					</SiteRoleRequisition>
+					<AWSRole>
+						<Path>RHEDcloud-custom</Path>
+						<RoleName>customroleupto43chars</RoleName>
+						<Description>custom role description provided by the user</Description>
+					</AWSRole>
+					<SiteRoleAssignmentRequisition>
+						<RoleAssignmentActionType>grant</RoleAssignmentActionType>
+						<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+						<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+						<Reason>For Testing</Reason>
+						<RoleDNs>
+							<DistinguishedName>cn=RGR_AWS-123456789012-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+						</RoleDNs>
+					</SiteRoleAssignmentRequisition>
+				</RoleProvisioningRequisition>
+				<Status>pending</Status>
+				<ProvisioningResult>provisioning</ProvisioningResult>
+				<ActualTime>1</ActualTime>
+				<AnticipatedTime>1</AnticipatedTime>
+				<ProvisioningStep>
+					<ProvisioningId>custom-role-14</ProvisioningId>
+					<StepId>1</StepId>
+					<Type>VALIDATE_CUSTOM_ROLE_NAME</Type>
+					<Description>Validate role name.</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>1</AnticipatedTime>
+					<CreateUser>AwsAccountService</CreateUser>
+					<CreateDatetime>
+						<Year>2016</Year>
+						<Month>2</Month>
+						<Day>3</Day>
+						<Hour>4</Hour>
+						<Minute>5</Minute>
+						<Second>6</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<ProvisioningStep>
+					<ProvisioningId>custom-role-14</ProvisioningId>
+					<StepId>2</StepId>
+					<Type>CREATE_LDS_GROUP</Type>
+					<Description>Create the group that backs the role in LDS.</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>84</AnticipatedTime>
+					<CreateUser>AwsAccountService</CreateUser>
+					<CreateDatetime>
+						<Year>2016</Year>
+						<Month>2</Month>
+						<Day>3</Day>
+						<Hour>4</Hour>
+						<Minute>5</Minute>
+						<Second>6</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<CreateUser>AwsAccountService</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</RoleProvisioning>
+		</BaselineData>
+	</DataArea>
+</com.amazon.aws.Provisioning.RoleProvisioning.Update>

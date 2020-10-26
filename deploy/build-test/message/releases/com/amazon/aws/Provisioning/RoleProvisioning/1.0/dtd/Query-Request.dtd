@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- AWS Account Service
+    Copyright 2020 RHEDcloud Foundation. All rights reserved.
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT com.amazon.aws.Provisioning.RoleProvisioning.Query (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (RoleProvisioningQuerySpecification)>

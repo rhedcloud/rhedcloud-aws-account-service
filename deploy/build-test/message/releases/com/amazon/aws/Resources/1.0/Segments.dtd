@@ -38,14 +38,14 @@
 <!-- 
 MessageId was defined as an Element in openeai/segments.dtd
 -->
-<!ELEMENT Account (AccountId, AccountName, AlternateName?,ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT Account (AccountId, AccountName, AlternateName?, ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountAlias (AccountId, Name)>
 <!ELEMENT AccountAliasQuerySpecification (AccountId)>
 <!ELEMENT AccountDeprovisioning (DeprovisioningId, AccountDeprovisioningRequisition, Status, DeprovisioningResult?, ActualTime?, AnticipatedTime?, DeprovisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT AccountDeprovisioningQuerySpecification (Comparison*, QueryLanguage?, DeprovisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
 <!ELEMENT AccountDeprovisioningRequisition (AccountId, AuthenticatedRequestorUserId)>
 <!ELEMENT AccountNotification (AccountNotificationId?, AccountId, Type, Priority, Subject, Text, ReferenceId?, Annotation*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT AccountNotificationQuerySpecification (Comparison*, QueryLanguage?, AccountNotificationId?, AccountId?, Type?, Priority?, AnnotationText?,StartCreateDatetime?,EndCreateDatetime?)>
+<!ELEMENT AccountNotificationQuerySpecification (Comparison*, QueryLanguage?, AccountNotificationId?, AccountId?, Type?, Priority?, AnnotationText?, StartCreateDatetime?, EndCreateDatetime?)>
 <!ELEMENT AccountOrganizationMembership (AccountId, ParentId)>
 <!ELEMENT AccountOrganizationMembershipQuerySpecification (AccountId)>
 <!ELEMENT AccountProvisioningAuthorization (UserId, IsAuthorized, AuthorizedUserDescription, UnauthorizedReason*)>
@@ -58,10 +58,10 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
 <!-- TODO both CountermeasureId and SecurityRiskId can be removed -->
 <!--
-<!ELEMENT Countermeasure (CountermeasureId?,SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
+<!ELEMENT Countermeasure (CountermeasureId?, SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
 -->
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
-<!ELEMENT DeprovisioningStep (DeprovisioningStepId?,DeprovisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT DeprovisioningStep (DeprovisioningStepId?, DeprovisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
 <!ELEMENT DetectionResult (Type, Status, Error*)>
 <!ELEMENT EmailAddress (Type, Email)>
@@ -69,14 +69,34 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Output (Description, OutputKey, OutputValue)>
 <!ELEMENT Parameters (Key, Value)>
 <!ELEMENT Property (Key, Value)>
-<!ELEMENT ProvisioningStep (ProvisioningStepId?,ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT ProvisioningStep (ProvisioningStepId?, ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT RemediationResult (Status, Description, Error*)>
-<!ELEMENT SamlProvider (AccountId,Arn?, Name?, SamlMetadataDocument?)>
+
+<!ELEMENT RoleProvisioning (RoleProvisioningId, AccountId, RoleProvisioningRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT RoleProvisioningQuerySpecification (Comparison*, QueryLanguage?, RoleProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT RoleProvisioningRequisition (AccountId, SiteGroup, SiteRoleRequisition, AWSRole, SiteRoleAssignmentRequisition)>
+
+<!ELEMENT SiteGroup (DistinguishedName, Description?, ObjectClass+)>
+<!ELEMENT SiteRoleRequisition (RoleName, RoleDescription, RoleCategoryKey?, Resource*)>
+<!ELEMENT Resource (ResourceDN?, ResourceName, ResourceDescription, ResourceCategoryKey, Entitlement)>
+<!ELEMENT Entitlement (EntitlementDN, EntitlementGuid?, EntitlementApplication?)>
+
+<!ELEMENT SiteRoleAssignmentRequisition (RoleAssignmentActionType?, RoleAssignmentType?, IdentityDN?, Reason?, RoleDNs?)>
+<!ELEMENT RoleDNs (DistinguishedName*)>
+
+<!ELEMENT AWSRole (Path, RoleName, AssumeRolePolicyDocument?, Description, MaxSessionDuration?, PermissionsBoundary?, Tag*)>
+<!ELEMENT Tag (Key, Value)>
+
+<!ELEMENT RoleDeprovisioning (RoleDeprovisioningId, AccountId, RoleDeprovisioningRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT RoleDeprovisioningQuerySpecification (Comparison*, QueryLanguage?, RoleDeprovisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT RoleDeprovisioningRequisition (AccountId, AWSRole)>
+
+<!ELEMENT SamlProvider (AccountId, Arn?, Name?, SamlMetadataDocument?)>
 <!ELEMENT SamlProviderRequisition (AccountId, Name, SamlMetadataDocument)>
-<!ELEMENT SamlProviderQuerySpecification (AccountId?,Arn?)>
+<!ELEMENT SamlProviderQuerySpecification (AccountId?, Arn?)>
 <!ELEMENT SecurityRisk (SecurityRiskId?, ServiceId, SequenceNumber, ServiceRiskName, RiskLevel, Description, AssessorId, AssessmentDatetime, ServiceControl*)>
 <!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, SecurityRiskRemediator, DetectionResult, DetectedSecurityRisk*, InstanceId?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT SecurityRiskDetectionQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskDetectionId?, AccountId?, SecurityRiskDetector?, SecurityRiskRemediator?, InstanceId?, StartCreateDatetime?,EndCreateDatetime?,DetectedSecurityRisk*)>
+<!ELEMENT SecurityRiskDetectionQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskDetectionId?, AccountId?, SecurityRiskDetector?, SecurityRiskRemediator?, InstanceId?, StartCreateDatetime?, EndCreateDatetime?, DetectedSecurityRisk*)>
 <!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?, SecurityRiskResourceTaggingProfile?)>
 <!ELEMENT SecurityRiskDetectionMetric (DetectorAccount*)>
 <!ELEMENT DetectorAccount (DetectorName, AccountId)>
@@ -106,7 +126,6 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT StackParameter (Key, Value)>
 <!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, Region?, StackId?, StackName?)>
 <!ELEMENT StackRequisition (AccountId, Credentials?, Region?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
-<!ELEMENT Tag (Key, Value)>
 <!ELEMENT TermsOfUse (TermsOfUseId?, Revision, EffectiveDate, ExpirationDate?, Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT TermsOfUseAgreement (TermsOfUseAgreementId?, TermsOfUseId, UserId, Status, PresentedDatetime, AgreedDatetime?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT TermsOfUseAgreementQuerySpecification (TermsOfUseAgreementId?, TermsOfUseId?, UserId?)>

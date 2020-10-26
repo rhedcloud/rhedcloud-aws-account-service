@@ -7,7 +7,7 @@
 	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="Account" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
 		<Sender>
 			<MessageId>
-				<SenderAppId>org.usda.ars.TestSuiteApplication</SenderAppId>
+				<SenderAppId>org.rhedcloud.AwsAccountService</SenderAppId>
 				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
 				<MessageSeq>1024</MessageSeq>
 			</MessageId>

@@ -6,7 +6,7 @@
 		messageType="Reply" messageRelease="1.0">
 		<Sender>
 			<MessageId>
-				<SenderAppId>org.openeai.tutorial.Samples.VirtualPrivateCloud</SenderAppId>
+				<SenderAppId>org.openeai.tutorial.Samples.AccountDeprovisioning</SenderAppId>
 				<ProducerId/>
 				<MessageSeq/>
 			</MessageId>

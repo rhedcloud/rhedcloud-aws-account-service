@@ -23,7 +23,11 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/VirtualPrivateCloud.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/VirtualPrivateCloudProvisioning.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountDeprovisioning.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/ProvisioningStep.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/DeprovisioningStep.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleProvisioning.hbm.xml"/>
+<!--<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleDeprovisioning.hbm.xml"/>-->
 
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/Service.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceSecurityAssessment.hbm.xml"/>
@@ -37,11 +41,6 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/TermsOfUseAgreement.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserNotification.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/user/v1_0/UserProfile.hbm.xml"/>
-
-    
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountDeprovisioning.hbm.xml"/>
-<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/DeprovisioningStep.hbm.xml"/>
-
 
 </session-factory>
 </hibernate-configuration>

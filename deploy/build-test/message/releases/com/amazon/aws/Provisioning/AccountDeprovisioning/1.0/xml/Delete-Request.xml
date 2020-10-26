@@ -8,12 +8,12 @@
 		messagePriority="9" messageType="Request">
 		<Sender>
 			<MessageId>
-				<SenderAppId>VirtualPrivateCloud</SenderAppId>
+				<SenderAppId>AccountDeprovisioning</SenderAppId>
 				<ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
 				<MessageSeq>2734</MessageSeq>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>VirtualPrivateCloud</AuthUserId>
+				<AuthUserId>AccountDeprovisioning</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>

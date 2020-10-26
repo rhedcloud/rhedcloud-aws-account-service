@@ -26,7 +26,7 @@
 		</Datetime>
 		<Result action="Query" status="success">
 			<ProcessedMessageId>
-				<SenderAppId>VirtualPrivateCloud</SenderAppId>
+				<SenderAppId>AccountDeprovisioning</SenderAppId>
 				<ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
 				<MessageSeq>86</MessageSeq>
 			</ProcessedMessageId>
