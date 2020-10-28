@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Create SYSTEM "../dtd/Create-Request.dtd">
-<com.amazon.aws.Provisioning.RoleDeprovisioning.Create>
+<!DOCTYPE com.amazon.aws.Provisioning.RoleProvisioning.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<com.amazon.aws.Provisioning.RoleProvisioning.Delete>
     <ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
-        messageObject="RoleDeprovisioning" messageAction="Create" messageType="Request"
+        messageObject="RoleProvisioning" messageAction="Delete" messageType="Request"
         messageRelease="1.0" messagePriority="9">
         <Sender>
             <MessageId>
-                <SenderAppId>org.rhedcloud.RoleDeprovisioning</SenderAppId>
+                <SenderAppId>org.rhedcloud.RoleProvisioning</SenderAppId>
                 <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
                 <MessageSeq>1024</MessageSeq>
             </MessageId>
@@ -29,9 +29,10 @@
             messageRelease="1.0" messageType="Reply"/>
     </ControlAreaRequest>
     <DataArea>
-        <NewData>
+        <DeleteData>
+            <DeleteAction type="Delete"/>
             <RoleProvisioning>
-                <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
+                <RoleProvisioningId>custom-role-14</RoleProvisioningId>
                 <AccountId>123456789012</AccountId>
                 <RoleProvisioningRequisition>
                     <AccountId>123456789012</AccountId>
@@ -135,6 +136,6 @@
                     <Timezone>America/New_York</Timezone>
                 </CreateDatetime>
             </RoleProvisioning>
-        </NewData>
+        </DeleteData>
     </DataArea>
-</com.amazon.aws.Provisioning.RoleDeprovisioning.Create>
+</com.amazon.aws.Provisioning.RoleProvisioning.Delete>

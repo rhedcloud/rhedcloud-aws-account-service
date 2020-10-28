@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Create SYSTEM "../dtd/Create-Request.dtd">
-<com.amazon.aws.Provisioning.RoleDeprovisioning.Create>
+<!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<com.amazon.aws.Provisioning.RoleDeprovisioning.Delete>
     <ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
-        messageObject="RoleDeprovisioning" messageAction="Create" messageType="Request"
+        messageObject="RoleDeprovisioning" messageAction="Delete" messageType="Request"
         messageRelease="1.0" messagePriority="9">
         <Sender>
             <MessageId>
@@ -29,7 +29,8 @@
             messageRelease="1.0" messageType="Reply"/>
     </ControlAreaRequest>
     <DataArea>
-        <NewData>
+        <DeleteData>
+            <DeleteAction type="Delete"/>
             <RoleProvisioning>
                 <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
                 <AccountId>123456789012</AccountId>
@@ -135,6 +136,6 @@
                     <Timezone>America/New_York</Timezone>
                 </CreateDatetime>
             </RoleProvisioning>
-        </NewData>
+        </DeleteData>
     </DataArea>
-</com.amazon.aws.Provisioning.RoleDeprovisioning.Create>
+</com.amazon.aws.Provisioning.RoleDeprovisioning.Delete>

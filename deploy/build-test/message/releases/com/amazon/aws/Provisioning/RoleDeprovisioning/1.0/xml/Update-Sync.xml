@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE com.amazon.aws.Provisioning.RoleProvisioning.Update SYSTEM "../dtd/Update-Sync.dtd">
-<com.amazon.aws.Provisioning.RoleProvisioning.Update>
+<!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Update SYSTEM "../dtd/Update-Sync.dtd">
+<com.amazon.aws.Provisioning.RoleDeprovisioning.Update>
 	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning" messageObject="RoleProvisioning"
 					 messageAction="Update" messageRelease="1.0" messagePriority="1" messageType="Sync">
 		<Sender>
@@ -241,4 +241,4 @@
 			</RoleProvisioning>
 		</BaselineData>
 	</DataArea>
-</com.amazon.aws.Provisioning.RoleProvisioning.Update>
+</com.amazon.aws.Provisioning.RoleDeprovisioning.Update>

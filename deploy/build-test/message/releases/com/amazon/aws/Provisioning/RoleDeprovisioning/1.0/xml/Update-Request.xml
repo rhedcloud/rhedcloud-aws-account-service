@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE com.amazon.aws.Provisioning.RoleProvisioning.Update SYSTEM "../dtd/Update-Request.dtd">
-<com.amazon.aws.Provisioning.RoleProvisioning.Update>
+<!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Update SYSTEM "../dtd/Update-Request.dtd">
+<com.amazon.aws.Provisioning.RoleDeprovisioning.Update>
     <ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
                         messageObject="RoleProvisioning" messageAction="Update" messageRelease="1.0"
                         messagePriority="9" messageType="Request">
@@ -244,4 +244,4 @@
             </RoleProvisioning>
         </BaselineData>
     </DataArea>
-</com.amazon.aws.Provisioning.RoleProvisioning.Update>
+</com.amazon.aws.Provisioning.RoleDeprovisioning.Update>
