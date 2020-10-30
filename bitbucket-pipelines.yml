@@ -55,142 +55,142 @@ pipelines:
         artifacts:
         - deploy/**     # preserve the deploy artifacts for the next step
 
-     - step:
-        name: Generate web service facade
-        script:
-        - ls deploy/build-test/libs/AwsAccountService
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/openeai-servicegen.git # import service generation deps
-        - source $HOME/.profile                                                           # source the profile to setup env variable
-        - export BUILD_HOME=`pwd`
-        - echo version $VERSION_NUMBER build $BITBUCKET_BUILD_NUMBER
-        - cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties/awsaccount.properties # copy the servicegen properties to where servicegen needs them
-        - cd openeai-servicegen                                                           # change working directory to servicegen home
-        - ./gen-webservice awsaccount                                                       # generate the web service facade
-        - cat target/awsaccount/rhedcloud-awsaccount-webservice/resources/services.xml
-        - export TARGET_DIR=target/awsaccount/rhedcloud-awsaccount-webservice/build/lib
-        - ls -la $TARGET_DIR
-        - mkdir -p $BUILD_HOME/deploy/build-test/libs/Axis2
-        - cp target/awsaccount/rhedcloud-awsaccount-webservice/wsdl/moas.wsdl $BUILD_HOME/deploy/build-test/libs/Axis2
-        - cp target/awsaccount/rhedcloud-awsaccount-webservice/resources/services.xml $BUILD_HOME/deploy/build-test/libs/Axis2
+#     - step:
+#        name: Generate web service facade
+#        script:
+#        - ls deploy/build-test/libs/AwsAccountService
+#        - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/openeai-servicegen.git # import service generation deps
+#        - source $HOME/.profile                                                           # source the profile to setup env variable
+#        - export BUILD_HOME=`pwd`
+#        - echo version $VERSION_NUMBER build $BITBUCKET_BUILD_NUMBER
+#        - cp deploy/build-test/servicegen-configs/awsaccount.properties openeai-servicegen/properties/awsaccount.properties # copy the servicegen properties to where servicegen needs them
+#        - cd openeai-servicegen                                                           # change working directory to servicegen home
+#        - ./gen-webservice awsaccount                                                       # generate the web service facade
+#        - cat target/awsaccount/rhedcloud-awsaccount-webservice/resources/services.xml
+#        - export TARGET_DIR=target/awsaccount/rhedcloud-awsaccount-webservice/build/lib
+#        - ls -la $TARGET_DIR
+#        - mkdir -p $BUILD_HOME/deploy/build-test/libs/Axis2
+#        - cp target/awsaccount/rhedcloud-awsaccount-webservice/wsdl/moas.wsdl $BUILD_HOME/deploy/build-test/libs/Axis2
+#        - cp target/awsaccount/rhedcloud-awsaccount-webservice/resources/services.xml $BUILD_HOME/deploy/build-test/libs/Axis2
 
-        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-localhost.aar $BUILD_HOME/deploy/build-test/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
-        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar
-        - mkdir -p $BUILD_HOME/deploy/esb-dev/libs/Axis2
-        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-dev.aar $BUILD_HOME/deploy/esb-dev/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
-        - mkdir -p $BUILD_HOME/deploy/esb-test/libs/Axis2
-        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-qa.aar $BUILD_HOME/deploy/esb-test/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
-        - mkdir -p $BUILD_HOME/deploy/esb-stage/libs/Axis2
-        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-stage.aar $BUILD_HOME/deploy/esb-stage/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
-        - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
-        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
+#        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-localhost.aar $BUILD_HOME/deploy/build-test/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
+#        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService/rhedcloud-awsaccount-webservice-1.0-wsdl-classes.jar
+#        - mkdir -p $BUILD_HOME/deploy/esb-dev/libs/Axis2
+#        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-dev.aar $BUILD_HOME/deploy/esb-dev/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
+#        - mkdir -p $BUILD_HOME/deploy/esb-test/libs/Axis2
+#        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-qa.aar $BUILD_HOME/deploy/esb-test/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
+#        - mkdir -p $BUILD_HOME/deploy/esb-stage/libs/Axis2
+#        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-stage.aar $BUILD_HOME/deploy/esb-stage/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
+#        - mkdir -p $BUILD_HOME/deploy/esb-prod/libs/Axis2
+#        - cp $TARGET_DIR/rhedcloud-awsaccount-webservice-1.0-prod.aar $BUILD_HOME/deploy/esb-prod/libs/Axis2/rhedcloud-awsaccount-webservice-1.0.aar
 
-        - echo ${BITBUCKET_BUILD_NUMBER} > $BUILD_HOME/deploy/BUILD_NUMBER.txt
+#        - echo ${BITBUCKET_BUILD_NUMBER} > $BUILD_HOME/deploy/BUILD_NUMBER.txt
 
 
         ##prepare .ebextensions for going to rhedcloud
-        - cd $BUILD_HOME
-        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
-        - cp -R rhedcloud-ebextensions/.ebextensions .
-        ##failing here?
-        - rm .ebextensions/logarchival.config
-        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
-        #- sed -i 's/myapp/'"rc-awsaccount-dev"'/g' $BUILD_HOME/.ebextensions/99datadog.config
-        #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
-        - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - sed -i 's/LDAP_URL/'"ldap:\/\/ldapprod1.vpc.rhedcloud.org:389\/ou=users,dc=rhedcloud,dc=org?uid?sub?(objectClass=*)"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - sed -i 's/AuthLDAPBindDN/'"#AuthLDAPBindDN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - sed -i 's/AuthLDAPBindPassword/'"#AuthLDAPBindPassword"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - cat  $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-        - ls -laR $BUILD_HOME/.ebextensions
-        - cp $BUILD_HOME/lib/openeai-core*jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
-        - cp $BUILD_HOME/lib/openeai-utils*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
-        - cp $BUILD_HOME/lib/rhedcloud-aws-moa*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
-        - cp $BUILD_HOME/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
-        # Create the axis2.war file for build environment
-        - echo "BUILD_NUMBER=$BUILD_NUMBER"
-        - mkdir -p deploy/build-test/libs/Axis2/WEB-INF/classes
-        - cd $BUILD_HOME/deploy/build-test/libs/Axis2
-        #- cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml WEB-INF/classes
-        - cp -R $BUILD_HOME/.ebextensions .
-        - ls .ebextensions
-        - sed -i 's/myapp/'"rc-awsaccount-local"'/g' .ebextensions/99datadog.config
-        - ../../../../processEnv.sh
-        - ls 
+#        - cd $BUILD_HOME
+#        - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-ebextensions.git 
+#        - cp -R rhedcloud-ebextensions/.ebextensions .
+#        ##failing here?
+#        - rm .ebextensions/logarchival.config
+#        - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+#        #- sed -i 's/myapp/'"rc-awsaccount-dev"'/g' $BUILD_HOME/.ebextensions/99datadog.config
+#        #need to be the same as what's in deploy/build-test/servicegen-configs/.properties
+#        - sed -i 's/service.name/'"AwsAccountService"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+#        - sed -i 's/LDAP_URL/'"ldap:\/\/ldapprod1.vpc.rhedcloud.org:389\/ou=users,dc=rhedcloud,dc=org?uid?sub?(objectClass=*)"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+#        - sed -i 's/AuthLDAPBindDN/'"#AuthLDAPBindDN"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+#        - sed -i 's/AuthLDAPBindPassword/'"#AuthLDAPBindPassword"'/g' $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+#        - cat  $BUILD_HOME/.ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+#        - ls -laR $BUILD_HOME/.ebextensions
+#        - cp $BUILD_HOME/lib/openeai-core*jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
+#        - cp $BUILD_HOME/lib/openeai-utils*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
+#        - cp $BUILD_HOME/lib/rhedcloud-aws-moa*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
+#        - cp $BUILD_HOME/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/*.jar $BUILD_HOME/deploy/build-test/libs/AwsAccountService
+#        # Create the axis2.war file for build environment
+#        - echo "BUILD_NUMBER=$BUILD_NUMBER"
+#        - mkdir -p deploy/build-test/libs/Axis2/WEB-INF/classes
+#        - cd $BUILD_HOME/deploy/build-test/libs/Axis2
+#        #- cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml WEB-INF/classes
+#        - cp -R $BUILD_HOME/.ebextensions .
+#        - ls .ebextensions
+#        - sed -i 's/myapp/'"rc-awsaccount-local"'/g' .ebextensions/99datadog.config
+#        - ../../../../processEnv.sh
+#        - ls 
           
-        # Create the axis2.war file for DEV
-        - cd $BUILD_HOME
-        - pwd
-        - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
-        - cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes
-        - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
-        - cp -R $BUILD_HOME/.ebextensions .
-        - ls .ebextensions
-        - sed -i 's/myapp/'"rc-awsaccount-dev"'/g' .ebextensions/99datadog.config
-        - ../../../../processEnv.sh
-        - ls
+#        # Create the axis2.war file for DEV
+#        - cd $BUILD_HOME
+#        - pwd
+#        - mkdir -p deploy/esb-dev/libs/Axis2/WEB-INF/classes
+#        - cp $BUILD_HOME/deploy/build-test/hibernate.cfg.xml deploy/esb-dev/libs/Axis2/WEB-INF/classes
+#        - cd $BUILD_HOME/deploy/esb-dev/libs/Axis2
+#        - cp -R $BUILD_HOME/.ebextensions .
+#        - ls .ebextensions
+#        - sed -i 's/myapp/'"rc-awsaccount-dev"'/g' .ebextensions/99datadog.config
+#        - ../../../../processEnv.sh
+#        - ls
 
-        # Create the axis2.war file for TEST
-        - cd $BUILD_HOME
-        - pwd
-        - mkdir -p deploy/esb-test/libs/Axis2/WEB-INF/classes
-        - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
-        - cp -R $BUILD_HOME/.ebextensions .
-        - ls .ebextensions
-        - sed -i 's/myapp/'"rc-awsaccount-test"'/g' .ebextensions/99datadog.config
-        - ../../../../processEnv.sh
-        - ls
+#        # Create the axis2.war file for TEST
+#        - cd $BUILD_HOME
+#        - pwd
+#        - mkdir -p deploy/esb-test/libs/Axis2/WEB-INF/classes
+#        - cd $BUILD_HOME/deploy/esb-test/libs/Axis2
+#        - cp -R $BUILD_HOME/.ebextensions .
+#        - ls .ebextensions
+#        - sed -i 's/myapp/'"rc-awsaccount-test"'/g' .ebextensions/99datadog.config
+#        - ../../../../processEnv.sh
+#        - ls
 
-        # Create the axis2.war file for STAGE
-        - cd $BUILD_HOME
-        - pwd
-        - mkdir -p deploy/esb-stage/libs/Axis2/WEB-INF/classes
-        - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
-        - cp -R $BUILD_HOME/.ebextensions .
-        - ls .ebextensions
-        - sed -i 's/myapp/'"rc-awsaccount-stage"'/g' .ebextensions/99datadog.config
-        - ../../../../processEnv.sh
-        - ls
+#        # Create the axis2.war file for STAGE
+#        - cd $BUILD_HOME
+#        - pwd
+#        - mkdir -p deploy/esb-stage/libs/Axis2/WEB-INF/classes
+#        - cd $BUILD_HOME/deploy/esb-stage/libs/Axis2
+#        - cp -R $BUILD_HOME/.ebextensions .
+#        - ls .ebextensions
+#        - sed -i 's/myapp/'"rc-awsaccount-stage"'/g' .ebextensions/99datadog.config
+#        - ../../../../processEnv.sh
+#        - ls
 
-        # Create the axis2.war file for PROD
-        - cd $BUILD_HOME
-        - pwd
-        - mkdir -p deploy/esb-prod/libs/Axis2/WEB-INF/classes
-        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
-        - cp -R $BUILD_HOME/.ebextensions .
-        - ls .ebextensions
-        - sed -i 's/myapp/'"rc-awsaccount-prod"'/g' .ebextensions/99datadog.config
-        - ../../../../processEnv.sh
-        - ls
-        - pwd
+#        # Create the axis2.war file for PROD
+#        - cd $BUILD_HOME
+#        - pwd
+#        - mkdir -p deploy/esb-prod/libs/Axis2/WEB-INF/classes
+#        - cd $BUILD_HOME/deploy/esb-prod/libs/Axis2
+#        - cp -R $BUILD_HOME/.ebextensions .
+#        - ls .ebextensions
+#        - sed -i 's/myapp/'"rc-awsaccount-prod"'/g' .ebextensions/99datadog.config
+#        - ../../../../processEnv.sh
+#        - ls
+#        - pwd
 
-        artifacts:
-        - deploy/build-test/**     # we have to preserve the artifacts separately get to over the 1G size limit
-        - deploy/esb-dev/**   
-        - deploy/esb-test/**  
-        - deploy/esb-stage/** 
-        - deploy/esb-prod/** 
-        - openeai-servicegen/target/**  
+#        artifacts:
+#        - deploy/build-test/**     # we have to preserve the artifacts separately get to over the 1G size limit
+#        - deploy/esb-dev/**   
+#        - deploy/esb-test/**  
+#        - deploy/esb-stage/** 
+#        - deploy/esb-prod/** 
+#        - openeai-servicegen/target/**  
 
-     - step:
-        name: Deploy and test the facade locally
-        script:
-        - source $HOME/.profile
-        - cd deploy/build-test
-        - export BUILD_HOME=`pwd`
-        - wget  https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.50/bin/apache-tomcat-8.0.50.tar.gz
-        - tar xvzf apache-tomcat-8.0.50.tar.gz
-        - cp -R configs  apache-tomcat-8.0.50/bin
-        - cp -R message  apache-tomcat-8.0.50/bin
-        #- cp -R eos  apache-tomcat-8.0.50/bin
-        - cd ../..
-        - jar tf deploy/build-test/libs/Axis2/axis2.war
-        - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
-        - cd deploy/build-test/apache-tomcat-8.0.50/bin
-        - export CATALINA_HOME=..
-        - chmod 755 *.sh
-        - ./startup.sh
-        - sleep 30
-        - tail -1000  ../logs/catalina.out
+#     - step:
+#        name: Deploy and test the facade locally
+#        script:
+#        - source $HOME/.profile
+#        - cd deploy/build-test
+#        - export BUILD_HOME=`pwd`
+#        - wget  https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.50/bin/apache-tomcat-8.0.50.tar.gz
+#        - tar xvzf apache-tomcat-8.0.50.tar.gz
+#        - cp -R configs  apache-tomcat-8.0.50/bin
+#        - cp -R message  apache-tomcat-8.0.50/bin
+#        #- cp -R eos  apache-tomcat-8.0.50/bin
+#        - cd ../..
+#        - jar tf deploy/build-test/libs/Axis2/axis2.war
+#        - cp deploy/build-test/libs/Axis2/axis2.war deploy/build-test/apache-tomcat-8.0.50/webapps
+#        - cd deploy/build-test/apache-tomcat-8.0.50/bin
+#        - export CATALINA_HOME=..
+#        - chmod 755 *.sh
+#        - ./startup.sh
+#        - sleep 30
+#        - tail -1000  ../logs/catalina.out
 
      - step:
         name: Upload build products
