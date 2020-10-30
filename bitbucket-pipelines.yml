@@ -59,7 +59,6 @@ pipelines:
         name: Generate web service facade
         script:
         - ls deploy/build-test/libs/AwsAccountService
-        - echo $BB_AUTH_STRING
         - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/openeai-servicegen.git # import service generation deps
         - source $HOME/.profile                                                           # source the profile to setup env variable
         - export BUILD_HOME=`pwd`
