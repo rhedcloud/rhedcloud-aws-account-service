@@ -15,9 +15,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 // Java utilities
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
@@ -27,31 +27,20 @@ import javax.mail.internet.AddressException;
 
 // Log4j
 import org.apache.log4j.Category;
-
-// JDOM
-import org.jdom.Document;
-import org.jdom.Element;
-
 // OpenEAI foundation
 import org.openeai.OpenEaiObject;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
-import org.openeai.config.MailServiceConfig;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.loggingutils.MailService;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
-import org.openeai.xml.XmlDocumentReader;
-import org.openeai.xml.XmlDocumentReaderException;
 
-//AWS Message Object API (MOA)
-import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
@@ -60,17 +49,11 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecifi
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountUserQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
-import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
-import com.amazonaws.services.organizations.model.Account;
 
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
-import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 
 /**
  * An example object provider that maintains an in-memory store of
@@ -94,6 +77,8 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
     private String m_emailClosing = null;
     private AccountUser accountUser;
     private int m_requestTimeoutIntervalInMillis = 10000;
+    // Added 10/29/2020: TJ: Sprint 4
+    private Properties notificationTypeProperties = null;
 
     /**
      * @see UserNotificationProvider.java
@@ -142,6 +127,19 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         }
         logger.info(LOGTAG + "Required e-mail notification type list " + "has " + requiredEmailNotificationTypeList.size() + " types.");
         setRequiredEmailNotificationTypeList(requiredEmailNotificationTypeList);
+
+        // START NEW (TJ): 10/29/2020
+        // Set notification Types.
+        try {
+			notificationTypeProperties = aConfig.getProperties("UserNotificationTypeProperties");
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+            String errMsg = "No required user notification types specified "
+           		+ "(UserNotificationTypeProperties). Can't continue.  " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg);
+		}
+        // END NEW (TJ): 10/29/2020
 
         // Set the accountSeries
         String accountSeries = props.getProperty("accountSeries");
@@ -491,9 +489,9 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         String LOGTAG = "[EmoryUserNotificationProvider.sendEmailnotification] ";
         boolean sendEmailNotification = false;
 
-        // If the notification matches the list of e-mail required types,
+        // If the notification type is one that requires an email,
         // return true. Otherwise, determine if the user prefers to
-        // receive e-mail notifications.
+        // receive e-mail notifications for this type of notification/priority.
         if (isEmailRequired(notification)) {
             logger.info(LOGTAG + "An e-mail notification is required for " +
             		"all notifications of type " + notification.getType() + ". "
@@ -502,20 +500,39 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             return true;
         } 
         else {
-            // If they have a property called sendUserNotificationEmails with a
-            // value of true, send them an e-mail. Otherwise log that no
-            // additional notification methods were requested.
-            if (sendUserNotificationEmails(dp.getKey()) == true) {
-                logger.info(LOGTAG + "sendUserNotificationEmails property is " 
-                	+ "true for user " + dp.getKey() + " (" + dp.getFullName()
-                    + "). Should send e-mail.");
+        	// New
+        	// if the User's profile is set up to receive emails for this 
+        	// type of notification with this priority level, send the
+        	// email
+            if (sendUserNotificationEmails(notification, dp.getKey()) == true) {
+                logger.info(LOGTAG + dp.getKey() + " (" + dp.getFullName() + 
+                	"). DOES want emails for notification: " + 
+                	notification.getType() + ":" + notification.getPriority() + 
+                	".  Should send e-mail.");
                 sendEmailNotification = true;
             } 
             else {
-                logger.info(LOGTAG + "sendUserNotificationEmails property is " +
-                "false for user " + dp.getKey() + "(" + dp.getFullName()
-                + "). Will not send " + "e-mail.");
+                logger.info(LOGTAG + dp.getKey() + " (" + dp.getFullName() + 
+                   	"). DOES NOT want emails for notification: " + 
+                   	notification.getType() + ":" + notification.getPriority() + 
+                   	".  Should NOT send e-mail.");
             }
+        	
+        	// Old
+            // If they have a property called sendUserNotificationEmails with a
+            // value of true, send them an e-mail. Otherwise log that no
+            // additional notification methods were requested.
+//            if (sendUserNotificationEmails(notification, dp.getKey()) == true) {
+//                logger.info(LOGTAG + "sendUserNotificationEmails property is " 
+//                	+ "true for user " + dp.getKey() + " (" + dp.getFullName()
+//                    + "). Should send e-mail.");
+//                sendEmailNotification = true;
+//            } 
+//            else {
+//                logger.info(LOGTAG + "sendUserNotificationEmails property is " +
+//                "false for user " + dp.getKey() + "(" + dp.getFullName()
+//                + "). Will not send " + "e-mail.");
+//            }
         }
 
         return sendEmailNotification;
@@ -542,7 +559,7 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         return m_requiredEmailNotificationTypeList;
     }
 
-    private boolean sendUserNotificationEmails(String userId) throws ProviderException {
+    private boolean sendUserNotificationEmails(UserNotification notification, String userId) throws ProviderException {
         boolean sendUserNotificationEmails = false;
 
         UserProfile up = userProfileQuery(userId);
@@ -552,15 +569,65 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
         }
         List props = up.getProperty();
         ListIterator li = props.listIterator();
+        
+        // START NEW (TJ): 10/29 
+        Properties userProfileProps = new Properties();
         while (li.hasNext()) {
-            Property prop = (Property) li.next();
-            if (prop.getKey().equalsIgnoreCase("sendUserNotificationEmails")) {
-                if (prop.getValue().equalsIgnoreCase("true")) {
-                    sendUserNotificationEmails = true;
-                }
-            }
+        	Property prop = (Property) li.next();
+        	userProfileProps.put(prop.getKey(), prop.getValue());
         }
+        
+		Iterator<Object> keys = notificationTypeProperties.keySet().iterator();
+		while (keys.hasNext()) {
+			
+			// e.g., sendSrdNotificationsLow from UserNotificationTypeProperties in AppConfig
+			String key = (String)keys.next();	
+			
+			// e.g., SRD:Low from UserNotificationTypeProperties in AppConfig
+			String typeAndPriority = notificationTypeProperties.getProperty(key);
+			
+			// e.g., SRD
+			String type = typeAndPriority.substring(0, typeAndPriority.indexOf(":"));	
+			
+			// e.g., Low
+			String priority = typeAndPriority.substring(typeAndPriority.indexOf(":") + 1);	
 
+			// e.g., the value in their UserProfile for sendSrdNotificationsLow (true or false)
+			boolean wantsEmailsForTypeAndPriority = 
+				Boolean.parseBoolean(userProfileProps.getProperty(key));	
+
+			// e.g., if the notification type == SRD
+			// AND the notification priority == Low
+			// AND sendSrdNotificationsLow == true in their UserProfile object
+			// send the notification
+			if (notification.getType().equalsIgnoreCase(type) && 
+				notification.getPriority().equalsIgnoreCase(priority) &&
+				wantsEmailsForTypeAndPriority) {
+				
+				return true;
+			}
+			// just so we return quicker if they've said the don't want 
+			// the notification specifically
+			else if (notification.getType().equalsIgnoreCase(type) && 
+				notification.getPriority().equalsIgnoreCase(priority) &&
+				!wantsEmailsForTypeAndPriority) {
+					
+				return false;
+			}
+
+		}
+        // END NEW (TJ): 10/29 
+        
+		// Old way
+//        while (li.hasNext()) {
+//            Property prop = (Property) li.next();
+//            if (prop.getKey().equalsIgnoreCase("sendUserNotificationEmails")) {
+//                if (prop.getValue().equalsIgnoreCase("true")) {
+//                    sendUserNotificationEmails = true;
+//                }
+//            }
+//        }
+//
         return sendUserNotificationEmails;
     }
 
