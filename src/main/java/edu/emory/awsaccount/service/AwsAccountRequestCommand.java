@@ -1,17 +1,11 @@
-/*******************************************************************************
- $Source: $
- $Revision: $
- *******************************************************************************/
+/* *****************************************************************************
+ This file is part of the RHEDcloud AWS Account Service.
 
-/******************************************************************************
- This file is part of the Emory AWS Account Service.
-
- Copyright (C) 2016 Emory University. All rights reserved. 
+ Copyright 2020 RHEDcloud Foundation. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service;
 
-// Log4j
 import org.apache.log4j.*;
 
 // JDOM
@@ -27,39 +21,37 @@ import org.openeai.xml.XmlDocumentReader;
 import org.openeai.xml.XmlDocumentReaderException;
 
 /**
- * This abstract command provides some functions common to all commands used by
- * the AWS Account service.
+ * This abstract command provides some functions common to all commands used by the AWS Account service.
  * 
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 June 2016
  */
 public abstract class AwsAccountRequestCommand extends RequestCommandImpl implements RequestCommand {
-    protected static Category logger = OpenEaiObject.logger;
+    private static final String LOGTAG = "[AwsAccountRequestCommand] ";
+    protected static final Category logger = OpenEaiObject.logger;
     protected Document m_responseDoc = null; // the primed XML response document
     protected Document m_provideDoc = null; // the primed XML response document
-    private static String LOGTAG = "[AwsAccountRequestCommand] ";
     protected boolean m_verbose = false;
 
     /**
-     * @param CommandConfig
-     * @throws InstantiationException
-     *             <P>
-     *             This constructor initializes the command using a
-     *             CommandConfig object. It invokes the constructor of the
-     *             ancestor, RequestCommandImpl, and then retrieves one
-     *             PropertyConfig object from AppConfig by name and gets and
-     *             sets the command properties using that PropertyConfig object.
-     *             This means that this command must have one PropertyConfig
-     *             object in its configuration named 'GeneralProperties'. This
-     *             constructor also initializes the response document and
-     *             provide document used in replies.
+     * This constructor initializes the command using a
+     * CommandConfig object. It invokes the constructor of the
+     * ancestor, RequestCommandImpl, and then retrieves one
+     * PropertyConfig object from AppConfig by name and gets and
+     * sets the command properties using that PropertyConfig object.
+     * This means that this command must have one PropertyConfig
+     * object in its configuration named 'GeneralProperties'. This
+     * constructor also initializes the response document and
+     * provide document used in replies.
+     * @param cConfig Command Config
+     * @throws InstantiationException on error
      */
     public AwsAccountRequestCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
         logger.info(LOGTAG + "Initializing " + edu.emory.awsaccount.service.ReleaseTag.getReleaseInfo());
 
         // Get and set the general properties for this command.
-        PropertyConfig pConfig = new PropertyConfig();
+        PropertyConfig pConfig;
         try {
             pConfig = (PropertyConfig) getAppConfig().getObject("GeneralProperties");
         } catch (EnterpriseConfigurationObjectException eoce) {
@@ -71,14 +63,13 @@ public abstract class AwsAccountRequestCommand extends RequestCommandImpl implem
 
         // Get the verbose property.
         String verbose = getProperties().getProperty("verbose", "false");
-        setVerbose(Boolean.getBoolean(verbose));
+        setVerbose(Boolean.parseBoolean(verbose));
         logger.info(LOGTAG + "property verbose: " + getVerbose());
 
         // Initialize response documents.
         XmlDocumentReader xmlReader = new XmlDocumentReader();
         try {
-            Document responseDoc = xmlReader.initializeDocument(getProperties().getProperty("responseDocumentUri"),
-                    getOutboundXmlValidation());
+            Document responseDoc = xmlReader.initializeDocument(getProperties().getProperty("responseDocumentUri"), getOutboundXmlValidation());
             if (responseDoc == null) {
                 String errMsg = "Missing 'responseDocumentUri' " + "property in the deployment descriptor.  Can't continue.";
                 logger.fatal(LOGTAG + errMsg);
@@ -86,8 +77,7 @@ public abstract class AwsAccountRequestCommand extends RequestCommandImpl implem
             }
             setResponseDocument(responseDoc);
 
-            Document provideDoc = xmlReader.initializeDocument(getProperties().getProperty("provideDocumentUri"),
-                    getOutboundXmlValidation());
+            Document provideDoc = xmlReader.initializeDocument(getProperties().getProperty("provideDocumentUri"), getOutboundXmlValidation());
             if (provideDoc == null) {
                 String errMsg = "Missing 'provideDocumentUri' " + "property in the deployment descriptor.  Can't continue.";
                 logger.fatal(LOGTAG + errMsg);
@@ -105,61 +95,52 @@ public abstract class AwsAccountRequestCommand extends RequestCommandImpl implem
     }
 
     /**
-     * @param boolean,
-     *            the verbose parameter
-     *            <P>
-     *            Set a parameter to toggle verbose logging.
+     * Set a parameter to toggle verbose logging.
+     * @param b the verbose parameter
      */
     protected void setVerbose(boolean b) {
         m_verbose = b;
     }
 
     /**
-     * @return boolean, the verbose parameter
-     *         <P>
-     *         Gets the value of the verbose logging parameter.
+     * Gets the value of the verbose logging parameter.
+     * @return the verbose parameter
      */
     protected boolean getVerbose() {
         return m_verbose;
     }
 
     /**
-     * @param Document,
-     *            the response document
-     *            <P>
-     *            Set a primed XML response document the command will use to
-     *            reply to the requests it handles.
+     * Set a primed XML response document the command will use to
+     * reply to the requests it handles.
+     * @param d the response document
      */
     protected void setResponseDocument(Document d) {
         m_responseDoc = d;
     }
 
     /**
-     * @return Document, the response document
-     *         <P>
-     *         Gets the primed XML response document the command will use to
-     *         reply to the requests it handles.
+     * Gets the primed XML response document the command will use to
+     * reply to the requests it handles.
+     * @return the response document
      */
     protected Document getResponseDocument() {
         return m_responseDoc;
     }
 
     /**
-     * @param Document,
-     *            the response document
-     *            <P>
-     *            Set a primed XML response document the command will use to
-     *            reply to the requests it handles.
+     * Set a primed XML response document the command will use to
+     * reply to the requests it handles.
+     * @param d the response document
      */
     protected void setProvideDocument(Document d) {
         m_provideDoc = d;
     }
 
     /**
-     * @return Document, the response document
-     *         <P>
-     *         Gets the primed XML response document the command will use to
-     *         reply to the requests it handles.
+     * Gets the primed XML response document the command will use to
+     * reply to the requests it handles.
+     * @return the response document
      */
     protected Document getProvideDocument() {
         return m_provideDoc;
