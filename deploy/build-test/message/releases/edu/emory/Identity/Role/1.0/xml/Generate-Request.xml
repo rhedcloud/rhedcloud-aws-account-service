@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<edu.emory.Identity.Role.Generate>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>provisionservice</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>11</Month>
+			<Day>14</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Provisioning" messageObject="Role"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<RoleRequisition>
+  <RoleName>RGR_AWS-602082670983-EmoryAdministratorRole</RoleName>
+  <RoleDescription>Provisions member to groups</RoleDescription>
+  <RoleCategoryKey>aws</RoleCategoryKey>
+  <Resource>
+    <ResourceName>MDSG_AWS-602082670983-EmoryAdministratorRole</ResourceName>
+    <ResourceDescription>Provisions members to group EmoryAdministratorRole on MS LDS University Connector</ResourceDescription>
+  	<ResourceCategoryKey>aws</ResourceCategoryKey>
+    <Entitlement>
+      <EntitlementDN>CN=EmoryAdministratorRole,OU=602082670983,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+      <EntitlementGuid>3999aced-f7f5-4021-a3ec-c79357509683</EntitlementGuid>
+      <EntitlementApplication>UMD</EntitlementApplication>
+    </Entitlement>
+  </Resource>
+  <Resource>
+    <ResourceName>EADG_aws-admin-24</ResourceName>
+    <ResourceDescription>Provisions members to group aws-admin-24 on Enterprise AD Connector</ResourceDescription>
+  	<ResourceCategoryKey>aws</ResourceCategoryKey>
+    <Entitlement>
+      <EntitlementDN>CN=AWS-Admin-24,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+      <EntitlementGuid></EntitlementGuid>
+      <EntitlementApplication>EAD</EntitlementApplication>
+    </Entitlement>
+  </Resource>
+</RoleRequisition>
+	</DataArea>
+	</edu.emory.Identity.Role.Generate>

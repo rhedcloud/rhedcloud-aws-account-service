@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Tod Jackson (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!--	$Revision: 1.2 $
+	$Date: 2007/05/22 17:00:47 $
+	$Source: /cvs/repositories/openii2/openii2/distributions/toolkit-examples-3.0/message/releases/com/any-erp-vendor/Person/BasicPerson/1.0/dtd/Create-Request.dtd,v $
+-->
+<!-- Defines a message that creates a basic person record for a given person.
+-->
+<!-- OpenEAI sample enterprise 
+	Copyright 2002-2003 OpenEAI Software Foundation.
+-->
+<!--Release History (this information is manually updated when the message is released)
+	12/23/2002 - tod@openeai.org
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/2.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.Identity.FullPerson.Create (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (NewData)>
+<!ELEMENT NewData (FullPerson)>

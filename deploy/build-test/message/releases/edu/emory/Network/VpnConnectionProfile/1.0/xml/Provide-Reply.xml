@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.VpnConnectionProfile.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Network.VpnConnectionProfile.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Network" messageObject="VpnConnectionProfile"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>Network Ops Service</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>netops</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>5</Month>
+			<Day>14</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>423</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<VpnConnectionProfile>
+			<VpnConnectionProfileId>1</VpnConnectionProfileId>
+			<VpcNetwork>10.65.0.0/23</VpcNetwork>
+			<TunnelProfile>
+				<TunnelId>10001</TunnelId>
+				<CryptoKeyringName>keyring-vpn-research-vpc001-tun1</CryptoKeyringName>
+				<IsakampProfileName>isakmp-vpn-research-vpc001-tun1</IsakampProfileName>
+				<IpsecTransformSetName>ipsec-prop-vpn-research-vpc001-tun1</IpsecTransformSetName>
+				<IpsecProfileName>ipsec-vpn-research-vpc001-tun1</IpsecProfileName>
+				<TunnelDescription>test description</TunnelDescription>
+				<CustomerGatewayIp>170.140.76.1</CustomerGatewayIp>
+				<VpnInsideIpCidr1>169.254.248.0/30</VpnInsideIpCidr1>
+				<VpnInsideIpCidr2>169.254.251.248/30</VpnInsideIpCidr2>
+			</TunnelProfile>
+			<TunnelProfile>
+				<TunnelId>20001</TunnelId>
+				<CryptoKeyringName>keyring-vpn-research-vpc001-tun2</CryptoKeyringName>
+				<IsakampProfileName>isakmp-vpn-research-vpc001-tun2</IsakampProfileName>
+				<IpsecTransformSetName>ipsec-prop-vpn-research-vpc001-tun2</IpsecTransformSetName>
+				<IpsecProfileName>ipsec-vpn-research-vpc001-tun2</IpsecProfileName>
+				<TunnelDescription>test description</TunnelDescription>
+				<CustomerGatewayIp>170.140.77.1</CustomerGatewayIp>
+				<VpnInsideIpCidr1>169.254.252.0/30</VpnInsideIpCidr1>
+				<VpnInsideIpCidr2>169.254.255.248/30</VpnInsideIpCidr2>
+			</TunnelProfile>
+		</VpnConnectionProfile>
+	</DataArea>
+</edu.emory.Network.VpnConnectionProfile.Provide>

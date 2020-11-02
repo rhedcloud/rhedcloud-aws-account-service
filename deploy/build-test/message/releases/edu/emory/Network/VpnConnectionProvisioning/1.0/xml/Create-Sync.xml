@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.VpnConnectionProvisioning.Create SYSTEM "../dtd/Create-Sync.dtd">
+<edu.emory.Network.VpnConnectionProvisioning.Create>
+	<ControlAreaSync messageCategory="edu.emory.Network" messageObject="VpnConnectionProvisioning"
+		messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.NetworkOpsService</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>networkops</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>5</Month>
+			<Day>16</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<VpnConnectionProvisioning>
+				<ProvisioningId>emory-vpn-23</ProvisioningId>
+				<VpnConnectionRequisition>
+					<VpnConnectionProfile>
+						<VpnConnectionProfileId>4</VpnConnectionProfileId>
+						<VpcNetwork>10.65.6.0/23</VpcNetwork>
+						<TunnelProfile>
+							<TunnelId>10004</TunnelId>
+							<CryptoKeyringName>keyring-vpn-research-vpc004-tun1</CryptoKeyringName>
+							<IsakampProfileName>isakmp-vpn-research-vpc004-tun1</IsakampProfileName>
+							<IpsecTransformSetName>ipsec-prop-vpn-research-vpc004-tun1</IpsecTransformSetName>
+							<IpsecProfileName>ipsec-vpn-research-vpc004-tun1</IpsecProfileName>
+							<TunnelDescription>AWS Research VPC004 Tunnel1</TunnelDescription>
+							<CustomerGatewayIp>170.140.76.4</CustomerGatewayIp>
+							<VpnInsideIpCidr1>169.254.248.12/30</VpnInsideIpCidr1>
+							<VpnInsideIpCidr2>169.254.251.248/30</VpnInsideIpCidr2>
+						</TunnelProfile>
+						<TunnelProfile>
+							<TunnelId>20004</TunnelId>
+							<CryptoKeyringName>keyring-vpn-research-vpc004-tun2</CryptoKeyringName>
+							<IsakampProfileName>isakmp-vpn-research-vpc004-tun2</IsakampProfileName>
+							<IpsecTransformSetName>ipsec-prop-vpn-research-vpc004-tun2</IpsecTransformSetName>
+							<IpsecProfileName>ipsec-vpn-research-vpc004-tun2</IpsecProfileName>
+							<TunnelDescription>AWS Research VPC004 Tunnel2</TunnelDescription>
+							<CustomerGatewayIp>170.140.77.4</CustomerGatewayIp>
+							<VpnInsideIpCidr1>169.254.252.12/30</VpnInsideIpCidr1>
+							<VpnInsideIpCidr2>169.254.255.248/30</VpnInsideIpCidr2>
+						</TunnelProfile>
+					</VpnConnectionProfile>
+					<OwnerId>vpc-08ea719c3340c14e3</OwnerId>
+					<RemoteVpnConnectionInfo>
+						<RemoteVpnConnectionId>vpn-0033363b465d4a2e1</RemoteVpnConnectionId>
+						<RemoteVpnTunnel>
+							<LocalTunnelId>10004</LocalTunnelId>
+							<RemoteVpnIpAddress>34.232.40.14</RemoteVpnIpAddress>
+							<PresharedKey>3HfFkcUxPtEGvDtlJkwTBm6KFrwNh3aY</PresharedKey>
+							<VpnInsideIpCidr>169.254.248.12/30</VpnInsideIpCidr>
+						</RemoteVpnTunnel>
+					</RemoteVpnConnectionInfo>
+					<RemoteVpnConnectionInfo>
+						<RemoteVpnConnectionId>vpn-07fd5517297bdd07c</RemoteVpnConnectionId>
+						<RemoteVpnTunnel>
+							<LocalTunnelId>20004</LocalTunnelId>
+							<RemoteVpnIpAddress>34.232.106.104</RemoteVpnIpAddress>
+							<PresharedKey>JOsdUi9XsJBlaLfygzae5D2Ts0Otk9G.</PresharedKey>
+							<VpnInsideIpCidr>169.254.252.12/30</VpnInsideIpCidr>
+						</RemoteVpnTunnel>
+					</RemoteVpnConnectionInfo>
+				</VpnConnectionRequisition>
+				<Status>pending</Status>
+				<AnticipatedTime>371197</AnticipatedTime>
+				<ProvisioningStep>
+					<ProvisioningId>emory-vpn-23</ProvisioningId>
+					<StepId>1</StepId>
+					<Type>CONFIRM_VPN_CONNECTION_NOT_IMPLEMENTED_ON_ROUTER1</Type>
+					<Description>Confirm that the VpnConnectionProfile has not been implemented on
+						Router 1 by performing a VpnConnection.Query-Request to router1 and
+						determining that the status of the VpnConnection is AVAILABLE</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>200</AnticipatedTime>
+					<CreateUser>NetworkOpsService</CreateUser>
+					<CreateDatetime>
+						<Year>2018</Year>
+						<Month>5</Month>
+						<Day>14</Day>
+						<Hour>4</Hour>
+						<Minute>18</Minute>
+						<Second>34</Second>
+						<SubSecond>452</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<ProvisioningStep>
+					<ProvisioningId>emory-vpn-23</ProvisioningId>
+					<StepId>2</StepId>
+					<Type>CONFIRM_VPN_OWNER</Type>
+					<Description>Confirm that the VpnConnectionProfile is presently assigned to the
+						requested owner by querying for a VpnConnectionProfileAssignment and
+						comparing the OwnerId in the assignment to the requested
+						OwnerId.</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>200</AnticipatedTime>
+					<CreateUser>NetworkOpsService</CreateUser>
+					<CreateDatetime>
+						<Year>2018</Year>
+						<Month>5</Month>
+						<Day>14</Day>
+						<Hour>4</Hour>
+						<Minute>18</Minute>
+						<Second>34</Second>
+						<SubSecond>452</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<ProvisioningStep>
+					<ProvisioningId>emory-vpn-23</ProvisioningId>
+					<StepId>3</StepId>
+					<Type>GENERATE_VPN_CONNECTION_ON_ROUTER1</Type>
+					<Description>Send a VpnConnection.Generate-Request to router1</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>200</AnticipatedTime>
+					<CreateUser>NetworkOpsService</CreateUser>
+					<CreateDatetime>
+						<Year>2018</Year>
+						<Month>5</Month>
+						<Day>14</Day>
+						<Hour>4</Hour>
+						<Minute>18</Minute>
+						<Second>34</Second>
+						<SubSecond>452</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<ProvisioningStep>
+					<ProvisioningId>emory-vpn-23</ProvisioningId>
+					<StepId>4</StepId>
+					<Type>GENERATE_VPN_CONNECTION_ON_ROUTER2</Type>
+					<Description>Send a VpnConnection.Generate-Request to router2</Description>
+					<Status>pending</Status>
+					<AnticipatedTime>200</AnticipatedTime>
+					<CreateUser>NetworkOpsService</CreateUser>
+					<CreateDatetime>
+						<Year>2018</Year>
+						<Month>5</Month>
+						<Day>14</Day>
+						<Hour>4</Hour>
+						<Minute>18</Minute>
+						<Second>34</Second>
+						<SubSecond>452</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</CreateDatetime>
+				</ProvisioningStep>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2016</Year>
+					<Month>2</Month>
+					<Day>3</Day>
+					<Hour>4</Hour>
+					<Minute>5</Minute>
+					<Second>6</Second>
+					<SubSecond>0</SubSecond>
+					<Timezone>America/New_York</Timezone>
+				</CreateDatetime>
+			</VpnConnectionProvisioning>
+		</NewData>
+	</DataArea>
+</edu.emory.Network.VpnConnectionProvisioning.Create>

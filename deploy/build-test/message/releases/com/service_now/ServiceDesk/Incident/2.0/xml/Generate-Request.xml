@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Steve A Wheat (Emory University) -->
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE com.service_now.ServiceDesk.Incident.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<com.service_now.ServiceDesk.Incident.Generate>
+	<ControlAreaRequest messageCategory="com.service_now.ServiceDesk" messageObject="Incident"
+		messageAction="Generate" messageRelease="2.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ServiceNowGateway</SenderAppId>
+				<ProducerId>0d41f66e-883f-42d4-bf1c-0afe08be2a77</ProducerId>
+				<MessageSeq>25</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>incidentservice</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="com.service_now.ServiceDesk" messageObject="Incident"
+			messageAction="Response" messageRelease="2.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<IncidentRequisition>
+			<ShortDescription>Hardware1</ShortDescription>
+			<Description>Hardware1 Issues</Description>
+			<Urgency>3</Urgency>
+			<Impact>3</Impact>
+			<BusinessService>Web Management</BusinessService>
+			<Category>Access</Category>
+			<SubCategory>Add</SubCategory>
+			<RecordType>Service Request</RecordType>
+			<ContactType>Integration</ContactType>
+			<CallerId>ctmath2</CallerId>
+			<CmdbCi>Enterprise Service Bus</CmdbCi>                
+		</IncidentRequisition>
+	</DataArea>
+</com.service_now.ServiceDesk.Incident.Generate>

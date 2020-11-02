@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (Emory University) -->
+<!-- Defines a message that creates an organizational unit.
+-->
+<!-- LDS Service
+    Copyright 2018 Emory University. All rights reserved.
+-->
+<!--Release History (this information is manually updated when the message is released)
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.LightweightDirectoryServices.OrganizationalUnit.Create (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (NewData)>
+<!ELEMENT NewData (OrganizationalUnit)>

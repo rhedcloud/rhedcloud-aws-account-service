@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.LightweightDirectoryServices.Group.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.LightweightDirectoryServices.Group.Provide>
+    <ControlAreaReply messageCategory="edu.emory.LightweightDirectoryServices"
+                      messageObject="Group" messageAction="Provide" messageRelease="1.0" messagePriority="9"
+                      messageType="Reply">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af0675956591 </ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>testsuiteapp</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2017</Year>
+            <Month>11</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>423</SubSecond>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+        <Result action="Query" status="success">
+            <ProcessedMessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
+                <MessageSeq>86</MessageSeq>
+            </ProcessedMessageId>
+        </Result>
+    </ControlAreaReply>
+    <DataArea>
+        <Group>
+            <objectClass>group</objectClass>
+            <objectClass>top</objectClass>
+            <groupType>-2147483646</groupType>
+            <instanceType>4</instanceType>
+            <objectCategory>CN=Group,CN=Schema,CN=Configuration,CN={A5CF2710-EF2D-4D77-8BDE-F99AA0854C58}</objectCategory>
+            <cn>EmoryAdministratorRole</cn>
+            <description>EmoryAdministratorRole Group for IDM for Amazon Web Services</description>
+            <distinguishedName>CN=EmoryAdministratorRole,OU=134285882893,OU=AWS,DC=emory,DC=edu</distinguishedName>
+            <dsCorePropagationData>16010101000000.0Z</dsCorePropagationData>
+            <member>CN=itest,OU=People,DC=emory,DC=edu</member>
+            <member>CN=itest2,OU=People,DC=emory,DC=edu</member>
+            <name>EmoryAdministratorRole</name>
+            <objectGUID>{1db404ae-2ad5-4553-ac16-0d585d8469ef}</objectGUID>
+            <objectSid>S-1-274789862-2889948830-2872978871-1129951614-236692895-816017300</objectSid>
+            <uSNChanged>755202</uSNChanged>
+            <uSNCreated>752956</uSNCreated>
+            <whenChanged>20171208175811.0Z</whenChanged>
+            <whenCreated>20171201154058.0Z</whenCreated>
+            <createTimeStamp>20171201154058.0Z</createTimeStamp>
+            <modifyTimeStamp>20171208175811.0Z</modifyTimeStamp>
+            <structuralObjectClass>group</structuralObjectClass>
+            <structuralObjectClass>top</structuralObjectClass>
+            <subSchemaSubEntry>CN=Aggregate,CN=Schema,CN=Configuration,CN={A5CF2710-EF2D-4D77-8BDE-F99AA0854C58}</subSchemaSubEntry>
+        </Group>
+    </DataArea>
+</edu.emory.LightweightDirectoryServices.Group.Provide>

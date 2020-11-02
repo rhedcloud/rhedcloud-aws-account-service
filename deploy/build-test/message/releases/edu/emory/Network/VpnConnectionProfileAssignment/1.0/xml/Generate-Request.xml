@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.VpnConnectionProfileAssignment.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<edu.emory.Network.VpnConnectionProfileAssignment.Generate>
+	<ControlAreaRequest messageCategory="edu.emory.Network"
+		messageObject="VpnConnectionProfileAssignment" messageAction="Generate" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>org.actsi.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuite</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>5</Month>
+			<Day>14</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Network"
+			messageObject="VpnConnectionProfileAssignment" messageAction="Response"
+			messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<VpnConnectionProfileAssignmentRequisition>
+			<OwnerId>emory-account-provisioning-43</OwnerId>
+		</VpnConnectionProfileAssignmentRequisition>
+	</DataArea>
+</edu.emory.Network.VpnConnectionProfileAssignment.Generate>

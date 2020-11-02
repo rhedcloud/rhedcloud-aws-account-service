@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Emory EmailAddressValidationService 
+	Copyright 2018 Emory University and Emory Healthcare.
+-->
+<!--Release History
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.Validation.EmailAddressValidation.Provide (ControlAreaReply, DataArea)>
+<!ELEMENT DataArea (EmailAddressValidation*)>

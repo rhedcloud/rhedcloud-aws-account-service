@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Defines a response message for a VPN connection provisioning generate request.
+-->
+<!-- Network Ops Service
+	Copyright 2018 Emory University. All rights reserved.
+-->
+<!--Release History (this information is manually updated when the message is released)
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.Network.VpnConnectionDeprovisioning.Response (ControlAreaReply, DataArea)>
+<!ELEMENT DataArea (VpnConnectionDeprovisioning?)>

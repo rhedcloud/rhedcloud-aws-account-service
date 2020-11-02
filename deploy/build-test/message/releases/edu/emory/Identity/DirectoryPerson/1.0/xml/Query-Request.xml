@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Identity.DirectoryPerson.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.Identity.DirectoryPerson.Query>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="DirectoryPerson" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>7f238a66-afad-4047-b420-6aaed96bb59e</ProducerId>
+				<MessageSeq>2</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>9</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>43</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Identity" messageObject="DirectoryPerson" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DirectoryPersonQuerySpecification>
+			<SearchString>Wheat</SearchString>
+		</DirectoryPersonQuerySpecification>
+	</DataArea>
+</edu.emory.Identity.DirectoryPerson.Query>

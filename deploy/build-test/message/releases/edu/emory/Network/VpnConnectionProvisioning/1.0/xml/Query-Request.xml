@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.VpnConnectionProvisioning.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.Network.VpnConnectionProvisioning.Query>
+	<ControlAreaRequest messageCategory="edu.emory.Network"
+		messageObject="VpnConnectionProvisioning" messageAction="Query" messageRelease="1.0"
+		messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>testsuiteapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>5</Month>
+			<Day>16</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>456</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Network"
+			messageObject="VpnConnectionProvisioning" messageRelease="1.0" messageAction="Provide"
+			messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<VpnConnectionProvisioningQuerySpecification>
+			<ProvisioningId>emory-vpn-23</ProvisioningId>
+		</VpnConnectionProvisioningQuerySpecification>
+	</DataArea>
+</edu.emory.Network.VpnConnectionProvisioning.Query>

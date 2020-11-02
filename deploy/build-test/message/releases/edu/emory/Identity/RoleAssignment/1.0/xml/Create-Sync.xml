@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.RoleAssignment.Create SYSTEM "../dtd/Create-Sync.dtd">
+<edu.emory.Identity.RoleAssignment.Create>
+	<ControlAreaSync messageCategory="edu.emory.Identity" messageObject="RoleAssignment" messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.RoleAssignmentService</SenderAppId>
+				<ProducerId>94c1b2db-121e-4fca-bb23-31f56697c24d</ProducerId>
+				<MessageSeq>927</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>10</Hour>
+			<Minute>34</Minute>
+			<Second>45</Second>
+			<SubSecond>342</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<RoleAssignment>
+				<RoleAssignmentActionType>grant</RoleAssignmentActionType>
+				<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+				<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+				<Reason>For Testing</Reason>
+				<RoleDNs>
+					<DistinguishedName>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+				</RoleDNs>
+			</RoleAssignment>
+		</NewData>
+	</DataArea>
+</edu.emory.Identity.RoleAssignment.Create>

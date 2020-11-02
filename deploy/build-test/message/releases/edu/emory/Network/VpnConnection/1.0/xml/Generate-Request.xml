@@ -28,21 +28,31 @@
 	</ControlAreaRequest>
 	<DataArea>
 		<VpnConnectionRequisition>
-			<VpcId>vpc-8aed17e2</VpcId>
-			<VpcCidr>10.65.0.0/23</VpcCidr>
-			<VpnId>1</VpnId>
-			<VpnEndpoint>
-				<RemoteVpnIpAddress>72.22.11.32</RemoteVpnIpAddress>
-				<PresharedKey>4cdzgEXUQbm8q/QBC0kK8fW5/4BuOf8Pv2l6MSbv</PresharedKey>
-				<CustomerGatewayIpAdress>170.140.76.1</CustomerGatewayIpAdress>
-				<VpnInsideIpCidr>169.254.248.0/30</VpnInsideIpCidr>
-			</VpnEndpoint>
-			<VpnEndpoint>
-				<RemoteVpnIpAddress>72.22.11.22</RemoteVpnIpAddress>
-				<PresharedKey>4cdzgEXUQbm8q/QBC0kK8fW5/4BuOf8Pv718MSgf</PresharedKey>
-				<CustomerGatewayIpAdress>170.140.77.1</CustomerGatewayIpAdress>
-				<VpnInsideIpCidr>169.254.252.0/30</VpnInsideIpCidr>
-			</VpnEndpoint>
+			<VpnConnectionProfile>
+				<VpnConnectionProfileId>4</VpnConnectionProfileId>
+				<VpcNetwork>10.65.6.0/23</VpcNetwork>
+				<TunnelProfile>
+					<TunnelId>10004</TunnelId>
+					<CryptoKeyringName>keyring-vpn-research-vpc004-tun1</CryptoKeyringName>
+					<IsakampProfileName>isakmp-vpn-research-vpc004-tun1</IsakampProfileName>
+					<IpsecTransformSetName>ipsec-prop-vpn-research-vpc004-tun1</IpsecTransformSetName>
+					<IpsecProfileName>ipsec-vpn-research-vpc004-tun1</IpsecProfileName>
+					<TunnelDescription>AWS Research VPC004 Tunnel1</TunnelDescription>
+					<CustomerGatewayIp>170.140.76.4</CustomerGatewayIp>
+					<VpnInsideIpCidr1>169.254.248.12/30</VpnInsideIpCidr1>
+					<VpnInsideIpCidr2>169.254.251.248/30</VpnInsideIpCidr2>
+				</TunnelProfile>
+			</VpnConnectionProfile>
+			<OwnerId>vpc-08ea719c3340c14e3</OwnerId>
+			<RemoteVpnConnectionInfo>
+				<RemoteVpnConnectionId>vpn-0033363b465d4a2e1</RemoteVpnConnectionId>
+				<RemoteVpnTunnel>
+					<LocalTunnelId>10004</LocalTunnelId>
+					<RemoteVpnIpAddress>34.232.40.14</RemoteVpnIpAddress>
+					<PresharedKey>3HfFkcUxPtEGvDtlJkwTBm6KFrwNh3aY</PresharedKey>
+					<VpnInsideIpCidr>169.254.248.12/30</VpnInsideIpCidr>
+				</RemoteVpnTunnel>
+			</RemoteVpnConnectionInfo>
 		</VpnConnectionRequisition>
 	</DataArea>
 </edu.emory.Network.VpnConnection.Generate>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.RoleAssignment.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<edu.emory.Identity.RoleAssignment.Delete>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="RoleAssignment"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.InstIdApplication</SenderAppId>
+				<ProducerId>6dff0e4a-7d39-4ebb-a5ea-cfb6c5f99b5f</ProducerId>
+				<MessageSeq>264</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>instidapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+			messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<RoleAssignment>
+				<RoleAssignmentActionType>revoke</RoleAssignmentActionType>
+				<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+				<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+				<Reason>For Testing</Reason>
+				<RoleDNs>
+					<DistinguishedName>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+				</RoleDNs>
+			</RoleAssignment>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Identity.RoleAssignment.Delete>

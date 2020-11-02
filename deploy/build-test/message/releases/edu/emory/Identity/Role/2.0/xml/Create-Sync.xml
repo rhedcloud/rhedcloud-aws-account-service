@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Create SYSTEM "../dtd/Create-Sync.dtd">
+<edu.emory.Identity.Role.Create>
+	<ControlAreaSync messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Create" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ProvisioningService</SenderAppId>
+				<ProducerId>94c1b2db-121e-4fca-bb23-31f56697c24d</ProducerId>
+				<MessageSeq>927</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>10</Hour>
+			<Minute>34</Minute>
+			<Second>45</Second>
+			<SubSecond>342</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<NewData>
+			<Role>
+				<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,
+					cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+				<Resource>
+					<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>AWS-308833937534-Administrator</ResourceName>
+					<ResourceApplication>AWS</ResourceApplication>
+					<Entitlement>
+						<EntitlementDN>
+							CN=Administrator,OU=308833937534,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{e0c96509-d3b8-4ed4-a9ff-398f0da7c1b3}</EntitlementGuid>
+						<EntitlementApplication>UMD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+				<Resource>
+					<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>AWS-Admin-8</ResourceName>
+					<ResourceApplication>AWS</ResourceApplication>
+					<Entitlement>
+						<EntitlementDN>CN=AWS-Admin-8,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{451f4d2c-0aac-4ad9-92b9-ca655091d8a7}</EntitlementGuid>
+						<EntitlementApplication>EAD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+			</Role>
+		</NewData>
+	</DataArea>
+	</edu.emory.Identity.Role.Create>

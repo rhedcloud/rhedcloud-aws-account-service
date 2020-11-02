@@ -11,7 +11,7 @@
 				<MessageSeq/>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>i2s</AuthUserId>
+				<AuthUserId>testsuite@emory.edu/192.168.1.1</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>

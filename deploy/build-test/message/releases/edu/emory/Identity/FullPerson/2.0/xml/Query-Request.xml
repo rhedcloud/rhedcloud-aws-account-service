@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.FullPerson.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.Identity.FullPerson.Query>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="FullPerson" messageAction="Query" messageRelease="2.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.IdentityService</SenderAppId>
+				<ProducerId>ff860fb1-6b17-45d0-a173-c26cb074dfa8</ProducerId>
+				<MessageSeq>3</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>edu.emory.IdentityService</AuthUserId>
+				<AuthUserSignature>unknown</AuthUserSignature>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>43</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Identity" messageObject="FullPerson" messageRelease="2.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<FullPersonQuerySpecification>
+			<PublicId>P0000017</PublicId>
+			<NetId>MBELL4</NetId>
+			<EmplId>0357543</EmplId>
+			<Prsni>254086</Prsni>
+		</FullPersonQuerySpecification>
+	</DataArea>
+	</edu.emory.Identity.FullPerson.Query>

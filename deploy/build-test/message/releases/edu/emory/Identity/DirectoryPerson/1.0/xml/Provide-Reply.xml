@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Identity.DirectoryPerson.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Identity.DirectoryPerson.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Identity" messageObject="DirectoryPerson" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.DirectoryService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>directoryservice</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2010</Year>
+			<Month>9</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+				<ProducerId>7f238a66-afad-4047-b420-6aaed96bb59e</ProducerId>
+				<MessageSeq>2</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<DirectoryPerson>
+            <DepartmentName>OIT Enterprise Architecture</DepartmentName>
+            <Email type="primary">
+				<EmailAddress>swheat@emory.edu</EmailAddress>
+			</Email>
+            <Fax>123-456-7890</Fax>
+            <FirstMiddle>Stephen</FirstMiddle>
+            <FullName>Stephen Wheat</FullName>
+            <Key>P0934572</Key>
+            <LastName>Wheat</LastName>
+            <DirectoryLocation>N Decatur Bldg</DirectoryLocation>
+            <MailStop>1784-001-1AN (OIT VP &amp; CIO)</MailStop>
+            <DirectoryPhone>404-727-5268</DirectoryPhone>
+            <SchoolDivision>Ofc of Information Technology</SchoolDivision>
+            <StudentPhone>123-456-7890</StudentPhone>
+            <Suffix>MS</Suffix>
+            <Title>Chief Information Technology Architect</Title>
+            <Type>Staff</Type>
+         </DirectoryPerson>
+	</DataArea>
+</edu.emory.Identity.DirectoryPerson.Provide>

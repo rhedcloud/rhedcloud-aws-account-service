@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Defines a sync message for communicating updates to VpnConnectionProvisioning objects.
+-->
+<!-- Network Ops Service
+	Copyright 2018 Emory University. All rights reserved.
+-->
+<!--Release History (this information is manually updated when the message is released)
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.Network.VpnConnectionProvisioning.Update (ControlAreaSync, DataArea)>
+<!ELEMENT DataArea (NewData, BaselineData)>
+<!ELEMENT NewData (VpnConnectionProvisioning)>
+<!ELEMENT BaselineData (VpnConnectionProvisioning)>

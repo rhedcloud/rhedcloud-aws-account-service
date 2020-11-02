@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<edu.emory.Identity.Role.Delete>
+	<ControlAreaSync messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ProvisioningService</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>265</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>ProvisioningServiceCommand</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<Role>
+				<RoleDN>cn=RGR_AWS-6020826709881-EmoryCentralAdministratorRole,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+				<RoleName>RGR_AWS-6020826709881-EmoryCentralAdministratorRole</RoleName>
+				<RoleDescription>Provisions member to groups</RoleDescription>
+				<RoleCategoryKey>aws</RoleCategoryKey>
+				<Resource>
+					<ResourceDN>cn=MDSG_AWS-308833937532097-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>MDSG_AWS-308833937532097-Administrator</ResourceName>
+					<ResourceDescription>Provisions members to group Administrator on MS LDS University
+						Connector</ResourceDescription>
+					<ResourceCategoryKey>aws</ResourceCategoryKey>
+					<Entitlement>
+						<EntitlementDN>CN=AWS-Admin-24,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>7026170705e5ca4f83c248823dbfd961</EntitlementGuid>
+					</Entitlement>
+				</Resource>
+				<Resource>
+					<ResourceDN>cn=MDSG_AWS-60208267106-EmoryCentralAdministratorRole,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>MDSG_AWS-60208267106-EmoryCentralAdministratorRole</ResourceName>
+					<ResourceDescription>Provisions members to group EmoryCentralAdministratorRole on MS
+						LDS University Connector</ResourceDescription>
+					<ResourceCategoryKey>aws</ResourceCategoryKey>
+					<Entitlement>
+						<EntitlementDN>CN=AWS-Admin-24,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>b42a273e2e7c6a0572dc5aa683584492</EntitlementGuid>
+					</Entitlement>
+				</Resource>
+			</Role>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Identity.Role.Delete>

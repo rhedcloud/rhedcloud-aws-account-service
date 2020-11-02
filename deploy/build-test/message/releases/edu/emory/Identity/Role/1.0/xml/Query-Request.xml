@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.Identity.Role.Query>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ProvisioningService</SenderAppId>
+				<ProducerId>5e2543c7-2648-47f5-9acf-90b820a89f66</ProducerId>
+				<MessageSeq>6232</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>paymaster</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>43</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Identity" messageObject="Role"
+			messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<RoleQuerySpecification>
+			<RoleDN>cn=RGR_AWS-6020826709881-EmoryCentralAdministratorRole,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+		</RoleQuerySpecification>
+	</DataArea>
+	</edu.emory.Identity.Role.Query>

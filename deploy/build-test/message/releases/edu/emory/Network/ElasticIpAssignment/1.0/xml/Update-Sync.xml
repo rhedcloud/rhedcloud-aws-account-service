@@ -12,7 +12,7 @@
 				<MessageSeq>324</MessageSeq>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>TestSuiteApp</AuthUserId>
+				<AuthUserId>testsuite@emory.edu/192.168.1.1</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>

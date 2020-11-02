@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.LightweightDirectoryServices.Group.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.LightweightDirectoryServices.Group.Query>
+    <ControlAreaRequest messageCategory="edu.emory.LightweightDirectoryServices"
+                        messageObject="Group" messageAction="Query" messageRelease="1.0" messagePriority="9"
+                        messageType="Request">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>testsuiteapp</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2017</Year>
+            <Month>11</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>456</SubSecond>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+        <ExpectedReplyFormat messageCategory="edu.emory.LightweightDirectoryServices" messageObject="Group"
+            messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+    </ControlAreaRequest>
+    <DataArea>
+        <GroupQuerySpecification>
+            <distinguishedName>CN=Administrator,OU=158058157672,OU=AWS,DC=emory,DC=edu</distinguishedName>
+        </GroupQuerySpecification>
+    </DataArea>
+</edu.emory.LightweightDirectoryServices.Group.Query>

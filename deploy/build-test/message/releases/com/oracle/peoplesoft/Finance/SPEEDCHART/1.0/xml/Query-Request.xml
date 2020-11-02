@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with X<oXygen/> XML Editor 13.1 by Steve Wheat (Emory University) -->
+<!DOCTYPE com.oracle.peoplesoft.Finance.SPEEDCHART.Query SYSTEM "../dtd/Query-Request.dtd">
+<com.oracle.peoplesoft.Finance.SPEEDCHART.Query>
+	<ControlAreaRequest messageCategory="com.oracle.peoplesoft.Finance" messageObject="SPEEDCHART" messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ecoi.EcoiMobile</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>EcoiMobile</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2012</Year>
+			<Month>11</Month>
+			<Day>17</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>456</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="com.oracle.peoplesoft.Finance" messageObject="SPEEDCHART" messageRelease="1.0" messageAction="Provide" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<SPEEDCHART_QUERY>
+			<SPEEDCHART_KEY>test key 1</SPEEDCHART_KEY>
+		</SPEEDCHART_QUERY>
+	</DataArea>
+</com.oracle.peoplesoft.Finance.SPEEDCHART.Query>

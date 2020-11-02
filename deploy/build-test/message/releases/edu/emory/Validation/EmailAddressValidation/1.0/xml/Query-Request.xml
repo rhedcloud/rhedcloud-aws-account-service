@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Validation.EmailAddressValidation.Query SYSTEM "../dtd/Query-Request.dtd">
+<edu.emory.Validation.EmailAddressValidation.Query>
+	<ControlAreaRequest messageCategory="edu.emory.Validation" messageObject="EmailAddressValidation"
+		messageAction="Query" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AnyApp</SenderAppId>
+				<ProducerId>753f99bc-4917-472b-8c7e-a9bc3ce592e9 </ProducerId>
+				<MessageSeq>32</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>anyapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>1</Month>
+			<Day>22</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Validation"
+			messageObject="EmailAddressValidation" messageAction="Provide" messageRelease="1.0"
+			messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<EmailAddressValidationQuerySpecification>
+			<EmailAddress>aws-admin-1@emory.edu</EmailAddress>
+		</EmailAddressValidationQuerySpecification>
+	</DataArea>
+</edu.emory.Validation.EmailAddressValidation.Query>

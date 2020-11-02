@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!DOCTYPE edu.emory.Identity.FullPerson.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<edu.emory.Identity.FullPerson.Delete>
+	<ControlAreaSync messageCategory="edu.emory.Identity" messageObject="FullPerson" messageAction="Delete" messageRelease="2.0" messagePriority="1" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+				<ProducerId>c31a5d2e-03ed-405e-afba-b97d468843aa</ProducerId>
+				<MessageSeq>1769</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>gwang28@emory.edu/192.168.1.1</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<FullPerson>
+				<PublicId>P8362543</PublicId>
+				<Person>
+					<PublicId>P8362543</PublicId>
+					<PersonalName type="Legal">
+						<LastName>Shmo</LastName>
+						<FirstName>Joseph</FirstName>
+						<MiddleName>The</MiddleName>
+						<NameSuffix>III</NameSuffix>
+						<Prefix>Mr</Prefix>
+						<Suffix>JD</Suffix>
+						<CompositeName>Shmo,Joseph The</CompositeName>
+					</PersonalName>
+					<LocalizedNameList>
+						<PersonalName type="Directory">
+							<LastName>Cool</LastName>
+							<FirstName>Joe</FirstName>
+							<MiddleName>T</MiddleName>
+							<NameSuffix>III</NameSuffix>
+							<Prefix>Mr</Prefix>
+							<Suffix>JD</Suffix>
+							<CompositeName>Cool,Joe T</CompositeName>
+						</PersonalName>
+					</LocalizedNameList>
+					<SSN>123456789</SSN>
+					<BirthDay>01</BirthDay>
+					<BirthMonth>01</BirthMonth>
+					<BirthYear>1981</BirthYear>
+					<DriversLicense>
+						<Value>23984729384</Value>
+						<Country>USA</Country>
+						<State>GA</State>
+						<ImageUri>http://www.emory.edu/DriversLicenseImages/GA/3984729384.jpeg</ImageUri>
+					</DriversLicense>
+					<NationalIdCard>
+						<Value>a89237skj8e</Value>
+						<Country>Canada</Country>
+						<ImageUri>http://www.emory.edu/NationalCardImages/a89237skj8e.jpeg</ImageUri>
+					</NationalIdCard>
+					<Gender>M</Gender>
+					<Association>
+						<Name>Employee</Name>
+						<Key>P8362543</Key>
+						<Realm>PublicId</Realm>
+					</Association>
+					<Eligibility type="U">
+						<Value>Y</Value>
+					</Eligibility>
+					<Tag>Junk</Tag>
+					<FallbackContact>
+						<EstablishedDate>
+							<Month>09</Month>
+							<Day>09</Day>
+							<Year>2009</Year>
+						</EstablishedDate>
+						<EmailAddress>joe.t.cool@hotmail.com</EmailAddress>
+					</FallbackContact>
+					<Phone type="business">
+						<CountryCode>1</CountryCode>
+						<AreaCode>404</AreaCode>
+						<Number>7128770</Number>
+						<ExtensionNumber>1000</ExtensionNumber>
+					</Phone>
+					<Email type="Exchange">
+						<EmailAddress>joe.cool@emory.edu</EmailAddress>
+					</Email>
+					<Prsni>123456</Prsni>
+					<EmailRestricted type="Amcom">
+						<Email type="Enotify">
+							<EmailAddress>joe.cool@gmail.com</EmailAddress>
+						</Email>
+					</EmailRestricted>
+					<PhoneRestricted type="Amcom">
+						<Phone type="EnotifyMobileStaff">
+							<Number>4045551212</Number>
+							<PhoneCarrier>
+								<Name>Verizon</Name>
+								<Code>7</Code>
+							</PhoneCarrier>
+							<Tag>ENotifyEmergency</Tag>
+						</Phone>
+					</PhoneRestricted>
+					<LocationRestricted type="Amcom">
+						<Location type="Home">
+							<Address>
+								<ZipOrPostalCode>33333</ZipOrPostalCode>
+							</Address>
+						</Location>
+					</LocationRestricted>
+				</Person>
+				<NetworkIdentity type="University" status="reserved" ancillary="true">
+					<Value>wink</Value>
+					<PublicId>P8362543</PublicId>
+					<CreateDate>
+						<Month>2</Month>
+						<Day>2</Day>
+						<Year>2002</Year>
+					</CreateDate>
+					<EndDate>
+						<Month>3</Month>
+						<Day>3</Day>
+						<Year>2003</Year>
+					</EndDate>
+					<Domain>Ldap</Domain>
+					<Tag>NAME_DERIVED</Tag>
+				</NetworkIdentity>
+				<Employee faculty="true">
+					<EmplId>5678934</EmplId>
+					<PublicId>P8362543</PublicId>
+					<CurrentHireDate>
+						<Month>4</Month>
+						<Day>4</Day>
+						<Year>2004</Year>
+					</CurrentHireDate>
+					<OrigHireDate>
+						<Month>2</Month>
+						<Day>2</Day>
+						<Year>2002</Year>
+					</OrigHireDate>
+					<ServiceDate>
+						<Month>3</Month>
+						<Day>3</Day>
+						<Year>2003</Year>
+					</ServiceDate>
+					<EmployeeStatus>A</EmployeeStatus>
+					<Job  type="current" primary="true">
+						<SequenceNumber>2</SequenceNumber>
+						<JobCode>514101</JobCode>
+						<JobName>Admn Assistanti</JobName>
+						<PersonJobStatus>Active</PersonJobStatus>
+						<Classification>Staff</Classification>
+						<OrgHierarchy>
+							<Department>
+								<Name>Data Warehouse - Bus Intellige</Name>
+								<Code>142300</Code>
+								<SetId>SHARE</SetId>
+							</Department>
+							<WorkGroup>
+								<Name>UTS Enterprise Applications</Name>
+								<Code>IT03</Code>
+								<SetId>SHARE</SetId>
+							</WorkGroup>
+							<Division>
+								<Name>Ofc of Information Technology</Name>
+								<Code>UPX</Code>
+								<SetId>SHARE</SetId>
+							</Division>
+							<OrgEntity>
+								<Name>Emory University</Name>
+								<Code>U01</Code>
+								<SetId>SHARE</SetId>
+							</OrgEntity>
+						</OrgHierarchy>
+						<EmployeeTime>Full Time</EmployeeTime>
+					</Job>
+					<Location>
+						<LocId>1256</LocId>
+						<Campus>Briarcliff</Campus>
+						<Building>Emory Briarcliff Campus</Building>
+						<Address>
+							<Street1>1256 Briarcliff Rd</Street1>
+							<Street2>Building A</Street2>
+							<Street3>Suite 100</Street3>
+							<CityOrLocality>Atlanta</CityOrLocality>
+							<County>DeKalb</County>
+							<StateOrProvince>GA</StateOrProvince>
+							<Nation>USA</Nation>
+							<ZipOrPostalCode>30322</ZipOrPostalCode>
+						</Address>
+						<Floor>1</Floor>
+						<Room>100</Room>
+						<Geocode>
+							<Longitude>33.7878</Longitude>
+							<Latitude>-84.3394</Latitude>
+						</Geocode>
+					</Location>
+					<DirectoryTitle>Data Warehouse Architect</DirectoryTitle>
+				</Employee>
+				<Student activeStudent="true" currentApplicant="false" eligibleStudent="true">
+					<EmplId>5678934</EmplId>
+					<PublicId>P8362543</PublicId>
+					<StudentCareer>
+						<AcademicCareer>
+							<Name>Law</Name>
+							<Code>LAW</Code>
+						</AcademicCareer>
+						<Term>5099</Term>
+						<AcadProgram>JD</AcadProgram>
+					</StudentCareer>
+					<LatestTerm>5099</LatestTerm>
+					<StudentLevel>
+						<Name>P3</Name>
+						<Code>Professional Year 3</Code>
+					</StudentLevel>
+				</Student>
+				<SponsoredPerson type="U" active="true">
+					<PublicId>P8362543</PublicId>
+					<OrgHierarchy>
+						<Department>
+							<Name>Data Warehouse - Bus Intellige</Name>
+							<Code>142300</Code>
+							<SetId>SHARE</SetId>
+						</Department>
+						<WorkGroup>
+							<Name>UTS Enterprise Applications</Name>
+							<Code>IT03</Code>
+							<SetId>SHARE</SetId>
+						</WorkGroup>
+						<Division>
+							<Name>Ofc of Information Technology</Name>
+							<Code>UPX</Code>
+							<SetId>SHARE</SetId>
+						</Division>
+						<OrgEntity>
+							<Name>Emory University</Name>
+							<Code>U01</Code>
+							<SetId>SHARE</SetId>
+						</OrgEntity>
+					</OrgHierarchy>
+				</SponsoredPerson>
+			</FullPerson>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Identity.FullPerson.Delete>

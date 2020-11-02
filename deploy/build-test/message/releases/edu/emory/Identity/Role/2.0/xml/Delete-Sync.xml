@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<edu.emory.Identity.Role.Delete>
+	<ControlAreaSync messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Delete" messageRelease="1.0" messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ProvisioningService</SenderAppId>
+				<ProducerId>c57f8b62-83a5-48b6-93d9-ba4308c97009</ProducerId>
+				<MessageSeq>265</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>ProvisioningServiceCommand</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>23</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<Role>
+				<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,
+					cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+				<Resource>
+					<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>AWS-308833937534-Administrator</ResourceName>
+					<ResourceApplication>AWS</ResourceApplication>
+					<Entitlement>
+						<EntitlementDN>
+							CN=Administrator,OU=308833937534,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{e0c96509-d3b8-4ed4-a9ff-398f0da7c1b3}</EntitlementGuid>
+						<EntitlementApplication>UMD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+				<Resource>
+					<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>AWS-Admin-8</ResourceName>
+					<ResourceApplication>AWS</ResourceApplication>
+					<Entitlement>
+						<EntitlementDN>CN=AWS-Admin-8,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{451f4d2c-0aac-4ad9-92b9-ca655091d8a7}</EntitlementGuid>
+						<EntitlementApplication>EAD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+			</Role>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Identity.Role.Delete>

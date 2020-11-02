@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.RoleAssignment.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Identity.RoleAssignment.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Identity" messageObject="RoleAssignment" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uillinois.aits.RoleAssignmentService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>5e2543c7-2648-47f5-9acf-90b820a89f66</ProducerId>
+				<MessageSeq>6232</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<RoleAssignment>
+			<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+			<CauseIdentities/>
+			<EffectiveDatetime>
+				<Year>2015</Year>
+				<Month>02</Month>
+				<Day>01</Day>
+				<Hour>11</Hour>
+				<Minute>12</Minute>
+				<Second>13</Second>
+				<SubSecond>0</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</EffectiveDatetime>
+			<ExplicitIdentityDNs>
+				<DistinguishedName>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</DistinguishedName>
+			</ExplicitIdentityDNs>
+			<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+		</RoleAssignment>
+		<RoleAssignment>
+			<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+			<CauseIdentities/>
+			<EffectiveDatetime>
+				<Year>2015</Year>
+				<Month>02</Month>
+				<Day>01</Day>
+				<Hour>11</Hour>
+				<Minute>12</Minute>
+				<Second>13</Second>
+				<SubSecond>0</SubSecond>
+				<Timezone>America/New_York</Timezone>
+			</EffectiveDatetime>
+			<ExplicitIdentityDNs>
+				<DistinguishedName>cn=P1021609,ou=Users,ou=Data,o=EmoryDev</DistinguishedName>
+			</ExplicitIdentityDNs>
+			<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+		</RoleAssignment>
+	</DataArea>
+</edu.emory.Identity.RoleAssignment.Provide>

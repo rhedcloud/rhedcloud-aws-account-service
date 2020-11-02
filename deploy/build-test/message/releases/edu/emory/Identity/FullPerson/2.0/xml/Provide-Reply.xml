@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.FullPerson.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Identity.FullPerson.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Identity" messageObject="FullPerson" messageAction="Provide" messageRelease="2.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>du.emory.IdentityService</SenderAppId>
+				<ProducerId>ff860fb1-6b17-45d0-a173-c26cb074dfa8</ProducerId>
+				<MessageSeq>3</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>du.emory.IdentityService</AuthUserId>
+				<AuthUserSignature>unknown</AuthUserSignature>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.uic.accc.NetIdApplication</SenderAppId>
+				<ProducerId>5e2543c7-2648-47f5-9acf-90b820a89f66</ProducerId>
+				<MessageSeq>6232</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<FullPerson>
+			<PublicId>P0000017</PublicId>
+			<Person>
+				<PublicId>P0000017</PublicId>
+				<PersonalName type="Legal">
+					<LastName>Bell</LastName>
+					<FirstName>Mary</FirstName>
+					<MiddleName>E</MiddleName>
+				</PersonalName>
+				<LocalizedNameList>
+					<PersonalName type="Directory">
+						<LastName>Bell</LastName>
+						<FirstName>Elizabeth</FirstName>
+					</PersonalName>
+				</LocalizedNameList>
+				<Association>
+					<Name>Employee</Name>
+				</Association>
+				<Eligibility type="University">
+					<Value>Eligible</Value>
+				</Eligibility>
+				<Eligibility type="Healthcare">
+					<Value>Ineligible</Value>
+				</Eligibility>
+				<Phone type="Mobile">
+					<Number>4042272878</Number>
+				</Phone>
+				<Phone type="Business">
+					<Number>4047128770</Number>
+				</Phone>
+				<Phone type="BusinessFax">
+					<Number>4047272838</Number>
+				</Phone>
+				<Email type="Primary">
+					<EmailAddress>elizabeth.bell@emory.edu</EmailAddress>
+				</Email>
+				<Prsni>254086</Prsni>
+				<Location>
+					<Building>1762 Clifton Rd </Building>
+					<Address>
+						<Street1>1762 Clifton Rd 1495</Street1>
+					</Address>
+				</Location>
+				<DirectoryTitle>Application Database Admin, Sr</DirectoryTitle>
+				<PhoneRestricted type="Amcom">
+					<Phone type="EnotifyMobileStaff">
+						<Number>4042272878</Number>
+						<PhoneCarrier>
+							<Name>Verizon</Name>
+							<Code>7</Code>
+						</PhoneCarrier>
+						<Tag>ENotifyEmergency</Tag>
+					</Phone>
+					<Phone type="UniversityHome">
+						<Number>4046879830</Number>
+					</Phone>
+				</PhoneRestricted>
+				<LocationRestricted type="Amcom">
+					<Location type="UniversityHome">
+						<Address>
+							<ZipOrPostalCode>30307</ZipOrPostalCode>
+						</Address>
+					</Location>
+				</LocationRestricted>
+			</Person>
+			<NetworkIdentity status="active" type="University">
+				<Value>MBELL4</Value>
+				<PublicId>P0000017</PublicId>
+				<CreateDate>
+					<Month>9</Month>
+					<Day>26</Day>
+					<Year>2001</Year>
+				</CreateDate>
+				<Domain>EMORYUNIVAD</Domain>
+			</NetworkIdentity>
+			<Employee staffStudent="false" studentStaff="false" preStart="false" retired="false" administrative="false" faculty="false" staff="true">
+				<EmplId>0357543</EmplId>
+				<PublicId>P0000017</PublicId>
+				<Job primary="true" type="current">
+					<EmplClass>9</EmplClass>
+					<SequenceNumber>0</SequenceNumber>
+					<JobCode>LB18</JobCode>
+					<JobName>Application Database Admin, Sr</JobName>
+					<PersonJobStatus>A</PersonJobStatus>
+					<OrgHierarchy>
+						<Department>
+							<Name>OIT: UTS Integration Ops/Devel</Name>
+							<Code>145280</Code>
+							<SetId>SHARE</SetId>
+						</Department>
+						<WorkGroup>
+							<Name>UTS Integration Web &amp; IdM</Name>
+							<Code>IT06</Code>
+							<SetId>SHARE</SetId>
+						</WorkGroup>
+						<Division>
+							<Name>Ofc of Information Technology</Name>
+							<Code>UPX</Code>
+							<SetId>SHARE</SetId>
+						</Division>
+						<OrgEntity>
+							<Name>Emory University</Name>
+							<Code>U01</Code>
+							<SetId>SHARE</SetId>
+						</OrgEntity>
+					</OrgHierarchy>
+					<Location>
+						<Building>1762 CLIFTON ROAD SUITE 1495</Building>
+						<Address>
+							<Street1>1762 CLFTN RDSTE1600&amp;1700</Street1>
+						</Address>
+						<Floor>1</Floor>
+					</Location>
+				</Job>
+			</Employee>
+		</FullPerson>
+	</DataArea>
+</edu.emory.Identity.FullPerson.Provide>

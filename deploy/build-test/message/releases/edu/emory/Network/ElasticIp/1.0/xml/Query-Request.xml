@@ -10,7 +10,7 @@
 				<MessageSeq>1024</MessageSeq>
 			</MessageId>
 			<Authentication>
-				<AuthUserId>Cidr</AuthUserId>
+				<AuthUserId>testsuite@emory.edu/192.168.1.1</AuthUserId>
 			</Authentication>
 		</Sender>
 		<Datetime>

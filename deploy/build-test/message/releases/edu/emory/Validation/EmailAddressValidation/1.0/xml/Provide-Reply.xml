@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Validation.EmailAddressValidation.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Validation.EmailAddressValidation.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Validation" messageObject="EmailAddressValidation" messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.anyapp</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>networkloc</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>1</Month>
+			<Day>22</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond/>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.emory.anyapp</SenderAppId>
+				<ProducerId>753f99bc-4917-472b-8c7e-a9bc3ce592e9</ProducerId>
+				<MessageSeq>32</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<EmailAddressValidation>
+			<ValidationProvider>Neverbounce</ValidationProvider>
+			<EmailAddress>aws-admin-1@emory.edu</EmailAddress>
+			<StatusCode>0</StatusCode>
+			<StatusDescription>verified as real address</StatusDescription>
+			<Property>
+				<PropertyName>Flags</PropertyName>
+				<PropertyValue>HAS_DNS,HAS_DNS_MX,SMTP_CONNECTABLE</PropertyValue>
+			</Property>
+			<Property>
+				<PropertyName>PaidCreditsUsed</PropertyName>
+				<PropertyValue>0</PropertyValue>
+			</Property>
+			<Property>
+				<PropertyName>PaidCreditsRemaining</PropertyName>
+				<PropertyValue>5000</PropertyValue>
+			</Property>
+			<Property>
+				<PropertyName>FreeCreditsUsed</PropertyName>
+				<PropertyValue>1</PropertyValue>
+			</Property>
+			<Property>
+				<PropertyName>FreeCreditsRemaining</PropertyName>
+				<PropertyValue>983</PropertyValue>
+			</Property>
+		</EmailAddressValidation>
+	</DataArea>
+	</edu.emory.Validation.EmailAddressValidation.Provide>

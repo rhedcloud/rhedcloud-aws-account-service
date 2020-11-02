@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Identity.Role.Provide>
+	<ControlAreaReply messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ProvisioningService</SenderAppId>
+				<ProducerId/>
+				<MessageSeq/>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>i2s</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>37</Minute>
+			<Second>46</Second>
+			<SubSecond>472</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<Result action="Query" status="success">
+			<ProcessedMessageId>
+				<SenderAppId>edu.emory.ProvisioningServiceCommand</SenderAppId>
+				<ProducerId>5e2543c7-2648-47f5-9acf-90b820a89f66</ProducerId>
+				<MessageSeq>6232</MessageSeq>
+			</ProcessedMessageId>
+		</Result>
+	</ControlAreaReply>
+	<DataArea>
+		<Role>
+			<RoleDN>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,
+				cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+			<Resource>
+				<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+				<ResourceName>driverCode</ResourceName>
+				<ResourceApplication>AWS</ResourceApplication>
+				<Entitlement>
+					<EntitlementDN>CN=AWS-Admin-8,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+					<EntitlementGuid>{451f4d2c-0aac-4ad9-92b9-ca655091d8a7}</EntitlementGuid>
+					<EntitlementApplication>EAD</EntitlementApplication>
+				</Entitlement>
+			</Resource>
+		</Role>
+	</DataArea>
+	</edu.emory.Identity.Role.Provide>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Stephen Wheat (Emory University) -->
+<!DOCTYPE edu.emory.LightweightDirectoryServices.OrganizationalUnit.Delete SYSTEM "../dtd/Delete-Request.dtd">
+<edu.emory.LightweightDirectoryServices.OrganizationalUnit.Delete>
+    <ControlAreaRequest messageCategory="edu.emory.LightweightDirectoryServices"
+                        messageObject="OrganizationalUnit" messageAction="Delete" messageRelease="1.0" messagePriority="9"
+                        messageType="Request">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>6ffef822-749a-4352-8a10-6f58b09fe326</ProducerId>
+                <MessageSeq>2734</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>testsuiteapp</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2017</Year>
+            <Month>11</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>423</SubSecond>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+        <ExpectedReplyFormat messageCategory="CoreMessaging" messageObject="Generic"
+            messageRelease="1.0" messageAction="Response" messageType="Reply"/>
+    </ControlAreaRequest>
+    <DataArea>
+        <DeleteData>
+            <DeleteAction type="Delete"/>
+            <OrganizationalUnit>
+                <distinguishedName>OU=134285882893,OU=AWS,DC=emory,DC=edu</distinguishedName>
+            </OrganizationalUnit>
+        </DeleteData>
+    </DataArea>
+</edu.emory.LightweightDirectoryServices.OrganizationalUnit.Delete>

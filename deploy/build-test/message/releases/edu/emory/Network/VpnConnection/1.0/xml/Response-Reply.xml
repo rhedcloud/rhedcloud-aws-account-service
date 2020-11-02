@@ -34,192 +34,84 @@
 	<DataArea>
 		<VpnConnection>
 			<VpnId>1</VpnId>
-			<VpcId>vpc-8aed17e2</VpcId>
-			<!--
-				crypto keyring keyring-vpn-research-vpc001-tun2 vrf AWS
-  				description vpc-001
-  				local-address 170.140.77.1 AWS
-  				pre-shared-key address 72.21.209.225 key test001	
-			-->
+			<VpcId>vpc-aaaaaaaa</VpcId>
 			<CryptoKeyring>
-				<Name>keyring-vpn-research-vpc001-tun2</Name>
+				<Name>keyring-vpn-research-vpc050-tun1</Name>
 				<Description>vpc-001</Description>
 				<LocalAddress>
-					<IpAddress>170.140.77.1</IpAddress>
-					<VirtualRouteForwarding>vrf</VirtualRouteForwarding>
-					<!-- note should this be true/false or yes/no, because the element is called vrf? -->
+					<IpAddress>72.21.209.225</IpAddress>
+					<VirtualRouteForwarding>AWS</VirtualRouteForwarding>
 				</LocalAddress>
-				<PresharedKey>test001</PresharedKey>
-				<!-- seems like this should be the actual useful key value or a hash of the key value. Looks like all that was in the terminal log were labels. -->
+				<PresharedKey>test050</PresharedKey>
 			</CryptoKeyring>
-			<!-- 
-				crypto isakmp profile isakmp-vpn-research-vpc001-tun2
-   				description vpc-001
-   				vrf AWS
-   				keyring keyring-vpn-research-vpc001-tun2
-   				match identity address 72.21.209.225 255.255.255.255 AWS
-   				local-address 170.140.77.1 AWS
-			-->
 			<CryptoIsakmpProfile>
-				<Name>isakmp-vpn-research-vpc001-tun2</Name>
-				<Description>vpc-001</Description>
-				<VirtualRouteForwarding>vrf</VirtualRouteForwarding>
-				<!-- note should this be true/false or yes/no, because the element is called vrf? -->
+				<Name>isakmp-vpn-research-vpc050-tun1</Name>
+				<Description>vpc-aaaaaaaa</Description>
+				<VirtualRouteForwarding>AWS</VirtualRouteForwarding>
 				<CryptoKeyring>
-					<Name>keyring-vpn-research-vpc001-tun2</Name>
-					<Description/>
-					<!-- not sure what goes here -->
+					<Name>keyring-vpn-research-vpc050-tun1</Name>
+					<Description>vpc-001</Description>
 					<LocalAddress>
-						<IpAddress>170.140.77.1</IpAddress>
-						<VirtualRouteForwarding/>
-						<!-- not sure what does here -->
+						<IpAddress>72.21.209.225</IpAddress>
+						<VirtualRouteForwarding>AWS</VirtualRouteForwarding>
 					</LocalAddress>
-					<PresharedKey/>
-					<!--- seems like this should be the actual useful key or hash, but it also seems redundant...isnt' there just one key per tunnel and should this be a child of each tunnel object? -->
+					<PresharedKey>test050</PresharedKey>
 				</CryptoKeyring>
 				<MatchIdentity>
 					<IpAddress>72.21.209.225</IpAddress>
 					<Netmask>255.255.255.255</Netmask>
-					<VirtualRouteForwarding/>
-					<!-- again, not sure what this should be and why it keeps appearing in pretty much every object -->
+					<VirtualRouteForwarding>AWS</VirtualRouteForwarding>
 				</MatchIdentity>
 				<LocalAddress>
-					<IpAddress>170.140.77.1</IpAddress>
-					<VirtualRouteForwarding/>
-					<!-- again, not sure what this should be and why it keeps appearing in pretty much every object -->
+					<IpAddress>72.21.209.225</IpAddress>
+					<VirtualRouteForwarding>AWS</VirtualRouteForwarding>
 				</LocalAddress>
 			</CryptoIsakmpProfile>
-			<!-- 
-				crypto ipsec transform-set ipsec-prop-vpn-research-vpc001-tun2 esp-aes
-				256 esp-sha256-hmac
- 				mode tunnel
-			-->
 			<CryptoIpsecTransformSet>
-				<Name>ipsec-prop-vpn-research-vpc001-tun2</Name>
-				<Cipher>esp-aes</Cipher>
+				<Name>ipsec-prop-vpn-research-vpc050-tun1</Name>
+				<Cipher>esp-sha256-hmac</Cipher>
 				<Bits>256</Bits>
-				<Mode>tunnel</Mode>
+				<Mode>null</Mode>
 			</CryptoIpsecTransformSet>
-			<!--
-				crypto ipsec profile ipsec-vpn-research-vpc001-tun2
- 				description vpc-001
- 				set transform-set ipsec-prop-vpn-research-vpc001-tun2
- 				set pfs group2
- 				tunnel protection ipsec profile ipsec-vpn-research-vpc001-tun2
-			-->
 			<CryptoIpsecProfile>
-				<Name>ipsec-vpn-research-vpc001-tun2</Name>
-				<Description>vpc-001</Description>
+				<Name>ipsec-vpn-research-vpc050-tun1</Name>
+				<Description>vpc-aaaaaaaa</Description>
 				<CryptoIpsecTransformSet>
-					<!-- note: looks like the definition of this may be wrong or I accidentally copied it form the preceding element. I don't see any Cipher, Bits, and Mode here. -->
-					<Name>ipsec-prop-vpn-research-vpc001-tun2</Name>
-					<Cipher/>
-					<Bits/>
-					<Mode/>
+					<Name>ipsec-prop-vpn-research-vpc050-tun1</Name>
+					<Cipher>esp-sha256-hmac</Cipher>
+					<Bits>256</Bits>
+					<Mode>null</Mode>
 				</CryptoIpsecTransformSet>
 				<PerfectForwardSecrecy>group2</PerfectForwardSecrecy>
 			</CryptoIpsecProfile>
-			<!--
-				interface Tunnel20200
-				description AWS Research VPC200 Tunnel2 (AVAILABLE)
-				vrf forwarding AWS
-				ip address 169.254.255.30 255.255.255.252
-				ip tcp adjust-mss 1387
-				shutdown
-				tunnel source 170.140.77.200
-				tunnel mode ipsec ipv4
-				tunnel vrf AWS
-				ip virtual-reassembly
-				end
-			-->
 			<TunnelInterface>
-				<Name>Tunnel20200</Name>
-				<Description>AWS Research VPC200 Tunnel2</Description>
-				<VirtualRouteForwarding/>
-				<!--- again, not sure if this should be true/false or the value AWS. I think this probably belongs just down here at the tunnel level along with some other stuff from above. Anything that is tunnel specific should appear beneath one of the tunnel obejcts and not at the top level. -->
-				<IpAddress>169.254.255.30</IpAddress>
+				<Name>10050</Name>
+				<Description>AWS Research VPC050 Tunnel1 (vpc-aaaaaaaa)</Description>
+				<VirtualRouteForwarding>AWS</VirtualRouteForwarding>
+				<IpAddress>169.254.248.198</IpAddress>
 				<Netmask>255.255.255.252</Netmask>
 				<TcpMaximumSegmentSize>1387</TcpMaximumSegmentSize>
-				<AdministrativeState>shutdown</AdministrativeState>
-				<TunnelSource>170.140.77.200</TunnelSource>
-				<TunnelMode>ipsec ipv4</TunnelMode>
-				<TunnelDestination/>
-				<!-- not sure what goes here -->
+				<AdministrativeState>up</AdministrativeState>
+				<TunnelSource>170.140.76.50</TunnelSource>
+				<TunnelMode>null</TunnelMode>
+				<TunnelDestination>72.21.209.225</TunnelDestination>
 				<CryptoIpsecProfile>
-					<!-- should the CryptoIpsecProfile from above really go down with each tunnel or should it be at the top level. Seems like it should be only in one place...removed from above or here unless they really are different -->
-					<Name/>
-					<Description/>
+					<Name>ipsec-vpn-research-vpc050-tun1</Name>
+					<Description>vpc-aaaaaaaa</Description>
 					<CryptoIpsecTransformSet>
-						<Name/>
-						<Cipher/>
-						<Bits/>
-						<Mode/>
+						<Name>ipsec-prop-vpn-research-vpc050-tun1</Name>
+						<Cipher>esp-sha256-hmac</Cipher>
+						<Bits>256</Bits>
+						<Mode>null</Mode>
 					</CryptoIpsecTransformSet>
-					<PerfectForwardSecrecy/>
+					<PerfectForwardSecrecy>group2</PerfectForwardSecrecy>
 				</CryptoIpsecProfile>
 				<IpVirtualReassembly/>
-				<!-- not sure what should go here true/false or should the element be rnamed? -->
-				<OperationalStatus/>
-				<!-- not sure what goes here and for all of the Bgp state stuff below -->
+				<OperationalStatus>up</OperationalStatus>
 				<BgpState>
-					<Status/>
-					<Uptime/>
-				</BgpState>
-				<BgpPrefixes>
-					<Sent/>
-					<Received/>
-				</BgpPrefixes>
-			</TunnelInterface>
-			<!--
-				I think if I understand correctly there should be two TunnelInterface elements in each of these VpnConnection objects.
-				If so it would be good to see an example of what the second one looks like and in what elements it differs from
-				the first. I only saw output for one tunnel in scanning the screen log you sent.
-				
-				
-				interface Tunnel20200
-				description AWS Research VPC200 Tunnel2 (AVAILABLE)
-				vrf forwarding AWS
-				ip address 169.254.255.30 255.255.255.252
-				ip tcp adjust-mss 1387
-				shutdown
-				tunnel source 170.140.77.200
-				tunnel mode ipsec ipv4
-				tunnel vrf AWS
-				ip virtual-reassembly
-				end
-			-->
-			<TunnelInterface>
-				<Name>Tunnel20200</Name>
-				<Description>AWS Research VPC200 Tunnel2</Description>
-				<VirtualRouteForwarding/>
-				<!--- again, not sure if this should be true/false or the value AWS. I think this probably belongs just down here at the tunnel level along with some other stuff from above. Anything that is tunnel specific should appear beneath one of the tunnel obejcts and not at the top level. -->
-				<IpAddress>169.254.255.30</IpAddress>
-				<Netmask>255.255.255.252</Netmask>
-				<TcpMaximumSegmentSize>1387</TcpMaximumSegmentSize>
-				<AdministrativeState>shutdown</AdministrativeState>
-				<TunnelSource>170.140.77.200</TunnelSource>
-				<TunnelMode>ipsec ipv4</TunnelMode>
-				<TunnelDestination/>
-				<!-- not sure what goes here -->
-				<CryptoIpsecProfile>
-					<!-- should the CryptoIpsecProfile from above really go down with each tunnel or should it be at the top level. Seems like it should be only in one place...removed from above or here unless they really are different -->
-					<Name/>
-					<Description/>
-					<CryptoIpsecTransformSet>
-						<Name/>
-						<Cipher/>
-						<Bits/>
-						<Mode/>
-					</CryptoIpsecTransformSet>
-					<PerfectForwardSecrecy/>
-				</CryptoIpsecProfile>
-				<IpVirtualReassembly/>
-				<!-- not sure what should go here true/false or should the element be rnamed? -->
-				<OperationalStatus/>
-				<!-- not sure what goes here and for all of the Bgp state stuff below -->
-				<BgpState>
-					<Status/>
-					<Uptime/>
+					<Status>fsm-established</Status>
+					<Uptime>00:00:16</Uptime>
+					<NeighborId>NeighborId</NeighborId>
 				</BgpState>
 				<BgpPrefixes>
 					<Sent/>

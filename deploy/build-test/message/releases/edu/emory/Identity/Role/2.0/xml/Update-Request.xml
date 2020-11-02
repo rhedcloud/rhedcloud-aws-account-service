@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Update SYSTEM "../dtd/Update-Request.dtd">
+<edu.emory.Identity.Role.Update>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.ProvisioningService</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>provisioningapp</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Provisioning" messageObject="Role"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<NewData>
+			<Role>
+				<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,
+					cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+				<Resource>
+					<ResourceName>AWS-308833937534-Administrator</ResourceName>
+					<Entitlement>
+						<EntitlementDN>
+							CN=Administrator,OU=308833937534,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{e0c96509-d3b8-4ed4-a9ff-398f0da7c1b3}</EntitlementGuid>
+						<EntitlementApplication>UMD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+				<Resource>
+					<ResourceName>AWS-Admin-8</ResourceName>
+					<Entitlement>
+						<EntitlementDN>CN=AWS-Admin-8,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{451f4d2c-0aac-4ad9-92b9-ca655091d8a7}</EntitlementGuid>
+						<EntitlementApplication>EAD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+			</Role>
+		</NewData>
+		<BaselineData>
+			<Role>
+				<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,
+					cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+				<Resource>
+					<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>AWS-308833937534-Administrator</ResourceName>
+					<ResourceApplication>AWS</ResourceApplication>
+					<Entitlement>
+						<EntitlementDN>
+							CN=Administrator,OU=308833937534,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{e0c96509-d3b8-4ed4-a9ff-398f0da7c1b3}</EntitlementGuid>
+						<EntitlementApplication>UMD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+				<Resource>
+					<ResourceDN>MDSG_AWS-134285882893-Administrator,cn=ResourceDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</ResourceDN>
+					<ResourceName>AWS-Admin-8</ResourceName>
+					<ResourceApplication>AWS</ResourceApplication>
+					<Entitlement>
+						<EntitlementDN>CN=AWS-Admin-8,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+						<EntitlementGuid>{451f4d2c-0aac-4ad9-92b9-ca655091d8a7}</EntitlementGuid>
+						<EntitlementApplication>EAD</EntitlementApplication>
+					</Entitlement>
+				</Resource>
+			</Role>
+		</BaselineData>
+	</DataArea>
+</edu.emory.Identity.Role.Update>

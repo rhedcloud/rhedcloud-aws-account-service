@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Stephen Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.RoleAssignment.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<edu.emory.Identity.RoleAssignment.Generate>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="RoleAssignment"
+		messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.uiuc.cites.NetIdApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>citesid</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2001</Year>
+			<Month>3</Month>
+			<Day>21</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Identity" messageObject="RoleAssignment"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>	
+			<RoleAssignmentRequisition>
+				<RoleAssignmentActionType>grant</RoleAssignmentActionType>
+				<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+				<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+				<Reason>For Testing</Reason>
+				<RoleDNs>
+					<DistinguishedName>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+				</RoleDNs>
+			</RoleAssignmentRequisition>	
+	</DataArea>
+</edu.emory.Identity.RoleAssignment.Generate>

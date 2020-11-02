@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.VpnConnectionProfileAssignment.Delete SYSTEM "../dtd/Delete-Sync.dtd">
+<edu.emory.Network.VpnConnectionProfileAssignment.Delete>
+	<ControlAreaSync messageCategory="edu.emory.Network"
+		messageObject="VpnConnectionProfileAssignment" messageAction="Delete" messageRelease="1.0"
+		messagePriority="9" messageType="Sync">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.NetworkOpsService</SenderAppId>
+				<ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
+				<MessageSeq>1024</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>networkops</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2018</Year>
+			<Month>5</Month>
+			<Day>14</Day>
+			<Hour>13</Hour>
+			<Minute>47</Minute>
+			<Second>30</Second>
+			<SubSecond>842</SubSecond>
+			<Timezone>6:00-GMT</Timezone>
+		</Datetime>
+	</ControlAreaSync>
+	<DataArea>
+		<DeleteData>
+			<DeleteAction type="Delete"/>
+			<VpnConnectionProfileAssignment>
+				<VpnConnectionProfileId>1</VpnConnectionProfileId>
+				<OwnerId>vpc-17552e6c</OwnerId>
+				<Description>Emory Type 1 VPC</Description>
+				<Purpose>Web environments for the Brain Health application</Purpose>
+				<CreateUser>swheat</CreateUser>
+				<CreateDatetime>
+					<Year>2018</Year>
+					<Month>5</Month>
+					<Day>14</Day>
+					<Hour>13</Hour>
+					<Minute>47</Minute>
+					<Second>31</Second>
+					<SubSecond>242</SubSecond>
+					<Timezone>6:00-GMT</Timezone>
+				</CreateDatetime>
+			</VpnConnectionProfileAssignment>
+		</DeleteData>
+	</DataArea>
+</edu.emory.Network.VpnConnectionProfileAssignment.Delete>

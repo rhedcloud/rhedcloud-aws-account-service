@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of the Emory Directory Service
+	 Copyright 2010 Emory University. All rights reserved.
+		
+ -->
+<!--
+-->
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT edu.emory.Identity.DirectoryPerson.Provide (ControlAreaReply, DataArea)>
+<!ELEMENT DataArea (DirectoryPerson*)>

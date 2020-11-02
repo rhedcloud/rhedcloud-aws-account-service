@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Steve Wheat (University of Illinois) -->
+<!DOCTYPE edu.emory.Identity.Role.Generate SYSTEM "../dtd/Generate-Request.dtd">
+<edu.emory.Identity.Role.Generate>
+	<ControlAreaRequest messageCategory="edu.emory.Identity" messageObject="Role"
+		messageAction="Generate" messageRelease="1.0" messagePriority="9" messageType="Request">
+		<Sender>
+			<MessageId>
+				<SenderAppId>edu.emory.AwsApplication</SenderAppId>
+				<ProducerId>e9dc46b3-4e8a-4512-9c13-98eb004a4cb9</ProducerId>
+				<MessageSeq>825</MessageSeq>
+			</MessageId>
+			<Authentication>
+				<AuthUserId>provisionservice</AuthUserId>
+			</Authentication>
+		</Sender>
+		<Datetime>
+			<Year>2017</Year>
+			<Month>11</Month>
+			<Day>14</Day>
+			<Hour>13</Hour>
+			<Minute>34</Minute>
+			<Second>21</Second>
+			<SubSecond>546</SubSecond>
+			<Timezone>GMT -6:00</Timezone>
+		</Datetime>
+		<ExpectedReplyFormat messageCategory="edu.emory.Provisioning" messageObject="Role"
+			messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+	</ControlAreaRequest>
+	<DataArea>
+		<RoleRequisition>
+			<RoleName>AWS-308833937534-Administrator</RoleName>
+			<RoleDescription>Provisions member to groups</RoleDescription>
+			<ResourceRequisition>
+				<ResourceName>AWS-308833937534-Administrator</ResourceName>
+				<RosourceDescription>Provisions members to group Administrator on MS LDS University Connector</RosourceDescription>
+				<Entitlement>
+					<EntitlementDN> CN=Administrator,OU=308833937534,OU=AWS,DC=emory,DC=edu</EntitlementDN>
+					<EntitlementGuid>{e0c96509-d3b8-4ed4-a9ff-398f0da7c1b3}</EntitlementGuid>
+					<EntitlementApplication>UMD</EntitlementApplication>
+				</Entitlement>
+			</ResourceRequisition>
+			<ResourceRequisition>
+				<ResourceName>AWS-Admin-8</ResourceName>
+				<RosourceDescription>Provisions members to group Administrator on MS LDS University Connector</RosourceDescription>
+				<Entitlement>
+					<EntitlementDN>CN=AWS-Admin-8,OU=AWS,DC=entdev,DC=emory,DC=edu</EntitlementDN>
+					<EntitlementGuid >{451f4d2c-0aac-4ad9-92b9-ca655091d8a7}</EntitlementGuid>
+					<EntitlementApplication>EAD</EntitlementApplication>
+				</Entitlement>
+			</ResourceRequisition>
+		</RoleRequisition>
+	</DataArea>
+	</edu.emory.Identity.Role.Generate>
