@@ -26,6 +26,8 @@ import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -47,6 +49,11 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 	//backwrdCompatibility to emory
 	private String emailDistroListUserNamePrefix = "aws-";
 	private String emailDistroListDomainName="@emory.edu";
+	// TJ:11/03/2020 externalizing valid codes
+    private List<String> validCodeList = new ArrayList<String>();
+    private boolean isValidateEmail = true;
+
+    
 	public void init (String provisioningId, Properties props,
 			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
 			throws StepException {
@@ -54,7 +61,20 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		super.init(provisioningId, props, aConfig, vpcpp);
 		
 		String LOGTAG = getStepTag() + "[VerifyNewAccountAdminDistroList.init] ";
-	
+
+		// TJ:11/03/2020 externalizing valid codes (START)
+	    String validateEmail = getProperties().getProperty("validateEmailAddress", "true");
+	    isValidateEmail = Boolean.parseBoolean(validateEmail);
+	    
+        String validCodes = getProperties().getProperty("validCodes", "0,3,4");
+        String[] validCodesArray = validCodes.split(",");
+
+        for (int i = 0; i < validCodesArray.length; i++) {
+            String code = validCodesArray[i];
+            validCodeList.add(code.trim());
+        }
+		// TJ:11/03/2020 externalizing valid codes (END)
+
 		// This step needs to send messages to the 
 		// EmailAddressValidationService to validate e-mail
 		// addresses.
@@ -65,12 +85,18 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			setEmailAddressValidationServiceProducerPool(p2p1);
 		}
 		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new StepException(errMsg);
+			if (isValidateEmail) {
+				// An error occurred retrieving an object from AppConfig. Log it and
+				// throw an exception.
+				String errMsg = "An error occurred retrieving an object from " +
+						"AppConfig. The exception is: " + ecoe.getMessage();
+				logger.fatal(LOGTAG + errMsg);
+				throw new StepException(errMsg);
+			}
+			else {
+				logger.info(LOGTAG + " no EmailAddressValidationServiceProducerPool "
+					+ "but validateEmailAddress is 'false' so processing will continue.");
+			}
 		}
 		
 		logger.info(LOGTAG + "Getting custom step properties...");
@@ -181,92 +207,105 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
  			addResultProperty("accountSeriesPrefix", getAccountSeriesPrefix());
  			addResultProperty("accountAlias", getAccountAlias());
 		    
-		    // Set the values of the query spec.
-		    try {
-		    	eavqs.setEmailAddress(accountEmailAddress);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "query spec. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-		    
-		    // Log the state of the query spec.
-		    try {
-		    	logger.info(LOGTAG + "Query spec is: " + eavqs.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the query spec " +
-		  	    	  "to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
-			// Get a producer from the pool
-			RequestService rs = null;
-			try {
-				PointToPointProducer p2p = 
-					(PointToPointProducer)getEmailAddressValidationServiceProducerPool()
-					.getExclusiveProducer();
-				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
-				rs = (RequestService)p2p;
-			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
-		    
-			List results = null;
-			try { 
-				long queryStartTime = System.currentTimeMillis();
-				results = eav.query(eavqs, rs);
-				long queryTime = System.currentTimeMillis() - queryStartTime;
-				logger.info(LOGTAG + "Queried for EmailAddressValidation" +
-					"for e-mail address " + accountEmailAddress + " in "
-					+ queryTime + " ms. Returned " + results.size() + 
-					" result.");
-			}
-			catch (EnterpriseObjectQueryException eoqe) {
-				String errMsg = "An error occurred querying for the  " +
-		    	  "AccountProvisioningAuthorization object. " +
-		    	  "The exception is: " + eoqe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoqe);
-			}
-			finally {
-				// Release the producer back to the pool
-				getEmailAddressValidationServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
-			}
+ 			// TJ:11/03/2020: Only validate the email address if configured to do so (START)
+ 	        if (isValidateEmail) {
+ 			    // Set the values of the query spec.
+ 			    try {
+ 			    	eavqs.setEmailAddress(accountEmailAddress);
+ 			    }
+ 			    catch (EnterpriseFieldException efe) {
+ 			    	String errMsg = "An error occurred setting the values of the " +
+ 			  	    	  "query spec. The exception is: " + efe.getMessage();
+ 			  	    logger.error(LOGTAG + errMsg);
+ 			  	    throw new StepException(errMsg, efe);
+ 			    }
+ 			    
+ 			    // Log the state of the query spec.
+ 			    try {
+ 			    	logger.info(LOGTAG + "Query spec is: " + eavqs.toXmlString());
+ 			    }
+ 			    catch (XmlEnterpriseObjectException xeoe) {
+ 			    	String errMsg = "An error occurred serializing the query spec " +
+ 			  	    	  "to XML. The exception is: " + xeoe.getMessage();
+ 		  	    	logger.error(LOGTAG + errMsg);
+ 		  	    	throw new StepException(errMsg, xeoe);
+ 			    }    
+ 				
+ 				// Get a producer from the pool
+ 				RequestService rs = null;
+ 				try {
+ 					PointToPointProducer p2p = 
+ 						(PointToPointProducer)getEmailAddressValidationServiceProducerPool()
+ 						.getExclusiveProducer();
+ 					p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
+ 					rs = (RequestService)p2p;
+ 				}
+ 				catch (JMSException jmse) {
+ 					String errMsg = "An error occurred getting a producer " +
+ 						"from the pool. The exception is: " + jmse.getMessage();
+ 					logger.error(LOGTAG + errMsg);
+ 					throw new StepException(errMsg, jmse);
+ 				}
+ 			    
+ 				List results = null;
+ 				try { 
+ 					long queryStartTime = System.currentTimeMillis();
+ 					results = eav.query(eavqs, rs);
+ 					long queryTime = System.currentTimeMillis() - queryStartTime;
+ 					logger.info(LOGTAG + "Queried for EmailAddressValidation" +
+ 						"for e-mail address " + accountEmailAddress + " in "
+ 						+ queryTime + " ms. Returned " + results.size() + 
+ 						" result.");
+ 				}
+ 				catch (EnterpriseObjectQueryException eoqe) {
+ 					String errMsg = "An error occurred querying for the  " +
+ 			    	  "EmailAddressValidation object. " +
+ 			    	  "The exception is: " + eoqe.getMessage();
+ 			    	logger.error(LOGTAG + errMsg);
+ 			    	throw new StepException(errMsg, eoqe);
+ 				}
+ 				finally {
+ 					// Release the producer back to the pool
+ 					getEmailAddressValidationServiceProducerPool()
+ 						.releaseProducer((MessageProducer)rs);
+ 				}
 
-			logger.info(LOGTAG + "received " + results.size() + " result(s)");
-			if (results.size() == 1) {
-				EmailAddressValidation eavResult = 
-						(EmailAddressValidation)results.get(0);
-				String statusCode = eavResult.getStatusCode();
-				logger.info(LOGTAG + "statusCode=" + statusCode);
-				if (statusCode.equalsIgnoreCase("0") ||
-                    statusCode.equalsIgnoreCase("3")) {
-					isValid = true;
-					logger.info(LOGTAG + "isValid is true");
-					addResultProperty("isValid", Boolean.toString(isValid));
-				}
-				else {
-					logger.info(LOGTAG + "isValid is false");
-					addResultProperty("isValid", Boolean.toString(isValid));
-				}
-			}
-			else {
-				String errMsg = "Invalid number of results returned from " +
-					"AccountProvisioningAuthorization.Query-Request. " +
-					results.size() + " results returned. Expected exactly 1.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
-			}
-			
+ 				logger.info(LOGTAG + "received " + results.size() + " result(s)");
+ 				if (results.size() == 1) {
+ 					EmailAddressValidation eavResult = 
+ 							(EmailAddressValidation)results.get(0);
+ 					String statusCode = eavResult.getStatusCode();
+ 					logger.info(LOGTAG + "statusCode=" + statusCode);
+ 					
+ 		 			// TJ:11/03/2020: get list of valid codes from AppConfig (START)
+ 					codeLoop: for (String code : validCodeList) {
+ 						if (statusCode.equalsIgnoreCase(code)) {
+ 	 						isValid = true;
+ 	 						logger.info(LOGTAG + "isValid is true");
+ 	 						addResultProperty("isValid", Boolean.toString(isValid));
+ 	 						break codeLoop;
+ 						}
+ 					}
+ 					if (!isValid) {
+ 						logger.info(LOGTAG + "isValid is false");
+ 						addResultProperty("isValid", Boolean.toString(isValid));
+ 					}
+ 		 			// TJ:11/03/2020: get list of valid codes from AppConfig (END)
+ 				}
+ 				else {
+ 					String errMsg = "Invalid number of results returned from " +
+ 						"EmailAddressValidation.Query-Request. " +
+ 						results.size() + " results returned. Expected exactly 1.";
+ 					logger.error(LOGTAG + errMsg);
+ 					throw new StepException(errMsg);
+ 				}
+ 	        }
+ 	        else {
+ 	        	// we're not validating the email address so set isValid to true
+ 	        	isValid = true;
+				logger.info(LOGTAG + "NOT validating email address.  Setting isValid=true");
+ 	        }
+ 			// TJ:11/03/2020: Only validate the email address if configured to do so (END)
 		}
 		// If allocateNewAccount and accountSequenceNumber is false, log it and
 		// add result props.
