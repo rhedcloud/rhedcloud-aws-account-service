@@ -133,6 +133,8 @@ public class DeleteGrouperIdmGroup extends AbstractStep implements Step {
 		}
         
         this.deleteRole(role, roleName);
+        addResultProperty("deletedUserAdminIdentityDnCount", "0");
+        addResultProperty("deletedUserAuditorIdentityDnCount", "0");
 
         /* end business logic */
 
