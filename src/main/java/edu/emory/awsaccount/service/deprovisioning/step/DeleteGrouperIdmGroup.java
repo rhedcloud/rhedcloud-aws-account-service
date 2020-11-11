@@ -21,7 +21,7 @@ import java.util.Properties;
 /**
  * Delete the grouper group the step is configured to delete.
  * e.g., 123456789:admin deletes the admin group in account 123456789 
- * (and the role assignments)
+ * (this will also remove the role assignments that are in the account level group)
  * 
  * e.g., 123456789 deletes the account level leaf in Grouper 
  * (after all account level groups have been deleted)
