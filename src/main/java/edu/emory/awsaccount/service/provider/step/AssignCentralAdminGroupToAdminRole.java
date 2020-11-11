@@ -233,7 +233,7 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
         } catch (EnterpriseFieldException efe) {
             String errMsg = "An error occurred setting field values of the " +
                     "requisition. The exception is " + efe.getMessage();
-            logger.error(LOGTAG + "errMsg");
+            logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
 
