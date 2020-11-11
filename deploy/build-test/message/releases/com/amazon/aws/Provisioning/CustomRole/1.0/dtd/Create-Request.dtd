@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Notes:
+-->
+<!-- Include resources (elements) shared by all messages -->
+<!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
+%RESOURCES;
+<!ELEMENT com.amazon.aws.Provisioning.CustomRole.Create (ControlAreaRequest, DataArea)>
+<!ELEMENT DataArea (NewData)>
+<!ELEMENT NewData (CustomRole)>

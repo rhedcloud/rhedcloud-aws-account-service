@@ -56,11 +56,9 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Annotation (Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
-<!-- TODO both CountermeasureId and SecurityRiskId can be removed -->
-<!--
-<!ELEMENT Countermeasure (CountermeasureId?, SecurityRiskId?, Status, Description, Verifier?, VerificationDatetime?)>
--->
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
+<!ELEMENT CustomRole (CustomRoleId, AccountId, RoleName, IdmRoleName, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT CustomRoleQuerySpecification (AccountId?)>
 <!ELEMENT DeprovisioningStep (DeprovisioningStepId?, DeprovisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
 <!ELEMENT DetectionResult (Type, Status, Error*)>
@@ -71,26 +69,14 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Property (Key, Value)>
 <!ELEMENT ProvisioningStep (ProvisioningStepId?, ProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT RemediationResult (Status, Description, Error*)>
-
-<!ELEMENT RoleProvisioning (RoleProvisioningId, AccountId, RoleProvisioningRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-<!ELEMENT RoleProvisioningQuerySpecification (Comparison*, QueryLanguage?, RoleProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
-<!ELEMENT RoleProvisioningRequisition (AccountId, SiteGroup, SiteRoleRequisition, AWSRole, SiteRoleAssignmentRequisition)>
-
-<!ELEMENT SiteGroup (DistinguishedName, Description?, ObjectClass+)>
-<!ELEMENT SiteRoleRequisition (RoleName, RoleDescription, RoleCategoryKey?, Resource*)>
-<!ELEMENT Resource (ResourceDN?, ResourceName, ResourceDescription, ResourceCategoryKey, Entitlement)>
-<!ELEMENT Entitlement (EntitlementDN, EntitlementGuid?, EntitlementApplication?)>
-
-<!ELEMENT SiteRoleAssignmentRequisition (RoleAssignmentActionType?, RoleAssignmentType?, IdentityDN?, Reason?, RoleDNs?)>
-<!ELEMENT RoleDNs (DistinguishedName*)>
-
-<!ELEMENT AWSRole (Path, RoleName, AssumeRolePolicyDocument?, Description, MaxSessionDuration?, PermissionsBoundary?, Tag*)>
-<!ELEMENT Tag (Key, Value)>
-
-<!ELEMENT RoleDeprovisioning (RoleDeprovisioningId, AccountId, RoleDeprovisioningRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT RoleDeprovisioning (RoleDeprovisioningId, AccountId, RoleDeprovisioningRequisition, Status, DeprovisioningResult?, ActualTime?, AnticipatedTime?, RoleDeprovisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT RoleDeprovisioningQuerySpecification (Comparison*, QueryLanguage?, RoleDeprovisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
-<!ELEMENT RoleDeprovisioningRequisition (AccountId, AWSRole)>
-
+<!ELEMENT RoleDeprovisioningRequisition (AccountId, RoleName)>
+<!ELEMENT RoleDeprovisioningStep (RoleDeprovisioningStepId?, RoleDeprovisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT RoleProvisioning (RoleProvisioningId, AccountId, RoleProvisioningRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, RoleProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT RoleProvisioningQuerySpecification (Comparison*, QueryLanguage?, RoleProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
+<!ELEMENT RoleProvisioningRequisition (AccountId, RoleName, RoleAssigneeUserId?)>
+<!ELEMENT RoleProvisioningStep (RoleProvisioningStepId?, RoleProvisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT SamlProvider (AccountId, Arn?, Name?, SamlMetadataDocument?)>
 <!ELEMENT SamlProviderRequisition (AccountId, Name, SamlMetadataDocument)>
 <!ELEMENT SamlProviderQuerySpecification (AccountId?, Arn?)>
@@ -126,6 +112,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT StackParameter (Key, Value)>
 <!ELEMENT StackQuerySpecification (Comparison*, QueryLanguage?, AccountId, Region?, StackId?, StackName?)>
 <!ELEMENT StackRequisition (AccountId, Credentials?, Region?, StackName, Description?, StackPolicyBody?, StackPolicyUrl?, TemplateBody?, TemplateUrl?, RoleArn?, TimeoutInMinutes?, OnFailure?, DisableRollback, StackParameter*, Capability*, NotificationArn*, ResourceType*, Tag*)>
+<!ELEMENT Tag (Key, Value)>
 <!ELEMENT TermsOfUse (TermsOfUseId?, Revision, EffectiveDate, ExpirationDate?, Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT TermsOfUseAgreement (TermsOfUseAgreementId?, TermsOfUseId, UserId, Status, PresentedDatetime, AgreedDatetime?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT TermsOfUseAgreementQuerySpecification (TermsOfUseAgreementId?, TermsOfUseId?, UserId?)>
@@ -139,7 +126,5 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnConnectionProfileId, Region, Type, Purpose, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioning (ProvisioningId, VirtualPrivateCloudRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
-
-
 <!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminUserId?, CreateUser?, LastUpdateUser?)>
 <!ELEMENT VirtualPrivateCloudRequisition (AccountId?, RequestId?, AuthenticatedRequestorUserId, AccountOwnerUserId, FinancialAccountNumber, CustomerAdminUserId+, Region, Type, ComplianceClass, SensitiveDataType*, Purpose, NotifyAdmins)>

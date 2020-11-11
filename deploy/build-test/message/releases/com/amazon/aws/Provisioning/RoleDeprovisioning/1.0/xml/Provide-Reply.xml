@@ -2,11 +2,11 @@
 <!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Provide SYSTEM "../dtd/Provide-Reply.dtd">
 <com.amazon.aws.Provisioning.RoleDeprovisioning.Provide>
     <ControlAreaReply messageCategory="com.amazon.aws.Provisioning"
-        messageObject="RoleDeprovisioning" messageAction="Provide" messageRelease="1.0"
-        messagePriority="9" messageType="Reply">
+        messageObject="RoleDeprovisioning" messageAction="Provide" messageType="Reply"
+        messageRelease="1.0" messagePriority="9">
         <Sender>
             <MessageId>
-                <SenderAppId>edu.emory.AwsAccountService</SenderAppId>
+                <SenderAppId>org.rhedcloud.RoleDeprovisioning</SenderAppId>
                 <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
                 <MessageSeq>1024</MessageSeq>
             </MessageId>
@@ -26,7 +26,7 @@
         </Datetime>
         <Result action="Query" status="success">
             <ProcessedMessageId>
-                <SenderAppId>RoleDeprovisioning</SenderAppId>
+                <SenderAppId>org.rhedcloud.RoleDeprovisioning</SenderAppId>
                 <ProducerId>33b054ea-33a2-4fc0-923b-c62fe2837963</ProducerId>
                 <MessageSeq>86</MessageSeq>
             </ProcessedMessageId>
@@ -34,20 +34,26 @@
     </ControlAreaReply>
     <DataArea>
         <RoleDeprovisioning>
-            <DeprovisioningId>emory-vpcp-23</DeprovisioningId>
+            <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
+            <AccountId>123456789012</AccountId>
             <RoleDeprovisioningRequisition>
                 <AccountId>123456789012</AccountId>
+                <RoleName>MyCustomRole</RoleName>
             </RoleDeprovisioningRequisition>
             <Status>pending</Status>
-            <AnticipatedTime>371197</AnticipatedTime>
-            <ProvisioningStep>
-                <ProvisioningId>emory-vpcp-23</ProvisioningId>
+            <AnticipatedTime>85</AnticipatedTime>
+            <RoleDeprovisioningStep>
+                <RoleDeprovisioningStepId>44</RoleDeprovisioningStepId>
+                <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
                 <StepId>1</StepId>
-                <Type>DETERMINE_NEW_OR_EXISTING_AWS_ACCOUNT</Type>
-                <Description>Determine if the request is for a new VPC in a new AWS account from the
-                    inventory or a new VPC in an account that is already in use.</Description>
-                <Status>pending</Status>
+                <Type>VALIDATE_CUSTOM_ROLE_NAME</Type>
+                <Description>Validate role name.</Description>
+                <Status>completed</Status>
+                <StepResult>success</StepResult>
+                <ActualTime>3</ActualTime>
                 <AnticipatedTime>1</AnticipatedTime>
+                <Property><Key>executionTime</Key><Value>3</Value></Property>
+                <Property><Key>validationMessage</Key><Value>Custom role name is valid.</Value></Property>
                 <CreateUser>AwsAccountService</CreateUser>
                 <CreateDatetime>
                     <Year>2016</Year>
@@ -59,8 +65,28 @@
                     <SubSecond>0</SubSecond>
                     <Timezone>America/New_York</Timezone>
                 </CreateDatetime>
-            </ProvisioningStep>
-            <CreateUser>swheat</CreateUser>
+            </RoleDeprovisioningStep>
+            <RoleDeprovisioningStep>
+                <RoleDeprovisioningStepId>45</RoleDeprovisioningStepId>
+                <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
+                <StepId>2</StepId>
+                <Type>DELETE_LDS_GROUP_FOR_CUSTOM_ROLE</Type>
+                <Description>Delete the group that backs the role in LDS.</Description>
+                <Status>in progress</Status>
+                <AnticipatedTime>84</AnticipatedTime>
+                <CreateUser>AwsAccountService</CreateUser>
+                <CreateDatetime>
+                    <Year>2016</Year>
+                    <Month>2</Month>
+                    <Day>3</Day>
+                    <Hour>4</Hour>
+                    <Minute>5</Minute>
+                    <Second>6</Second>
+                    <SubSecond>0</SubSecond>
+                    <Timezone>America/New_York</Timezone>
+                </CreateDatetime>
+            </RoleDeprovisioningStep>
+            <CreateUser>AwsAccountService</CreateUser>
             <CreateDatetime>
                 <Year>2016</Year>
                 <Month>2</Month>
@@ -71,6 +97,17 @@
                 <SubSecond>0</SubSecond>
                 <Timezone>America/New_York</Timezone>
             </CreateDatetime>
+            <LastUpdateUser>AwsAccountService</LastUpdateUser>
+            <LastUpdateDatetime>
+                <Year>2016</Year>
+                <Month>2</Month>
+                <Day>3</Day>
+                <Hour>4</Hour>
+                <Minute>5</Minute>
+                <Second>6</Second>
+                <SubSecond>0</SubSecond>
+                <Timezone>America/New_York</Timezone>
+            </LastUpdateDatetime>
         </RoleDeprovisioning>
     </DataArea>
 </com.amazon.aws.Provisioning.RoleDeprovisioning.Provide>

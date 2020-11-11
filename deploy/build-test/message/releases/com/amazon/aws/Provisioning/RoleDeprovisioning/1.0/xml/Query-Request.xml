@@ -2,11 +2,11 @@
 <!DOCTYPE com.amazon.aws.Provisioning.RoleDeprovisioning.Query SYSTEM "../dtd/Query-Request.dtd">
 <com.amazon.aws.Provisioning.RoleDeprovisioning.Query>
     <ControlAreaRequest messageCategory="com.amazon.aws.Provisioning"
-        messageObject="RoleDeprovisioning" messageAction="Query" messageRelease="1.0"
-        messagePriority="9" messageType="Request">
+        messageObject="RoleDeprovisioning" messageAction="Query" messageType="Request"
+        messageRelease="1.0" messagePriority="9">
         <Sender>
             <MessageId>
-                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <SenderAppId>org.rhedcloud.RoleDeprovisioning</SenderAppId>
                 <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591 </ProducerId>
                 <MessageSeq>1024</MessageSeq>
             </MessageId>
@@ -25,12 +25,12 @@
             <Timezone>6:00-GMT</Timezone>
         </Datetime>
         <ExpectedReplyFormat messageCategory="com.amazon.aws.Provisioning"
-            messageObject="RoleDeprovisioning" messageRelease="1.0" messageAction="Provide"
-            messageType="Reply"/>
+            messageObject="RoleDeprovisioning" messageAction="Provide"
+            messageRelease="1.0" messageType="Reply"/>
     </ControlAreaRequest>
     <DataArea>
         <RoleDeprovisioningQuerySpecification>
-            <DeprovisioningId>emory-ad-23</DeprovisioningId>
+            <DeprovisioningId>custom-role-14</DeprovisioningId>
         </RoleDeprovisioningQuerySpecification>
     </DataArea>
 </com.amazon.aws.Provisioning.RoleDeprovisioning.Query>

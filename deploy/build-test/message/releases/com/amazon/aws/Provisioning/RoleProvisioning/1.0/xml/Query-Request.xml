@@ -30,7 +30,7 @@
     </ControlAreaRequest>
     <DataArea>
         <RoleProvisioningQuerySpecification>
-            <RoleProvisioningId>custom-role-14</RoleProvisioningId>
+            <ProvisioningId>custom-role-14</ProvisioningId>
         </RoleProvisioningQuerySpecification>
     </DataArea>
 </com.amazon.aws.Provisioning.RoleProvisioning.Query>

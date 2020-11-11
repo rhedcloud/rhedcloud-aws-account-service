@@ -1,72 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.jmsobjects.provisioning.v1_0">
-<class name="RoleProvisioning" table="ROLE_PROVISIONING">
-<id name="RoleProvisioningId" column="ROLE_PROVISIONING_ID">
-<generator class="assigned"/>
-</id>
-<property name="AccountId" column="ACCOUNT_ID"/>
-<component name="RoleProvisioningRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition">
-<property name="AccountId" column="ACCOUNT_ID"/>
-<component name="SiteGroup" class="com.amazon.aws.moa.objects.resources.v1_0.SiteGroup">
-<property name="DistinguishedName" column="DISTINGUISHED_NAME"/>
-<property name="Description" column="DESCRIPTION"/>
-<property name="ObjectClass" column="OBJECT_CLASS"/>
-</component>
-<component name="SiteRoleRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.SiteRoleRequisition">
-<property name="RoleName" column="ROLE_NAME"/>
-<property name="RoleDescription" column="ROLE_DESCRIPTION"/>
-<property name="RoleCategoryKey" column="ROLE_CATEGORY_KEY"/>
-<property name="Resource" column="RESOURCE_"/>
-</component>
-<component name="AWSRole" class="com.amazon.aws.moa.objects.resources.v1_0.AWSRole">
-<property name="Path" column="PATH"/>
-<property name="RoleName" column="ROLE_NAME"/>
-<property name="AssumeRolePolicyDocument" column="ASSUME_ROLE_POLICY_DOCUMENT"/>
-<property name="Description" column="DESCRIPTION"/>
-<property name="MaxSessionDuration" column="MAX_SESSION_DURATION"/>
-<property name="PermissionsBoundary" column="PERMISSIONS_BOUNDARY"/>
-<property name="Tag" column="TAG"/>
-</component>
-<component name="SiteRoleAssignmentRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.SiteRoleAssignmentRequisition">
-<property name="RoleAssignmentActionType" column="ROLE_ASSIGNMENT_ACTION_TYPE"/>
-<property name="RoleAssignmentType" column="ROLE_ASSIGNMENT_TYPE"/>
-<property name="IdentityDN" column="IDENTITY_DN"/>
-<property name="Reason" column="REASON"/>
-<component name="RoleDNs" class="com.amazon.aws.moa.objects.resources.v1_0.RoleDNs">
-<property name="DistinguishedName" column="DISTINGUISHED_NAME"/>
-</component>
-</component>
-</component>
-<property name="Status" column="STATUS"/>
-<property name="ProvisioningResult" column="PROVISIONING_RESULT"/>
-<property name="ActualTime" column="ACTUAL_TIME"/>
-<property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
-<bag name="ProvisioningStep" table="RL_PRVSNNG_PRVSNNG_STP">
-<key column="ROLE_PROVISIONING_ID"/>
-<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep">
-<property name="ProvisioningStepId" column="PROVISIONING_STEP_ID"/>
-<property name="ProvisioningId" column="PROVISIONING_ID"/>
-<property name="StepId" column="STEP_ID"/>
-<property name="Type" column="TYPE_"/>
-<property name="Description" column="DESCRIPTION"/>
-<property name="Status" column="STATUS"/>
-<property name="StepResult" column="STEP_RESULT"/>
-<property name="ActualTime" column="ACTUAL_TIME"/>
-<property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
-<nested-composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property" name="Property">
-<property name="Key" column="KEY_"/>
-<property name="Value" column="VALUE"/>
-</nested-composite-element>
-<property name="CreateUser" column="CREATE_USER"/>
-<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
-<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
-<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
-</composite-element>
-</bag>
-<property name="CreateUser" column="CREATE_USER"/>
-<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
-<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
-<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
-</class>
+    <class name="RoleProvisioning" table="ROLE_PROVISIONING">
+        <id name="RoleProvisioningId" column="ROLE_PROVISIONING_ID">
+            <generator class="assigned"/>
+        </id>
+        <property name="AccountId" column="ACCOUNT_ID" insert="false" update="false"/>
+        <component name="RoleProvisioningRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition">
+            <property name="AccountId" column="ACCOUNT_ID"/>
+            <property name="RoleName" column="ROLE_NAME"/>
+            <property name="RoleAssigneeUserId" column="ROLE_ASSIGNEE_USER_ID"/>
+        </component>
+        <property name="Status" column="STATUS"/>
+        <property name="ProvisioningResult" column="PROVISIONING_RESULT"/>
+        <property name="ActualTime" column="ACTUAL_TIME"/>
+        <property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
+
+        <bag name="RoleProvisioningStep" cascade="all">
+            <key column="ROLE_PROVISIONING_ID"/>
+            <one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningStep"/>
+        </bag>
+
+        <property name="CreateUser" column="CREATE_USER"/>
+        <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+        <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+        <property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+    </class>
 </hibernate-mapping>

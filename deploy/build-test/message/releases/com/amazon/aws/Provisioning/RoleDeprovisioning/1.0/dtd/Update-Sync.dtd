@@ -7,7 +7,7 @@
 <!-- Include resources (elements) shared by all messages -->
 <!ENTITY % RESOURCES SYSTEM "../../../../Resources/1.0/Resources.dtd">
 %RESOURCES;
-<!ELEMENT com.amazon.aws.Provisioning.RoleProvisioning.Update (ControlAreaSync, DataArea)>
+<!ELEMENT com.amazon.aws.Provisioning.RoleDeprovisioning.Update (ControlAreaSync, DataArea)>
 <!ELEMENT DataArea (NewData, BaselineData)>
 <!ELEMENT NewData (RoleDeprovisioning)>
 <!ELEMENT BaselineData (RoleDeprovisioning)>

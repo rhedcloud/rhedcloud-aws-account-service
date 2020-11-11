@@ -32,17 +32,16 @@
                 <AccountId>123456789012</AccountId>
                 <RoleDeprovisioningRequisition>
                     <AccountId>123456789012</AccountId>
+                    <RoleName>MyCustomRole</RoleName>
                 </RoleDeprovisioningRequisition>
                 <Status>pending</Status>
-                <AnticipatedTime>371197</AnticipatedTime>
-                <ProvisioningStep>
-                    <ProvisioningId>custom-role-14</ProvisioningId>
+                <AnticipatedTime>85</AnticipatedTime>
+                <RoleDeprovisioningStep>
+                    <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
                     <StepId>1</StepId>
-                    <Type>DETERMINE_NEW_OR_EXISTING_AWS_ACCOUNT</Type>
-                    <Description>Determine if the request is for a new VPC in a new AWS account from
-                        the inventory or a new VPC in an account that is already in
-                        use.</Description>
-                    <Status>pending</Status>
+                    <Type>VALIDATE_CUSTOM_ROLE_NAME</Type>
+                    <Description>Validate role name.</Description>
+                    <Status>in progress</Status>
                     <AnticipatedTime>1</AnticipatedTime>
                     <CreateUser>AwsAccountService</CreateUser>
                     <CreateDatetime>
@@ -55,8 +54,27 @@
                         <SubSecond>0</SubSecond>
                         <Timezone>America/New_York</Timezone>
                     </CreateDatetime>
-                </ProvisioningStep>
-                <CreateUser>swheat</CreateUser>
+                </RoleDeprovisioningStep>
+                <RoleDeprovisioningStep>
+                    <RoleDeprovisioningId>custom-role-14</RoleDeprovisioningId>
+                    <StepId>2</StepId>
+                    <Type>DELETE_LDS_GROUP_FOR_CUSTOM_ROLE</Type>
+                    <Description>Delete the group that backs the role in LDS.</Description>
+                    <Status>pending</Status>
+                    <AnticipatedTime>84</AnticipatedTime>
+                    <CreateUser>AwsAccountService</CreateUser>
+                    <CreateDatetime>
+                        <Year>2016</Year>
+                        <Month>2</Month>
+                        <Day>3</Day>
+                        <Hour>4</Hour>
+                        <Minute>5</Minute>
+                        <Second>6</Second>
+                        <SubSecond>0</SubSecond>
+                        <Timezone>America/New_York</Timezone>
+                    </CreateDatetime>
+                </RoleDeprovisioningStep>
+                <CreateUser>AwsAccountService</CreateUser>
                 <CreateDatetime>
                     <Year>2016</Year>
                     <Month>2</Month>

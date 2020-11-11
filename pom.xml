@@ -70,9 +70,9 @@
   <dependency>
    <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>aws-moa</artifactId>
-   <version>master-19</version>
+   <version>master-24</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/rhedcloud-aws-moas-master-19.jar</systemPath>
+   <systemPath>${project.basedir}/lib/rhedcloud-aws-moas-master-24.jar</systemPath>
   </dependency>
 
   <dependency>
@@ -124,11 +124,11 @@
   </dependency>
 
   <dependency>
-   <groupId>org.rhedcloud.awsaccount.service</groupId>
-   <artifactId>httpclient-4.5.3</artifactId>
-   <version>4.5.3</version>
+   <groupId>org.apache.httpcomponents</groupId>
+   <artifactId>httpclient</artifactId>
+   <version>4.5.13</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/httpclient-4.5.3.jar</systemPath>
+   <systemPath>${project.basedir}/lib/httpclient-4.5.13.jar</systemPath>
   </dependency>
 
   <dependency>
@@ -230,7 +230,7 @@
   <dependency><groupId>gnu-regexp-1.0.8</groupId><artifactId>gnu-regexp-1.0.8</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/gnu-regexp-1.0.8.jar</systemPath></dependency>
   <dependency><groupId>hibernate-jpa-2.0-api-1.0.0.Final</groupId><artifactId>hibernate-jpa-2.0-api-1.0.0.Final</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate-jpa-2.0-api-1.0.0.Final.jar</systemPath></dependency>
   <dependency><groupId>hibernate3</groupId><artifactId>hibernate3</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate3.jar</systemPath></dependency>
-  <dependency><groupId>httpcore-4.4.4</groupId><artifactId>httpcore-4.4.4</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/httpcore-4.4.4.jar</systemPath></dependency>
+  <dependency><groupId>org.apache.httpcomponents</groupId><artifactId>httpcore</artifactId><version>4.4.13</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/httpcore-4.4.13.jar</systemPath></dependency>
   <dependency><groupId>ion-java-1.0.2</groupId><artifactId>ion-java-1.0.2</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/ion-java-1.0.2.jar</systemPath></dependency>
   <dependency><groupId>jackson-annotations-2.6.0</groupId><artifactId>jackson-annotations-2.6.0</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/jackson-annotations-2.6.0.jar</systemPath></dependency>
   <dependency><groupId>jackson-core-2.6.6</groupId><artifactId>jackson-core-2.6.6</artifactId><version>x</version><scope>system</scope><systemPath>${project.basedir}/deploy/build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/jackson-core-2.6.6.jar</systemPath></dependency>

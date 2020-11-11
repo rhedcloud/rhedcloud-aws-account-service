@@ -1,52 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.jmsobjects.provisioning.v1_0">
-<class name="RoleDeprovisioning" table="ROLE_DEPROVISIONING">
-<id name="RoleDeprovisioningId" column="ROLE_DEPROVISIONING_ID">
-<generator class="assigned"/>
-</id>
-<property name="AccountId" column="ACCOUNT_ID"/>
-<component name="RoleDeprovisioningRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition">
-<property name="AccountId" column="ACCOUNT_ID"/>
-<component name="AWSRole" class="com.amazon.aws.moa.objects.resources.v1_0.AWSRole">
-<property name="Path" column="PATH"/>
-<property name="RoleName" column="ROLE_NAME"/>
-<property name="AssumeRolePolicyDocument" column="ASSUME_ROLE_POLICY_DOCUMENT"/>
-<property name="Description" column="DESCRIPTION"/>
-<property name="MaxSessionDuration" column="MAX_SESSION_DURATION"/>
-<property name="PermissionsBoundary" column="PERMISSIONS_BOUNDARY"/>
-<property name="Tag" column="TAG"/>
-</component>
-</component>
-<property name="Status" column="STATUS"/>
-<property name="ProvisioningResult" column="PROVISIONING_RESULT"/>
-<property name="ActualTime" column="ACTUAL_TIME"/>
-<property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
-<bag name="ProvisioningStep" table="RL_DPRVSNNG_PRVSNNG_STP">
-<key column="ROLE_DEPROVISIONING_ID"/>
-<composite-element class="com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep">
-<property name="ProvisioningStepId" column="PROVISIONING_STEP_ID"/>
-<property name="ProvisioningId" column="PROVISIONING_ID"/>
-<property name="StepId" column="STEP_ID"/>
-<property name="Type" column="TYPE_"/>
-<property name="Description" column="DESCRIPTION"/>
-<property name="Status" column="STATUS"/>
-<property name="StepResult" column="STEP_RESULT"/>
-<property name="ActualTime" column="ACTUAL_TIME"/>
-<property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
-<nested-composite-element class="com.amazon.aws.moa.objects.resources.v1_0.Property" name="Property">
-<property name="Key" column="KEY_"/>
-<property name="Value" column="VALUE"/>
-</nested-composite-element>
-<property name="CreateUser" column="CREATE_USER"/>
-<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
-<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
-<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
-</composite-element>
-</bag>
-<property name="CreateUser" column="CREATE_USER"/>
-<property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
-<property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
-<property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
-</class>
+    <class name="RoleDeprovisioning" table="ROLE_DEPROVISIONING">
+        <id name="RoleDeprovisioningId" column="ROLE_DEPROVISIONING_ID">
+            <generator class="assigned"/>
+        </id>
+        <property name="AccountId" column="ACCOUNT_ID" insert="false" update="false"/>
+        <component name="RoleDeprovisioningRequisition" class="com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition">
+            <property name="AccountId" column="ACCOUNT_ID"/>
+            <property name="RoleName" column="ROLE_NAME"/>
+        </component>
+        <property name="Status" column="STATUS"/>
+        <property name="DeprovisioningResult" column="DEPROVISIONING_RESULT"/>
+        <property name="ActualTime" column="ACTUAL_TIME"/>
+        <property name="AnticipatedTime" column="ANTICIPATED_TIME"/>
+
+        <bag name="RoleDeprovisioningStep" cascade="all">
+            <key column="ROLE_DEPROVISIONING_ID"/>
+            <one-to-many class="com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningStep"/>
+        </bag>
+
+        <property name="CreateUser" column="CREATE_USER"/>
+        <property name="CreateDatetime" type="OpenEaiDatetime" column="CREATE_DATETIME"/>
+        <property name="LastUpdateUser" column="LAST_UPDATE_USER"/>
+        <property name="LastUpdateDatetime" type="OpenEaiDatetime" column="LAST_UPDATE_DATETIME"/>
+    </class>
 </hibernate-mapping>
