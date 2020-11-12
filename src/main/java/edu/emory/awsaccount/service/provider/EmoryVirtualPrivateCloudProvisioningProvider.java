@@ -1663,6 +1663,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 					d = d.replaceAll("ERROR_DESCRIPTION", extraErrMsg);
 					d = d.replaceAll("STEP_ID", failedStepId);
 					ir.setDescription(d);
+		            logger.info(LOGTAG + "Provisioning Failure incident discription is: " + ir.getDescription());
 					
 		            Incident incident = generateIncident(ir);
 		            String incidentNumber = incident.getNumber();
