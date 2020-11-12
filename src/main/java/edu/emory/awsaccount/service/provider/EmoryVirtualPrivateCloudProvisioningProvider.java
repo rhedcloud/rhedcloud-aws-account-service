@@ -1660,6 +1660,9 @@ implements VirtualPrivateCloudProvisioningProvider {
 					String failedStepId = failedStep.getStepId();
 					String d = ir.getDescription();
 					d = d.replaceAll("PROVISIONING_ID", provisioningId);
+					if (extraErrMsg == null) {
+						extraErrMsg = "Unkown Error";
+					}
 					d = d.replaceAll("ERROR_DESCRIPTION", extraErrMsg);
 					d = d.replaceAll("STEP_ID", failedStepId);
 					ir.setDescription(d);
