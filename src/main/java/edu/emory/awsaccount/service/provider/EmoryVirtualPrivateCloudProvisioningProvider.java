@@ -11,30 +11,21 @@
 
 package edu.emory.awsaccount.service.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 // Java utilities
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
-import java.util.Random;
 import java.util.StringTokenizer;
 
 import javax.jms.JMSException;
 
-import org.apache.commons.io.IOUtils;
 // Log4j
 import org.apache.log4j.Category;
-
-// JDOM
-import org.jdom.Document;
-import org.jdom.Element;
-
 // OpenEAI foundation
 import org.openeai.OpenEaiObject;
 import org.openeai.config.AppConfig;
@@ -44,41 +35,25 @@ import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.EnterpriseObjectUpdateException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Result;
-import org.openeai.moa.objects.resources.v1_0.QueryLanguage;
 import org.openeai.threadpool.ThreadPool;
 import org.openeai.threadpool.ThreadPoolException;
 import org.openeai.transport.RequestService;
-import org.openeai.utils.filetransfer.handlers.TransferHandlerException;
-import org.openeai.utils.lock.Key;
-import org.openeai.utils.lock.Lock;
-import org.openeai.utils.lock.LockAlreadySetException;
-import org.openeai.utils.lock.LockException;
 import org.openeai.utils.sequence.Sequence;
 import org.openeai.utils.sequence.SequenceException;
-import org.openeai.xml.XmlDocumentReader;
-import org.openeai.xml.XmlDocumentReaderException;
-
-import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 
 //AWS Message Object API (MOA)
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
-import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
-import com.amazon.aws.moa.objects.resources.v1_0.Output;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
@@ -87,14 +62,7 @@ import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 import edu.emory.awsaccount.service.provider.step.Step;
 import edu.emory.awsaccount.service.provider.step.StepException;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
-import edu.emory.moa.jmsobjects.identity.v2_0.Person;
-import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
-import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
-import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
-import edu.emory.moa.objects.resources.v1_0.CidrRequisition;
-import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
-import edu.emory.moa.objects.resources.v2_0.PersonQuerySpecification;
 
 /**
  *  A provider that maintains provisions AWS accounts and VPC
@@ -125,6 +93,9 @@ implements VirtualPrivateCloudProvisioningProvider {
 	protected String SUCCESS_RESULT = "success";
 	protected String FAILURE_RESULT = "failure";
 	
+	// TJ:11/12/2020 - Sprint 4.15
+	private Properties incidentProperties;
+	
 	/**
 	 * @see VirtualPrivateCloudProvisioningProvider.java
 	 */
@@ -132,6 +103,18 @@ implements VirtualPrivateCloudProvisioningProvider {
 	public void init(AppConfig aConfig) throws ProviderException {
 		logger.info(LOGTAG + "Initializing...");
 		setAppConfig(aConfig);
+		
+		// TJ:11/12/2020 - Sprint 4.15
+		// get the incident properties that holds static incident data
+		try {
+			incidentProperties = aConfig.getProperties("ProvisioningFailureIncidentProperties");
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			String errMsg = "Error retrieving a 'IncidentProperties' object from "
+					+ "AppConfig: The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new ProviderException(errMsg, e);
+		}
 
 		// Get the provider properties
 		PropertyConfig pConfig = new PropertyConfig();
@@ -1364,7 +1347,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 								"is: " + se2.getMessage();
 							logger.error(LOGTAG + errMsg2);
 						}
-						rollbackCompletedSteps(completedSteps);
+						rollbackCompletedSteps(completedSteps, step, errMsg);
 						return;
 					}
 					catch (IllegalAccessException iae) {
@@ -1384,7 +1367,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 								"is: " + se2.getMessage();
 							logger.error(LOGTAG + errMsg2);
 						}
-						rollbackCompletedSteps(completedSteps);
+						rollbackCompletedSteps(completedSteps, step, errMsg);
 						return;
 					}
 					catch (InstantiationException ie) {
@@ -1404,7 +1387,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 								"is: " + se2.getMessage();
 							logger.error(LOGTAG + errMsg2);
 						}
-						rollbackCompletedSteps(completedSteps);
+						rollbackCompletedSteps(completedSteps, step, errMsg);
 						return;
 					}
 					catch (StepException se) {
@@ -1424,7 +1407,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 								"is: " + se2.getMessage();
 							logger.error(LOGTAG + errMsg2);
 						}
-						rollbackCompletedSteps(completedSteps);
+						rollbackCompletedSteps(completedSteps, step, errMsg);
 						return;
 					}
 					
@@ -1448,7 +1431,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 						if (step.getResult().equals(FAILURE_RESULT)) {
 							logger.info(LOGTAG + "[Step " + step.getStepId() +
 								"] failed. Rolling back all completed steps.");
-							rollbackCompletedSteps(completedSteps);
+							rollbackCompletedSteps(completedSteps, step, null);
 							return;
 						}
 						
@@ -1501,7 +1484,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 							logger.error(LOGTAG + errMsg2);
 						}
 						finally {
-							rollbackCompletedSteps(completedSteps);
+							rollbackCompletedSteps(completedSteps, step, errMsg);
 						}
 						return;
 					}
@@ -1510,7 +1493,7 @@ implements VirtualPrivateCloudProvisioningProvider {
 					String errMsg = "An error occurred instantiating " +
 						"a step. The className property is null.";
 					logger.error(LOGTAG + errMsg);
-					rollbackCompletedSteps(completedSteps);
+					rollbackCompletedSteps(completedSteps, null, errMsg);
 					return;
 				}
 			}
@@ -1552,7 +1535,8 @@ implements VirtualPrivateCloudProvisioningProvider {
 			
 		}
 		
-		private void rollbackCompletedSteps(List<Step> completedSteps) {
+		private void rollbackCompletedSteps(List<Step> completedSteps, 
+				Step failedStep, String extraErrMsg) {
 			logger.info(LOGTAG + "Starting rollback of completed steps...");
 			
 			// Reverse the order of the completedSteps list.
@@ -1608,12 +1592,97 @@ implements VirtualPrivateCloudProvisioningProvider {
 		    	logger.error(LOGTAG + errMsg);
 			}
 			
+			// TJ:11/12/2020 - Sprint 4.15
 			// The the provider is configured to create an incident
 			// in ServiceNow upon failure, create an incident.
-			if (false) {
+			boolean createIncident = Boolean.parseBoolean(getProperties().getProperty("createIncidentOnFailure", "true"));
+			if (createIncident) {
 				logger.info(LOGTAG + "Creating an Incident " +
 					"in ServiceNow...");
-				//TODO: create an incident.
+				
+				//create an incident.
+				IncidentRequisition ir = new IncidentRequisition();
+			    try {
+			    	ir = (IncidentRequisition)getAppConfig()
+				    		.getObjectByType(ir.getClass().getName());
+			    	
+			    	// reflectively populate the requisition from the incidentProperties
+					Iterator<Object> keys = incidentProperties.keySet().iterator();
+					while (keys.hasNext()) {
+						Object key = keys.next();
+						try {
+							Method setter = ir.getClass().getMethod(
+								"set" + key,
+								new Class[] { String.class }
+							);
+							setter.invoke(
+								ir, 
+								new Object[] { 
+									incidentProperties.getProperty((String) key) 
+								}
+							);
+							
+						} catch (NoSuchMethodException e) {
+							e.printStackTrace();
+					    	String errMsg = "[NoSuchMethodException] An error occurred populating the "
+				    			+ "IncidentRequisition object from " +
+						    	  "AppConfig. The exception is: " + e.getMessage();
+					    	logger.error(LOGTAG + errMsg);
+						} catch (SecurityException e) {
+							e.printStackTrace();
+					    	String errMsg = "[SecurityException] An error occurred populating the "
+				    			+ "IncidentRequisition object from " +
+						    	  "AppConfig. The exception is: " + e.getMessage();
+					    	logger.error(LOGTAG + errMsg);
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+					    	String errMsg = "[IllegalAccessException] An error occurred populating the "
+				    			+ "IncidentRequisition object from " +
+						    	  "AppConfig. The exception is: " + e.getMessage();
+					    	logger.error(LOGTAG + errMsg);
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+					    	String errMsg = "[IllegalArgumentException] An error occurred populating the "
+				    			+ "IncidentRequisition object from " +
+						    	  "AppConfig. The exception is: " + e.getMessage();
+					    	logger.error(LOGTAG + errMsg);
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+					    	String errMsg = "[InvocationTargetException] An error occurred populating the "
+				    			+ "IncidentRequisition object from " +
+						    	  "AppConfig. The exception is: " + e.getMessage();
+					    	logger.error(LOGTAG + errMsg);
+						}
+					}
+			    	
+					// put more info in the requisition (description)?
+					String provisioningId = this.getProvisioningId();
+					String failedStepId = failedStep.getStepId();
+					String d = ir.getDescription();
+					d = d.replaceAll("PROVISIONING_ID", provisioningId);
+					d = d.replaceAll("ERROR_DESCRIPTION", extraErrMsg);
+					d = d.replaceAll("STEP_ID", failedStepId);
+					ir.setDescription(d);
+					
+		            Incident incident = generateIncident(ir);
+		            String incidentNumber = incident.getNumber();
+
+		            logger.info(LOGTAG + "Provisioning Failure incidentNumber is: " + incidentNumber);
+			    }
+			    catch (EnterpriseConfigurationObjectException ecoe) {
+			    	String errMsg = "An error occurred retrieving an IncidentRequisition object from " +
+			    	  "AppConfig. The exception is: " + ecoe.getMessage();
+			    	logger.error(LOGTAG + errMsg);
+			    } catch (ProviderException e) {
+					e.printStackTrace();
+			    	String errMsg = "An error occurred generating an Incident.  " +
+					    	  "The exception is: " + e.getMessage();
+			    	logger.error(LOGTAG + errMsg);
+				} catch (EnterpriseFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 			else {
 				logger.info(LOGTAG + "createIncidentOnFailure is " 
