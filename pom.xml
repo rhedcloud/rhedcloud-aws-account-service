@@ -70,9 +70,9 @@
   <dependency>
    <groupId>org.rhedcloud.awsaccount.service</groupId>
    <artifactId>aws-moa</artifactId>
-   <version>master-24</version>
+   <version>master-25</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/lib/rhedcloud-aws-moas-master-24.jar</systemPath>
+   <systemPath>${project.basedir}/lib/rhedcloud-aws-moas-master-25.jar</systemPath>
   </dependency>
 
   <dependency>

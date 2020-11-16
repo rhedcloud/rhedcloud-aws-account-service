@@ -57,7 +57,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?, BillId?, PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
 <!ELEMENT Credentials (AccessKeyId, SecretKey)>
-<!ELEMENT CustomRole (CustomRoleId, AccountId, RoleName, IdmRoleName, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT CustomRole (CustomRoleId?, AccountId, RoleName, IdmRoleName, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT CustomRoleQuerySpecification (AccountId?)>
 <!ELEMENT DeprovisioningStep (DeprovisioningStepId?, DeprovisioningId, StepId, Type, Description, Status, StepResult?, ActualTime?, AnticipatedTime?, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT DetectedSecurityRisk (Type, AmazonResourceName, RemediationResult?)>
