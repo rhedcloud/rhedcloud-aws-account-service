@@ -41,7 +41,7 @@ public interface Step {
      * @param provider provider
      * @throws StepException on error
      */
-	void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider provider) throws StepException;
+    void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider provider) throws StepException;
 
     List<Property> execute() throws StepException;
     void rollback() throws StepException;

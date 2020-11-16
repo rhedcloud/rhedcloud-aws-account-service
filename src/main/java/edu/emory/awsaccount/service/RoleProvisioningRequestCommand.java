@@ -6,11 +6,14 @@
 
 package edu.emory.awsaccount.service;
 
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.CustomRole;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleProvisioning;
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
 import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.RoleProvisioningProvider;
+import edu.emory.awsaccount.service.roleProvisioning.step.StepException;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.log4j.Logger;
@@ -19,6 +22,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.openeai.config.CommandConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
+import org.openeai.config.EnterpriseFieldException;
 import org.openeai.config.LoggerConfig;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.consumer.commands.CommandException;
@@ -385,12 +389,12 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             // Generate the RoleProvisioning object using the provider implementation.
             logger.info(LOGTAG + "Generating an RoleProvisioning object...");
 
-            RoleProvisioning ad;
+            RoleProvisioning roleProvisioning;
             try {
             	long generateStartTime = System.currentTimeMillis();
-                ad = getProvider().generate(req);
+                roleProvisioning = getProvider().generate(req);
                 if (testId != null)
-                    ad.setTestId(testId);
+                    roleProvisioning.setTestId(testId);
                 long generateTime = System.currentTimeMillis() - generateStartTime;
                 logger.info(LOGTAG + "Generated RoleProvisioning in " + generateTime + " ms." );
             }
@@ -415,8 +419,8 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 Authentication auth = new Authentication();
                 auth.setAuthUserId(authUserId);
                 auth.setAuthUserSignature("none");
-                ad.setAuthentication(auth);
-                ad.createSync((SyncService) producer);
+                roleProvisioning.setAuthentication(auth);
+                roleProvisioning.createSync((SyncService) producer);
                 logger.info(LOGTAG + "Published RoleProvisioning.Create-Sync" + " message.");
             }
             catch (EnterpriseObjectSyncException e) {
@@ -440,7 +444,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             }
             Element content;
             try {
-                content = (Element) ad.buildOutputFromObject();
+                content = (Element) roleProvisioning.buildOutputFromObject();
             }
             catch (EnterpriseLayoutException e) {
                 String errMsg = "An error occurred serializing a RoleProvisioning object to an XML element. The exception is: " + e.getMessage();
@@ -720,20 +724,15 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 throw new CommandException(errMsg);
             }
             
-            // TODO - Set the value of the DeprovisioningId.
-            /*
             try {
-            	querySpec.setDeprovisioningId(baselineAd.getDeprovisioningId());
+            	querySpec.setRoleProvisioningId(baselineAd.getRoleProvisioningId());
             }
             catch (EnterpriseFieldException e) {
-            	String errMsg = "An error occurred setting the field values " +
-            		"of the VPCP query specification. The exception is: " +
-            		e.getMessage();
+            	String errMsg = "An error occurred setting the field values of the RoleProvisioning query specification. The exception is: " + e.getMessage();
             	logger.error(LOGTAG + errMsg);
             	throw new CommandException(errMsg, e);
             }
-            */
-            
+
             // Query for the RoleProvisioning.
             RoleProvisioning ad = null;
             try {
