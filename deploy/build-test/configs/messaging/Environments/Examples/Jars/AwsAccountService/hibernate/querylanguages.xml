@@ -163,6 +163,16 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</VpnConnectionProvisioningQuerySpecification>
 	</querylanguage>
 	<querylanguage>
+		<RoleProvisioningQuerySpecification>
+			<QueryLanguage max="20" type="hql" name="maxRoleProvisionings" value="from RoleProvisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</RoleProvisioningQuerySpecification>
+		<RoleProvisioningQuerySpecification>
+			<QueryLanguage type="hql" name="allRoleProvisionings" value="from RoleProvisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</RoleProvisioningQuerySpecification>
+	</querylanguage>
+	<querylanguage>
 
 		<AccountNotificationQuerySpecification>
 			<QueryLanguage max="200" type="hql" name="maxByAccountId" value="from AccountNotification where AccountId=:AccountId order by CreateDatetime desc">
