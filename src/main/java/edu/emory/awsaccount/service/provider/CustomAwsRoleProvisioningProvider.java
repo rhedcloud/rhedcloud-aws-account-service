@@ -554,7 +554,7 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                     try {
                         Class<?> stepClass = Class.forName(className);
                         step = (Step) stepClass.newInstance();
-                        logger.info(LOGTAG + "Initializing step " + stepIndex + ".");
+                        logger.info(LOGTAG + "Initializing step index " + stepIndex + ".");
                         step.init(getProvisioningId(), props, getAppConfig(), getRoleProvisioningProvider());
                     }
                     catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -564,10 +564,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                         return;
                     }
                     catch (StepException se) {
-                        String errMsg = "An error occurred initializing the Step " + step.getStepId() + ". The exception is: " + se.getMessage();
+                        String errMsg = "An error occurred initializing step " + step.getStepId() + ". The exception is: " + se.getMessage();
                         logger.error(LOGTAG + errMsg);
                         try {
-                            logger.info(LOGTAG + "Setting completed status and failure result...");
+                            // Add an error step property limited to 255 characters (database column size)
+                            String m = se.getMessage().substring(0, Math.min(se.getMessage().length(), 254));
+                            step.addResultProperty("stepExecutionException", m);
                             step.update(Step.STEP_STATUS_COMPLETED, Step.STEP_RESULT_FAILURE);
                             logger.info(LOGTAG + "Updated to completed status and failure result.");
                         }
@@ -580,14 +582,13 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                     }
 
                     // Execute the step
-                    List<Property> resultProps;
                     try {
                         logger.info(LOGTAG + "Executing [Step-" + step.getStepId() + "] " + step.getDescription());
                         long startTime = System.currentTimeMillis();
-                        resultProps = step.execute();
+                        List<Property> resultProps = step.execute();
                         long time = System.currentTimeMillis() - startTime;
-                        logger.info(LOGTAG + "Completed Step " + step.getStepId() + " with result " + step.getResult() + " in " + time + " ms.");
-                        logger.info(LOGTAG + "Step result properties are: " + resultPropsToXmlString(resultProps));
+                        logger.info(LOGTAG + "Completed [Step-" + step.getStepId() + "] with result " + step.getResult() + " in " + time + " ms"
+                                + " and result properties " + resultPropsToXmlString(resultProps));
 
                         // If the result of the step is failure, roll back all completed steps and return.
                         if (step.getResult().equals(Step.STEP_RESULT_FAILURE)) {
@@ -602,26 +603,14 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                     catch (StepException se) {
                         // An error occurred executing the step.
                         // Log it and roll back all preceding steps.
-                        LOGTAG = LOGTAG +  "[StepExecutionException][Step-" + step.getStepId() + "] ";
-                        String errMsg = "An error occurred executing step " + step.getStepId() + ". The exception is: " + se.getMessage();
+                        LOGTAG = LOGTAG + "[StepExecutionException][Step-" + step.getStepId() + "] ";
+                        String errMsg = "The exception is: " + se.getMessage();
                         logger.error(LOGTAG + errMsg);
 
                         try {
                             logger.info(LOGTAG + "Setting completed status, failure result, and final error details...");
-                            // Add an error step property limited to 255 characters (database column size)
-                            String stepExecutionException;
-                            if (se.getMessage() != null) {
-                                int size = se.getMessage().length();
-                                if (size > 254) size = 254;
-                                stepExecutionException = se.getMessage().substring(0, size);
-                            }
-                            else {
-                                stepExecutionException = "No step execution exception found.";
-                            }
-                            logger.info(LOGTAG + "Final step execution exception text is: " + stepExecutionException);
-
-                            step.addResultProperty("stepExecutionException", stepExecutionException);
-                            logger.info(LOGTAG + "Added property stepExecutionException: " + stepExecutionException);
+                            String m = se.getMessage().substring(0, Math.min(se.getMessage().length(), 254));
+                            step.addResultProperty("stepExecutionException", m);
                             step.update(Step.STEP_STATUS_COMPLETED, Step.STEP_RESULT_FAILURE);
                             logger.info(LOGTAG + "Updated to completed status and failure result.");
                         }

@@ -318,7 +318,19 @@ public abstract class AbstractStep {
         }
         return null;
     }
-    
+
+    protected RoleProvisioningStep getFailedProvisioningStep() {
+        RoleProvisioning roleProvisioning = getRoleProvisioning();
+        @SuppressWarnings("unchecked")
+        List<RoleProvisioningStep> steps = roleProvisioning.getRoleProvisioningStep();
+        for (RoleProvisioningStep step : steps) {
+            if (step.getStepResult().equals(Step.STEP_RESULT_FAILURE)) {
+                return step;
+            }
+        }
+        return null;
+    }
+
     protected void setResultProperties(List<Property> resultProps) { m_resultProperties = resultProps; }
     public void addResultProperty(String key, String value) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] ";
@@ -583,6 +595,11 @@ public abstract class AbstractStep {
     protected int getMandatoryIntegerProperty(String LOGTAG, String propertyName, boolean isSecret) throws StepException {
         String v = getMandatoryStringProperty(LOGTAG, propertyName, isSecret);
         return Integer.parseInt(v);
+    }
+
+    protected boolean getMandatoryBooleanProperty(String LOGTAG, String propertyName, boolean isSecret) throws StepException {
+        String v = getMandatoryStringProperty(LOGTAG, propertyName, isSecret);
+        return Boolean.parseBoolean(v);
     }
 
     protected String getWithDefaultStringProperty(String LOGTAG, String propertyName, String defaultValue, boolean isSecret) {
