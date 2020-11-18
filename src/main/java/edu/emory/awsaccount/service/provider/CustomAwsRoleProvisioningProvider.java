@@ -708,16 +708,6 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                 String errMsg = "An error occurred querying for the  current state of a RoleProvisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
             }
-
-            // The the provider is configured to create an incident
-            // in ServiceNow upon failure, create an incident.
-            if (false) {
-                logger.info(LOGTAG + "Creating an Incident in ServiceNow...");
-                //TODO: create an incident.
-            }
-            else {
-                logger.info(LOGTAG + "createIncidentOnFailure is false. Will not create an incident in ServiceNow.");
-            }
         }
 
         private String resultPropsToXmlString(List<Property> resultProps) {
