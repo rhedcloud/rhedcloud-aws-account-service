@@ -10,7 +10,9 @@ import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
 import edu.emory.awsaccount.service.provider.RoleProvisioningProvider;
 import edu.emory.moa.jmsobjects.lightweightdirectoryservices.v1_0.Group;
+import edu.emory.moa.jmsobjects.lightweightdirectoryservices.v1_0.OrganizationalUnit;
 import edu.emory.moa.objects.resources.v1_0.GroupQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.OrganizationalUnitQuerySpecification;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -35,6 +37,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
     private ProducerPool ldsServiceProducerPool = null;
     private String groupDescriptionTemplate = null;
     private String groupDnTemplate = null;
+    private String organizationalUnitDescriptionTemplate = null;
+    private String organizationalUnitDnTemplate = null;
 
     public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
@@ -56,6 +60,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         setGroupDescriptionTemplate(getMandatoryStringProperty(LOGTAG, "groupDescriptionTemplate", false));
         setGroupDnTemplate(getMandatoryStringProperty(LOGTAG, "groupDnTemplate", false));
+        setOrganizationalUnitDescriptionTemplate(getMandatoryStringProperty(LOGTAG, "organizationalUnitDescriptionTemplate", false));
+        setOrganizationalUnitDnTemplate(getMandatoryStringProperty(LOGTAG, "organizationalUnitDnTemplate", false));
 
         logger.info(LOGTAG + "Initialization complete.");
     }
@@ -72,12 +78,142 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         String accountId = roleProvisioningRequisition.getAccountId();
         String roleName = roleProvisioningRequisition.getRoleName();
 
+        createCustomRolesOrganizationalUnit(accountId, LOGTAG);
+        createCustomRolesGroup(accountId, roleName, LOGTAG);
+        queryCustomRolesGroupGuid(accountId, roleName, LOGTAG);
+
+        // Update the step.
+        update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
+        
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+        
+        // Return the properties.
+        return getResultProperties();
+    }
+
+    private void createCustomRolesOrganizationalUnit(String accountId, String LOGTAG) throws StepException {
+        OrganizationalUnit ou;
+        OrganizationalUnitQuerySpecification ouQuerySpec;
+        try {
+            ou = (OrganizationalUnit) getAppConfig().getObjectByType(OrganizationalUnit.class.getName());
+            ouQuerySpec = (OrganizationalUnitQuerySpecification) getAppConfig().getObjectByType(OrganizationalUnitQuerySpecification.class.getName());
+        }
+        catch (EnterpriseConfigurationObjectException e) {
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
+
+        try {
+            ouQuerySpec.setdistinguishedName(fromTemplate(getOrganizationalUnitDnTemplate(), accountId, ""));
+        }
+        catch (EnterpriseFieldException e) {
+            String errMsg = "An error occurred setting the values of the object. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
+
+        // Log the state of the OrganizationalUnitQuerySpecification.
+        try {
+            logger.info(LOGTAG + "OrganizationalUnitQuerySpecification is: " + ouQuerySpec.toXmlString());
+        }
+        catch (XmlEnterpriseObjectException e) {
+            String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
+
+        // Get a producer from the pool
+        RequestService rs;
+        try {
+            rs = (RequestService) getLdsServiceProducerPool().getExclusiveProducer();
+        }
+        catch (JMSException e) {
+            String errMsg = "An error occurred getting a producer from the pool. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
+
+        List<OrganizationalUnit> results;
+        try {
+            long queryStartTime = System.currentTimeMillis();
+            results = ou.query(ouQuerySpec, rs);
+            long queryTime = System.currentTimeMillis() - queryStartTime;
+            logger.info(LOGTAG + "Queried for OrganizationalUnit in " + queryTime + " ms. There are " + results.size() + " result(s).");
+        }
+        catch (EnterpriseObjectQueryException e) {
+            String errMsg = "An error occurred querying for the OU object. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
+        finally {
+            getLdsServiceProducerPool().releaseProducer((MessageProducer) rs);
+        }
+
+        if (results.size() == 0) {
+            try {
+                ou.addobjectClass("organizationalUnit");
+                ou.addobjectClass("top");
+                ou.setdescription(fromTemplate(getOrganizationalUnitDescriptionTemplate(), accountId, ""));
+                ou.setdistinguishedName(fromTemplate(getOrganizationalUnitDnTemplate(), accountId, ""));
+            }
+            catch (EnterpriseFieldException e) {
+                String errMsg = "An error occurred setting the values of the object. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+
+            // Log the state of the OrganizationalUnit.
+            try {
+                logger.info(LOGTAG + "OrganizationalUnit to be created is: " + ou.toXmlString());
+            }
+            catch (XmlEnterpriseObjectException e) {
+                String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+
+            // Get a producer from the pool
+            try {
+                rs = (RequestService) getLdsServiceProducerPool().getExclusiveProducer();
+            }
+            catch (JMSException e) {
+                String errMsg = "An error occurred getting a producer from the pool. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+
+            try {
+                long createStartTime = System.currentTimeMillis();
+                ou.create(rs);
+                long createTime = System.currentTimeMillis() - createStartTime;
+                logger.info(LOGTAG + "Created OU in " + createTime + "ms.");
+
+                addResultProperty("createdOrganizationalUnit", "true");
+                addResultProperty("distinguishedName", ou.getdistinguishedName());
+            }
+            catch (EnterpriseObjectCreateException e) {
+                String errMsg = "An error occurred creating the OU object. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+            finally {
+                getLdsServiceProducerPool().releaseProducer((MessageProducer) rs);
+            }
+        }
+        else {
+            addResultProperty("createdOrganizationalUnit", "false");
+            addResultProperty("distinguishedName", results.get(0).getdistinguishedName());
+        }
+    }
+
+    private void createCustomRolesGroup(String accountId, String roleName, String LOGTAG) throws StepException {
         // Get a configured Group object from AppConfig.
         Group group;
-        GroupQuerySpecification querySpec;
         try {
             group = (Group) getAppConfig().getObjectByType(Group.class.getName());
-            querySpec = (GroupQuerySpecification) getAppConfig().getObjectByType(GroupQuerySpecification.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
             String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
@@ -89,8 +225,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         try {
             group.addobjectClass("group");
             group.addobjectClass("top");
-            group.setdescription(buildDescriptionValueFromTemplate(accountId));
-            group.setdistinguishedName(buildDnValueFromTemplate(accountId, roleName));
+            group.setdescription(fromTemplate(getGroupDescriptionTemplate(), accountId, roleName));
+            group.setdistinguishedName(fromTemplate(getGroupDnTemplate(), accountId, roleName));
         }
         catch (EnterpriseFieldException e) {
             String errMsg = "An error occurred setting the values of the object. The exception is: " + e.getMessage();
@@ -135,14 +271,28 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
             throw new StepException(errMsg, e);
         }
         finally {
-            // Release the producer back to the pool
             getLdsServiceProducerPool().releaseProducer((MessageProducer) rs);
+        }
+    }
+
+    private void queryCustomRolesGroupGuid(String accountId, String roleName, String LOGTAG) throws StepException {
+        // Get a configured Group object from AppConfig.
+        Group group;
+        GroupQuerySpecification groupQuerySpec;
+        try {
+            group = (Group) getAppConfig().getObjectByType(Group.class.getName());
+            groupQuerySpec = (GroupQuerySpecification) getAppConfig().getObjectByType(GroupQuerySpecification.class.getName());
+        }
+        catch (EnterpriseConfigurationObjectException e) {
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
         }
 
         // Query for the new group by DN to get the generated GUID.
         // Set the values of the query spec.
         try {
-            querySpec.setdistinguishedName(group.getdistinguishedName());
+            groupQuerySpec.setdistinguishedName(fromTemplate(getGroupDnTemplate(), accountId, roleName));
         }
         catch (EnterpriseFieldException e) {
             String errMsg = "An error occurred setting the values of the object. The exception is: " + e.getMessage();
@@ -152,7 +302,7 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         // Log the state of the query spec.
         try {
-            logger.info(LOGTAG + "querySpec is: " + group.toXmlString());
+            logger.info(LOGTAG + "Group query spec is: " + groupQuerySpec.toXmlString());
         }
         catch (XmlEnterpriseObjectException e) {
             String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
@@ -161,6 +311,7 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         }
 
         // Get a producer from the pool
+        RequestService rs;
         try {
             rs = (RequestService) getLdsServiceProducerPool().getExclusiveProducer();
         }
@@ -173,13 +324,13 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         try {
             long queryStartTime = System.currentTimeMillis();
             @SuppressWarnings("unchecked")
-            List<Group> results = group.query(querySpec, rs);
+            List<Group> results = group.query(groupQuerySpec, rs);
             long queryTime = System.currentTimeMillis() - queryStartTime;
             logger.info(LOGTAG + "Queries for group in " + queryTime + "ms. There are " + results.size() + " result(s).");
             if (results.size() == 1) {
                 String guid = results.get(0).getobjectGUID();
-                logger.info(LOGTAG + "GUID for new group is: " + guid);
                 addResultProperty("guid", guid);
+                logger.info(LOGTAG + "GUID for new group is: " + guid);
             }
             else {
                 String errMsg = "Invalid number of groups returned. Expected 1, got " + results.size();
@@ -195,21 +346,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         finally {
             getLdsServiceProducerPool().releaseProducer((MessageProducer) rs);
         }
-
-        // set result properties
-        // handled inline above
-
-        // Update the step.
-        update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
-        // Log completion time.
-        long time = System.currentTimeMillis() - startTime;
-        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
-        // Return the properties.
-        return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateLdsGroupForCustomRole.simulate] ";
@@ -219,7 +357,7 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         // simulated result properties
         addResultProperty("createdGroup", "false");
-        addResultProperty("distinguishedName", buildDnValueFromTemplate("123456789012", "SimulatedRoleName"));
+        addResultProperty("distinguishedName", fromTemplate(getGroupDnTemplate(), "123456789012", "SimulatedRoleName"));
         addResultProperty("guid", UUID.randomUUID().toString());
 
         // Update the step.
@@ -390,12 +528,12 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
     private void setGroupDescriptionTemplate (String v) { groupDescriptionTemplate = v; }
     private String getGroupDnTemplate() { return groupDnTemplate; }
     private void setGroupDnTemplate (String v) { groupDnTemplate = v; }
+    public String getOrganizationalUnitDescriptionTemplate() { return organizationalUnitDescriptionTemplate; }
+    public void setOrganizationalUnitDescriptionTemplate(String v) { organizationalUnitDescriptionTemplate = v; }
+    public String getOrganizationalUnitDnTemplate() { return organizationalUnitDnTemplate; }
+    public void setOrganizationalUnitDnTemplate(String v) { organizationalUnitDnTemplate = v; }
 
-    private String buildDescriptionValueFromTemplate(String accountId) {
-        return getGroupDescriptionTemplate().replace("ACCOUNT_NUMBER", accountId);
-    }
-
-    private String buildDnValueFromTemplate(String accountId, String roleName) {
-        return getGroupDnTemplate().replace("ACCOUNT_NUMBER", accountId).replace("CUSTOM_ROLE_NAME", roleName);
+    private String fromTemplate(String template, String accountId, String roleName) {
+        return template.replace("ACCOUNT_NUMBER", accountId).replace("CUSTOM_ROLE_NAME", roleName);
     }
 }
