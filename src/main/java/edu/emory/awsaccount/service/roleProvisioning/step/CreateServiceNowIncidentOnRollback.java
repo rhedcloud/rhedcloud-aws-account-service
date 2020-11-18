@@ -190,6 +190,7 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
             for (Property p : failedStepProperties) {
                 if (p.getKey().equals("stepExecutionException")) {
                     stepExecutionException = p.getValue();
+                    break;
                 }
             }
             if (stepExecutionException == null) {
