@@ -6,65 +6,50 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.jms.JMSException;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.jdom.Document;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
+import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectCreateException;
-import org.openeai.moa.EnterpriseObjectDeleteException;
-import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
-import org.openeai.moa.objects.resources.Result;
 import org.openeai.transport.RequestService;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
-import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
-import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
-import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-
-import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
+import javax.jms.JMSException;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * If this is a new account request, create account metadata
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 30 August 2018
  **/
 public class NotifyAdmins extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private String m_notificationTemplate;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[NotifyAdmins.init] ";
-		
+
 		// This step needs to send messages to the AWS account service
 		// to create account metadata.
 		ProducerPool p2p1 = null;
@@ -81,42 +66,42 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		String notificationTemplate = getProperties()
 			.getProperty("notificationTemplate", null);
 		setNotificationTemplate(notificationTemplate);
 		logger.info(LOGTAG + "notificationTemplate is: " +
 			getNotificationTemplate());
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[NotifyAdmins.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean sentNotification = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get the VirtualPrivateCloudRequisition object.
 	    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
 	    VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
-	    
+
 		// Get the allocatedNewAccount property from the
 		// GENERATE_NEW_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		String accountId = null;
 		String newAccountId = null;
-		
+
 		newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT",
 			"newAccountId");
 		addResultProperty("newAccountId", newAccountId);
 		logger.info(LOGTAG + "Property newAccountId from preceding " +
 			"step is: " + newAccountId);
-		
+
 		// If the newAccountId is null, get the accountId from the
 		// VPCP requisition. Otherwise accountId is the value of
 		// the newAccountId
@@ -128,13 +113,13 @@ public class NotifyAdmins extends AbstractStep implements Step {
 		else {
 			accountId = newAccountId;
 		}
-		
+
 		if (accountId == null || newAccountId.equalsIgnoreCase("null")) {
 			String errMsg = "accountId is null. Can't continue.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-			
+
 		// Get a configured account notification object from AppConfig.
 		AccountNotification aNotification = new AccountNotification();
 	    try {
@@ -147,7 +132,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException(errMsg, ecoe);
 	    }
-	    
+
 	    // Set the values of the account.
 	    try {
 	    	aNotification.setAccountId(accountId);
@@ -158,10 +143,10 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	    	aNotification.setReferenceId(vpcp.getProvisioningId());
 	    	aNotification
 	    		.setCreateUser(req.getAuthenticatedRequestorUserId());
-	    	Datetime createDatetime = new Datetime("Create", 
+	    	Datetime createDatetime = new Datetime("Create",
 	    		System.currentTimeMillis());
 	    	aNotification.setCreateDatetime(createDatetime);
-	    	
+
 	    	// Set the account to be SRD exempt initially.
 	    	// This will be changed later in the provisioning.
 	    	Annotation annotation = aNotification.newAnnotation();
@@ -176,7 +161,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	  	    logger.error(LOGTAG + errMsg);
 	  	    throw new StepException(errMsg, efe);
 	    }
-	    
+
 	    // Log the state of the account.
 	    try {
 	    	logger.info(LOGTAG + "AccountNotification to create is: "
@@ -187,8 +172,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
 	  	    	  "to XML. The exception is: " + xeoe.getMessage();
   	    	logger.error(LOGTAG + errMsg);
   	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
+	    }
+
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
@@ -201,15 +186,15 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, jmse);
 		}
-	    
-		try { 
+
+		try {
 			long createStartTime = System.currentTimeMillis();
 			aNotification.create(rs);
 			long createTime = System.currentTimeMillis() - createStartTime;
 			logger.info(LOGTAG + "Created AccountNotification in "
 				+ createTime + " ms.");
 			sentNotification = true;
-			addResultProperty("sentNotification", 
+			addResultProperty("sentNotification",
 				Boolean.toString(sentNotification));
 		}
 		catch (EnterpriseObjectCreateException eoce) {
@@ -222,87 +207,87 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			// Release the producer back to the pool
 			getAwsAccountServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
-		}	
-		
+		}
+
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[NotifyAdmins.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	addResultProperty("accountMetadataCreated", "true");
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[NotifyAdmins.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[NotifyAdmins.rollback] ";
 		logger.info(LOGTAG + "Rollback called, nothing to roll back.");
-		
+
 		addResultProperty("adminNotificationRollback", "not applicable");
-		
+
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}
-	
-	private void setNotificationTemplate (String template) throws 
+
+	private void setNotificationTemplate (String template) throws
 		StepException {
 
 		if (template == null) {
@@ -310,19 +295,19 @@ public class NotifyAdmins extends AbstractStep implements Step {
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_notificationTemplate = template;
 	}
 
 	private String getNotificationTemplate() {
 		return m_notificationTemplate;
 	}
-	
-	private String getNotificationText(VirtualPrivateCloudRequisition req) 
+
+	private String getNotificationText(VirtualPrivateCloudRequisition req)
 		throws StepException {
-		
+
 		String text = getNotificationTemplate().replaceAll("\\s+", " ");
-		
+
 		String request = "";
 		try {
 			request = req.toXmlString();
@@ -334,8 +319,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
 			throw new StepException(errMsg, xeoe);
 		}
 		text = text + "\n\nThe details of the request are:\n\n" + request;
-				
+
 		return text;
 	}
-	
+
 }
