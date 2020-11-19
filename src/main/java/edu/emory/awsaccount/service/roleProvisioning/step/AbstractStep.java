@@ -30,10 +30,10 @@ import java.util.TimeZone;
 
 /**
  *  An abstract class from which all provisioning steps inherit. This class
- *  implements common behaviors, such as required instance variable 
+ *  implements common behaviors, such as required instance variable
  *  initialization, querying the AWS Account Service for its state and the
  *  ability to update the step in the AWS Account Service.
- *  
+ *
  *  Step-specific behaviors are implemented in implementations that extend this
  *  class and implement the Step interface.
  */
@@ -69,10 +69,10 @@ public abstract class AbstractStep {
 
     public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp)
         throws StepException {
-        
+
         String LOGTAG = "[AbstractStep.init] ";
         logger.info(LOGTAG + "Initializing...");
-        
+
         // Set identification and control properties of the step.
         setAppConfig(aConfig);
         setProvisioningId(provisioningId);
@@ -84,17 +84,17 @@ public abstract class AbstractStep {
         setFailStep(Boolean.parseBoolean(props.getProperty("failStep", "false")));
         setRoleProvisioningProvider(rpp);
         setProperties(props);
-        
+
         // Query for the provisioning object.
         queryForRoleProvisioningBaseline();
-        
+
         // If the RoleProvisioning object is not null, look for the step.
         RoleProvisioningStep step;
         if (getRoleProvisioning() != null) {
             step = getProvisioningStepById(getStepId());
-        
+
             // If the provisioning step is present, set the initial values of this
-            // step from those of the provisioning step. 
+            // step from those of the provisioning step.
             if (step != null) {
                 setType(step.getType());
                 setDescription(step.getDescription());
@@ -122,23 +122,23 @@ public abstract class AbstractStep {
             String errMsg = "No RoleProvisioning object found for ProvisioningId " + provisioningId + ". Can't continue.";
             throw new StepException(errMsg);
         }
-        
+
         // Set the step tag value.
         String stepTag = "[ProvisioningId " + getProvisioningId() + "][Step-" + getStepId() + "] ";
         setStepTag(stepTag);
-        
+
         logger.info(LOGTAG + "Initialization complete #######################");
     }
-    
+
     public List<Property> execute() throws StepException {
         setExecutionStartTime();
-        
+
         // Update the step to indicate it is in progress.
         update(Step.STEP_STATUS_IN_PROGRESS, Step.STEP_RESULT_NONE);
 
         String LOGTAG = getStepTag() + "[AbstractStep.execute] ";
         logger.info(LOGTAG + "Determining execution method.");
-        
+
         // Determine if the step should be skipped, simulated, or failed.
         // If skipStep is true, log it skip it and return a property indicating that the step was skipped.
         if (getSkipStep()) {
@@ -147,7 +147,7 @@ public abstract class AbstractStep {
             setExecutionTime();
             return getResultProperties();
         }
-        
+
         // If simulateStep is true, log it and call the simulate method.
         if (getSimulateStep()) {
             logger.info(LOGTAG + "simulateStep is true, simulating this step.");
@@ -155,7 +155,7 @@ public abstract class AbstractStep {
             setExecutionTime();
             return props;
         }
-        
+
         // If failStep is true, log it and call the fail method.
         if (getFailStep()) {
             logger.info(LOGTAG + "failStep is true, failing this step.");
@@ -163,7 +163,7 @@ public abstract class AbstractStep {
             setExecutionTime();
             return props;
         }
-        
+
         // Otherwise run the step logic.
         else {
             logger.info(LOGTAG + "Running the step.");
@@ -172,11 +172,11 @@ public abstract class AbstractStep {
             return props;
         }
     }
-    
+
     protected abstract List<Property> simulate() throws StepException;
     protected abstract List<Property> run() throws StepException;
     protected abstract List<Property> fail() throws StepException;
-    
+
     private void setAppConfig(AppConfig appConfig) throws StepException {
         if (appConfig == null) {
             String errMsg = "AppConfig is null. AppConfig is required.";
@@ -186,7 +186,7 @@ public abstract class AbstractStep {
         m_appConfig = appConfig;
     }
     protected AppConfig getAppConfig() { return m_appConfig; }
-    
+
     private String getProvisioningId() { return provisioningId; }
     private void setProvisioningId(String provisioningId) throws StepException {
         if (provisioningId == null) {
@@ -226,7 +226,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_type = type;
     }
     public String getDescription() { return m_description; }
@@ -236,7 +236,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_description = description;
     }
     public String getStatus() { return m_status; }
@@ -246,7 +246,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_status = status;
     }
     public Properties getProperties() { return m_props; }
@@ -260,7 +260,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_createUser = createUser;
     }
     private Datetime getCreateDatetime() { return m_createDatetime; }
@@ -270,7 +270,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_createDatetime = createDatetime;
     }
     private String getLastUpdateUser() { return m_lastUpdateUser; }
@@ -280,7 +280,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_lastUpdateUser = lastUpdateUser;
     }
     private Datetime getLastUpdateDatetime() { return m_lastUpdateDatetime; }
@@ -290,11 +290,11 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         m_lastUpdateDatetime = lastUpdateDatetime;
     }
-    
-    
+
+
     protected RoleProvisioningStep getProvisioningStepById(String stepId) {
         RoleProvisioning roleProvisioning = getRoleProvisioning();
         @SuppressWarnings("unchecked")
@@ -306,7 +306,7 @@ public abstract class AbstractStep {
         }
         return null;
     }
-    
+
     protected RoleProvisioningStep getProvisioningStepByType(String stepType) {
         RoleProvisioning roleProvisioning = getRoleProvisioning();
         @SuppressWarnings("unchecked")
@@ -335,11 +335,11 @@ public abstract class AbstractStep {
     public void addResultProperty(String key, String value) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] ";
         logger.debug(LOGTAG + "Adding result property " + key + ": " + value);
-        
+
         if (getResultProperties() == null) {
             setResultProperties(new ArrayList<>());
         }
-        
+
         Property newProp = roleProvisioning.newRoleProvisioningStep().newProperty();
         try {
             newProp.setKey(key);
@@ -350,7 +350,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-        
+
         // If the list already contains a Property
         // with this key value, update its value.
         boolean replacedValue = false;
@@ -377,11 +377,11 @@ public abstract class AbstractStep {
             logger.debug(LOGTAG + "No existing property with key " + key + ". Added property with value: " + value);
         }
     }
-    
+
     public List<Property> getResultProperties() {
         return m_resultProperties;
     }
-    
+
     protected String getResultProperty(String key) {
         List<Property> resultProperties = getResultProperties();
         for (Property prop : resultProperties) {
@@ -391,7 +391,7 @@ public abstract class AbstractStep {
         }
         return null;
     }
-    
+
     protected String getResultProperty(RoleProvisioningStep step, String key) {
         @SuppressWarnings("unchecked")
         List<Property> resultProperties = step.getProperty();
@@ -402,37 +402,37 @@ public abstract class AbstractStep {
         }
         return null;
     }
-    
+
     protected void setExecutionStartTime() throws StepException {
         m_executionStartTime = System.currentTimeMillis();
-        
+
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
         String formattedDate = format.format(new java.util.Date(m_executionStartTime));
 
         addResultProperty("startTime", Long.toString(getExecutionStartTime()));
         addResultProperty("startTimeFormatted", formattedDate);
-        
+
         logger.info(LOGTAG + "Set step startTime to " + getExecutionStartTime() + " or " + formattedDate);
     }
-    
+
     protected long getExecutionStartTime() {
         return m_executionStartTime;
     }
-    
+
     protected void setExecutionTime() throws StepException {
         long currentTime = System.currentTimeMillis();
         m_executionTime = currentTime - getExecutionStartTime();
 
         addResultProperty("executionTime", Long.toString(getExecutionTime()));
-        
+
         logger.info(LOGTAG + "Set step executionTime to " + m_executionTime + " = " + currentTime + " - " + m_executionStartTime);
     }
-    
+
     protected long getExecutionTime() {
         return m_executionTime;
     }
-    
+
     protected void setEndTime() throws StepException {
         m_executionEndTime = System.currentTimeMillis();
 
@@ -442,22 +442,22 @@ public abstract class AbstractStep {
 
         addResultProperty("executionEndTime", Long.toString(m_executionEndTime));
         addResultProperty("executionEndTimeFormatted", formattedDate);
-        
+
         logger.info(LOGTAG + "Set step executionEndTime to " + getExecutionEndTime() + " or " + formattedDate);
     }
-    
+
     protected long getExecutionEndTime() {
         return m_executionEndTime;
     }
-    
+
     public void update(String status, String result) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.update] ";
         logger.info(LOGTAG + "Updating step with status " + status + " and result " + result);
-        
+
         // Update the baseline state of the RoleProvisioning
         queryForRoleProvisioningBaseline();
-        
-        // If the current status is in progress, update the 
+
+        // If the current status is in progress, update the
         // execution time. Note that we don't want to
         // update the execution on update for steps that
         // have already completed or are in any other status
@@ -465,7 +465,7 @@ public abstract class AbstractStep {
         if (getStatus().equalsIgnoreCase(Step.STEP_STATUS_IN_PROGRESS)) {
             // setExecutionTime();
         }
-        
+
         // If the status is changing from in progress to anything else, set the executionEndTime.
         if (getStatus().equals(Step.STEP_STATUS_IN_PROGRESS) && !status.equals(Step.STEP_STATUS_IN_PROGRESS)) {
             setExecutionTime();
@@ -475,10 +475,10 @@ public abstract class AbstractStep {
         // Update the fields of this step.
         setStatus(status);
         setResult(result);
-        
+
         // Get the corresponding provisioning step.
         RoleProvisioningStep dStep = getProvisioningStepById(getStepId());
-        
+
         // Update the step values.
         try {
             dStep.setStatus(getStatus());
@@ -493,7 +493,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
-        
+
         // Perform the step update.
         try {
             long updateStartTime = System.currentTimeMillis();
@@ -506,16 +506,16 @@ public abstract class AbstractStep {
             String errMsg = "An error occurred updating the RoleProvisioning object with an updated ProvisioningStep. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
-        }    
+        }
     }
-    
+
     protected void rollback() throws StepException {
         String LOGTAG = "[AbstractStep.rollback] ";
         logger.info(LOGTAG + "Initializing common rollback logic...");
         logger.info(LOGTAG + "Querying for RoleProvisioning baseline...");
         queryForRoleProvisioningBaseline();
     }
-    
+
     private void queryForRoleProvisioningBaseline() throws StepException {
         // Query for the RoleProvisioning object in the AWS Account Service.
         // Get a configured query spec from AppConfig
@@ -528,7 +528,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-        
+
         // Set the values of the query spec.
         try {
             querySpec.setRoleProvisioningId(getProvisioningId());
@@ -538,7 +538,7 @@ public abstract class AbstractStep {
               logger.error(LOGTAG + errMsg);
               throw new StepException(errMsg, efe);
         }
-        
+
         // Log the state of the query spec.
         try {
             logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
@@ -550,7 +550,7 @@ public abstract class AbstractStep {
         }
 
         List<RoleProvisioning> results;
-        try { 
+        try {
             results = getRoleProvisioningProvider().query(querySpec);
             setRoleProvisioning(results.get(0));
         }
@@ -563,7 +563,7 @@ public abstract class AbstractStep {
 
     protected String getStepPropertyValue(String stepType, String key) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
-        
+
         // Get the property value with the named step and key.
         RoleProvisioningStep step = getProvisioningStepByType(stepType);
         String value;
@@ -579,7 +579,7 @@ public abstract class AbstractStep {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-        
+
         return value;
     }
 

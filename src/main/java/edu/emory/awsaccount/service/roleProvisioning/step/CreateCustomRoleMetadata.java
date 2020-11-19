@@ -31,9 +31,9 @@ import java.util.Properties;
 public class CreateCustomRoleMetadata extends AbstractStep implements Step {
     private ProducerPool awsAccountServiceProducerPool = null;
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[CreateCustomRoleMetadata.init] ";
 
         // This step needs to send messages to the AWS account service to create CustomRole metadata.
@@ -124,20 +124,17 @@ public class CreateCustomRoleMetadata extends AbstractStep implements Step {
             getAwsAccountServiceProducerPool().releaseProducer((MessageProducer)rs);
         }
 
-        // set result properties
-        addResultProperty("???", "???");
-
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateCustomRoleMetadata.simulate] ";
@@ -147,15 +144,15 @@ public class CreateCustomRoleMetadata extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateCustomRoleMetadata.fail] ";
@@ -165,11 +162,11 @@ public class CreateCustomRoleMetadata extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -181,7 +178,7 @@ public class CreateCustomRoleMetadata extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");

@@ -61,9 +61,9 @@ public class CreateAwsRoleForCustomRole extends AbstractStep implements Step {
     private String samlIdpName = null;
     private String samlIssuer = null;
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[CreateAwsRoleForCustomRole.init] ";
 
         logger.info(LOGTAG + "Getting custom step properties...");
@@ -117,15 +117,15 @@ public class CreateAwsRoleForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateAwsRoleForCustomRole.simulate] ";
@@ -138,15 +138,15 @@ public class CreateAwsRoleForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateAwsRoleForCustomRole.fail] ";
@@ -156,11 +156,11 @@ public class CreateAwsRoleForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -168,7 +168,6 @@ public class CreateAwsRoleForCustomRole extends AbstractStep implements Step {
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateAwsRoleForCustomRole.rollback] ";
-        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         // the account and custom role name was specified in the requisition
         RoleProvisioningRequisition roleProvisioningRequisition = getRoleProvisioning().getRoleProvisioningRequisition();
@@ -190,7 +189,7 @@ public class CreateAwsRoleForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");

@@ -35,9 +35,9 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
     private String m_identityDnTemplate = null;
     private String m_roleDnTemplate = null;
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[AssignUserToCustomRole.init] ";
 
         // This step needs to send messages to the IDM service to create account roles.
@@ -50,7 +50,7 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
             logger.fatal(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-        
+
         logger.info(LOGTAG + "Getting custom step properties...");
 
         setRequestTimeoutIntervalInMillis(getWithDefaultIntegerProperty(LOGTAG, "requestTimeoutIntervalInMillis", "10000", false));
@@ -85,15 +85,15 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[AssignUserToCustomRole.simulate] ";
@@ -103,15 +103,15 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[AssignUserToCustomRole.fail] ";
@@ -121,15 +121,15 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[AssignUserToCustomRole.rollback] ";
@@ -137,19 +137,19 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
-    
+
     private void generateRoleAssignment(String userId, String accountId, String roleName)
         throws StepException {
-        
+
         String LOGTAG = getStepTag() + "[AssignUserToCustomRole.generateRoleAssignment] ";
-        
+
         logger.info(LOGTAG + "Generating RoleAssignment for user " + userId  + " for account " + accountId);
-        
+
         // Get a configured RoleAssignment from AppConfig.
         RoleAssignment ra;
         RoleAssignmentRequisition req;
@@ -162,7 +162,7 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-        
+
         // Set the values of the RoleAssignmentRequisition
         try {
             req.setRoleAssignmentActionType("grant");
@@ -178,7 +178,7 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-        
+
         // Log the state of the RoleRequisition.
         try {
             logger.info(LOGTAG + "RoleAssignment req is: " + req.toXmlString());
@@ -187,8 +187,8 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
             String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
               logger.error(LOGTAG + errMsg);
               throw new StepException(errMsg, e);
-        }    
-        
+        }
+
         // Get a producer from the pool
         RequestService rs;
         try {
@@ -201,9 +201,9 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-        
+
         List<RoleAssignment> results;
-        try { 
+        try {
             long generateStartTime = System.currentTimeMillis();
             results = ra.generate(req, rs);
             long generateTime = System.currentTimeMillis() - generateStartTime;
@@ -230,7 +230,7 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
             }
         }
     }
-    
+
     private ProducerPool getIdmServiceProducerPool() { return m_idmServiceProducerPool; }
     private void setIdmServiceProducerPool(ProducerPool v) { m_idmServiceProducerPool = v; }
     private int getRequestTimeoutIntervalInMillis() { return m_requestTimeoutIntervalInMillis; }
@@ -243,7 +243,7 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
     private String buildIdentityDnFromTemplate(String userId) {
         return getIdentityDnTemplate().replace("USER_ID", userId);
     }
-    
+
     private String buildRoleDnFromTemplate(String accountId, String roleName) {
         return getRoleDnTemplate().replace("ACCOUNT_NUMBER", accountId).replace("CUSTOM_ROLE_NAME", roleName);
     }

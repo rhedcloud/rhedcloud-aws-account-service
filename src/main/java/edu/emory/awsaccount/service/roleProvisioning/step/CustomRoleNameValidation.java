@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 public class CustomRoleNameValidation extends AbstractStep implements Step {
     private static final Pattern ALPHANUMERIC = Pattern.compile("^[A-Za-z0-9]+$");
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[CustomRoleNameValidation.init] ";
         logger.info(LOGTAG + "Initialization complete.");
     }
@@ -72,15 +72,15 @@ public class CustomRoleNameValidation extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, stepResult);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CustomRoleNameValidation.simulate] ";
@@ -95,15 +95,15 @@ public class CustomRoleNameValidation extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CustomRoleNameValidation.fail] ";
@@ -111,18 +111,13 @@ public class CustomRoleNameValidation extends AbstractStep implements Step {
 
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_FAILURE);
 
-        // simulated result properties
-        addResultProperty("accountId", "123456789012");
-        addResultProperty("customRoleName", "fail");
-        addResultProperty("validationMessage", "Custom role name validation was forced to fail.");
-
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -134,7 +129,7 @@ public class CustomRoleNameValidation extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");

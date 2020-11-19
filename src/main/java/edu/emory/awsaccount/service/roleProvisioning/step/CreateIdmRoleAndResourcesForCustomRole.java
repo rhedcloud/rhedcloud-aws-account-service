@@ -35,9 +35,9 @@ public class CreateIdmRoleAndResourcesForCustomRole extends AbstractStep impleme
     private int m_requestTimeoutIntervalInMillis = 10000;
     private String groupDnTemplate = null;
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCustomRole.init] ";
 
         // This step needs to send messages to the IDM service to create account roles.
@@ -187,15 +187,15 @@ public class CreateIdmRoleAndResourcesForCustomRole extends AbstractStep impleme
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCustomRole.simulate] ";
@@ -205,15 +205,15 @@ public class CreateIdmRoleAndResourcesForCustomRole extends AbstractStep impleme
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCustomRole.fail] ";
@@ -223,11 +223,11 @@ public class CreateIdmRoleAndResourcesForCustomRole extends AbstractStep impleme
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -236,12 +236,11 @@ public class CreateIdmRoleAndResourcesForCustomRole extends AbstractStep impleme
         super.rollback();
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCustomRole.rollback] ";
-
         logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");

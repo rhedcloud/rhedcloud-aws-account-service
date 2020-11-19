@@ -20,11 +20,11 @@ import java.util.Properties;
 public class ExampleStep extends AbstractStep implements Step {
     private int sleepTimeInMillis;
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[RoleProvisioning.ExampleStep.init] ";
-        
+
         logger.info(LOGTAG + "Getting custom step properties...");
 
         setSleepTimeInMillis(getWithDefaultIntegerProperty(LOGTAG, "sleepTimeInMillis", "5000", false));
@@ -56,15 +56,15 @@ public class ExampleStep extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[RoleProvisioning.ExampleStep.simulate] ";
@@ -74,15 +74,15 @@ public class ExampleStep extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[RoleProvisioning.ExampleStep.fail] ";
@@ -92,11 +92,11 @@ public class ExampleStep extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -108,12 +108,12 @@ public class ExampleStep extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
-    
+
     private void setSleepTimeInMillis(int v) { sleepTimeInMillis = v; }
     private int getSleepTimeInMillis() { return sleepTimeInMillis; }
 }

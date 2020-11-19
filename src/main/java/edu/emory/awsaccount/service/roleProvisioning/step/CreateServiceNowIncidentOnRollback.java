@@ -35,9 +35,9 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
     private boolean createIncidentOnFailure;
     private final Properties incidentProperties = new Properties();
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[CreateServiceNowIncidentOnRollback.init] ";
 
         // This step needs to send messages to the LDS Service to provision the group for the account.
@@ -74,15 +74,15 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateServiceNowIncidentOnRollback.simulate] ";
@@ -92,15 +92,15 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateServiceNowIncidentOnRollback.fail] ";
@@ -110,11 +110,11 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -262,7 +262,7 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");

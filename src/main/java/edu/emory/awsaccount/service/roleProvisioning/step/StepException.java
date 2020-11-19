@@ -15,7 +15,7 @@ public class StepException extends Exception {
    */
   public StepException() {
     super();
-  }  
+  }
   /**
     * Message constructor.
     */

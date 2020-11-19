@@ -40,9 +40,9 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
     private String organizationalUnitDescriptionTemplate = null;
     private String organizationalUnitDnTemplate = null;
 
-    public void init (String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
-        
+
         String LOGTAG = getStepTag() + "[CreateLdsGroupForCustomRole.init] ";
 
         // This step needs to send messages to the LDS Service to provision the group for the account.
@@ -84,11 +84,11 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -362,15 +362,15 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
-    
+
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateLdsGroupForCustomRole.fail] ";
@@ -380,11 +380,11 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_FAILURE);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-        
+
         // Return the properties.
         return getResultProperties();
     }
@@ -393,16 +393,16 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         super.rollback();
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateLdsGroupForCustomRole.rollback] ";
-        
+
         String createdGroup = getResultProperty("createdGroup");
         boolean rollbackRequired = Boolean.parseBoolean(createdGroup);
         String distinguishedName = getResultProperty("distinguishedName");
-        
+
         // If the step property createdGroup is true,
         // Query for the Group and then delete it.
         if (rollbackRequired) {
             // Query for the Group by distinguished name.
-            
+
             // Get a configured Group object and query spec from AppConfig.
             Group group;
             GroupQuerySpecification querySpec;
@@ -415,7 +415,7 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, e);
             }
-            
+
             // Set the values of the querySpec.
             try {
                 querySpec.setdistinguishedName(distinguishedName);
@@ -425,7 +425,7 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
                   logger.error(LOGTAG + errMsg);
                   throw new StepException(errMsg, e);
             }
-            
+
             // Log the state of the query spec.
             try {
                 logger.info(LOGTAG + "query spec is: " + querySpec.toXmlString());
@@ -434,8 +434,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
                 String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
                   logger.error(LOGTAG + errMsg);
                   throw new StepException(errMsg, e);
-            }    
-            
+            }
+
             // Get a producer from the pool
             RequestService rs;
             try {
@@ -446,9 +446,9 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, e);
             }
-            
+
             List<Group> results;
-            try { 
+            try {
                 long queryStartTime = System.currentTimeMillis();
                 results = group.query(querySpec, rs);
                 long queryTime = System.currentTimeMillis() - queryStartTime;
@@ -462,11 +462,11 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
             finally {
                 getLdsServiceProducerPool().releaseProducer((MessageProducer) rs);
             }
-            
+
             // If there is exactly one result delete it and set result properties.
             if (results.size() == 1) {
                 group = results.get(0);
-                
+
                 // Log the state of the Group.
                 try {
                     logger.info(LOGTAG + "Group is: " + group.toXmlString());
@@ -475,8 +475,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
                     String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
                       logger.error(LOGTAG + errMsg);
                       throw new StepException(errMsg, e);
-                }    
-                
+                }
+
                 // Get a producer from the pool
                 try {
                     rs = (RequestService) getLdsServiceProducerPool().getExclusiveProducer();
@@ -486,13 +486,13 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
                     logger.error(LOGTAG + errMsg);
                     throw new StepException(errMsg, e);
                 }
-                
-                try { 
+
+                try {
                     long deleteStartTime = System.currentTimeMillis();
                     group.delete("Delete", rs);
                     long deleteTime = System.currentTimeMillis() - deleteStartTime;
                     logger.info(LOGTAG + "Deleted Group in " + deleteTime + "ms.");
-                    addResultProperty("deletedGroup", "true"); 
+                    addResultProperty("deletedGroup", "true");
                 }
                 catch (EnterpriseObjectDeleteException e) {
                     String errMsg = "An error occurred deleting the Group object. The exception is: " + e.getMessage();
@@ -516,7 +516,7 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
 
         // Update the step.
         update(STEP_STATUS_ROLLBACK, STEP_RESULT_SUCCESS);
-        
+
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
