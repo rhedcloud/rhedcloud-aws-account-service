@@ -173,6 +173,16 @@ xsi:noNamespaceSchemaLocation="#mySchema">
 		</RoleProvisioningQuerySpecification>
 	</querylanguage>
 	<querylanguage>
+		<RoleDeprovisioningQuerySpecification>
+			<QueryLanguage max="20" type="hql" name="maxRoleDeprovisionings" value="from RoleDeprovisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</RoleDeprovisioningQuerySpecification>
+		<RoleDeprovisioningQuerySpecification>
+			<QueryLanguage type="hql" name="allRoleDeprovisionings" value="from RoleDeprovisioning order by CreateDatetime desc">
+			</QueryLanguage>
+		</RoleDeprovisioningQuerySpecification>
+	</querylanguage>
+	<querylanguage>
 
 		<AccountNotificationQuerySpecification>
 			<QueryLanguage max="200" type="hql" name="maxByAccountId" value="from AccountNotification where AccountId=:AccountId order by CreateDatetime desc">
