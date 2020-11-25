@@ -6,14 +6,14 @@
 
 package edu.emory.awsaccount.service.provider;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleProvisioning;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleDeprovisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningStep;
-import edu.emory.awsaccount.service.roleProvisioning.step.Step;
-import edu.emory.awsaccount.service.roleProvisioning.step.StepException;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningStep;
+import edu.emory.awsaccount.service.roleDeprovisioning.step.Step;
+import edu.emory.awsaccount.service.roleDeprovisioning.step.StepException;
 import org.apache.log4j.Logger;
 import org.openeai.OpenEaiObject;
 import org.openeai.config.AppConfig;
@@ -40,13 +40,13 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Custom AWS Role Provisioning provider.
+ * Custom AWS Role Deprovisioning provider.
  */
-public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements RoleProvisioningProvider {
-    private static final Logger logger = Logger.getLogger(CustomAwsRoleProvisioningProvider.class);
+public class CustomAwsRoleDeprovisioningProvider extends OpenEaiObject implements RoleDeprovisioningProvider {
+    private static final Logger logger = Logger.getLogger(CustomAwsRoleDeprovisioningProvider.class);
 
-    private static final String PROVISIONING_ID_SEQUENCE_NAME = "CustomRoleProvisioningIdSequence";
-    private static final String PROVISIONING_ID_DEFAULT_PREFIX = "custom-role-provisioning-";
+    private static final String PROVISIONING_ID_SEQUENCE_NAME = "CustomRoleDeprovisioningIdSequence";
+    private static final String PROVISIONING_ID_DEFAULT_PREFIX = "custom-role-deprovisioning-";
 
     private AppConfig appConfig;
     private boolean verbose;
@@ -58,13 +58,13 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
     @Override
     public void init(AppConfig aConfig) throws ProviderException {
-        final String LOGTAG = "[CustomAwsRoleProvisioningProvider.init] ";
+        final String LOGTAG = "[CustomAwsRoleDeprovisioningProvider.init] ";
         logger.info(LOGTAG + "Initializing...");
         setAppConfig(aConfig);
 
         // Get the provider properties
         try {
-            PropertyConfig pConfig = (PropertyConfig) getAppConfig().getObject("CustomRoleProvisioningProviderProperties");
+            PropertyConfig pConfig = (PropertyConfig) getAppConfig().getObject("CustomRoleDeprovisioningProviderProperties");
             setProperties(pConfig.getProperties());
         }
         catch (EnterpriseConfigurationObjectException e) {
@@ -78,8 +78,8 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
         // Set the properties for the provider
         setVerbose(Boolean.parseBoolean(getProperties().getProperty("verbose", "false")));
         logger.info(LOGTAG + "verbose property is: " + getVerbose());
-        setProvisioningIdPrefix(getProperties().getProperty("roleProvisioningIdPrefix", PROVISIONING_ID_DEFAULT_PREFIX));
-        logger.info(LOGTAG + "roleProvisioningIdPrefix property is: " + getProvisioningIdPrefix());
+        setProvisioningIdPrefix(getProperties().getProperty("roleDeprovisioningIdPrefix", PROVISIONING_ID_DEFAULT_PREFIX));
+        logger.info(LOGTAG + "roleDeprovisioningIdPrefix property is: " + getProvisioningIdPrefix());
 
         // This provider needs a sequence to generate a unique ProvisioningId
         // for each transaction in multiple threads and multiple instances.
@@ -154,17 +154,17 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
     }
 
     @Override
-    public List<RoleProvisioning> query(RoleProvisioningQuerySpecification querySpec) throws ProviderException {
-        final String LOGTAG = "[CustomAwsRoleProvisioningProvider.query] ";
-        logger.info(LOGTAG + "Querying for RoleProvisioning with ProvisioningId: " + querySpec.getRoleProvisioningId());
+    public List<RoleDeprovisioning> query(RoleDeprovisioningQuerySpecification querySpec) throws ProviderException {
+        final String LOGTAG = "[CustomAwsRoleDeprovisioningProvider.query] ";
+        logger.info(LOGTAG + "Querying for RoleDeprovisioning with ProvisioningId: " + querySpec.getRoleDeprovisioningId());
 
         // Get a configured object to use.
-        RoleProvisioning roleProvisioning;
+        RoleDeprovisioning roleDeprovisioning;
         try {
-            roleProvisioning = (RoleProvisioning) getAppConfig().getObjectByType(RoleProvisioning.class.getName());
+            roleDeprovisioning = (RoleDeprovisioning) getAppConfig().getObjectByType(RoleDeprovisioning.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
-            String errMsg = "An error occurred getting RoleProvisioning properties from AppConfig. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred getting RoleDeprovisioning properties from AppConfig. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -182,16 +182,16 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             throw new ProviderException(errMsg, e);
         }
 
-        List<RoleProvisioning> results;
+        List<RoleDeprovisioning> results;
         try {
-            logger.info(LOGTAG + "Querying for the RoleProvisioning...");
+            logger.info(LOGTAG + "Querying for the RoleDeprovisioning...");
             long startTime = System.currentTimeMillis();
-            results = roleProvisioning.query(querySpec, rs);
+            results = roleDeprovisioning.query(querySpec, rs);
             long time = System.currentTimeMillis() - startTime;
-            logger.info(LOGTAG + "Queried for RoleProvisioning objects in " + time + " ms.");
+            logger.info(LOGTAG + "Queried for RoleDeprovisioning objects in " + time + " ms.");
         }
         catch (EnterpriseObjectQueryException e) {
-            String errMsg = "An error occurred querying the RoleProvisioning object The exception is: " + e.getMessage();
+            String errMsg = "An error occurred querying the RoleDeprovisioning object The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -203,16 +203,16 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
     }
 
     @Override
-    public RoleProvisioning generate(RoleProvisioningRequisition requisition) throws ProviderException {
-        final String LOGTAG = "[CustomAwsRoleProvisioningProvider.generate] ";
+    public RoleDeprovisioning generate(RoleDeprovisioningRequisition requisition) throws ProviderException {
+        final String LOGTAG = "[CustomAwsRoleDeprovisioningProvider.generate] ";
 
         // Get a configured object from AppConfig
-        RoleProvisioning roleProvisioning;
+        RoleDeprovisioning roleDeprovisioning;
         try {
-            roleProvisioning = (RoleProvisioning) appConfig.getObjectByType(RoleProvisioning.class.getName());
+            roleDeprovisioning = (RoleDeprovisioning) appConfig.getObjectByType(RoleDeprovisioning.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
-            String errMsg = "An error occurred getting RoleProvisioning properties from AppConfig. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred getting RoleDeprovisioning properties from AppConfig. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -231,15 +231,15 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
         String provisioningId = getProvisioningIdPrefix() + seq;
         try {
-            roleProvisioning.setRoleProvisioningId(provisioningId);
-            roleProvisioning.setAccountId(requisition.getAccountId());
-            roleProvisioning.setRoleProvisioningRequisition(requisition);
-            roleProvisioning.setStatus(ROLE_PROVISIONING_STATUS_PENDING);
-            roleProvisioning.setCreateUser("AwsAccountService");
-            roleProvisioning.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
+            roleDeprovisioning.setRoleDeprovisioningId(provisioningId);
+            roleDeprovisioning.setAccountId(requisition.getAccountId());
+            roleDeprovisioning.setRoleDeprovisioningRequisition(requisition);
+            roleDeprovisioning.setStatus(ROLE_PROVISIONING_STATUS_PENDING);
+            roleDeprovisioning.setCreateUser("AwsAccountService");
+            roleDeprovisioning.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
         }
         catch (EnterpriseFieldException e) {
-            String errMsg = "An error occurred setting the values of the RoleProvisioning object. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred setting the values of the RoleDeprovisioning object. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -266,9 +266,9 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
             totalAnticipatedTime += Long.parseLong(stepAnticipatedTime);
 
-            RoleProvisioningStep provisioningStep = roleProvisioning.newRoleProvisioningStep();
+            RoleDeprovisioningStep provisioningStep = roleDeprovisioning.newRoleDeprovisioningStep();
             try {
-                provisioningStep.setRoleProvisioningId(provisioningId);
+                provisioningStep.setRoleDeprovisioningId(provisioningId);
                 provisioningStep.setStepId(stepId);
                 provisioningStep.setType(stepType);
                 provisioningStep.setDescription(stepDesc);
@@ -277,7 +277,7 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                 provisioningStep.setCreateUser("AwsAccountService");
                 provisioningStep.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
 
-                roleProvisioning.addRoleProvisioningStep(provisioningStep);
+                roleDeprovisioning.addRoleDeprovisioningStep(provisioningStep);
             }
             catch (EnterpriseFieldException e) {
                 String errMsg = "An error occurred setting field values of the ProvisioningStep object. The exception is: " + e.getMessage();
@@ -288,7 +288,7 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
         // update the overall anticipated time, now that we've computed it
         try {
-            roleProvisioning.setAnticipatedTime(Long.toString(totalAnticipatedTime));
+            roleDeprovisioning.setAnticipatedTime(Long.toString(totalAnticipatedTime));
         }
         catch (EnterpriseFieldException e) {
             String errMsg = "An error occurred setting field values of the provisioning object. The exception is: " + e.getMessage();
@@ -298,12 +298,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
         try {
             long createStartTime = System.currentTimeMillis();
-            create(roleProvisioning);
+            create(roleDeprovisioning);
             long createTime = System.currentTimeMillis() - createStartTime;
-            logger.info(LOGTAG + "Created RoleProvisioning in " + createTime + " ms.");
+            logger.info(LOGTAG + "Created RoleDeprovisioning in " + createTime + " ms.");
         }
         catch (ProviderException e) {
-            String errMsg = "An error occurred performing the RoleProvisioning create. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred performing the RoleDeprovisioning create. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -313,12 +313,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
         // adding jobs to the pool, it may throw an exception indicating it
         // is busy when we try to add a job. We need to catch that exception
         // and try to add the job until we are successful.
-        RoleProvisioningTransaction roleProvisioningTransaction = new RoleProvisioningTransaction(roleProvisioning);
+        RoleDeprovisioningTransaction roleDeprovisioningTransaction = new RoleDeprovisioningTransaction(roleDeprovisioning);
         boolean jobAdded = false;
         while (!jobAdded) {
             try {
                 logger.info(LOGTAG + "Adding job to thread pool for ProvisioningId: " + provisioningId);
-                getThreadPool().addJob(roleProvisioningTransaction);
+                getThreadPool().addJob(roleDeprovisioningTransaction);
                 jobAdded = true;
             }
             catch (ThreadPoolException e) {
@@ -334,12 +334,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             }
         }
 
-        return roleProvisioning;
+        return roleDeprovisioning;
     }
 
     @Override
-    public void create(RoleProvisioning roleProvisioning) throws ProviderException {
-        final String LOGTAG = "[CustomAwsRoleProvisioningProvider.create] ";
+    public void create(RoleDeprovisioning roleDeprovisioning) throws ProviderException {
+        final String LOGTAG = "[CustomAwsRoleDeprovisioningProvider.create] ";
 
         // Get a RequestService to use for this transaction.
         RequestService rs;
@@ -354,12 +354,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
         try {
             long startTime = System.currentTimeMillis();
-            roleProvisioning.create(rs);
+            roleDeprovisioning.create(rs);
             long time = System.currentTimeMillis() - startTime;
-            logger.info(LOGTAG + "Created RoleProvisioning object in " + time + " ms.");
+            logger.info(LOGTAG + "Created RoleDeprovisioning object in " + time + " ms.");
         }
         catch (EnterpriseObjectCreateException e) {
-            String errMsg = "An error occurred creating the RoleProvisioning object. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred creating the RoleDeprovisioning object. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -369,8 +369,8 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
     }
 
     @Override
-    public void update(RoleProvisioning roleProvisioning) throws ProviderException {
-        final String LOGTAG = "[CustomAwsRoleProvisioningProvider.update] ";
+    public void update(RoleDeprovisioning roleDeprovisioning) throws ProviderException {
+        final String LOGTAG = "[CustomAwsRoleDeprovisioningProvider.update] ";
 
         // Get a RequestService to use for this transaction.
         RequestService rs;
@@ -385,12 +385,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
         try {
             long startTime = System.currentTimeMillis();
-            roleProvisioning.update(rs);
+            roleDeprovisioning.update(rs);
             long time = System.currentTimeMillis() - startTime;
-            logger.info(LOGTAG + "Updated RoleProvisioning object in " + time + " ms.");
+            logger.info(LOGTAG + "Updated RoleDeprovisioning object in " + time + " ms.");
         }
         catch (EnterpriseObjectUpdateException e) {
-            String errMsg = "An error occurred updating the RoleProvisioning object. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred updating the RoleDeprovisioning object. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -400,8 +400,8 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
     }
 
     @Override
-    public void delete(RoleProvisioning roleProvisioning) throws ProviderException {
-        final String LOGTAG = "[CustomAwsRoleProvisioningProvider.delete] ";
+    public void delete(RoleDeprovisioning roleDeprovisioning) throws ProviderException {
+        final String LOGTAG = "[CustomAwsRoleDeprovisioningProvider.delete] ";
 
         // Get a RequestService to use for this transaction.
         RequestService rs;
@@ -416,12 +416,12 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
         try {
             long startTime = System.currentTimeMillis();
-            roleProvisioning.delete("Delete", rs);
+            roleDeprovisioning.delete("Delete", rs);
             long time = System.currentTimeMillis() - startTime;
-            logger.info(LOGTAG + "Deleted RoleProvisioning object in " + time + " ms.");
+            logger.info(LOGTAG + "Deleted RoleDeprovisioning object in " + time + " ms.");
         }
         catch (EnterpriseObjectDeleteException e) {
-            String errMsg = "An error occurred deleting the RoleProvisioning object. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred deleting the RoleDeprovisioning object. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg, e);
         }
@@ -461,29 +461,29 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
     public void setThreadPool(ThreadPool v) { this.threadPool = v; }
     public int getThreadPoolSleepInterval() { return threadPoolSleepInterval; }
     public void setThreadPoolSleepInterval(int v) { this.threadPoolSleepInterval = v; }
-    public RoleProvisioningProvider getRoleProvisioningProvider() { return this; }
+    public RoleDeprovisioningProvider getRoleDeprovisioningProvider() { return this; }
 
 
     /**
-     * A transaction to process custom AWS role provisioning.
+     * A transaction to process custom AWS role deprovisioning.
      */
-    private class RoleProvisioningTransaction implements java.lang.Runnable {
-        private RoleProvisioning roleProvisioning;
+    private class RoleDeprovisioningTransaction implements java.lang.Runnable {
+        private RoleDeprovisioning roleDeprovisioning;
         private long executionStartTime = 0;
 
-        public RoleProvisioningTransaction(RoleProvisioning roleProvisioning) {
+        public RoleDeprovisioningTransaction(RoleDeprovisioning roleDeprovisioning) {
             // must happen first
-            setRoleProvisioning(roleProvisioning);
+            setRoleDeprovisioning(roleDeprovisioning);
 
-            final String LOGTAG = "[RoleProvisioningTransaction{" + getProvisioningId() + "}] ";
+            final String LOGTAG = "[RoleDeprovisioningTransaction{" + getProvisioningId() + "}] ";
             logger.info(LOGTAG + "Initializing provisioning process");
         }
 
         public void run() {
             setExecutionStartTime(System.currentTimeMillis());
 
-            String LOGTAG = "[RoleProvisioningTransaction{" + getProvisioningId() + "}] ";
-            logger.info(LOGTAG + "Running provisioning process");
+            String LOGTAG = "[RoleDeprovisioningTransaction{" + getProvisioningId() + "}] ";
+            logger.info(LOGTAG + "Running deprovisioning process");
 
             List<Properties> stepsAsProperties;
             try {
@@ -510,7 +510,7 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                         Class<?> stepClass = Class.forName(className);
                         step = (Step) stepClass.newInstance();
                         logger.info(LOGTAG + "Initializing step index " + stepIndex + ".");
-                        step.init(getProvisioningId(), props, getAppConfig(), getRoleProvisioningProvider());
+                        step.init(getProvisioningId(), props, getAppConfig(), getRoleDeprovisioningProvider());
                     }
                     catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                         String errMsg = "An error occurred instantiating the Step. The exception is: " + e.getMessage();
@@ -591,28 +591,28 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             // Set the end of execution.
             long executionTime = System.currentTimeMillis() - getExecutionStartTime();
 
-            // Update the state of the RoleProvisioning object in this transaction.
-            queryForRoleProvisioningBaseline();
+            // Update the state of the RoleDeprovisioning object in this transaction.
+            queryForRoleDeprovisioningBaseline();
 
             // Set the status to complete, the result to success, and the
             // execution time.
             try {
-                getRoleProvisioning().setStatus(ROLE_PROVISIONING_STATUS_COMPLETED);
-                getRoleProvisioning().setProvisioningResult(ROLE_PROVISIONING_RESULT_SUCCESS);
-                getRoleProvisioning().setActualTime(Long.toString(executionTime));
+                getRoleDeprovisioning().setStatus(ROLE_PROVISIONING_STATUS_COMPLETED);
+                getRoleDeprovisioning().setDeprovisioningResult(ROLE_PROVISIONING_RESULT_SUCCESS);
+                getRoleDeprovisioning().setActualTime(Long.toString(executionTime));
             }
             catch (EnterpriseFieldException efe) {
-                String errMsg = "An error occurred setting field values on the RoleProvisioning object. The exception is: " + efe.getMessage();
+                String errMsg = "An error occurred setting field values on the RoleDeprovisioning object. The exception is: " + efe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 return;
             }
 
-            // Update the RoleProvisioning object.
+            // Update the RoleDeprovisioning object.
             try {
-                getRoleProvisioningProvider().update(getRoleProvisioning());
+                getRoleDeprovisioningProvider().update(getRoleDeprovisioning());
             }
             catch (ProviderException e) {
-                String errMsg = "An error occurred querying for the  current state of a RoleProvisioning object. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred querying for the  current state of a RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 return;
             }
@@ -641,26 +641,26 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             // All steps completed successfully. Set the end of execution.
             long executionTime = System.currentTimeMillis() - getExecutionStartTime();
 
-            // Update the state of the RoleProvisioning object in this transaction.
-            queryForRoleProvisioningBaseline();
+            // Update the state of the RoleDeprovisioning object in this transaction.
+            queryForRoleDeprovisioningBaseline();
 
             // Set the status to complete, the result to failure, and the execution time.
             try {
-                getRoleProvisioning().setStatus(ROLE_PROVISIONING_STATUS_COMPLETED);
-                getRoleProvisioning().setProvisioningResult(ROLE_PROVISIONING_RESULT_FAILURE);
-                getRoleProvisioning().setActualTime(Long.toString(executionTime));
+                getRoleDeprovisioning().setStatus(ROLE_PROVISIONING_STATUS_COMPLETED);
+                getRoleDeprovisioning().setDeprovisioningResult(ROLE_PROVISIONING_RESULT_FAILURE);
+                getRoleDeprovisioning().setActualTime(Long.toString(executionTime));
             }
             catch (EnterpriseFieldException efe) {
-                String errMsg = "An error setting field values on the RoleProvisioning object. The exception is: " + efe.getMessage();
+                String errMsg = "An error setting field values on the RoleDeprovisioning object. The exception is: " + efe.getMessage();
                 logger.error(LOGTAG + errMsg);
             }
 
-            // Update the RoleProvisioning object.
+            // Update the RoleDeprovisioning object.
             try {
-                getRoleProvisioningProvider().update(getRoleProvisioning());
+                getRoleDeprovisioningProvider().update(getRoleDeprovisioning());
             }
             catch (ProviderException e) {
-                String errMsg = "An error occurred querying for the  current state of a RoleProvisioning object. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred querying for the  current state of a RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
             }
         }
@@ -678,14 +678,14 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             return buf.toString();
         }
 
-        private void queryForRoleProvisioningBaseline() {
-            String LOGTAG = "[RoleProvisioningTransaction{" + getProvisioningId() + "}] ";
+        private void queryForRoleDeprovisioningBaseline() {
+            String LOGTAG = "[RoleDeprovisioningTransaction{" + getProvisioningId() + "}] ";
 
-            // Query for the RoleProvisioning object in the AWS Account Service.
+            // Query for the RoleDeprovisioning object in the AWS Account Service.
             // Get a configured query spec from AppConfig
-            RoleProvisioningQuerySpecification qs = new RoleProvisioningQuerySpecification();
+            RoleDeprovisioningQuerySpecification qs = new RoleDeprovisioningQuerySpecification();
             try {
-                qs = (RoleProvisioningQuerySpecification) getAppConfig().getObjectByType(RoleProvisioningQuerySpecification.class.getName());
+                qs = (RoleDeprovisioningQuerySpecification) getAppConfig().getObjectByType(RoleDeprovisioningQuerySpecification.class.getName());
             }
             catch (EnterpriseConfigurationObjectException e) {
                 String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
@@ -694,10 +694,10 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
 
             // Set the values of the query spec.
             try {
-                qs.setRoleProvisioningId(getProvisioningId());
+                qs.setRoleDeprovisioningId(getProvisioningId());
             }
             catch (EnterpriseFieldException efe) {
-                String errMsg = "An error occurred setting the values of the RoleProvisioning query spec. The exception is: " + efe.getMessage();
+                String errMsg = "An error occurred setting the values of the RoleDeprovisioning query spec. The exception is: " + efe.getMessage();
                 logger.error(LOGTAG + errMsg);
             }
 
@@ -711,18 +711,18 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             }
 
             try {
-                List<RoleProvisioning> results = getRoleProvisioningProvider().query(qs);
-                setRoleProvisioning(results.get(0));
+                List<RoleDeprovisioning> results = getRoleDeprovisioningProvider().query(qs);
+                setRoleDeprovisioning(results.get(0));
             }
             catch (ProviderException pe) {
-                String errMsg = "An error occurred querying for the  current state of a RoleProvisioning object. The exception is: " + pe.getMessage();
+                String errMsg = "An error occurred querying for the  current state of a RoleDeprovisioning object. The exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errMsg);
             }
         }
 
-        private RoleProvisioning getRoleProvisioning() { return roleProvisioning; }
-        private void setRoleProvisioning(RoleProvisioning v) { roleProvisioning = v; }
-        private String getProvisioningId() { return roleProvisioning.getRoleProvisioningId(); }
+        private RoleDeprovisioning getRoleDeprovisioning() { return roleDeprovisioning; }
+        private void setRoleDeprovisioning(RoleDeprovisioning v) { roleDeprovisioning = v; }
+        private String getProvisioningId() { return roleDeprovisioning.getRoleDeprovisioningId(); }
 
         private long getExecutionStartTime() { return executionStartTime; }
         private void setExecutionStartTime(long time) { executionStartTime = time; }

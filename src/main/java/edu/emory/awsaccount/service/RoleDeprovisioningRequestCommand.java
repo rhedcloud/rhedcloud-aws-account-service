@@ -6,11 +6,11 @@
 
 package edu.emory.awsaccount.service;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleProvisioning;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleDeprovisioning;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition;
 import edu.emory.awsaccount.service.provider.ProviderException;
-import edu.emory.awsaccount.service.provider.RoleProvisioningProvider;
+import edu.emory.awsaccount.service.provider.RoleDeprovisioningProvider;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.log4j.Logger;
@@ -42,20 +42,20 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * This command handles requests for RoleProvisioning objects.
+ * This command handles requests for RoleDeprovisioning objects.
  * Specifically, it handles a Generate-Request. All other actions for the
- * RoleProvisioning object are handled by a deployment of the
+ * RoleDeprovisioning object are handled by a deployment of the
  * RDBMS connector for persistence and retrieval purposes only. This command
  * also proxies query requests to the RDBMS connector implementation, so
  * one command and one endpoint can cleanly implement the entire public
  * interface for role provisioning.
  * <P>
- * The generate and query actions for RoleProvisioning are
- * invoked by clients wanting to provision custom roles in an existing AWS account.
- * The generate operation passes in an RoleProvisioningRequisition object
- * with the account number and role information to provision. The generate action immediately returns
- * a RoleProvisioning object with detailed status of the
- * provisioning process and a RoleProvisioningId that can be used for subsequent
+ * The generate and query actions for RoleDeprovisioning are
+ * invoked by clients wanting to deprovision custom roles in an existing AWS account.
+ * The generate operation passes in an RoleDeprovisioningRequisition object
+ * with the account number and role information to deprovision. The generate action immediately returns
+ * a RoleDeprovisioning object with detailed status of the
+ * provisioning process and a RoleDeprovisioningId that can be used for subsequent
  * queries for updates on the progress of provisioning. Additionally, like
  * all similar services the AwsAccountService also publishes create, update, and
  * delete sync messages, so as a new instance of the provisioning process
@@ -63,36 +63,36 @@ import java.util.StringTokenizer;
  * Applications interested in the status of provisioning may also consume
  * these messages to take action on provisioning operations.
  * <OL>
- * <LI>com.amazon.aws.Provisioning.RoleProvisioning.Query-Request (<A HREF=
- * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleProvisioning/1.0/dtd/Query-Request.dtd"
+ * <LI>com.amazon.aws.Provisioning.RoleDeprovisioning.Query-Request (<A HREF=
+ * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleDeprovisioning/1.0/dtd/Query-Request.dtd"
  * >Definition</A> | <A HREF=
- * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleProvisioning/1.0/xml/Query-Request.xml"
+ * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleDeprovisioning/1.0/xml/Query-Request.xml"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
  * <LI>Build a message object from the XML document for the
- * RoleProvisioningQuerySpecification</LI>
- * <LI>Get a configured RoleProvisioning object from
+ * RoleDeprovisioningQuerySpecification</LI>
+ * <LI>Get a configured RoleDeprovisioning object from
  * AppConfig</LI>
  * <LI>Get the P2P producer pool configured to send messages to the
  * AwsAccountService RDBMS command implementation</LI>
- * <LI>Call the query method on the RoleProvisioning</LI>
+ * <LI>Call the query method on the RoleDeprovisioning</LI>
  * <LI>Proxy the result to the requestor by building the message response from
  * the results of the query operation. This should contain a list of
- * zero or more RoleProvisioning objects.</LI>
+ * zero or more RoleDeprovisioning objects.</LI>
  * <LI>Return the response.</LI>
  * </UL>
  * </LI>
- * <LI>com.amazon.aws.Provisioning.RoleProvisioning.Generate-Request (<A
+ * <LI>com.amazon.aws.Provisioning.RoleDeprovisioning.Generate-Request (<A
  * HREF=
- * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleProvisioning/1.0/dtd/Generate-Request.dtd"
+ * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleDeprovisioning/1.0/dtd/Generate-Request.dtd"
  * >Definition</A> | <A HREF=
- * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleProvisioning/1.0/xml/Generate-Request.xml"
+ * "https://bitbucket.org/rhedcloud/rhedcloud-aws-moas/src/master/message/releases/com/amazon/aws/Provisioning/RoleDeprovisioning/1.0/xml/Generate-Request.xml"
  * >Sample Message</A>)
  * <UL>
  * <LI>Convert the JMS message to and XML document</LI>
  * <LI>Build a message object from the XML document for the
- * RoleProvisioning object</LI>
+ * RoleDeprovisioning object</LI>
  * <LI>Invoke the generate method of the
  * configured role provisioning provider. </LI>
  * <LI>Build the response to the request message</LI>
@@ -102,10 +102,10 @@ import java.util.StringTokenizer;
  *
  * </OL>
  */
-public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
-    private static final String LOGTAG = "[RoleProvisioningRequestCommand] ";
-    private static final Logger logger = Logger.getLogger(RoleProvisioningRequestCommand.class);
-    private RoleProvisioningProvider m_provider = null;
+public class RoleDeprovisioningRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
+    private static final String LOGTAG = "[RoleDeprovisioningRequestCommand] ";
+    private static final Logger logger = Logger.getLogger(RoleDeprovisioningRequestCommand.class);
+    private RoleDeprovisioningProvider m_provider = null;
     private ProducerPool m_producerPool = null;
 
     /**
@@ -122,7 +122,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
      * @param cConfig command config
      * @throws InstantiationException on error
      */
-    public RoleProvisioningRequestCommand(CommandConfig cConfig) throws InstantiationException {
+    public RoleDeprovisioningRequestCommand(CommandConfig cConfig) throws InstantiationException {
         super(cConfig);
         logger.info(LOGTAG + "Initializing " + ReleaseTag.getReleaseInfo());
 
@@ -149,21 +149,21 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
         }
 
         // Initialize a provider
-        String className = getProperties().getProperty("roleProvisioningProviderClassName");
+        String className = getProperties().getProperty("roleDeprovisioningProviderClassName");
         if (className == null || className.equals("")) {
-            String errMsg = "No roleProvisioningProviderClassName property specified. Can't continue.";
+            String errMsg = "No roleDeprovisioningProviderClassName property specified. Can't continue.";
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
-        logger.info(LOGTAG + "roleProvisioningProviderClassName is: " + className);
+        logger.info(LOGTAG + "roleDeprovisioningProviderClassName is: " + className);
 
-        RoleProvisioningProvider provider;
+        RoleDeprovisioningProvider provider;
         try {
             logger.info(LOGTAG + "Getting class for name: " + className);
-            provider = (RoleProvisioningProvider) Class.forName(className).newInstance();
-            logger.info(LOGTAG + "Initializing RoleProvisioningProvider: " + provider.getClass().getName());
+            provider = (RoleDeprovisioningProvider) Class.forName(className).newInstance();
+            logger.info(LOGTAG + "Initializing RoleDeprovisioningProvider: " + provider.getClass().getName());
             provider.init(getAppConfig());
-            logger.info(LOGTAG + "RoleProvisioningProvider initialized.");
+            logger.info(LOGTAG + "RoleDeprovisioningProvider initialized.");
             setProvider(provider);
         }
         catch (ClassNotFoundException e) {
@@ -177,7 +177,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             throw new InstantiationException(errMsg);
         }
         catch (ProviderException e) {
-            String errMsg = "An error occurred initializing the RoleProvisioningProvider " + className + ". The exception is: " + e.getMessage();
+            String errMsg = "An error occurred initializing the RoleDeprovisioningProvider " + className + ". The exception is: " + e.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
@@ -195,9 +195,9 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
 
         // Verify that we have all required objects in the AppConfig.
         try {
-            getAppConfig().getObjectByType(RoleProvisioning.class.getName());
-            getAppConfig().getObjectByType(RoleProvisioningRequisition.class.getName());
-            getAppConfig().getObjectByType(RoleProvisioningQuerySpecification.class.getName());
+            getAppConfig().getObjectByType(RoleDeprovisioning.class.getName());
+            getAppConfig().getObjectByType(RoleDeprovisioningRequisition.class.getName());
+            getAppConfig().getObjectByType(RoleDeprovisioningQuerySpecification.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
             String errMsg = "Error retrieving an object from AppConfig: The exception is: " + e.getMessage();
@@ -215,9 +215,9 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
      * text portion of the message, clears the message body in
      * preparation for the reply, gets the ControlArea from the XML
      * document, and verifies that message object of the message is
-     * a RoleProvisioning object and the action is a query,
+     * a RoleDeprovisioning object and the action is a query,
      * generate, create, update, or delete. Then this method uses the
-     * configured RoleProvisioningProvider to perform each
+     * configured RoleDeprovisioningProvider to perform each
      * operation.
      *
      * @param messageNumber the number of the message processed by the consumer
@@ -265,11 +265,11 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
         String msgObject = eControlArea.getAttribute("messageObject").getValue();
 
         // Verify that the message object we are dealing with is a
-        // RoleProvisioning object; if not, reply with an error.
-        if (!msgObject.equalsIgnoreCase("RoleProvisioning")) {
+        // RoleDeprovisioning object; if not, reply with an error.
+        if (!msgObject.equalsIgnoreCase("RoleDeprovisioning")) {
             String errType = "application";
-            String errCode = "OpenEAI-RoleProvisioning-1001";
-            String errDesc = "Unsupported message object: " + msgObject + ". This command expects 'RoleProvisioning'.";
+            String errCode = "OpenEAI-RoleDeprovisioning-1001";
+            String errDesc = "Unsupported message object: " + msgObject + ". This command expects 'RoleDeprovisioning'.";
             logger.error(LOGTAG + errDesc);
             logger.error(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
             ArrayList<Error> errors = new ArrayList<>();
@@ -292,7 +292,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
         // Validate the format of the AuthUserId. If the format is invalid, respond with an error.
         if (!validateAuthUserId(authUserId)) {
             String errType = "application";
-            String errCode = "AwsAccountService-RoleProvisioning-1001";
+            String errCode = "AwsAccountService-RoleDeprovisioning-1001";
             String errDesc = "Invalid AuthUserId. The value '" + authUserId + "' is not valid. The expected format is user@domain/ip number.";
             logger.fatal(LOGTAG + errDesc);
             logger.fatal(LOGTAG + "Message sent in is: \n" + getMessageBody(inDoc));
@@ -308,10 +308,10 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
         // Get the EPPN from from AuthUserId.
 //        String eppn = getEppnFromAuthUserId(authUserId);
 
-        // Get a configured RoleProvisioningRequisition from AppConfig.
-        RoleProvisioningRequisition req;
+        // Get a configured RoleDeprovisioningRequisition from AppConfig.
+        RoleDeprovisioningRequisition req;
         try {
-            req = (RoleProvisioningRequisition) getAppConfig().getObjectByType(RoleProvisioningRequisition.class.getName());
+            req = (RoleDeprovisioningRequisition) getAppConfig().getObjectByType(RoleDeprovisioningRequisition.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
             String errMsg = "Error retrieving an object from AppConfig: The exception is: " + e.getMessage();
@@ -333,7 +333,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             catch (EnterpriseLayoutException e) {
                 // There was an error building the query object from a query element.
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1002";
+                String errCode = "AwsAccountService-RoleDeprovisioning-1002";
                 String errDesc = "An error occurred building the TestId object from the ControlArea element in the message. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -350,14 +350,14 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
 
         // Handle a Generate-Request.
         if (msgAction.equalsIgnoreCase("Generate")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleProvisioning.Generate-Request message.");
-            Element eGenerateObject = inDoc.getRootElement().getChild("DataArea").getChild("RoleProvisioningRequisition");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleDeprovisioning.Generate-Request message.");
+            Element eGenerateObject = inDoc.getRootElement().getChild("DataArea").getChild("RoleDeprovisioningRequisition");
 
             // Verify that the generate object element is not null. If it is null, reply with an error.
             if (eGenerateObject == null) {
                 String errType = "application";
-                String errCode = "OpenEAI-RoleProvisioning-1002";
-                String errDesc = "Invalid element found in the RoleProvisioning.Generate-Request message. This command expects an RoleProvisioningRequisition";
+                String errCode = "OpenEAI-RoleDeprovisioning-1002";
+                String errDesc = "Invalid element found in the RoleDeprovisioning.Generate-Request message. This command expects an RoleDeprovisioningRequisition";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -366,15 +366,15 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Now build a RoleProvisioningRequisition object from the element in the message.
+            // Now build a RoleDeprovisioningRequisition object from the element in the message.
             try {
                 req.buildObjectFromInput(eGenerateObject);
             }
             catch (EnterpriseLayoutException e) {
                 // There was an error building the query object from a query element.
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1002";
-                String errDesc = "An error occurred building the generate object from the DataArea element in the RoleProvisioning.Generate-Request message. The exception is: " + e.getMessage();
+                String errCode = "AwsAccountService-RoleDeprovisioning-1002";
+                String errDesc = "An error occurred building the generate object from the DataArea element in the RoleDeprovisioning.Generate-Request message. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -383,24 +383,24 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Generate the RoleProvisioning object using the provider implementation.
-            logger.info(LOGTAG + "Generating an RoleProvisioning object...");
+            // Generate the RoleDeprovisioning object using the provider implementation.
+            logger.info(LOGTAG + "Generating an RoleDeprovisioning object...");
 
-            RoleProvisioning roleProvisioning;
+            RoleDeprovisioning roleDeprovisioning;
             try {
             	long generateStartTime = System.currentTimeMillis();
-                roleProvisioning = getProvider().generate(req);
+                roleDeprovisioning = getProvider().generate(req);
                 if (testId != null)
-                    roleProvisioning.setTestId(testId);
+                    roleDeprovisioning.setTestId(testId);
                 long generateTime = System.currentTimeMillis() - generateStartTime;
-                logger.info(LOGTAG + "Generated RoleProvisioning in " + generateTime + " ms." );
+                logger.info(LOGTAG + "Generated RoleDeprovisioning in " + generateTime + " ms." );
             }
             catch (Throwable e) {
                 logger.error(LOGTAG, e);
                 // There was an error generating the identity
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1003";
-                String errDesc = "An error occurred generating the RoleProvisioning object. The exception is: " + e.getMessage();
+                String errCode = "AwsAccountService-RoleDeprovisioning-1003";
+                String errDesc = "An error occurred generating the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -410,23 +410,23 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             }
 
             // Publish a Create-Sync Message
-            logger.info(LOGTAG + "Publishing an RoleProvisioning.Create-Sync message...");
+            logger.info(LOGTAG + "Publishing an RoleDeprovisioning.Create-Sync message...");
             try {
                 MessageProducer producer = getProducerPool().getProducer();
                 Authentication auth = new Authentication();
                 auth.setAuthUserId(authUserId);
                 auth.setAuthUserSignature("none");
-                roleProvisioning.setAuthentication(auth);
-                roleProvisioning.createSync((SyncService) producer);
-                logger.info(LOGTAG + "Published RoleProvisioning.Create-Sync" + " message.");
+                roleDeprovisioning.setAuthentication(auth);
+                roleDeprovisioning.createSync((SyncService) producer);
+                logger.info(LOGTAG + "Published RoleDeprovisioning.Create-Sync" + " message.");
             }
             catch (EnterpriseObjectSyncException e) {
-                String errMsg = "An error occurred publishing the RoleProvisioning.Create-Sync message. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred publishing the RoleDeprovisioning.Create-Sync message. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
             catch (JMSException e) {
-                String errMsg = "A JMS error occurred publishing the RoleProvisioning.Create-Sync message. The exception is: " + e.getMessage();
+                String errMsg = "A JMS error occurred publishing the RoleDeprovisioning.Create-Sync message. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
@@ -441,10 +441,10 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             }
             Element content;
             try {
-                content = (Element) roleProvisioning.buildOutputFromObject();
+                content = (Element) roleDeprovisioning.buildOutputFromObject();
             }
             catch (EnterpriseLayoutException e) {
-                String errMsg = "An error occurred serializing a RoleProvisioning object to an XML element. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred serializing a RoleDeprovisioning object to an XML element. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg, e);
                 throw new CommandException(errMsg, e);
             }
@@ -461,13 +461,13 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
 
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
-            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.RoleProvisioning.Query-Request message.");
-            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("RoleProvisioningQuerySpecification");
+            logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.RoleDeprovisioning.Query-Request message.");
+            Element eQuerySpec = inDoc.getRootElement().getChild("DataArea").getChild("RoleDeprovisioningQuerySpecification");
 
             // Get a configured query object from AppConfig.
-            RoleProvisioningQuerySpecification querySpec;
+            RoleDeprovisioningQuerySpecification querySpec;
             try {
-                querySpec = (RoleProvisioningQuerySpecification) getAppConfig().getObjectByType(RoleProvisioningQuerySpecification.class.getName());
+                querySpec = (RoleDeprovisioningQuerySpecification) getAppConfig().getObjectByType(RoleDeprovisioningQuerySpecification.class.getName());
             }
             catch (EnterpriseConfigurationObjectException e) {
                 String errMsg = "Error retrieving an object from AppConfig: The exception is: " + e.getMessage();
@@ -484,7 +484,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                     // There was an error building the query object from a query
                     // element.
                     String errType = "application";
-                    String errCode = "AwsAccountService-RoleProvisioning-1004";
+                    String errCode = "AwsAccountService-RoleDeprovisioning-1004";
                     String errDesc = "An error occurred building the query object from the DataArea element in the Query-Request message. The exception " + "is: " + e.getMessage();
                     logger.error(LOGTAG + errDesc);
                     logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -497,7 +497,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             else {
                 // The query spec is null.
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1005";
+                String errCode = "AwsAccountService-RoleDeprovisioning-1005";
                 String errDesc = "An error occurred building the query object from the DataArea element in the Query-Request message. The query spec is null.";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -507,21 +507,21 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Query for the RoleProvisioning from the provider.
-            logger.info(LOGTAG + "Querying for the RoleProvisioning...");
+            // Query for the RoleDeprovisioning from the provider.
+            logger.info(LOGTAG + "Querying for the RoleDeprovisioning...");
 
-            List<RoleProvisioning> results;
+            List<RoleDeprovisioning> results;
             try {
             	long queryStartTime = System.currentTimeMillis();
                 results = getProvider().query(querySpec);
                 long queryTime = System.currentTimeMillis() - queryStartTime;
-                logger.info(LOGTAG + "Queried for RoleProvisioning in " + queryTime + "ms.");
+                logger.info(LOGTAG + "Queried for RoleDeprovisioning in " + queryTime + "ms.");
             }
             catch (ProviderException e) {
                 // There was an error generating the identity
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1006";
-                String errDesc = "An error occurred querying for the RoleProvisioning. The exception is: " + e.getMessage();
+                String errCode = "AwsAccountService-RoleDeprovisioning-1006";
+                String errDesc = "An error occurred querying for the RoleDeprovisioning. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -534,7 +534,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             	logger.info(LOGTAG + "Found " + results.size() + " matching result(s).");
             }
             else {
-            	logger.info(LOGTAG + "Results are null; no matching RoleProvisioning found.");
+            	logger.info(LOGTAG + "Results are null; no matching RoleDeprovisioning found.");
             }
 
             // Prepare the response.
@@ -544,13 +544,13 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 ArrayList<Element> adList = new ArrayList<>();
                 for (int i = 0; i < results.size(); i++) {
                     try {
-                        RoleProvisioning ad = results.get(i);
+                        RoleDeprovisioning ad = results.get(i);
                         if (testId != null)
                             ad.setTestId(testId);
                         adList.add((Element) ad.buildOutputFromObject());
                     }
                     catch (EnterpriseLayoutException e) {
-                        String errMsg = "An error occurred serializing RoleProvisioning object to an XML element. The exception is: " + e.getMessage();
+                        String errMsg = "An error occurred serializing RoleDeprovisioning object to an XML element. The exception is: " + e.getMessage();
                         logger.error(LOGTAG + errMsg);
                         throw new CommandException(errMsg, e);
                     }
@@ -565,14 +565,14 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
 
         // Handle a Create-Request.
         if (msgAction.equalsIgnoreCase("Create")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleProvisioning.Create-Request message.");
-            Element eRp = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("RoleProvisioning");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleDeprovisioning.Create-Request message.");
+            Element eRp = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("RoleDeprovisioning");
 
-            // Verify that the RoleProvisioning element is not null. If it is null, reply with an error.
+            // Verify that the RoleDeprovisioning element is not null. If it is null, reply with an error.
             if (eRp == null) {
                 String errType = "application";
-                String errCode = "OpenEAI-RoleProvisioning-1003";
-                String errDesc = "Invalid element found in the Create-Request message. This command expects an RoleProvisioning";
+                String errCode = "OpenEAI-RoleDeprovisioning-1003";
+                String errDesc = "Invalid element found in the Create-Request message. This command expects an RoleDeprovisioning";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -581,10 +581,10 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Get a configured RoleProvisioning from AppConfig.
-            RoleProvisioning ad;
+            // Get a configured RoleDeprovisioning from AppConfig.
+            RoleDeprovisioning ad;
             try {
-                ad = (RoleProvisioning) getAppConfig().getObjectByType(RoleProvisioning.class.getName());
+                ad = (RoleDeprovisioning) getAppConfig().getObjectByType(RoleDeprovisioning.class.getName());
             }
             catch (EnterpriseConfigurationObjectException e) {
                 String errMsg = "Error retrieving an object from AppConfig: The exception is: " + e.getMessage();
@@ -592,7 +592,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 throw new CommandException(errMsg);
             }
 
-            // Now build an RoleProvisioning object from the element in the message.
+            // Now build an RoleDeprovisioning object from the element in the message.
             try {
                 ad.buildObjectFromInput(eRp);
                 if (testId != null)
@@ -602,7 +602,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             catch (EnterpriseLayoutException e) {
                 // There was an error building the delete object from the delete element.
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1007";
+                String errCode = "AwsAccountService-RoleDeprovisioning-1007";
                 String errDesc = "An error occurred building the delete object from the DataArea element in the Create-Request message. The exception " + "is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -612,20 +612,20 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Create the RoleProvisioning object using the provider.
-            logger.info(LOGTAG + "Creating an RoleProvisioning...");
+            // Create the RoleDeprovisioning object using the provider.
+            logger.info(LOGTAG + "Creating an RoleDeprovisioning...");
 
             try {
             	long createStartTime = System.currentTimeMillis();
                 getProvider().create(ad);
                 long createTime = System.currentTimeMillis() - createStartTime;
-                logger.info(LOGTAG + "Created RoleProvisioning in " + createTime + " ms.");
+                logger.info(LOGTAG + "Created RoleDeprovisioning in " + createTime + " ms.");
             }
             catch (ProviderException e) {
-                // There was an error creating the RoleProvisioning
+                // There was an error creating the RoleDeprovisioning
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1008";
-                String errDesc = "An error occurred deleting the RoleProvisioning. The exception is: " + e.getMessage();
+                String errCode = "AwsAccountService-RoleDeprovisioning-1008";
+                String errDesc = "An error occurred deleting the RoleDeprovisioning. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -638,15 +638,15 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             try {
                 MessageProducer producer = getProducerPool().getProducer();
                 ad.createSync((SyncService) producer);
-                logger.info(LOGTAG + "Published RoleProvisioning.Create-Sync message.");
+                logger.info(LOGTAG + "Published RoleDeprovisioning.Create-Sync message.");
             }
             catch (EnterpriseObjectSyncException e) {
-                String errMsg = "An error occurred publishing the RoleProvisioning.Create-Sync message after creating the RoleProvisioning object. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred publishing the RoleDeprovisioning.Create-Sync message after creating the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
             catch (JMSException e) {
-            	String errMsg = "A JMS error occurred publishing the RoleProvisioning.Create-Sync message after creating the RoleProvisioning object. The exception is: " + e.getMessage();
+            	String errMsg = "A JMS error occurred publishing the RoleDeprovisioning.Create-Sync message after creating the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
@@ -669,22 +669,22 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
 
         // Handle an Update-Request.
         if (msgAction.equalsIgnoreCase("Update")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleProvisioning.Update-Request message.");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleDeprovisioning.Update-Request message.");
 
             // Verify that the baseline is not null.
-            Element eBaselineData = inDoc.getRootElement().getChild("DataArea").getChild("BaselineData").getChild("RoleProvisioning");
-            Element eNewData = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("RoleProvisioning");
+            Element eBaselineData = inDoc.getRootElement().getChild("DataArea").getChild("BaselineData").getChild("RoleDeprovisioning");
+            Element eNewData = inDoc.getRootElement().getChild("DataArea").getChild("NewData").getChild("RoleDeprovisioning");
             if (eNewData == null || eBaselineData == null) {
-                String errMsg = "Either the baseline or new data state of the RoleProvisioning is null. Can't continue.";
+                String errMsg = "Either the baseline or new data state of the RoleDeprovisioning is null. Can't continue.";
                 throw new CommandException(errMsg);
             }
 
             // Get configured objects from AppConfig.
-            RoleProvisioning baselineAd;
-            RoleProvisioning newAd;
+            RoleDeprovisioning baselineAd;
+            RoleDeprovisioning newAd;
             try {
-                baselineAd = (RoleProvisioning) getAppConfig().getObjectByType(RoleProvisioning.class.getName());
-                newAd = (RoleProvisioning) getAppConfig().getObjectByType(RoleProvisioning.class.getName());
+                baselineAd = (RoleDeprovisioning) getAppConfig().getObjectByType(RoleDeprovisioning.class.getName());
+                newAd = (RoleDeprovisioning) getAppConfig().getObjectByType(RoleDeprovisioning.class.getName());
             }
             catch (EnterpriseConfigurationObjectException e) {
                 String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
@@ -692,7 +692,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 throw new CommandException(errMsg, e);
             }
 
-            // Build the baseline and newdata states of the RoleProvisioning.
+            // Build the baseline and newdata states of the RoleDeprovisioning.
             try {
                 baselineAd.buildObjectFromInput(eBaselineData);
                 newAd.buildObjectFromInput(eNewData);
@@ -702,16 +702,16 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 }
             }
             catch (EnterpriseLayoutException e) {
-                String errMsg = "An error occurred building the baseline and newdata states of the RoleProvisioning object passed in. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred building the baseline and newdata states of the RoleDeprovisioning object passed in. The exception is: " + e.getMessage();
                 throw new CommandException(errMsg, e);
             }
 
             // Perform the baseline check.
 
-            // Get a configured RoleProvisioningQuerySpecification from AppConfig.
-            RoleProvisioningQuerySpecification querySpec;
+            // Get a configured RoleDeprovisioningQuerySpecification from AppConfig.
+            RoleDeprovisioningQuerySpecification querySpec;
             try {
-                querySpec = (RoleProvisioningQuerySpecification) getAppConfig().getObjectByType(RoleProvisioningQuerySpecification.class.getName());
+                querySpec = (RoleDeprovisioningQuerySpecification) getAppConfig().getObjectByType(RoleDeprovisioningQuerySpecification.class.getName());
             }
             catch (EnterpriseConfigurationObjectException e) {
                 String errMsg = "Error retrieving an object from AppConfig: The exception is: " + e.getMessage();
@@ -720,28 +720,28 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             }
 
             try {
-            	querySpec.setRoleProvisioningId(baselineAd.getRoleProvisioningId());
+            	querySpec.setRoleDeprovisioningId(baselineAd.getRoleDeprovisioningId());
             }
             catch (EnterpriseFieldException e) {
-            	String errMsg = "An error occurred setting the field values of the RoleProvisioning query specification. The exception is: " + e.getMessage();
+            	String errMsg = "An error occurred setting the field values of the RoleDeprovisioning query specification. The exception is: " + e.getMessage();
             	logger.error(LOGTAG + errMsg);
             	throw new CommandException(errMsg, e);
             }
 
-            // Query for the RoleProvisioning.
-            RoleProvisioning ad = null;
+            // Query for the RoleDeprovisioning.
+            RoleDeprovisioning ad = null;
             try {
-            	logger.info(LOGTAG + "Querying for baseline RoleProvisioning...");
-                List<RoleProvisioning> adList = getProvider().query(querySpec);
+            	logger.info(LOGTAG + "Querying for baseline RoleDeprovisioning...");
+                List<RoleDeprovisioning> adList = getProvider().query(querySpec);
                 logger.info(LOGTAG + "Found " + adList.size() + " result(s).");
                 if (adList.size() > 0)
                     ad = adList.get(0);
             }
             catch (ProviderException e) {
-                // There was an error querying the RoleProvisioning service
+                // There was an error querying the RoleDeprovisioning service
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1009";
-                String errDesc = "An error occurred querying the RoleProvisioning provider to verify the baseline state of the RoleProvisioning. The exception is: " + e.getMessage();
+                String errCode = "AwsAccountService-RoleDeprovisioning-1009";
+                String errDesc = "An error occurred querying the RoleDeprovisioning provider to verify the baseline state of the RoleDeprovisioning. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -754,11 +754,11 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 // Compare the retrieved baseline with the baseline in the update request message.
                 try {
                     if (baselineAd.equals(ad)) {
-                        logger.info(LOGTAG + "Baseline matches the current state of the RoleProvisioning in the AWS Account Service.");
+                        logger.info(LOGTAG + "Baseline matches the current state of the RoleDeprovisioning in the AWS Account Service.");
                     } else {
-                        logger.info(LOGTAG + "Baseline does not match the current state of the RoleProvisioning in the AWS Account Service.");
+                        logger.info(LOGTAG + "Baseline does not match the current state of the RoleDeprovisioning in the AWS Account Service.");
                         String errType = "application";
-                        String errCode = "OpenEAI-RoleProvisioning-1004";
+                        String errCode = "OpenEAI-RoleDeprovisioning-1004";
                         String errDesc = "Baseline is stale.";
                         logger.error(LOGTAG + errDesc);
                         logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -769,9 +769,9 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                     }
                 }
                 catch (XmlEnterpriseObjectException e) {
-                    // Respond with an error, because no RoleProvisioning matching the baseline could be found.
+                    // Respond with an error, because no RoleDeprovisioning matching the baseline could be found.
                     String errType = "application";
-                    String errCode = "OpenEAI-RoleProvisioning-1005";
+                    String errCode = "OpenEAI-RoleDeprovisioning-1005";
                     String errDesc = "Baseline stale error in comparison.";
                     logger.error(LOGTAG + errDesc);
                     logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -782,9 +782,9 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 }
 
             } else {
-                // Respond with an error, because no RoleProvisioning matching the baseline could be found.
+                // Respond with an error, because no RoleDeprovisioning matching the baseline could be found.
                 String errType = "application";
-                String errCode = "OpenEAI-RoleProvisioning-1006";
+                String errCode = "OpenEAI-RoleDeprovisioning-1006";
                 String errDesc = "Baseline is stale. No baseline found.";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -798,7 +798,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             try {
                 if (baselineAd.equals(newAd)) {
                     String errType = "application";
-                    String errCode = "AwsAccountService-RoleProvisioning-1010";
+                    String errCode = "AwsAccountService-RoleDeprovisioning-1010";
                     String errDesc = "Baseline state and new state of the object are equal. No update operation may be performed.";
                     logger.error(LOGTAG + errDesc);
                     logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -814,18 +814,18 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 throw new CommandException(errMsg, e);
             }
 
-            // Update the RoleProvisioning object using the provider.
+            // Update the RoleDeprovisioning object using the provider.
             try {
                 long updateStartTime = System.currentTimeMillis();
-                logger.info(LOGTAG + "Updating the RoleProvisioning object in the provider...");
+                logger.info(LOGTAG + "Updating the RoleDeprovisioning object in the provider...");
                 getProvider().update(newAd);
                 long updateTime = System.currentTimeMillis() - updateStartTime;
-                logger.info(LOGTAG + "RoleProvisioning update processed by provider in " + updateTime + " ms.");
+                logger.info(LOGTAG + "RoleDeprovisioning update processed by provider in " + updateTime + " ms.");
             }
             catch (ProviderException e) {
-                // There was an error updating the RoleProvisioning
+                // There was an error updating the RoleDeprovisioning
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1011";
+                String errCode = "AwsAccountService-RoleDeprovisioning-1011";
                 String errDesc = "An error occurred updating the object. The " + "exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -834,9 +834,9 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            logger.info(LOGTAG + "Updated RoleProvisioning: " + newAd.toString());
+            logger.info(LOGTAG + "Updated RoleDeprovisioning: " + newAd.toString());
 
-            // Set the baseline on the new state of the RoleProvisioning.
+            // Set the baseline on the new state of the RoleDeprovisioning.
             newAd.setBaseline(baselineAd);
 
             // Publish an Update-Sync Message
@@ -845,15 +845,15 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 long publishStartTime = System.currentTimeMillis();
                 newAd.updateSync((SyncService) producer);
                 long publishTime = System.currentTimeMillis() - publishStartTime;
-                logger.info(LOGTAG + "Published RoleProvisioning.Update-Sync message in " + publishTime + " ms.");
+                logger.info(LOGTAG + "Published RoleDeprovisioning.Update-Sync message in " + publishTime + " ms.");
             }
             catch (EnterpriseObjectSyncException e) {
-                String errMsg = "An error occurred publishing the RoleProvisioning.Update-Sync message after updating the the RoleProvisioning object. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred publishing the RoleDeprovisioning.Update-Sync message after updating the the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
             catch (JMSException e) {
-                String errMsg = "An error occurred publishing the RoleProvisioning.Update-Sync message after generating an identity. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred publishing the RoleDeprovisioning.Update-Sync message after generating an identity. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
@@ -876,15 +876,15 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
 
         // Handle a Delete-Request.
         if (msgAction.equalsIgnoreCase("Delete")) {
-            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleProvisioning.Delete-Request message.");
-            Element eRoleProvisioning = inDoc.getRootElement().getChild("DataArea").getChild("DeleteData").getChild("RoleProvisioning");
+            logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning.RoleDeprovisioning.Delete-Request message.");
+            Element eRoleDeprovisioning = inDoc.getRootElement().getChild("DataArea").getChild("DeleteData").getChild("RoleDeprovisioning");
 
-            // Verify that the RoleProvisioning element is not null. If it is
+            // Verify that the RoleDeprovisioning element is not null. If it is
             // null, reply with an error.
-            if (eRoleProvisioning == null) {
+            if (eRoleDeprovisioning == null) {
                 String errType = "application";
-                String errCode = "OpenEAI-RoleProvisioning-1007";
-                String errDesc = "Invalid element found in the Delete-Request message. This command expects an RoleProvisioning";
+                String errCode = "OpenEAI-RoleDeprovisioning-1007";
+                String errDesc = "Invalid element found in the Delete-Request message. This command expects an RoleDeprovisioning";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -893,10 +893,10 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Get a configured RoleProvisioning from AppConfig.
-            RoleProvisioning ad;
+            // Get a configured RoleDeprovisioning from AppConfig.
+            RoleDeprovisioning ad;
             try {
-                ad = (RoleProvisioning) getAppConfig().getObjectByType(RoleProvisioning.class.getName());
+                ad = (RoleDeprovisioning) getAppConfig().getObjectByType(RoleDeprovisioning.class.getName());
             }
             catch (EnterpriseConfigurationObjectException e) {
                 String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: " + e.getMessage();
@@ -904,16 +904,16 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 throw new CommandException(errMsg);
             }
 
-            // Now build an RoleProvisioning object from the element in the message.
+            // Now build an RoleDeprovisioning object from the element in the message.
             try {
-                ad.buildObjectFromInput(eRoleProvisioning);
+                ad.buildObjectFromInput(eRoleDeprovisioning);
                 if (testId != null)
                     ad.setTestId(testId);
             }
             catch (EnterpriseLayoutException e) {
                 // There was an error building the delete object from the delete element.
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1012";
+                String errCode = "AwsAccountService-RoleDeprovisioning-1012";
                 String errDesc = "An error occurred building the delete object from the DataArea element in the Delete-Request message. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -923,20 +923,20 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
                 return getMessage(msg, replyContents);
             }
 
-            // Delete the RoleProvisioning object using the provider.
-            logger.info(LOGTAG + "Deleting an RoleProvisioning object...");
+            // Delete the RoleDeprovisioning object using the provider.
+            logger.info(LOGTAG + "Deleting an RoleDeprovisioning object...");
 
             try {
             	long deleteStartTime = System.currentTimeMillis();
                 getProvider().delete(ad);
                 long deleteTime = System.currentTimeMillis() - deleteStartTime;
-                logger.info(LOGTAG + "Deleted RoleProvisioning in " + deleteTime + " ms.");
+                logger.info(LOGTAG + "Deleted RoleDeprovisioning in " + deleteTime + " ms.");
             }
             catch (ProviderException e) {
-                // There was an error deleting the RoleProvisioning
+                // There was an error deleting the RoleDeprovisioning
                 String errType = "application";
-                String errCode = "AwsAccountService-RoleProvisioning-1013";
-                String errDesc = "An error occurred deleting the RoleProvisioning object. The exception is: " + e.getMessage();
+                String errCode = "AwsAccountService-RoleDeprovisioning-1013";
+                String errDesc = "An error occurred deleting the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList<Error> errors = new ArrayList<>();
@@ -949,15 +949,15 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             try {
                 MessageProducer producer = getProducerPool().getProducer();
                 ad.deleteSync("delete", (SyncService) producer);
-                logger.info(LOGTAG + "Published RoleProvisioning.Delete-Sync" + " message.");
+                logger.info(LOGTAG + "Published RoleDeprovisioning.Delete-Sync" + " message.");
             }
             catch (EnterpriseObjectSyncException e) {
-                String errMsg = "An error occurred publishing the RoleProvisioning.Delete-Sync message after deleting the RoleProvisioning object. The exception is: " + e.getMessage();
+                String errMsg = "An error occurred publishing the RoleDeprovisioning.Delete-Sync message after deleting the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
             catch (JMSException e) {
-            	String errMsg = "A JMS error occurred publishing the RoleProvisioning.Delete-Sync message after deleting the RoleProvisioning object. The exception is: " + e.getMessage();
+            	String errMsg = "A JMS error occurred publishing the RoleDeprovisioning.Delete-Sync message after deleting the RoleDeprovisioning object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, e);
             }
@@ -981,7 +981,7 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
         else {
             // The messageAction is invalid; it is not a query, generate, create. update, or delete
             String errType = "application";
-            String errCode = "OpenEAI-RoleProvisioning-1008";
+            String errCode = "OpenEAI-RoleDeprovisioning-1008";
             String errDesc = "Unsupported message action: " + msgAction + ". This command only supports query, generate, create, update, and delete.";
             logger.fatal(LOGTAG + errDesc);
             logger.fatal("Message sent in is: \n" + getMessageBody(inDoc));
@@ -993,18 +993,18 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
     }
 
     /**
-     * Sets the RoleProvisioning provider for this command.
-     * @param provider the RoleProvisioning provider
+     * Sets the RoleDeprovisioning provider for this command.
+     * @param provider the RoleDeprovisioning provider
      */
-    protected void setProvider(RoleProvisioningProvider provider) {
+    protected void setProvider(RoleDeprovisioningProvider provider) {
         m_provider = provider;
     }
 
     /**
-     * Gets the RoleProvisioning provider for this command.
-     * @return the RoleProvisioning provider
+     * Gets the RoleDeprovisioning provider for this command.
+     * @return the RoleDeprovisioning provider
      */
-    protected RoleProvisioningProvider getProvider() {
+    protected RoleDeprovisioningProvider getProvider() {
         return m_provider;
     }
 

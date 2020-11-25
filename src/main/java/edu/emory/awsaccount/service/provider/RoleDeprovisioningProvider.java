@@ -1,7 +1,7 @@
 /* *****************************************************************************
  This file is part of the RHEDcloud AWS Account Service.
 
- Copyright (C) 2020 RHEDcloud Foundation. All rights reserved. 
+ Copyright (C) 2020 RHEDcloud Foundation. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service.provider;
@@ -17,6 +17,13 @@ import java.util.List;
  * Interface for all RoleDeprovisioning object providers.
  */
 public interface RoleDeprovisioningProvider {
+    String ROLE_PROVISIONING_STATUS_COMPLETED = "completed";
+    String ROLE_PROVISIONING_STATUS_PENDING = "pending";
+    String ROLE_PROVISIONING_STATUS_ROLLBACK = "rolled back";
+
+    String ROLE_PROVISIONING_RESULT_SUCCESS = "success";
+    String ROLE_PROVISIONING_RESULT_FAILURE = "failure";
+
     /**
      * Initialize provider.
      *
@@ -50,7 +57,7 @@ public interface RoleDeprovisioningProvider {
      * @throws ProviderException with details of the error.
      */
     void create(RoleDeprovisioning rd) throws ProviderException;
-    
+
     /**
      * message/releases/com/amazon/aws/Provisioning/RoleDeprovisioning/1.0/xml/Update-Request.xml
      *

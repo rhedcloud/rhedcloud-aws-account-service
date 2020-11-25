@@ -33,8 +33,11 @@
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/AccountDeprovisioning.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/ProvisioningStep.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/DeprovisioningStep.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/CustomRole.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleProvisioning.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleProvisioningStep.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleDeprovisioning.hbm.xml"/>
+<mapping resource="com/amazon/aws/moa/jmsobjects/provisioning/v1_0/RoleDeprovisioningStep.hbm.xml"/>
 
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/Service.hbm.xml"/>
 <mapping resource="com/amazon/aws/moa/jmsobjects/services/v1_0/ServiceSecurityAssessment.hbm.xml"/>

@@ -4,15 +4,15 @@
  Copyright 2020 RHEDcloud Foundation. All rights reserved.
  ******************************************************************************/
 
-package edu.emory.awsaccount.service.roleProvisioning.step;
+package edu.emory.awsaccount.service.roleDeprovisioning.step;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleProvisioning;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleDeprovisioning;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningStep;
 import edu.emory.awsaccount.service.provider.ProviderException;
-import edu.emory.awsaccount.service.provider.RoleProvisioningProvider;
+import edu.emory.awsaccount.service.provider.RoleDeprovisioningProvider;
 import org.apache.log4j.Category;
 import org.openeai.OpenEaiObject;
 import org.openeai.config.AppConfig;
@@ -57,8 +57,8 @@ public abstract class AbstractStep {
     private boolean m_skipStep = false;
     private boolean m_simulateStep = false;
     private boolean m_failStep = false;
-    private RoleProvisioning roleProvisioning = null;
-    private RoleProvisioningProvider roleProvisioningProvider = null;
+    private RoleDeprovisioning roleDeprovisioning = null;
+    private RoleDeprovisioningProvider roleDeprovisioningProvider = null;
     private AppConfig m_appConfig = null;
 
     protected String m_stepTag = null;
@@ -67,7 +67,7 @@ public abstract class AbstractStep {
     protected long m_executionEndTime = 0;
     protected Properties m_props = null;
 
-    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp)
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleDeprovisioningProvider rpp)
         throws StepException {
 
         String LOGTAG = "[AbstractStep.init] ";
@@ -82,15 +82,15 @@ public abstract class AbstractStep {
         setSkipStep(Boolean.parseBoolean(props.getProperty("skipStep", "false")));
         setSimulateStep(Boolean.parseBoolean(props.getProperty("simulateStep", "false")));
         setFailStep(Boolean.parseBoolean(props.getProperty("failStep", "false")));
-        setRoleProvisioningProvider(rpp);
+        setRoleDeprovisioningProvider(rpp);
         setProperties(props);
 
         // Query for the provisioning object.
-        queryForRoleProvisioningBaseline();
+        queryForRoleDeprovisioningBaseline();
 
-        // If the RoleProvisioning object is not null, look for the step.
-        RoleProvisioningStep step;
-        if (getRoleProvisioning() != null) {
+        // If the RoleDeprovisioning object is not null, look for the step.
+        RoleDeprovisioningStep step;
+        if (getRoleDeprovisioning() != null) {
             step = getProvisioningStepById(getStepId());
 
             // If the provisioning step is present, set the initial values of this
@@ -117,9 +117,9 @@ public abstract class AbstractStep {
                 setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
             }
         }
-        // The RoleProvisioning object for the specified id does not exist. This is a fatal step error.
+        // The RoleDeprovisioning object for the specified id does not exist. This is a fatal step error.
         else {
-            String errMsg = "No RoleProvisioning object found for ProvisioningId " + provisioningId + ". Can't continue.";
+            String errMsg = "No RoleDeprovisioning object found for ProvisioningId " + provisioningId + ". Can't continue.";
             throw new StepException(errMsg);
         }
 
@@ -215,10 +215,10 @@ public abstract class AbstractStep {
     protected boolean getSimulateStep() { return m_simulateStep; }
     private void setFailStep(boolean failStep) { m_failStep = failStep; }
     private boolean getFailStep() { return m_failStep; }
-    private void setRoleProvisioningProvider(RoleProvisioningProvider v) { roleProvisioningProvider = v; }
-    protected RoleProvisioningProvider getRoleProvisioningProvider() { return roleProvisioningProvider; }
-    private void setRoleProvisioning(RoleProvisioning v) { roleProvisioning = v; }
-    protected RoleProvisioning getRoleProvisioning() { return roleProvisioning; }
+    private void setRoleDeprovisioningProvider(RoleDeprovisioningProvider v) { roleDeprovisioningProvider = v; }
+    protected RoleDeprovisioningProvider getRoleDeprovisioningProvider() { return roleDeprovisioningProvider; }
+    private void setRoleDeprovisioning(RoleDeprovisioning v) { roleDeprovisioning = v; }
+    protected RoleDeprovisioning getRoleDeprovisioning() { return roleDeprovisioning; }
     public String getType() { return m_type; }
     private void setType(String type) throws StepException {
         if (type == null) {
@@ -295,11 +295,11 @@ public abstract class AbstractStep {
     }
 
 
-    protected RoleProvisioningStep getProvisioningStepById(String stepId) {
-        RoleProvisioning roleProvisioning = getRoleProvisioning();
+    protected RoleDeprovisioningStep getProvisioningStepById(String stepId) {
+        RoleDeprovisioning roleDeprovisioning = getRoleDeprovisioning();
         @SuppressWarnings("unchecked")
-        List<RoleProvisioningStep> steps = roleProvisioning.getRoleProvisioningStep();
-        for (RoleProvisioningStep step : steps) {
+        List<RoleDeprovisioningStep> steps = roleDeprovisioning.getRoleDeprovisioningStep();
+        for (RoleDeprovisioningStep step : steps) {
             if (step.getStepId().equals(stepId)) {
                 return step;
             }
@@ -307,11 +307,11 @@ public abstract class AbstractStep {
         return null;
     }
 
-    protected RoleProvisioningStep getProvisioningStepByType(String stepType) {
-        RoleProvisioning roleProvisioning = getRoleProvisioning();
+    protected RoleDeprovisioningStep getProvisioningStepByType(String stepType) {
+        RoleDeprovisioning roleDeprovisioning = getRoleDeprovisioning();
         @SuppressWarnings("unchecked")
-        List<RoleProvisioningStep> steps = roleProvisioning.getRoleProvisioningStep();
-        for (RoleProvisioningStep step : steps) {
+        List<RoleDeprovisioningStep> steps = roleDeprovisioning.getRoleDeprovisioningStep();
+        for (RoleDeprovisioningStep step : steps) {
             if (step.getType().equalsIgnoreCase(stepType)) {
                 return step;
             }
@@ -319,11 +319,11 @@ public abstract class AbstractStep {
         return null;
     }
 
-    protected RoleProvisioningStep getFailedProvisioningStep() {
-        RoleProvisioning roleProvisioning = getRoleProvisioning();
+    protected RoleDeprovisioningStep getFailedProvisioningStep() {
+        RoleDeprovisioning roleDeprovisioning = getRoleDeprovisioning();
         @SuppressWarnings("unchecked")
-        List<RoleProvisioningStep> steps = roleProvisioning.getRoleProvisioningStep();
-        for (RoleProvisioningStep step : steps) {
+        List<RoleDeprovisioningStep> steps = roleDeprovisioning.getRoleDeprovisioningStep();
+        for (RoleDeprovisioningStep step : steps) {
             if (step.getStepResult().equals(Step.STEP_RESULT_FAILURE)) {
                 return step;
             }
@@ -340,7 +340,7 @@ public abstract class AbstractStep {
             setResultProperties(new ArrayList<>());
         }
 
-        Property newProp = roleProvisioning.newRoleProvisioningStep().newProperty();
+        Property newProp = roleDeprovisioning.newRoleDeprovisioningStep().newProperty();
         try {
             newProp.setKey(key);
             newProp.setValue(value);
@@ -392,7 +392,7 @@ public abstract class AbstractStep {
         return null;
     }
 
-    protected String getResultProperty(RoleProvisioningStep step, String key) {
+    protected String getResultProperty(RoleDeprovisioningStep step, String key) {
         @SuppressWarnings("unchecked")
         List<Property> resultProperties = step.getProperty();
         for (Property prop : resultProperties) {
@@ -454,8 +454,8 @@ public abstract class AbstractStep {
         String LOGTAG = getStepTag() + "[AbstractStep.update] ";
         logger.info(LOGTAG + "Updating step with status " + status + " and result " + result);
 
-        // Update the baseline state of the RoleProvisioning
-        queryForRoleProvisioningBaseline();
+        // Update the baseline state of the RoleDeprovisioning
+        queryForRoleDeprovisioningBaseline();
 
         // If the current status is in progress, update the
         // execution time. Note that we don't want to
@@ -477,7 +477,7 @@ public abstract class AbstractStep {
         setResult(result);
 
         // Get the corresponding provisioning step.
-        RoleProvisioningStep dStep = getProvisioningStepById(getStepId());
+        RoleDeprovisioningStep dStep = getProvisioningStepById(getStepId());
 
         // Update the step values.
         try {
@@ -497,13 +497,13 @@ public abstract class AbstractStep {
         // Perform the step update.
         try {
             long updateStartTime = System.currentTimeMillis();
-            logger.info(LOGTAG + "Updating the RoleProvisioning with new step information...");
-            getRoleProvisioningProvider().update(getRoleProvisioning());
+            logger.info(LOGTAG + "Updating the RoleDeprovisioning with new step information...");
+            getRoleDeprovisioningProvider().update(getRoleDeprovisioning());
             long time = System.currentTimeMillis() - updateStartTime;
-            logger.info(LOGTAG = "Updated RoleProvisioning with new step state in " + time + " ms.");
+            logger.info(LOGTAG = "Updated RoleDeprovisioning with new step state in " + time + " ms.");
         }
         catch (ProviderException pe) {
-            String errMsg = "An error occurred updating the RoleProvisioning object with an updated ProvisioningStep. The exception is: " + pe.getMessage();
+            String errMsg = "An error occurred updating the RoleDeprovisioning object with an updated ProvisioningStep. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
         }
@@ -512,16 +512,16 @@ public abstract class AbstractStep {
     protected void rollback() throws StepException {
         String LOGTAG = "[AbstractStep.rollback] ";
         logger.info(LOGTAG + "Initializing common rollback logic...");
-        logger.info(LOGTAG + "Querying for RoleProvisioning baseline...");
-        queryForRoleProvisioningBaseline();
+        logger.info(LOGTAG + "Querying for RoleDeprovisioning baseline...");
+        queryForRoleDeprovisioningBaseline();
     }
 
-    private void queryForRoleProvisioningBaseline() throws StepException {
-        // Query for the RoleProvisioning object in the AWS Account Service.
+    private void queryForRoleDeprovisioningBaseline() throws StepException {
+        // Query for the RoleDeprovisioning object in the AWS Account Service.
         // Get a configured query spec from AppConfig
-        RoleProvisioningQuerySpecification querySpec;
+        RoleDeprovisioningQuerySpecification querySpec;
         try {
-            querySpec = (RoleProvisioningQuerySpecification) getAppConfig().getObjectByType(RoleProvisioningQuerySpecification.class.getName());
+            querySpec = (RoleDeprovisioningQuerySpecification) getAppConfig().getObjectByType(RoleDeprovisioningQuerySpecification.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
             String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
@@ -531,10 +531,10 @@ public abstract class AbstractStep {
 
         // Set the values of the query spec.
         try {
-            querySpec.setRoleProvisioningId(getProvisioningId());
+            querySpec.setRoleDeprovisioningId(getProvisioningId());
         }
         catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the values of the RoleProvisioning query spec. The exception is: " + efe.getMessage();
+            String errMsg = "An error occurred setting the values of the RoleDeprovisioning query spec. The exception is: " + efe.getMessage();
               logger.error(LOGTAG + errMsg);
               throw new StepException(errMsg, efe);
         }
@@ -549,13 +549,13 @@ public abstract class AbstractStep {
               throw new StepException(errMsg, e);
         }
 
-        List<RoleProvisioning> results;
+        List<RoleDeprovisioning> results;
         try {
-            results = getRoleProvisioningProvider().query(querySpec);
-            setRoleProvisioning(results.get(0));
+            results = getRoleDeprovisioningProvider().query(querySpec);
+            setRoleDeprovisioning(results.get(0));
         }
         catch (ProviderException pe) {
-            String errMsg = "An error occurred querying for the  current state of a RoleProvisioning object. The exception is: " + pe.getMessage();
+            String errMsg = "An error occurred querying for the  current state of a RoleDeprovisioning object. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
         }
@@ -565,7 +565,7 @@ public abstract class AbstractStep {
         String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 
         // Get the property value with the named step and key.
-        RoleProvisioningStep step = getProvisioningStepByType(stepType);
+        RoleDeprovisioningStep step = getProvisioningStepByType(stepType);
         String value;
         if (step != null) {
             value = getResultProperty(step, key);
