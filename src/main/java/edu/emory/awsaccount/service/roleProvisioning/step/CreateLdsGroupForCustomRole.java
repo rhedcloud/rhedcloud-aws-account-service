@@ -74,9 +74,9 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_EXECUTED);
 
         // the account and custom role name was specified in the requisition
-        RoleProvisioningRequisition roleProvisioningRequisition = getRoleProvisioning().getRoleProvisioningRequisition();
-        String accountId = roleProvisioningRequisition.getAccountId();
-        String roleName = roleProvisioningRequisition.getRoleName();
+        RoleProvisioningRequisition requisition = getRoleProvisioning().getRoleProvisioningRequisition();
+        String accountId = requisition.getAccountId();
+        String roleName = requisition.getRoleName();
 
         createCustomRolesOrganizationalUnit(accountId, LOGTAG);
         createCustomRolesGroup(accountId, roleName, LOGTAG);
@@ -390,8 +390,8 @@ public class CreateLdsGroupForCustomRole extends AbstractStep implements Step {
     }
 
     public void rollback() throws StepException {
-        super.rollback();
         long startTime = System.currentTimeMillis();
+        super.rollback();
         String LOGTAG = getStepTag() + "[CreateLdsGroupForCustomRole.rollback] ";
 
         String createdGroup = getResultProperty("createdGroup");

@@ -483,7 +483,7 @@ public class CustomAwsRoleDeprovisioningProvider extends OpenEaiObject implement
             setExecutionStartTime(System.currentTimeMillis());
 
             String LOGTAG = "[RoleDeprovisioningTransaction{" + getProvisioningId() + "}] ";
-            logger.info(LOGTAG + "Running deprovisioning process");
+            logger.info(LOGTAG + "Running deprovisioning transaction");
 
             List<Properties> stepsAsProperties;
             try {
@@ -616,6 +616,8 @@ public class CustomAwsRoleDeprovisioningProvider extends OpenEaiObject implement
                 logger.error(LOGTAG + errMsg);
                 return;
             }
+
+            logger.info(LOGTAG + "Completed deprovisioning transaction");
         }
 
         private void rollbackCompletedSteps(List<Step> completedSteps) {

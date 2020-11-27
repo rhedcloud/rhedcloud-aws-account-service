@@ -68,10 +68,10 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_EXECUTED);
 
         // the account and custom role name was specified in the requisition
-        RoleProvisioningRequisition roleProvisioningRequisition = getRoleProvisioning().getRoleProvisioningRequisition();
-        String accountId = roleProvisioningRequisition.getAccountId();
-        String roleName = roleProvisioningRequisition.getRoleName();
-        String roleAssigneeUserId = roleProvisioningRequisition.getRoleAssigneeUserId();
+        RoleProvisioningRequisition requisition = getRoleProvisioning().getRoleProvisioningRequisition();
+        String accountId = requisition.getAccountId();
+        String roleName = requisition.getRoleName();
+        String roleAssigneeUserId = requisition.getRoleAssigneeUserId();
 
         // this step is optional and driven by the assignee field in the requisition
         if (roleAssigneeUserId == null || roleAssigneeUserId.isEmpty()) {
@@ -132,6 +132,7 @@ public class AssignUserToCustomRole extends AbstractStep implements Step {
 
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
+        super.rollback();
         String LOGTAG = getStepTag() + "[AssignUserToCustomRole.rollback] ";
         logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 

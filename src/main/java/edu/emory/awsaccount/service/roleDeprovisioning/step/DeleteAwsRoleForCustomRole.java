@@ -13,7 +13,15 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
+import com.amazonaws.services.identitymanagement.model.AttachedPolicy;
+import com.amazonaws.services.identitymanagement.model.DeleteRolePolicyRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteRoleRequest;
+import com.amazonaws.services.identitymanagement.model.DetachRolePolicyRequest;
+import com.amazonaws.services.identitymanagement.model.ListAttachedRolePoliciesRequest;
+import com.amazonaws.services.identitymanagement.model.ListAttachedRolePoliciesResult;
+import com.amazonaws.services.identitymanagement.model.ListRolePoliciesRequest;
+import com.amazonaws.services.identitymanagement.model.ListRolePoliciesResult;
+import com.amazonaws.services.identitymanagement.model.NoSuchEntityException;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
@@ -58,18 +66,74 @@ public class DeleteAwsRoleForCustomRole extends AbstractStep implements Step {
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_EXECUTED);
 
         // the account and custom role name was specified in the requisition
-        RoleDeprovisioningRequisition roleDeprovisioningRequisition = getRoleDeprovisioning().getRoleDeprovisioningRequisition();
-        String accountId = roleDeprovisioningRequisition.getAccountId();
-        String roleName = roleDeprovisioningRequisition.getRoleName();
+        RoleDeprovisioningRequisition requisition = getRoleDeprovisioning().getRoleDeprovisioningRequisition();
+        String accountId = requisition.getAccountId();
+        String roleName = requisition.getRoleName();
 
         try {
+            long elapsedStartTime = System.currentTimeMillis();
+            int index;
+
             AmazonIdentityManagement iam = buildIamClient(accountId);
-            iam.deleteRole(new DeleteRoleRequest().withRoleName(roleName));
+
+            ListRolePoliciesRequest listRolePoliciesRequest = new ListRolePoliciesRequest()
+                    .withRoleName(roleName);
+            ListRolePoliciesResult listRolePoliciesResult;
+            index = 1;
+            do {
+                listRolePoliciesResult = iam.listRolePolicies(listRolePoliciesRequest);
+
+                for (String policyName : listRolePoliciesResult.getPolicyNames()) {
+                    DeleteRolePolicyRequest deleteRolePolicyRequest = new DeleteRolePolicyRequest()
+                            .withRoleName(roleName)
+                            .withPolicyName(policyName);
+                    iam.deleteRolePolicy(deleteRolePolicyRequest);
+
+                    addResultProperty("deletedAwsIamRoleInlinePolicy" + index++, policyName);
+                }
+
+                listRolePoliciesRequest.setMarker(listRolePoliciesResult.getMarker());
+            } while (listRolePoliciesResult.isTruncated());
+
+
+            ListAttachedRolePoliciesRequest listAttachedRolePoliciesRequest = new ListAttachedRolePoliciesRequest()
+                    .withRoleName(roleName);
+            ListAttachedRolePoliciesResult listAttachedRolePoliciesResult;
+            index = 1;
+            do {
+                listAttachedRolePoliciesResult = iam.listAttachedRolePolicies(listAttachedRolePoliciesRequest);
+
+                for (AttachedPolicy attachedPolicy : listAttachedRolePoliciesResult.getAttachedPolicies()) {
+                    DetachRolePolicyRequest detachRolePolicyRequest = new DetachRolePolicyRequest()
+                            .withRoleName(roleName)
+                            .withPolicyArn(attachedPolicy.getPolicyArn());
+                    iam.detachRolePolicy(detachRolePolicyRequest);
+
+                    addResultProperty("deletedAwsIamRoleAttachedPolicy" + index++, attachedPolicy.getPolicyArn());
+                }
+
+                listAttachedRolePoliciesRequest.setMarker(listAttachedRolePoliciesResult.getMarker());
+            } while (listAttachedRolePoliciesResult.isTruncated());
+
+
+            DeleteRoleRequest deleteRoleRequest = new DeleteRoleRequest()
+                    .withRoleName(roleName);
+            iam.deleteRole(deleteRoleRequest);
+
+            addResultProperty("deletedAwsIamRole", roleName);
+
+            long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
+            logger.info(LOGTAG + "Deleted AWS IAM role in " + elapsedTime + " ms.");
+        }
+        catch (NoSuchEntityException e) {
+            // not an error - the role was probably deleted in a previous deprovisioning run
+            logger.info(LOGTAG + "AWS IAM role " + roleName + " does not exist.");
+            addResultProperty("deletedAwsIamRole", "not applicable");
         }
         catch (Exception e) {
-            String errMsg = "An error occurred deleting the role. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred deleting the AWS IAM role. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
-            //throw new StepException(errMsg, e);
+            throw new StepException(errMsg, e);
         }
 
         // Update the step.
@@ -91,7 +155,7 @@ public class DeleteAwsRoleForCustomRole extends AbstractStep implements Step {
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_SIMULATED);
 
         // simulated result properties
-        addResultProperty("customRoleArn", "arn:aws:iam::123456789012:role/MyCustomRole");
+        addResultProperty("deletedAwsIamRole", "simulated");
 
         // Update the step.
         update(STEP_STATUS_COMPLETED, STEP_RESULT_SUCCESS);
@@ -123,8 +187,8 @@ public class DeleteAwsRoleForCustomRole extends AbstractStep implements Step {
     }
 
     public void rollback() throws StepException {
-        super.rollback();
         long startTime = System.currentTimeMillis();
+        super.rollback();
         String LOGTAG = getStepTag() + "[DeleteAwsRoleForCustomRole.rollback] ";
         logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 

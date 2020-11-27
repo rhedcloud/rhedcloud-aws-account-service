@@ -120,8 +120,8 @@ public class CreateServiceNowIncidentOnRollback extends AbstractStep implements 
     }
 
     public void rollback() throws StepException {
-        super.rollback();
         long startTime = System.currentTimeMillis();
+        super.rollback();
         String LOGTAG = getStepTag() + "[CreateServiceNowIncidentOnRollback.rollback] ";
 
         if (!isCreateIncidentOnFailure()) {

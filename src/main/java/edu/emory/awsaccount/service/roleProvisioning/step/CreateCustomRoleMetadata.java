@@ -58,9 +58,9 @@ public class CreateCustomRoleMetadata extends AbstractStep implements Step {
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_EXECUTED);
 
         // the account and custom role name was specified in the requisition
-        RoleProvisioningRequisition roleProvisioningRequisition = getRoleProvisioning().getRoleProvisioningRequisition();
-        String accountId = roleProvisioningRequisition.getAccountId();
-        String roleName = roleProvisioningRequisition.getRoleName();
+        RoleProvisioningRequisition requisition = getRoleProvisioning().getRoleProvisioningRequisition();
+        String accountId = requisition.getAccountId();
+        String roleName = requisition.getRoleName();
 
         // Get some properties from previous steps.
         String customRoleIdmName = getStepPropertyValue("CREATE_IDM_ROLE_AND_RESOURCES_FOR_CUSTOM_ROLE", "customRoleIdmName");
@@ -173,6 +173,7 @@ public class CreateCustomRoleMetadata extends AbstractStep implements Step {
 
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
+        super.rollback();
         String LOGTAG = getStepTag() + "[CreateCustomRoleMetadata.rollback] ";
         logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 

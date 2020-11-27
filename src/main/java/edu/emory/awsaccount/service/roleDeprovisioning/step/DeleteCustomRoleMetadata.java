@@ -4,20 +4,20 @@
  Copyright 2020 RHEDcloud Foundation. All rights reserved.
  ******************************************************************************/
 
-package edu.emory.awsaccount.service.roleProvisioning.step;
+package edu.emory.awsaccount.service.roleDeprovisioning.step;
 
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
-import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
-import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.CustomRole;
+import com.amazon.aws.moa.objects.resources.v1_0.CustomRoleQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
-import edu.emory.awsaccount.service.provider.RoleProvisioningProvider;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition;
+import edu.emory.awsaccount.service.provider.RoleDeprovisioningProvider;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.moa.EnterpriseObjectCreateException;
+import org.openeai.moa.EnterpriseObjectDeleteException;
+import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
@@ -25,19 +25,19 @@ import javax.jms.JMSException;
 import java.util.List;
 import java.util.Properties;
 
-public class CustomRoleNotification extends AbstractStep implements Step {
-    private ProducerPool awsAccountServiceProducerPool;
-    private String notificationTemplate;
-    private String notificationType;
-    private String notificationPriority;
-    private String notificationSubject;
 
-    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+/**
+ * Delete the CustomRole metadata.
+ */
+public class DeleteCustomRoleMetadata extends AbstractStep implements Step {
+    private ProducerPool awsAccountServiceProducerPool = null;
+
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleDeprovisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
 
-        String LOGTAG = getStepTag() + "[CustomRoleNotification.init] ";
+        String LOGTAG = getStepTag() + "[DeleteCustomRoleMetadata.init] ";
 
-        // This step needs to send messages to the AWS account service to send notifications.
+        // This step needs to send messages to the AWS account service to delete CustomRole metadata.
         try {
             ProducerPool p = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
             setAwsAccountServiceProducerPool(p);
@@ -48,69 +48,45 @@ public class CustomRoleNotification extends AbstractStep implements Step {
             throw new StepException(errMsg, e);
         }
 
-        logger.info(LOGTAG + "Getting custom step properties...");
-
-        setNotificationSubject(getMandatoryStringProperty(LOGTAG, "notificationSubject", false));
-        setNotificationTemplate(getMandatoryStringProperty(LOGTAG, "notificationTemplate", false));
-        setNotificationType(getMandatoryStringProperty(LOGTAG, "notificationType", false));
-        setNotificationPriority(getMandatoryStringProperty(LOGTAG, "notificationPriority", false));
-
         logger.info(LOGTAG + "Initialization complete.");
     }
 
     protected List<Property> run() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() + "[CustomRoleNotification.run] ";
+        String LOGTAG = getStepTag() + "[DeleteCustomRoleMetadata.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_EXECUTED);
 
         // the account and custom role name was specified in the requisition
-        RoleProvisioningRequisition requisition = getRoleProvisioning().getRoleProvisioningRequisition();
+        RoleDeprovisioningRequisition requisition = getRoleDeprovisioning().getRoleDeprovisioningRequisition();
         String accountId = requisition.getAccountId();
         String roleName = requisition.getRoleName();
-        String roleProvisioningId = getRoleProvisioning().getRoleProvisioningId();
 
-        // Get a configured account notification object from AppConfig.
-        AccountNotification aNotification;
+        // Get a configured objects from AppConfig.
+        CustomRole customRole;
+        CustomRoleQuerySpecification querySpec;
         try {
-            aNotification = (AccountNotification)getAppConfig().getObjectByType(AccountNotification.class.getName());
+            customRole = (CustomRole) getAppConfig().getObjectByType(CustomRole.class.getName());
+            querySpec = (CustomRoleQuerySpecification) getAppConfig().getObjectByType(CustomRoleQuerySpecification.class.getName());
         }
         catch (EnterpriseConfigurationObjectException e) {
-            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred getting CustomRole properties from AppConfig. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-
         try {
-            Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
+            querySpec.setAccountId(accountId);
 
-            aNotification.setAccountId(accountId);
-            aNotification.setType(getNotificationType());
-            aNotification.setPriority(getNotificationPriority());
-            aNotification.setSubject(getNotificationSubject());
-            aNotification.setText(getNotificationBody(accountId, roleName));
-            aNotification.setReferenceId(roleProvisioningId);
-            aNotification.setCreateUser("AwsAccountService");
-            aNotification.setCreateDatetime(createDatetime);
-
-            Annotation annotation = aNotification.newAnnotation();
-            annotation.setText("AwsAccountService Custom Role Provisioning");
-            annotation.setCreateUser("AwsAccountService");
-            annotation.setCreateDatetime(createDatetime);
-            aNotification.addAnnotation(annotation);
+            logger.info(LOGTAG + "CustomRoleQuerySpecification is: " + querySpec.toXmlString());
         }
         catch (EnterpriseFieldException e) {
-            String errMsg = "An error occurred setting the values of the AccountNotification. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred setting field values of the CustomRoleQuerySpecification object. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
-
-        try {
-            logger.info(LOGTAG + "AccountNotification to create is: " + aNotification.toXmlString());
-        }
         catch (XmlEnterpriseObjectException e) {
-            String errMsg = "An error occurred serializing the AccountNotification to XML. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred serializing the CustomRoleQuerySpecification to XML. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
@@ -128,18 +104,50 @@ public class CustomRoleNotification extends AbstractStep implements Step {
 
         try {
             long elapsedStartTime = System.currentTimeMillis();
-            aNotification.create(rs);
+            @SuppressWarnings("unchecked")
+            List<CustomRole> results = customRole.query(querySpec, rs);
             long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
-            logger.info(LOGTAG + "Created AccountNotification in " + elapsedTime + " ms.");
-            addResultProperty("sentNotification", Boolean.toString(true));
+            logger.info(LOGTAG + "Queried CustomRole in " + elapsedTime + " ms.");
+
+            int index = 1;
+            for (CustomRole cr : results) {
+                if (cr.getAccountId().equals(accountId) && cr.getRoleName().equals(roleName)) {
+                    try {
+                        logger.info(LOGTAG + "CustomRole to be deleted is: " + cr.toXmlString());
+                    }
+                    catch (XmlEnterpriseObjectException e) {
+                        String errMsg = "An error occurred serializing the CustomRole to be deleted to XML. The exception is: " + e.getMessage();
+                        logger.error(LOGTAG + errMsg);
+                        throw new StepException(errMsg, e);
+                    }
+
+                    String customRoleId = cr.getCustomRoleId();
+
+                    elapsedStartTime = System.currentTimeMillis();
+                    cr.delete("Delete", rs);
+                    elapsedTime = System.currentTimeMillis() - elapsedStartTime;
+                    logger.info(LOGTAG + "Deleted CustomRole in " + elapsedTime + " ms.");
+
+                    addResultProperty("deletedCustomRoleId" + index++, customRoleId);
+                }
+            }
+
+            if (index == 1) {
+                addResultProperty("deletedCustomRoleId", "not applicable");
+            }
         }
-        catch (EnterpriseObjectCreateException e) {
-            String errMsg = "An error occurred creating the AccountNotification. The exception is: " + e.getMessage();
+        catch (EnterpriseObjectQueryException e) {
+            String errMsg = "An error occurred querying the CustomRole. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
+        catch (EnterpriseObjectDeleteException e) {
+            String errMsg = "An error occurred deleting the CustomRole. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
         finally {
-            getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
+            getAwsAccountServiceProducerPool().releaseProducer((MessageProducer)rs);
         }
 
         // Update the step.
@@ -155,7 +163,7 @@ public class CustomRoleNotification extends AbstractStep implements Step {
 
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() + "[CustomRoleNotification.simulate] ";
+        String LOGTAG = getStepTag() + "[DeleteCustomRoleMetadata.simulate] ";
         logger.info(LOGTAG + "Begin step simulation.");
 
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_SIMULATED);
@@ -173,7 +181,7 @@ public class CustomRoleNotification extends AbstractStep implements Step {
 
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() + "[CustomRoleNotification.fail] ";
+        String LOGTAG = getStepTag() + "[DeleteCustomRoleMetadata.fail] ";
         logger.info(LOGTAG + "Begin step failure simulation.");
 
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_FAILURE);
@@ -192,7 +200,7 @@ public class CustomRoleNotification extends AbstractStep implements Step {
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
         super.rollback();
-        String LOGTAG = getStepTag() + "[CustomRoleNotification.rollback] ";
+        String LOGTAG = getStepTag() + "[DeleteCustomRoleMetadata.rollback] ";
         logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         // Update the step.
@@ -203,20 +211,6 @@ public class CustomRoleNotification extends AbstractStep implements Step {
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
 
-    private String getNotificationBody(String accountId, String roleName) {
-        return notificationTemplate
-                .replace("ACCOUNT_NUMBER", accountId)
-                .replace("CUSTOM_ROLE_NAME", roleName);
-    }
-
     public ProducerPool getAwsAccountServiceProducerPool() { return awsAccountServiceProducerPool; }
     public void setAwsAccountServiceProducerPool(ProducerPool v) { this.awsAccountServiceProducerPool = v; }
-    public String getNotificationTemplate() { return notificationTemplate; }
-    public void setNotificationTemplate(String v) { this.notificationTemplate = v; }
-    public String getNotificationType() { return notificationType; }
-    public void setNotificationType(String v) { this.notificationType = v; }
-    public String getNotificationPriority() { return notificationPriority; }
-    public void setNotificationPriority(String v) { this.notificationPriority = v; }
-    public String getNotificationSubject() { return notificationSubject; }
-    public void setNotificationSubject(String v) { this.notificationSubject = v; }
 }

@@ -103,6 +103,7 @@ public class ExampleStep extends AbstractStep implements Step {
 
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
+        super.rollback();
         String LOGTAG = getStepTag() + "[RoleProvisioning.ExampleStep.rollback] ";
         logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 

@@ -483,7 +483,7 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
             setExecutionStartTime(System.currentTimeMillis());
 
             String LOGTAG = "[RoleProvisioningTransaction{" + getProvisioningId() + "}] ";
-            logger.info(LOGTAG + "Running provisioning process");
+            logger.info(LOGTAG + "Running provisioning transaction");
 
             List<Properties> stepsAsProperties;
             try {
@@ -616,6 +616,8 @@ public class CustomAwsRoleProvisioningProvider extends OpenEaiObject implements 
                 logger.error(LOGTAG + errMsg);
                 return;
             }
+
+            logger.info(LOGTAG + "Completed provisioning transaction");
         }
 
         private void rollbackCompletedSteps(List<Step> completedSteps) {

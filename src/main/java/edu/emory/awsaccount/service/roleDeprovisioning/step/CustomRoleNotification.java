@@ -4,14 +4,14 @@
  Copyright 2020 RHEDcloud Foundation. All rights reserved.
  ******************************************************************************/
 
-package edu.emory.awsaccount.service.roleProvisioning.step;
+package edu.emory.awsaccount.service.roleDeprovisioning.step;
 
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
-import edu.emory.awsaccount.service.provider.RoleProvisioningProvider;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition;
+import edu.emory.awsaccount.service.provider.RoleDeprovisioningProvider;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -32,7 +32,7 @@ public class CustomRoleNotification extends AbstractStep implements Step {
     private String notificationPriority;
     private String notificationSubject;
 
-    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleProvisioningProvider rpp) throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, RoleDeprovisioningProvider rpp) throws StepException {
         super.init(provisioningId, props, aConfig, rpp);
 
         String LOGTAG = getStepTag() + "[CustomRoleNotification.init] ";
@@ -66,10 +66,10 @@ public class CustomRoleNotification extends AbstractStep implements Step {
         addResultProperty(STEP_EXECUTION_METHOD_PROPERTY_KEY, STEP_EXECUTION_METHOD_EXECUTED);
 
         // the account and custom role name was specified in the requisition
-        RoleProvisioningRequisition requisition = getRoleProvisioning().getRoleProvisioningRequisition();
+        RoleDeprovisioningRequisition requisition = getRoleDeprovisioning().getRoleDeprovisioningRequisition();
         String accountId = requisition.getAccountId();
         String roleName = requisition.getRoleName();
-        String roleProvisioningId = getRoleProvisioning().getRoleProvisioningId();
+        String roleDeprovisioningId = getRoleDeprovisioning().getRoleDeprovisioningId();
 
         // Get a configured account notification object from AppConfig.
         AccountNotification aNotification;
@@ -90,24 +90,22 @@ public class CustomRoleNotification extends AbstractStep implements Step {
             aNotification.setPriority(getNotificationPriority());
             aNotification.setSubject(getNotificationSubject());
             aNotification.setText(getNotificationBody(accountId, roleName));
-            aNotification.setReferenceId(roleProvisioningId);
+            aNotification.setReferenceId(roleDeprovisioningId);
             aNotification.setCreateUser("AwsAccountService");
             aNotification.setCreateDatetime(createDatetime);
 
             Annotation annotation = aNotification.newAnnotation();
-            annotation.setText("AwsAccountService Custom Role Provisioning");
+            annotation.setText("AwsAccountService Custom Role Deprovisioning");
             annotation.setCreateUser("AwsAccountService");
             annotation.setCreateDatetime(createDatetime);
             aNotification.addAnnotation(annotation);
+
+            logger.info(LOGTAG + "AccountNotification to create is: " + aNotification.toXmlString());
         }
         catch (EnterpriseFieldException e) {
             String errMsg = "An error occurred setting the values of the AccountNotification. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
-        }
-
-        try {
-            logger.info(LOGTAG + "AccountNotification to create is: " + aNotification.toXmlString());
         }
         catch (XmlEnterpriseObjectException e) {
             String errMsg = "An error occurred serializing the AccountNotification to XML. The exception is: " + e.getMessage();
@@ -131,6 +129,7 @@ public class CustomRoleNotification extends AbstractStep implements Step {
             aNotification.create(rs);
             long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
             logger.info(LOGTAG + "Created AccountNotification in " + elapsedTime + " ms.");
+
             addResultProperty("sentNotification", Boolean.toString(true));
         }
         catch (EnterpriseObjectCreateException e) {
