@@ -402,8 +402,13 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             	
             	ms.addHeaderField("X-Priority", "1");
             }
+            else if (notification.getPriority() != null && 
+                	notification.getPriority().equalsIgnoreCase("low")) {
+            	
+                	ms.addHeaderField("X-Priority", "5");
+            }
             else {
-            	ms.addHeaderField("X-Priority", "5");
+            	ms.addHeaderField("X-Priority", "3");
             }
             // END
             
