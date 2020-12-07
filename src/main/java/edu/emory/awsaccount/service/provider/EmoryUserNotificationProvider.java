@@ -393,6 +393,20 @@ public class EmoryUserNotificationProvider extends OpenEaiObject implements User
             logger.info(LOGTAG + "Sending e-mail for user " + dp.getKey() + " (" + dp.getFullName() + ")");
 
             MailService ms = getMailService();
+            
+            // TJ: Sprint 4 12/7/2020
+            // if it's a high-priority notification
+            // send the email as high-priority
+            if (notification.getPriority() != null && 
+            	notification.getPriority().equalsIgnoreCase("high")) {
+            	
+            	ms.addHeaderField("X-Priority", "1");
+            }
+            else {
+            	ms.addHeaderField("X-Priority", "5");
+            }
+            // END
+            
             try {
                 ms.setFromAddress(getEmailFromAddress());
                 ms.setRecipientList(dp.getEmail().getEmailAddress());
