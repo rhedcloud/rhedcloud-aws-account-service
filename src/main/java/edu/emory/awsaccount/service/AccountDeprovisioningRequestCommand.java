@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2016 Emory University. All rights reserved. 
+ Copyright (C) 2016 Emory University. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service;
@@ -62,9 +62,9 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 /**
  * This command handles requests for AccountDeprovisioning objects.
  * Specifically, it handles a Generate-Request. All other actions for the
- * AccountDeprovisioning object are handled by a deployment of the 
+ * AccountDeprovisioning object are handled by a deployment of the
  * RDBMS connector for persistence and retrieval purposes only. This command
- * also proxies query requests to the RDBMS connector implementation, so 
+ * also proxies query requests to the RDBMS connector implementation, so
  * one command and one endpoint can cleanly implement the entire public
  * interface for account deprovisioning.
  * <P>
@@ -77,7 +77,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  * queries for updates on the progress of provisioning. Additionally, like
  * all similar services the AwsAccountService also publishes create, update, and
  * delete sync messages, so as a new instance of the deprovisioning process
- * is created and updated, create and update sync messages are published. 
+ * is created and updated, create and update sync messages are published.
  * Applications interested in the status of provisioning may also consume
  * these messages to take action on provisioning operations.
  * <OL>
@@ -96,7 +96,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  * AwsAccountService RDBMS command implementation</LI>
  * <LI>Call the query method on the VirtualPrivateCloudProvisioiningObject</LI>
  * <LI>Proxy the result to the requestor by building the message response from
- * the results of the query operation. This should contain a list of 
+ * the results of the query operation. This should contain a list of
  * zero or more AccountDeprovisioning objects.</LI>
  * <LI>Return the response.</LI>
  * </UL>
@@ -119,10 +119,10 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  * </LI>
  *
  * </OL>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 2 May 2016
- * 
+ *
  */
 public class AccountDeprovisioningRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
     private static String LOGTAG = "[AccountDeprovisioningRequestCommand] ";
@@ -153,7 +153,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             LoggerConfig lConfig = new LoggerConfig();
             lConfig = (LoggerConfig) getAppConfig().getObjectByType(lConfig.getClass().getName());
             PropertyConfigurator.configure(lConfig.getProperties());
-        } 
+        }
         catch (Exception e) {
         	String errMsg = "An error occurred configuring a command-specific " +
         		"logger. The exception is: " + e.getMessage();
@@ -164,13 +164,13 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
         try {
             PropertyConfig pConfig = (PropertyConfig) getAppConfig().getObject("GeneralProperties");
             setProperties(pConfig.getProperties());
-            logger.info(LOGTAG + "Properties are: " + getProperties().toString());     
-        } 
+            logger.info(LOGTAG + "Properties are: " + getProperties().toString());
+        }
         catch (EnterpriseConfigurationObjectException ecoe) {
             // An error occurred retrieving a property config from AppConfig.
             // Log it
             // and throw an exception.
-            String errMsg = "An error occurred retrieving a property config from " 
+            String errMsg = "An error occurred retrieving a property config from "
             		+ "AppConfig. The exception is: " + ecoe.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
@@ -187,7 +187,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
         }
         logger.info(LOGTAG + "accountDeprovisioningProviderClassName" +
         	"is: " + className);
-        
+
         AccountDeprovisioningProvider provider = null;
         try {
             logger.info(LOGTAG + "Getting class for name: " + className);
@@ -229,15 +229,15 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
-      
+
         // Verify that we have all required objects in the AppConfig.
-        // Get a configured AccountDeprovisinoing from AppConfig.
+        // Get a configured AccountDeprovisioning from AppConfig.
         AccountDeprovisioning ad = new AccountDeprovisioning();
         try {
             ad = (AccountDeprovisioning) getAppConfig()
             	.getObjectByType(ad.getClass().getName());
         } catch (EnterpriseConfigurationObjectException eoce) {
-            String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: " 
+            String errMsg = "Error retrieving an object from AppConfig: The exception" + "is: "
             	+ eoce.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
@@ -272,7 +272,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
      *             preparation for the reply, gets the ControlArea from the XML
      *             document, and verifies that message object of the message is
      *             an AccountDeprovisioning object and the action is a query,
-     *             generate, update, or delete. Then this method uses the 
+     *             generate, update, or delete. Then this method uses the
      *             configured AccountDeprovisioningProvider to perform each
      *             operation.
      */
@@ -343,7 +343,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
     	if (authUserId.equalsIgnoreCase("TestSuiteApplication")) {
     		authUserId = "testsuiteapp@emory.edu/127.0.0.1";
     	}
-        
+
         // Validate the format of the AuthUserId. If the format is invalid,
         // respond with an error.
         if (validateAuthUserId(authUserId) == false) {
@@ -400,7 +400,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 return getMessage(msg, replyContents);
             }
 
-            // Now build a AccountDeprovisinoingRequisition object from the element in the message.
+            // Now build a AccountDeprovisioningRequisition object from the element in the message.
             try {
                 req.buildObjectFromInput(eGenerateObject);
                 if (eTestId != null)
@@ -471,8 +471,8 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, jmse);
             }
-            
-            logger.info(LOGTAG + "Prepare response... " );          
+
+            logger.info(LOGTAG + "Prepare response... " );
             // Prepare the response.
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
@@ -499,7 +499,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
-        
+
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
             logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning.AccountDeprovisioning."
@@ -507,7 +507,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             Element eQuerySpec = inDoc.getRootElement().getChild("DataArea")
                     .getChild("AccountDeprovisioningQuerySpecification");
 
-            // Get a configured query object from AppConfig.            
+            // Get a configured query object from AppConfig.
             AccountDeprovisioningQuerySpecification querySpec = new AccountDeprovisioningQuerySpecification();
             try {
                 querySpec = (AccountDeprovisioningQuerySpecification) getAppConfig().getObjectByType(
@@ -518,7 +518,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
             }
-            
+
             // If the query object is null, return and error.
             if (eQuerySpec != null) {
             	try {
@@ -528,8 +528,8 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                     // element.
                     String errType = "application";
                     String errCode = "AwsAccontService-100X";
-                    String errDesc = "An error occurred building the query " 
-                    		+ "object from the DataArea element in the " 
+                    String errDesc = "An error occurred building the query "
+                    		+ "object from the DataArea element in the "
                     		+ "Query-Request message. The exception " + "is: "
                             + ele.getMessage();
                     logger.error(LOGTAG + errDesc);
@@ -544,16 +544,16 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 // The query spec is null.
                 String errType = "application";
                 String errCode = "AwsAccontService-100X";
-                String errDesc = "An error occurred building the query " 
-                		+ "object from the DataArea element in the " 
+                String errDesc = "An error occurred building the query "
+                		+ "object from the DataArea element in the "
                 		+ "Query-Request message. The query spec is null.";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
                 errors.add(buildError(errType, errCode, errDesc));
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
-                return getMessage(msg, replyContents);  
-            }           
+                return getMessage(msg, replyContents);
+            }
 
             // Query for the AccountDeprovisioning from the provider.
             logger.info(LOGTAG + "Querying for the AccountDeprovisioning...");
@@ -568,7 +568,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 // There was an error generating the identity
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred querying for the Virtual" 
+                String errDesc = "An error occurred querying for the Virtual"
                 		+ "PrivateCloud. The " + "exception is: "
                         + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
@@ -578,9 +578,9 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             if (results != null) {
-            	logger.info(LOGTAG + "Found " + results.size() + " matching result(s)."); 
+            	logger.info(LOGTAG + "Found " + results.size() + " matching result(s).");
             }
             else {
             	logger.info(LOGTAG + "Results are null; no matching AccountDeprovisioning found.");
@@ -590,7 +590,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             localProvideDoc.getRootElement().getChild("DataArea").removeContent();
             // If there are results, place them in the response.
             if (results != null && results.size() > 0) {
-            	
+
                 ArrayList adList = new ArrayList();
                 for (int i = 0; i < results.size(); i++) {
                     Element eAccountDeprovisioning = null;
@@ -602,8 +602,8 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                             ad.setTestId(testId);
                     } catch (EnterpriseLayoutException ele) {
                         String errMsg = "An error occurred serializing "
-                                + "AccountDeprovisioning object "  
-                        		+ "to an XML element. The exception is: " 
+                                + "AccountDeprovisioning object "
+                        		+ "to an XML element. The exception is: "
                                 + ele.getMessage();
                         logger.error(LOGTAG + errMsg);
                         throw new CommandException(errMsg, ele);
@@ -616,7 +616,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
-        
+
         // Handle a Create-Request.
         if (msgAction.equalsIgnoreCase("Create")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
@@ -638,8 +638,8 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
-            // Get a configured AccountDeprovisinoing from AppConfig.
+
+            // Get a configured AccountDeprovisioning from AppConfig.
             AccountDeprovisioning ad = new AccountDeprovisioning();
             try {
                 ad = (AccountDeprovisioning) getAppConfig()
@@ -654,12 +654,12 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             // message.
             try {
                 ad.buildObjectFromInput(eVpcp);
-                if (eTestId != null) { 
+                if (eTestId != null) {
                 	testId.buildObjectFromInput(eTestId);
                 	ad.setTestId(testId);
                 }
                 logger.info(LOGTAG + "TestId is: " + ad.getTestId().toString());
-            } 
+            }
             catch (EnterpriseLayoutException ele) {
                 // There was an error building the delete object from the
                 // delete element.
@@ -677,14 +677,14 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             }
 
             // Create the AccountDeprovisioning object using the provider.
-            logger.info(LOGTAG + "Creating an AccountDeprovisinoing...");
+            logger.info(LOGTAG + "Creating an AccountDeprovisioning...");
 
             try {
             	long createStartTime = System.currentTimeMillis();
-                getProvider().create(ad); 
+                getProvider().create(ad);
                 long createTime = System.currentTimeMillis() - createStartTime;
                 logger.info(LOGTAG + "Created AccountDeprovisioning in " + createTime + " ms.");
-            } 
+            }
             catch (ProviderException pe) {
                 // There was an error creating the AccountDeprovisioning
                 String errType = "application";
@@ -707,14 +707,14 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 ad.createSync((SyncService) producer);
                 logger.info(LOGTAG + "Published AccountDeprovisioning.Create-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the Account" 
+                String errMsg = "An error occurred publishing the Account"
                         + "Deprovisioning.Create-Sync message after creating "
                 		+ "the AccountDeprovisioning object. The " + "exception is: "
                         + eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
-            	String errMsg = "An error occurred publishing the Account" 
+            	String errMsg = "An error occurred publishing the Account"
                         + "Deprovisioning.Create-Sync message after creating "
                 		+ "the AccountDeprovisioning object. The " + "exception is: "
                         + jmse.getMessage();
@@ -726,7 +726,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply contents
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -737,7 +737,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
-          
+
         // Handle an Update-Request.
         if (msgAction.equalsIgnoreCase("Update")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
@@ -762,9 +762,9 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 	.getObjectByType(baselineAd.getClass().getName());
                 newAd = (AccountDeprovisioning) getAppConfig()
                 	.getObjectByType(newAd.getClass().getName());
-            } 
+            }
             catch (EnterpriseConfigurationObjectException ecoe) {
-                String errMsg = "An error occurred retrieving an object from " 
+                String errMsg = "An error occurred retrieving an object from "
                 	+ "AppConfig. The exception is: " + ecoe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, ecoe);
@@ -772,27 +772,27 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             if (eTestId != null)
                 newAd.setTestId(testId);
 
-            // Build the baseline and newdata states of the AccountDeprovisinoing.
+            // Build the baseline and newdata states of the AccountDeprovisioning.
             try {
                 baselineAd.buildObjectFromInput(eBaselineData);
                 newAd.buildObjectFromInput(eNewData);
-                if (eTestId != null) { 
+                if (eTestId != null) {
                 	testId.buildObjectFromInput(eTestId);
                 	newAd.setTestId(testId);
                 }
                 logger.info(LOGTAG + "TestId is: " + newAd.getTestId().toString());
             } catch (EnterpriseLayoutException ele) {
                 String errMsg = "An error occurred building the baseline and newdata"
-                        + " states of the AccountDeprovisioning object passed in. " 
+                        + " states of the AccountDeprovisioning object passed in. "
                 		+ "The exception is: " + ele.getMessage();
                 throw new CommandException(errMsg, ele);
             }
 
             // Perform the baseline check.
-            
+
             // Get a configured AccountDeprovisioningQuerySpecification from
             // AppConfig.
-            AccountDeprovisioningQuerySpecification querySpec = 
+            AccountDeprovisioningQuerySpecification querySpec =
             	new AccountDeprovisioningQuerySpecification();
             try {
                 querySpec = (AccountDeprovisioningQuerySpecification) getAppConfig()
@@ -803,7 +803,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
             }
-            
+
             // Set the value of the DeprovisioningId.
             try {
             	querySpec.setDeprovisioningId(baselineAd.getDeprovisioningId());
@@ -815,7 +815,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             	logger.error(LOGTAG + errMsg);
             	throw new CommandException(errMsg, efe);
             }
-            
+
             // Query for the AccountDeprovisioning.
             AccountDeprovisioning ad = null;
             try {
@@ -827,8 +827,8 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 // There was an error querying the AccountDeprovisioning service
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred querying the AccountDeprovisioning " 
-                		+ "provider to verify the baseline state of the AccountDeprovisioning. " 
+                String errDesc = "An error occurred querying the AccountDeprovisioning "
+                		+ "provider to verify the baseline state of the AccountDeprovisioning. "
                 		+ "The exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -837,7 +837,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-           
+
             if (ad != null) {
                 // Compare the retrieved baseline with the baseline in the
                 // update request message.
@@ -905,7 +905,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 logger.info(LOGTAG + "Updating the AccountDeprovisioning object in the provider...");
                 getProvider().update(newAd);
                 long updateTime = System.currentTimeMillis() - updateStartTime;
-                logger.info(LOGTAG + "AccountDeprovisioning update processed by provider in " 
+                logger.info(LOGTAG + "AccountDeprovisioning update processed by provider in "
                 		+ updateTime + " ms.");
             } catch (ProviderException pe) {
                 // There was an error updating the AccountDeprovisioning
@@ -932,12 +932,12 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                     logger.info(LOGTAG + "Publishing AccountDeprovisioning.Update-Sync message...");
                 newAd.updateSync((SyncService) producer);
                 long publishTime = System.currentTimeMillis() - publishStartTime;
-                logger.info(LOGTAG + "Published AccountDeprovisinoing.Update-Sync message in "
+                logger.info(LOGTAG + "Published AccountDeprovisioning.Update-Sync message in "
                         + publishTime + " ms.");
             } catch (EnterpriseObjectSyncException eose) {
                 String errMsg = "An error occurred publishing the Account" +
                 		"Deprovisinoing.Update-Sync message after updating the"
-                		+ " the AccountDeprovisioning object. The exception is: " + 
+                		+ " the AccountDeprovisioning object. The exception is: " +
                 		eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
@@ -954,7 +954,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply document.
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -964,8 +964,8 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
 
             // Return the response with status success.
             return getMessage(msg, replyContents);
-        }        
-        
+        }
+
         // Handle a Delete-Request.
         if (msgAction.equalsIgnoreCase("Delete")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
@@ -973,7 +973,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             Element eAccountDeprovisioning = inDoc.getRootElement().getChild("DataArea")
             	.getChild("DeleteData").getChild("AccountDeprovisioning");
 
-            // Verify that the AccountDeprovisinoing element is not null. If it is
+            // Verify that the AccountDeprovisioning element is not null. If it is
             // null, reply with an error.
             if (eAccountDeprovisioning == null) {
                 String errType = "application";
@@ -987,15 +987,15 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             // Get a configured AccountDeprovisioning from AppConfig.
             AccountDeprovisioning ad = new AccountDeprovisioning();
             try {
                 ad = (AccountDeprovisioning) getAppConfig()
                 	.getObjectByType(ad.getClass().getName());
-            } 
+            }
             catch (EnterpriseConfigurationObjectException eoce) {
-                String errMsg = "Error retrieving an object from AppConfig: " + 
+                String errMsg = "Error retrieving an object from AppConfig: " +
                 	"The exception" + "is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
@@ -1007,7 +1007,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 ad.buildObjectFromInput(eAccountDeprovisioning);
                 if (eTestId != null) testId.buildObjectFromInput(eTestId);
                 ad.setTestId(testId);
-            } 
+            }
             catch (EnterpriseLayoutException ele) {
                 // There was an error building the delete object from the
                 // delete element.
@@ -1029,10 +1029,10 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
 
             try {
             	long deleteStartTime = System.currentTimeMillis();
-                getProvider().delete(ad); 
+                getProvider().delete(ad);
                 long deleteTime = System.currentTimeMillis() - deleteStartTime;
                 logger.info(LOGTAG + "Deleted AccountDeprovisioning in " + deleteTime + " ms.");
-            } 
+            }
             catch (ProviderException pe) {
                 // There was an error deleting the AccountDeprovisioning
                 String errType = "application";
@@ -1053,16 +1053,16 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
                 if (getVerbose())
                     logger.info(LOGTAG + "Publishing AccountDeprovisioning.Delete-Sync message...");
                 ad.deleteSync("delete", (SyncService) producer);
-                logger.info(LOGTAG + "Published AccountDeprovisinoing.Delete-Sync" + " message.");
+                logger.info(LOGTAG + "Published AccountDeprovisioning.Delete-Sync" + " message.");
             } catch (EnterpriseObjectSyncException eose) {
-                String errMsg = "An error occurred publishing the Account" 
+                String errMsg = "An error occurred publishing the Account"
                         + "Deprovisinoing.Delete-Sync message after deleting "
                 		+ "the AccountDeprovisioning object. The " + "exception is: "
                         + eose.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, eose);
             } catch (JMSException jmse) {
-            	String errMsg = "An error occurred publishing the Account" 
+            	String errMsg = "An error occurred publishing the Account"
                         + "Deprovisioning.Delete-Sync message after deleting "
                 		+ "the AccountDeprovisioning. The " + "exception is: "
                         + jmse.getMessage();
@@ -1074,7 +1074,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply document.
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -1087,7 +1087,7 @@ public class AccountDeprovisioningRequestCommand extends AwsAccountRequestComman
         }
 
         else {
-            // The messageAction is invalid; it is not a query, generate, 
+            // The messageAction is invalid; it is not a query, generate,
         	// create. update, or delete
             String errType = "application";
             String errCode = "OpenEAI-1002";

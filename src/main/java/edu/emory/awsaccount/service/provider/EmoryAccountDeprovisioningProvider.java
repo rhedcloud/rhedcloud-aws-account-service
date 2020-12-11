@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service.provider;
@@ -70,8 +70,7 @@ import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
  * @author Steve Wheat (swheat@emory.edu)
  *
  */
-public class  EmoryAccountDeprovisioningProvider extends OpenEaiObject 
-implements AccountDeprovisioningProvider {
+public class EmoryAccountDeprovisioningProvider extends OpenEaiObject implements AccountDeprovisioningProvider {
 
 	private Category logger = OpenEaiObject.logger;
 	private AppConfig m_appConfig;
@@ -91,7 +90,7 @@ implements AccountDeprovisioningProvider {
 	protected String ROLLBACK_STATUS = "rolled back";
 	protected String SUCCESS_RESULT = "success";
 	protected String FAILURE_RESULT = "failure";
-	
+
 	/**
 	 * @see VirtualPrivateCloudProvisioningProvider.java
 	 */
@@ -105,31 +104,31 @@ implements AccountDeprovisioningProvider {
 		try {
 			pConfig = (PropertyConfig)aConfig
 				.getObject("AccountDeprovisioningProviderProperties");
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException eoce) {
 			String errMsg = "Error retrieving a PropertyConfig object from "
 					+ "AppConfig: The exception is: " + eoce.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, eoce);
 		}
-		
+
 		Properties props = pConfig.getProperties();
 		setProperties(props);
 		logger.info(LOGTAG + getProperties().toString());
-		
+
 		// Set the verbose property.
 		setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
 		logger.info(LOGTAG + "Verbose property is: " + getVerbose());
-		
+
 		// Set the verbose property.
 		setCentralAdminRoleDn(getProperties().getProperty("centralAdminRoleDn", null));
 		logger.info(LOGTAG + "centralAdminRoleDn is: " + getCentralAdminRoleDn());
-		
+
 		// Set the primed doc URL for a template provisioning object.
 		String primedDocUrl = getProperties().getProperty("primedDocumentUri");
 		setPrimedDocumentUrl(primedDocUrl);
 		logger.info(LOGTAG + "primedDocumentUrl property is: " + primedDocUrl);
-		
+
 		// Get the sequences to use.
 		// This provider needs a sequence to generate a unique DeprovisioningId
 		// for each transaction in multiple threads and multiple instances.
@@ -146,7 +145,7 @@ implements AccountDeprovisioningProvider {
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-				
+
 		// This provider needs to send messages to the AWS account service
 		// to initialize provisioning transactions.
 		ProducerPool p2p1 = null;
@@ -163,7 +162,7 @@ implements AccountDeprovisioningProvider {
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-		
+
 		// This provider needs to send messages to the ServiceNow service.
 		ProducerPool p2p2 = null;
 		try {
@@ -179,7 +178,7 @@ implements AccountDeprovisioningProvider {
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-		
+
 		// This provider needs to send messages to the IdmService service
 		// to query for RoleAssignments.
 		ProducerPool p2p3 = null;
@@ -196,8 +195,8 @@ implements AccountDeprovisioningProvider {
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-				
-		// Get the ThreadPool pool to use. 
+
+		// Get the ThreadPool pool to use.
 		// This provider needs a thread pool in which to process concurrent
 		// deprovisioning transactions.
 		ThreadPool tp = null;
@@ -213,8 +212,8 @@ implements AccountDeprovisioningProvider {
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-		
-		// Initialize all provisioning steps this provider will use to 
+
+		// Initialize all provisioning steps this provider will use to
 		// verify the runtime configuration as best we can.
 		// Get a list of all step properties.
 		List<PropertyConfig> stepPropConfigs = null;
@@ -229,7 +228,7 @@ implements AccountDeprovisioningProvider {
 			throw new ProviderException(errMsg, eoce);
 		}
 		logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
-		
+
 		// Convert property configs to properties
 		List<Properties> stepProps = new ArrayList<Properties>();
 		ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
@@ -238,10 +237,10 @@ implements AccountDeprovisioningProvider {
 			Properties stepProp = stepConfig.getProperties();
 			stepProps.add(stepProp);
 		}
-		
+
 		// Sort the list by stepId integer.
 		stepProps.sort(new StepPropIdComparator(1));
-		
+
 		// For each property instantiate the step and log out its details.
 		List<Step> completedSteps = new ArrayList();
 		ListIterator stepPropsIterator = stepProps.listIterator();
@@ -296,31 +295,31 @@ implements AccountDeprovisioningProvider {
 //					logger.error(LOGTAG + errMsg);
 //					throw new ProviderException(errMsg, error);
 				}
-			}	
+			}
 		}
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 
 	/**
-	 * @see AccountDeprovisinoingProvider.java
-	 * 
-	 * This method proxys a query to an RDBMS command that handles it. The 
+	 * @see AccountDeprovisioningProvider.java
+	 *
+	 * This method proxys a query to an RDBMS command that handles it. The
 	 * purpose of including this operation in this command (and not just the
 	 * generate) operations is that it will give us one command that should
 	 * handle all broad access to the AccountDeprovisioning service
-	 * operations. In general, applications and clients will only need to 
+	 * operations. In general, applications and clients will only need to
 	 * perform the query and generate operations and the create, update, and
 	 * delete operations will be handled by and RDBMS connector deployment
 	 * and accessed by this command and administrative applications like the
 	 * VPCP web application.
 	 */
-	public List<AccountDeprovisioning> 
+	public List<AccountDeprovisioning>
 		query(AccountDeprovisioningQuerySpecification querySpec)
 			throws ProviderException {
-			logger.info(LOGTAG + "Querying for AccountDeprovisioning with DeprovisioningId: " + 
+			logger.info(LOGTAG + "Querying for AccountDeprovisioning with DeprovisioningId: " +
 					querySpec.getDeprovisioningId());
-		
+
 			// Get a configured AccountDeprovisioning object to use.
 			AccountDeprovisioning ad = new AccountDeprovisioning();
 			try {
@@ -350,35 +349,32 @@ implements AccountDeprovisioningProvider {
 			// Query for the AccountDeprovisioning object.
 			List results = null;
 			try {
-				logger.info(LOGTAG + "Querying for the VPCP...");
+				logger.info(LOGTAG + "Querying for the AccountDeprovisioning...");
 				long startTime = System.currentTimeMillis();
 				results = ad.query(querySpec, rs);
 				long time = System.currentTimeMillis() - startTime;
-				logger.info(LOGTAG + "Queried for AccountDeprovisioning " +
-					"objects in " + time + " ms.");
+				logger.info(LOGTAG + "Queried for AccountDeprovisioning objects in " + time + " ms.");
 			}
 			catch (EnterpriseObjectQueryException eoce) {
-				String errMsg = "An error occurred querying the Account" +
-						"Deprovisioning object The exception is: " + 
-						eoce.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new ProviderException(errMsg, eoce);
+				String errMsg = "An error occurred querying the AccountDeprovisioning object The exception is: " + eoce.getMessage();
+				logger.error(LOGTAG + errMsg);
+				throw new ProviderException(errMsg, eoce);
 			}
 			// In any case, release the producer back to the pool.
 			finally {
 				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 			}
-			
+
 			// Return the results
 			return results;
 	}
-	
+
 	/**
 	 * @see AccountDeprovisioningProvider.java
 	 */
 	public void create(AccountDeprovisioning ad) throws ProviderException {
 		String LOGTAG = "[EmoryAccountDeprovisioningProvider.create] ";
-		
+
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -400,7 +396,7 @@ implements AccountDeprovisioningProvider {
 		}
 		catch (EnterpriseObjectCreateException eoce) {
 			String errMsg = "An error occurred creating the Account" +
-					"Deprovisioning object The exception is: " + 
+					"Deprovisioning object The exception is: " +
 					eoce.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoce);
@@ -416,7 +412,7 @@ implements AccountDeprovisioningProvider {
 	 */
 	public AccountDeprovisioning generate(AccountDeprovisioningRequisition adr)
 			throws ProviderException {
-     
+
 	    // Get a configured AccountDeprovisioning object from AppConfig
 	    AccountDeprovisioning ad = new AccountDeprovisioning();
 	    try {
@@ -429,7 +425,7 @@ implements AccountDeprovisioningProvider {
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new ProviderException(errMsg, ecoe);
 	    }
-	    
+
 	    // Get the next sequence number to identify the AccountDeprovisioning.
 	    String seq = null;
 	    try {
@@ -438,13 +434,13 @@ implements AccountDeprovisioningProvider {
 	    }
 	    catch (SequenceException se) {
 	    	String errMsg = "An error occurred getting the next value " +
-  	    	  "from the ProvisioningId sequence. The exception is: " + 
+  	    	  "from the ProvisioningId sequence. The exception is: " +
   	    	  se.getMessage();
   	    	logger.error(LOGTAG + errMsg);
   	    	throw new ProviderException(errMsg, se);
 	    }
 
-		// Set the values of the AccountDeprovisioning object.	
+		// Set the values of the AccountDeprovisioning object.
 		try {
 			ad.setDeprovisioningId("rhedcloud-ad-" + seq);
 			logger.info(LOGTAG + "The DeprovisioningId is: " + ad.getDeprovisioningId());
@@ -455,14 +451,14 @@ implements AccountDeprovisioningProvider {
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
-				"AccountDeprovisioning object. The exception is: " + 
+				"AccountDeprovisioning object. The exception is: " +
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, efe);
 		}
-		
+
 		// Add all of the steps.
-		// Initialize all provisioning steps this provider will use to 
+		// Initialize all provisioning steps this provider will use to
 		// verify the runtime configuration as best we can.
 		// Get a list of all step properties.
 		List<PropertyConfig> stepPropConfigs = null;
@@ -477,7 +473,7 @@ implements AccountDeprovisioningProvider {
 			throw new ProviderException(errMsg, eoce);
 		}
 		logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
-		
+
 		// Convert property configs to properties
 		List<Properties> stepProps = new ArrayList<Properties>();
 		ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
@@ -486,10 +482,10 @@ implements AccountDeprovisioningProvider {
 			Properties stepProp = stepConfig.getProperties();
 			stepProps.add(stepProp);
 		}
-		
+
 		// Sort the list by stepId integer.
 		stepProps.sort(new StepPropIdComparator(1));
-		
+
 		// For each property instantiate a provisioning step
 		// and add it to the provisioning object.
 		ListIterator stepPropsIterator = stepProps.listIterator();
@@ -504,7 +500,7 @@ implements AccountDeprovisioningProvider {
 			String stepAnticipatedTime = sp.getProperty("anticipatedTime");
 			int anticipatedTime = Integer.parseInt(stepAnticipatedTime);
 			totalAnticipatedTime = totalAnticipatedTime + anticipatedTime;
-			
+
 			DeprovisioningStep dStep = ad.newDeprovisioningStep();
 			try {
 				dStep.setDeprovisioningId(ad.getDeprovisioningId());
@@ -516,7 +512,7 @@ implements AccountDeprovisioningProvider {
 				dStep.setCreateUser("AwsAccountService");
 				Datetime createDatetime = dStep.newCreateDatetime();
 				dStep.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
-				
+
 				ad.addDeprovisioningStep(dStep);
 			}
 			catch (EnterpriseFieldException efe) {
@@ -525,13 +521,13 @@ implements AccountDeprovisioningProvider {
 					efe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, efe);
-				
+
 			}
-			logger.info(LOGTAG + "Added step " + i + "to the deprovisioning object.");
+			logger.info(LOGTAG + "Added step " + i + " to the deprovisioning object.");
 			logger.info(LOGTAG + "Total anticipated time of this deprovisioning " +
 				"process is " + totalAnticipatedTime + " ms.");
 		}
-		
+
 		// update the AccountDeprovisioning anticipated time.
 		try {
 			ad.setAnticipatedTime(Integer.toString(totalAnticipatedTime));
@@ -543,13 +539,13 @@ implements AccountDeprovisioningProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, efe);
 		}
-		
+
 		// Create the AccountDeprovisioning object.
 		try {
 			long createStartTime = System.currentTimeMillis();
 			create(ad);
 			long createTime = System.currentTimeMillis() - createStartTime;
-			logger.info(LOGTAG + "Created AccountDeprovisinoing object in " +
+			logger.info(LOGTAG + "Created AccountDeprovisioning object in " +
 				createTime + " ms.");
 		}
 		catch (ProviderException pe) {
@@ -557,8 +553,8 @@ implements AccountDeprovisioningProvider {
 				"Deprovisioning create. The exception is: " + pe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, pe);
-		} 		
-		
+		}
+
 		// Add the AccountDeprovisioning to the ThreadPool for processing.
 		// If this thread pool is set to check for available threads before
 		// adding jobs to the pool, it may throw an exception indicating it
@@ -575,7 +571,7 @@ implements AccountDeprovisioningProvider {
 			catch (ThreadPoolException tpe) {
 				// The thread pool is busy. Log it and sleep briefly to try to
 				// add the job again later.
-				String msg = "The thread pool is busy. Sleeping for " + 
+				String msg = "The thread pool is busy. Sleeping for " +
 						getSleepInterval() + " milliseconds.";
 				logger.debug(LOGTAG + msg);
 				try { Thread.sleep(getSleepInterval()); }
@@ -598,9 +594,9 @@ implements AccountDeprovisioningProvider {
 	/**
 	 * @see AccountDeprovisioningProvider.java
 	 */
-	public void update(AccountDeprovisioning ad) throws ProviderException {		
+	public void update(AccountDeprovisioning ad) throws ProviderException {
 		String LOGTAG = "[EmoryAccountDeprovisioningProvider.update] ";
-		
+
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -613,29 +609,14 @@ implements AccountDeprovisioningProvider {
 			throw new ProviderException(errMsg, jmse);
 		}
 		// Update the AccountDeprovisioning object.
-		Result result = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			result = (Result)ad.update(rs);
+			ad.update(rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Updated AccountDeprovisioning " +
-				"object in " + time + " ms.");
+			logger.info(LOGTAG + "Updated AccountDeprovisioning object in " + time + " ms.");
 		}
 		catch (EnterpriseObjectUpdateException eoce) {
-			List<org.openeai.moa.objects.resources.Error> errors = result.getError();
-			String errList = "";
-			if (errors != null) {
-				ListIterator li = errors.listIterator();
-				while (li.hasNext()) {
-					org.openeai.moa.objects.resources.Error error = 
-						(org.openeai.moa.objects.resources.Error)li.next();
-					errList = errList + error.getErrorNumber() + ": " + 
-						error.getErrorDescription() + " ";
-				}
-			}
-			String errMsg = "An error occurred updating the Account" +
-					"Deprovisioning object The exception is: " + 
-					eoce.getMessage() + "The errors list is: " + errList;
+			String errMsg = "An error occurred updating the AccountDeprovisioning object The exception is: " + eoce.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, eoce);
 		}
@@ -644,13 +625,13 @@ implements AccountDeprovisioningProvider {
 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
 	}
-	
+
 	/**
 	 * @see AccountDeprovisioningProvider.java
 	 */
-	public void delete(AccountDeprovisioning vpcp) throws ProviderException {		
+	public void delete(AccountDeprovisioning vpcp) throws ProviderException {
 		String LOGTAG = "[EmoryAccountDeprovisioningProvider.delete] ";
-		
+
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -672,7 +653,7 @@ implements AccountDeprovisioningProvider {
 		}
 		catch (EnterpriseObjectCreateException eoce) {
 			String errMsg = "An error occurred deleting the Account" +
-					"Deprovisioning object The exception is: " + 
+					"Deprovisioning object The exception is: " +
 					eoce.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoce);
@@ -682,7 +663,7 @@ implements AccountDeprovisioningProvider {
 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
 	}
-		
+
 	/**
 	 * @param String, the centralAdminRoleDn
 	 * <P>
@@ -695,7 +676,7 @@ implements AccountDeprovisioningProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-		
+
 		m_centralAdminRoleDn = dn;
 	}
 
@@ -707,7 +688,7 @@ implements AccountDeprovisioningProvider {
 	private String getCentralAdminRoleDn() {
 		return m_centralAdminRoleDn;
 	}
-	
+
 	/**
 	 * @param boolean, the verbose logging property
 	 * <P>
@@ -725,7 +706,7 @@ implements AccountDeprovisioningProvider {
 	private boolean getVerbose() {
 		return m_verbose;
 	}
-	
+
 	/**
      * @param Sequence, the DeprovisinoingId sequence.
      *            <P>
@@ -743,11 +724,11 @@ implements AccountDeprovisioningProvider {
     private Sequence getDeprovisioningIdSequence() {
         return  m_deprovisioningIdSequence;
     }
-	
+
     /**
      * @param ProducerPool, the AWS account service producer pool.
      *            <P>
-     *            This method sets the producer pool to use to send 
+     *            This method sets the producer pool to use to send
      *            messages to the AWS Account Service.
      */
     private void setAwsAccountServiceProducerPool(ProducerPool pool) {
@@ -763,11 +744,11 @@ implements AccountDeprovisioningProvider {
     private ProducerPool getAwsAccountServiceProducerPool() {
         return m_awsAccountServiceProducerPool;
     }
-    
+
     /**
      * @param ProducerPool, the ServiceNow service producer pool.
      *            <P>
-     *            This method sets the producer pool to use to send 
+     *            This method sets the producer pool to use to send
      *            messages to the ServiceNow Service.
      */
     private void setServiceNowServiceProducerPool(ProducerPool pool) {
@@ -783,11 +764,11 @@ implements AccountDeprovisioningProvider {
     private ProducerPool getServiceNowServiceProducerPool() {
         return m_serviceNowServiceProducerPool;
     }
-    
+
     /**
      * @param ProducerPool, the IDM service producer pool.
      *            <P>
-     *            This method sets the producer pool to use to send 
+     *            This method sets the producer pool to use to send
      *            messages to the IDM Service.
      */
     private void setIdmServiceProducerPool(ProducerPool pool) {
@@ -803,7 +784,7 @@ implements AccountDeprovisioningProvider {
     private ProducerPool getIdmServiceProducerPool() {
         return m_idmServiceProducerPool;
     }
-    
+
 	/**
 	 * This method gets the thread pool.
 	 */
@@ -817,14 +798,14 @@ implements AccountDeprovisioningProvider {
 	private final void setThreadPool(ThreadPool tp) {
 		m_threadPool = tp;
 	}
-	
+
 	/**
 	 * This method gets the value of the threadPoolSleepInteval.
 	 */
 	public final int getSleepInterval() {
 		return m_threadPoolSleepInterval;
 	}
-	
+
     /**
      * @param AppConfig
      *            , the AppConfig object of this provider.
@@ -845,7 +826,7 @@ implements AccountDeprovisioningProvider {
     private AppConfig getAppConfig() {
         return m_appConfig;
     }
-    
+
     private String vpcpToXmlString(VirtualPrivateCloudProvisioning vpcp) {
     	String sVpcp = null;
     	try {
@@ -856,7 +837,7 @@ implements AccountDeprovisioningProvider {
     	}
     	return sVpcp;
     }
-    
+
 	/**
 	 * @param String, the URL to a primed document containing a
 	 * sample object.
@@ -869,10 +850,10 @@ implements AccountDeprovisioningProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
 		}
-		
+
 		m_primedDocUrl = primedDocUrl;
 	}
-	
+
 	/**
 	 * @return String, the URL to a primed document containing a
 	 * sample object
@@ -882,26 +863,26 @@ implements AccountDeprovisioningProvider {
 	private String getPrimedDocumentUrl() {
 		return m_primedDocUrl;
 	}
-	
+
 	private AccountDeprovisioningProvider getAccountDeprovisioningProvider() {
 		return this;
 	}
-	
+
 	private class StepPropIdComparator implements Comparator<Properties> {
 
 		int m_order = 1;
-		
+
 		public StepPropIdComparator(int order) {
 			m_order = order;
 		}
-		
+
 	    public int compare(Properties prop1, Properties prop2) {
 	        int returnVal = 0;
-	        
+
 	        // Convert stepIds to integers
 	        int stepId1 = Integer.valueOf(prop1.getProperty("stepId"));
 	        int stepId2 = Integer.valueOf(prop2.getProperty("stepId"));
-	        
+
 	        // Compare integer stepIds.
 	        if (stepId1 < stepId2) {
 	        	returnVal =  -1;
@@ -915,22 +896,22 @@ implements AccountDeprovisioningProvider {
 	        return (returnVal * m_order);
 	    }
 	}
-	
+
 	private class StepIdComparator implements Comparator<Step> {
 
 		int m_order = 1;
-		
+
 		public StepIdComparator(int order) {
 			m_order = order;
 		}
-		
+
 	    public int compare(Step step1, Step step2) {
 	        int returnVal = 0;
-	        
+
 	        // Convert stepIds to integers
 	        int stepId1 = Integer.valueOf(step1.getStepId());
 	        int stepId2 = Integer.valueOf(step2.getStepId());
-	        
+
 	        // Compare integer stepIds.
 	        if (stepId1 < stepId2) {
 	        	returnVal =  -1;
@@ -944,14 +925,14 @@ implements AccountDeprovisioningProvider {
 	        return (returnVal * m_order);
 	    }
 	}
-	
-	public Incident generateIncident(IncidentRequisition req) 
+
+	public Incident generateIncident(IncidentRequisition req)
 		throws ProviderException {
-		
+
 		String LOGTAG = "[EmoryAccontDeprovisioningProvider.generateIncident] ";
-		
+
 		if (req == null) {
-			String errMsg = "IncidentRequisision is null. " + 
+			String errMsg = "IncidentRequisision is null. " +
 				"Can't generate an Incident.";
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
@@ -969,7 +950,7 @@ implements AccountDeprovisioningProvider {
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new ProviderException(errMsg, ecoe);
 	    }
-	    
+
 	    // Log the state of the requisition.
 	    try {
 	    	logger.info(LOGTAG + "Incident requisition is: " + req.toXmlString());
@@ -979,8 +960,8 @@ implements AccountDeprovisioningProvider {
 	  	    	  "to XML. The exception is: " + xeoe.getMessage();
   	    	logger.error(LOGTAG + errMsg);
   	    	throw new ProviderException(errMsg, xeoe);
-	    }    
-		
+	    }
+
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
@@ -993,14 +974,14 @@ implements AccountDeprovisioningProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, jmse);
 		}
-	    
+
 		List results = null;
-		try { 
+		try {
 			long generateStartTime = System.currentTimeMillis();
 			results = incident.generate(req, rs);
 			long generateTime = System.currentTimeMillis() - generateStartTime;
 			logger.info(LOGTAG + "Generated Incident in " +
-				+ generateTime + " ms. Returned " + results.size() + 
+				+ generateTime + " ms. Returned " + results.size() +
 				" result.");
 		}
 		catch (EnterpriseObjectGenerateException eoge) {
@@ -1014,17 +995,17 @@ implements AccountDeprovisioningProvider {
 			getServiceNowServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
 		}
-		
+
 		return (Incident)results.get(0);
 	}
-	
+
 	public int notifyCentralAdministrators(UserNotification notification)
 		throws ProviderException {
-		
+
 		// Query for the list of central administrators.
-		List<RoleAssignment> roleAssignments = 
+		List<RoleAssignment> roleAssignments =
 			roleAssignmentQuery(getCentralAdminRoleDn());
-		
+
 		ListIterator li = roleAssignments.listIterator();
 		int i = 0;
 		while (li.hasNext()) {
@@ -1044,17 +1025,17 @@ implements AccountDeprovisioningProvider {
 			createUserNotification(notification);
 			i++;
 		}
-		
+
 		return i;
 	}
-	
+
 	public List<String> getCentralAdministrators()
 		throws ProviderException {
-		
+
 		// Query for the list of central administrators.
-		List<RoleAssignment> roleAssignments = 
+		List<RoleAssignment> roleAssignments =
 			roleAssignmentQuery(getCentralAdminRoleDn());
-		
+
 		ListIterator li = roleAssignments.listIterator();
 		List<String> userIds = new ArrayList<String>();
 		while (li.hasNext()) {
@@ -1063,10 +1044,10 @@ implements AccountDeprovisioningProvider {
 			String userId = parseUserId(userDn);
 			userIds.add(userId);
 		}
-		
+
 		return userIds;
 	}
-	
+
 	private String parseUserId(String dn) {
 		StringTokenizer st1 = new StringTokenizer(dn, ",");
 		String firstToken = st1.nextToken();
@@ -1075,10 +1056,10 @@ implements AccountDeprovisioningProvider {
 		String userId = st2.nextToken();
 		return userId;
 	}
-	
+
 	private void createUserNotification (UserNotification notification)
 		throws ProviderException {
-		
+
 		// Create the UserNotification in the AWS Account Service.
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
@@ -1101,7 +1082,7 @@ implements AccountDeprovisioningProvider {
 		}
 		catch (EnterpriseObjectCreateException eoce) {
 			String errMsg = "An error occurred creating the " +
-					"UserNotification object The exception is: " + 
+					"UserNotification object The exception is: " +
 					eoce.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoce);
@@ -1111,12 +1092,12 @@ implements AccountDeprovisioningProvider {
 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
 	}
-	
-	private List<RoleAssignment> roleAssignmentQuery(String roleDn) 
+
+	private List<RoleAssignment> roleAssignmentQuery(String roleDn)
 		throws ProviderException {
-		
+
     	// Query the IDM service for all users in the named role
-    	// Get a configured AccountUser, RoleAssignment, and 
+    	// Get a configured AccountUser, RoleAssignment, and
     	// RoleAssignmentQuerySpecification from AppConfig
 		RoleAssignment roleAssignment = new RoleAssignment();
     	RoleAssignmentQuerySpecification querySpec = new RoleAssignmentQuerySpecification();
@@ -1132,7 +1113,7 @@ implements AccountDeprovisioningProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, ecoe);
 		}
-		
+
 		// Set the values of the querySpec.
 		try {
 			querySpec.setRoleDN(roleDn);
@@ -1141,12 +1122,12 @@ implements AccountDeprovisioningProvider {
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
-				"query specification object. The exception is: " + 
+				"query specification object. The exception is: " +
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, efe);
 		}
-    	
+
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -1165,12 +1146,12 @@ implements AccountDeprovisioningProvider {
 			roleAssignments = roleAssignment.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
 			logger.info(LOGTAG + "Queried for RoleAssignments for " +
-				"roleDn " + roleDn + " in " + time + " ms. Returned " + 
+				"roleDn " + roleDn + " in " + time + " ms. Returned " +
 				roleAssignments.size() + " users in the role.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the " +
-					"RoleAssignment objects The exception is: " + 
+					"RoleAssignment objects The exception is: " +
 					eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoqe);
@@ -1179,10 +1160,10 @@ implements AccountDeprovisioningProvider {
 		finally {
 			getIdmServiceProducerPool().releaseProducer((PointToPointProducer)rs);
     	}
-		
+
 		return roleAssignments;
-	}	
-	
+	}
+
 	/**
 	 * A transaction to process account deprovisioning.
 	 */
@@ -1195,15 +1176,15 @@ implements AccountDeprovisioningProvider {
 			logger.info(LOGTAG + "Initializing deprovisioning process for " +
 				"DeprovisioningId: " + ad.getDeprovisioningId());
 			m_ad = ad;
-		}	
-		
+		}
+
 		public void run() {
 			setExecutionStartTime(System.currentTimeMillis());
-			String LOGTAG = "[AccountDeprovisioningTransaction{" + 
+			String LOGTAG = "[AccountDeprovisioningTransaction{" +
 				getDeprovisioningId() + "}] ";
-			logger.info(LOGTAG +  "Processing DeprovisioningId number: " 
+			logger.info(LOGTAG +  "Processing DeprovisioningId number: "
 				+ getDeprovisioningId());
-/**			
+/**
 			// Get the FailStep if it exists.
 			int failStep = 0;
 			String purpose = m_ad.getVirtualPrivateCloudRequisition().getPurpose();
@@ -1222,7 +1203,7 @@ implements AccountDeprovisioningProvider {
 					logger.info(LOGTAG + "failStep is: " + failStep);
 				}
 			}
-**/			
+**/
 			// Get a list of all step properties.
 			List<PropertyConfig> stepPropConfigs = null;
 			try {
@@ -1236,7 +1217,7 @@ implements AccountDeprovisioningProvider {
 				return;
 			}
 			logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
-			
+
 			// Convert property configs to properties
 			List<Properties> stepProps = new ArrayList<Properties>();
 			ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
@@ -1245,12 +1226,12 @@ implements AccountDeprovisioningProvider {
 				Properties stepProp = pConfig.getProperties();
 				stepProps.add(stepProp);
 			}
-			
+
 			// Sort the list by stepId integer.
 			stepProps.sort(new StepPropIdComparator(1));
-			
+
 			// For each property instantiate the step, call the execute
-			// method, and if successful, place it in the map of 
+			// method, and if successful, place it in the map of
 			// completed steps.
 			List<Step> completedSteps = new ArrayList();
 			ListIterator stepPropsIterator = stepProps.listIterator();
@@ -1266,7 +1247,7 @@ implements AccountDeprovisioningProvider {
 						Class stepClass = Class.forName(className);
 						step = (Step)stepClass.newInstance();
 						logger.info(LOGTAG + "Initializing step " + i + ".");
-/**						
+/**
 						// If this is the failStep, set the failStep to be true.
 						if (i == failStep) {
 							logger.info(LOGTAG + "This step (" + i + ") is the FailStep. " +
@@ -1276,16 +1257,16 @@ implements AccountDeprovisioningProvider {
 						else {
 							logger.info(LOGTAG + "This step (" + i + ") is not the FailStep.");
 						}
-**/						
+**/
 
-			
-						step.init(getDeprovisioningId(), props, getAppConfig(), 
+
+						step.init(getDeprovisioningId(), props, getAppConfig(),
 							getAccountDeprovisioningProvider());
 					}
 					catch (ClassNotFoundException cnfe) {
 						// An error occurred instantiating the step.
 						// Log it and roll back all preceding steps.
-						String errMsg = "An error occurred instantiating the Step " + 
+						String errMsg = "An error occurred instantiating the Step " +
 							step.getStepId() + "The exception is: " + cnfe.getMessage();
 						logger.error(LOGTAG + errMsg);
 						try {
@@ -1305,7 +1286,7 @@ implements AccountDeprovisioningProvider {
 					catch (IllegalAccessException iae) {
 						// An error occurred instantiating the step.
 						// Log it and roll back all preceding steps.
-						String errMsg = "An error occurred instantiating the Step " + 
+						String errMsg = "An error occurred instantiating the Step " +
 							step.getStepId() + "The exception is: " + iae.getMessage();
 						logger.error(LOGTAG + errMsg);
 						try {
@@ -1325,7 +1306,7 @@ implements AccountDeprovisioningProvider {
 					catch (InstantiationException ie) {
 						// An error occurred instantiating the step.
 						// Log it and roll back all preceding steps.
-						String errMsg = "An error occurred instantiating the Step " + 
+						String errMsg = "An error occurred instantiating the Step " +
 							step.getStepId() + "The exception is: " + ie.getMessage();
 						logger.error(LOGTAG + errMsg);
 						try {
@@ -1341,11 +1322,11 @@ implements AccountDeprovisioningProvider {
 						}
 						rollbackCompletedSteps(completedSteps);
 						return;
-					}				
+					}
 					catch (StepException se) {
 						// An error occurred initializing the step.
 						// Log it and roll back all preceding steps.
-						String errMsg = "An error occurred initializing the Step " + 
+						String errMsg = "An error occurred initializing the Step " +
 							step.getStepId() + "The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
 						try {
@@ -1362,22 +1343,22 @@ implements AccountDeprovisioningProvider {
 						rollbackCompletedSteps(completedSteps);
 						return;
 					}
-										
+
 					// Execute the step
 					List<Property> resultProps = null;
 					try {
-						logger.info(LOGTAG + "Executing [Step-" + 
-								step.getStepId() + "] " + 
+						logger.info(LOGTAG + "Executing [Step-" +
+								step.getStepId() + "] " +
 								step.getDescription());
 						long startTime = System.currentTimeMillis();
 						resultProps = step.execute();
 						long time = System.currentTimeMillis() - startTime;
-						logger.info(LOGTAG + "Completed Step " + 
-							step.getStepId() + " with result " + 
+						logger.info(LOGTAG + "Completed Step " +
+							step.getStepId() + " with result " +
 							step.getResult() + " in " + time + " ms.");
-						logger.info(LOGTAG + "Step result properties are: " + 
+						logger.info(LOGTAG + "Step result properties are: " +
 							resultPropsToXmlString(resultProps));
-						
+
 						// If the result of the step is failure, roll back
 						// all completed steps and return.
 						if (step.getResult().equals(FAILURE_RESULT)) {
@@ -1386,21 +1367,21 @@ implements AccountDeprovisioningProvider {
 							rollbackCompletedSteps(completedSteps);
 							return;
 						}
-						
+
 						// Add all successfully completed steps to the list
 						// of completed steps.
 						completedSteps.add(step);
-						
+
 					}
 					catch (StepException se) {
 						// An error occurred executing the step.
 						// Log it and roll back all preceding steps.
-						LOGTAG = LOGTAG +  "[StepExecutionException][Step-" + 
+						LOGTAG = LOGTAG +  "[StepExecutionException][Step-" +
 								step.getStepId() + "] ";
-						String errMsg = "An error occurred executing step " + 
+						String errMsg = "An error occurred executing step " +
 							step.getStepId() + ". The exception is: " + se.getMessage();
 						logger.error(LOGTAG + errMsg);
-			
+
 						try {
 							logger.info(LOGTAG + "Setting completed status, "
 								+ "failure result, and final error details...");
@@ -1408,10 +1389,10 @@ implements AccountDeprovisioningProvider {
 							String stepExecutionException = null;
 							if (se.getMessage() != null) {
 								int size = se.getMessage().length();
-								logger.info(LOGTAG + "stepExecutionException size is: " 
+								logger.info(LOGTAG + "stepExecutionException size is: "
 										+ size);
 								if (size > 254) size = 254;
-								stepExecutionException = 
+								stepExecutionException =
 									se.getMessage().substring(0, size);
 							}
 							else {
@@ -1419,8 +1400,8 @@ implements AccountDeprovisioningProvider {
 							}
 							logger.info(LOGTAG + "Final step execution exception text is: " +
 								stepExecutionException);
-								
-							step.addResultProperty("stepExecutionException", 
+
+							step.addResultProperty("stepExecutionException",
 								stepExecutionException);
 							logger.info(LOGTAG + "Added property " +
 									"stepExecutionException: " +
@@ -1449,14 +1430,14 @@ implements AccountDeprovisioningProvider {
 					return;
 				}
 			}
-			
-			// All steps completed successfully. 
+
+			// All steps completed successfully.
 			// Set the end of execution.
 			long executionTime = System.currentTimeMillis() - getExecutionStartTime();
-		
+
 			// Update the state of the AccountDeprovisioning object in this transaction.
 			queryForAccountDeprovisioningBaseline();
-			
+
 			// Set the status to complete, the result to success, and the
 			// execution time.
 			try {
@@ -1469,9 +1450,9 @@ implements AccountDeprovisioningProvider {
 			    	  "AccountDeprovisioning object. The exception is: " + efe.getMessage();
 			    logger.error(LOGTAG + errMsg);
 			}
-			
+
 			// Update the AccountDeprovisioning object.
-			try { 
+			try {
 				getAccountDeprovisioningProvider()
 					.update(getAccountDeprovisioning());
 			}
@@ -1481,18 +1462,18 @@ implements AccountDeprovisioningProvider {
 		    	  "The exception is: " + pe.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 			}
-			
+
 			// And we're done.
 			return;
-			
+
 		}
-		
+
 		private void rollbackCompletedSteps(List<Step> completedSteps) {
 			logger.info(LOGTAG + "Starting rollback of completed steps...");
-			
+
 			// Reverse the order of the completedSteps list.
 			completedSteps.sort(new StepIdComparator(-1));
-			
+
 			ListIterator completedStepsIterator = completedSteps.listIterator();
 			long startTime = System.currentTimeMillis();
 			while (completedStepsIterator.hasNext()) {
@@ -1502,7 +1483,7 @@ implements AccountDeprovisioningProvider {
 				}
 				catch (StepException se) {
 					String errMsg = "An error occurred rolling back step " +
-						completedStep.getStepId() + ": " + 
+						completedStep.getStepId() + ": " +
 						completedStep.getType() + ". The exception is: " +
 						se.getMessage();
 					logger.error(LOGTAG + errMsg);
@@ -1510,14 +1491,14 @@ implements AccountDeprovisioningProvider {
 			}
 			long time = System.currentTimeMillis() - startTime;
 			logger.info(LOGTAG + "Provisioning rollback complete in " + time + " ms.");
-			
-			// All steps completed successfully. 
+
+			// All steps completed successfully.
 			// Set the end of execution.
 			long executionTime = System.currentTimeMillis() - getExecutionStartTime();
-			
+
 			// Update the state of the VPCP object in this transaction.
 			queryForAccountDeprovisioningBaseline();
-			
+
 			// Set the status to complete, the result to failure, and the
 			// execution time.
 			try {
@@ -1530,9 +1511,9 @@ implements AccountDeprovisioningProvider {
 			    	  "Deprovisioning object. The exception is: " + efe.getMessage();
 			    logger.error(LOGTAG + errMsg);
 			}
-			
+
 			// Update the AccountDeprovisioning object.
-			try { 
+			try {
 				getAccountDeprovisioningProvider()
 					.update(getAccountDeprovisioning());
 			}
@@ -1541,8 +1522,8 @@ implements AccountDeprovisioningProvider {
 		    	  "current state of an AccountDeprovisioning object. " +
 		    	  "The exception is: " + pe.getMessage();
 		    	logger.error(LOGTAG + errMsg);
-			}			
-			
+			}
+
 			// The the provider is configured to create an incident
 			// in ServiceNow upon failure, create an incident.
 			if (false) {
@@ -1551,15 +1532,15 @@ implements AccountDeprovisioningProvider {
 				//TODO: create an incident.
 			}
 			else {
-				logger.info(LOGTAG + "createIncidentOnFailure is " 
-					+ "false. Will not create an incident in " 
+				logger.info(LOGTAG + "createIncidentOnFailure is "
+					+ "false. Will not create an incident in "
 					+ "ServiceNow.");
 			}
 		}
-		
+
 		private String resultPropsToXmlString(List<Property> resultProps) {
 			String stringProps = "";
-			
+
 			ListIterator li = resultProps.listIterator();
 			while (li.hasNext()) {
 				Property prop = (Property)li.next();
@@ -1574,22 +1555,22 @@ implements AccountDeprovisioningProvider {
 					logger.error(LOGTAG + errMsg);
 				}
 			}
-			
+
 			return stringProps;
 		}
-		
+
 		private String getDeprovisioningId() {
 			return m_ad.getDeprovisioningId();
 		}
-		
+
 		private void setAccountDeprovisioning(AccountDeprovisioning ad) {
 			m_ad = ad;
 		}
-		
+
 		private AccountDeprovisioning getAccountDeprovisioning() {
 			return m_ad;
 		}
-		
+
 		private void queryForAccountDeprovisioningBaseline() {
 			// Query for the AccountDeprovisioning object in the AWS Account Service.
 			// Get a configured query spec from AppConfig
@@ -1604,7 +1585,7 @@ implements AccountDeprovisioningProvider {
 		    	  "AppConfig. The exception is: " + ecoe.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 		    }
-			
+
 		    // Set the values of the query spec.
 		    try {
 		    	querySpec.setDeprovisioningId(getDeprovisioningId());
@@ -1614,7 +1595,7 @@ implements AccountDeprovisioningProvider {
 		  	    	  "deprovisioning query spec. The exception is: " + efe.getMessage();
 		  	    logger.error(LOGTAG + errMsg);
 		    }
-		    
+
 		    // Log the state of the query spec.
 		    try {
 		    	logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
@@ -1624,9 +1605,9 @@ implements AccountDeprovisioningProvider {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 		    }
-		    
+
 			List results = null;
-			try { 
+			try {
 				results = getAccountDeprovisioningProvider().query(querySpec);
 			}
 			catch (ProviderException pe) {
@@ -1635,19 +1616,19 @@ implements AccountDeprovisioningProvider {
 		    	  "The exception is: " + pe.getMessage();
 		    	logger.error(LOGTAG + errMsg);
 			}
-			AccountDeprovisioning ad = 
+			AccountDeprovisioning ad =
 				(AccountDeprovisioning)results.get(0);
-			
+
 			setAccountDeprovisioning(ad);
 		}
-		
+
 		private void setExecutionStartTime(long time) {
 			m_executionStartTime = time;
 		}
-		
+
 		private long getExecutionStartTime() {
 			return m_executionStartTime;
 		}
 	}
-}		
-	
+}
+

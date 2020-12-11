@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2020 RHEDcloud Foundation. All rights reserved. 
+ Copyright (C) 2020 RHEDcloud Foundation. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.deprovisioning.step;
 
@@ -45,12 +45,12 @@ import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 /**
  * Move the account to the pending delete organizational unit.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2020
  **/
 public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step {
-	
+
 	private String m_accessKey = null;
 	private String m_secretKey = null;
 	private String m_sourceParentId = null;
@@ -59,67 +59,67 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 	private String m_hipaaSourceParentId = null;
 	private String m_destinationParentId = null;
 	private ProducerPool m_awsAccountServiceProducerPool = null;
-	
+
 	private AWSOrganizationsClient m_awsOrganizationsClient = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, AccountDeprovisioningProvider adp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, AccountDeprovisioningProvider adp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, adp);
-		
+
 		String LOGTAG = getStepTag() + "[MoveAccountToPendingDeleteOrg.init] ";
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-		
+
 		String accessKey = getProperties().getProperty("accessKey", null);
 		setAccessKey(accessKey);
 		logger.info(LOGTAG + "accessKey is: " + getAccessKey());
-		
+
 		String secretKey = getProperties().getProperty("secretKey", null);
 		setSecretKey(secretKey);
 		logger.info(LOGTAG + "secretKey is: present");
-		
+
 		String rootSourceParentId = getProperties().getProperty("rootSourceParentId", null);
 		setRootSourceParentId(rootSourceParentId);
 		logger.info(LOGTAG + "rootSourceParentId is: " + getRootSourceParentId());
-		
+
 		String standardSourceParentId = getProperties().getProperty("standardSourceParentId", null);
 		setStandardSourceParentId(standardSourceParentId);
 		logger.info(LOGTAG + "standardSourceParentId is: " + getStandardSourceParentId());
-		
+
 		String hipaaSourceParentId = getProperties().getProperty("hipaaSourceParentId", null);
 		setHipaaSourceParentId(hipaaSourceParentId);
 		logger.info(LOGTAG + "hipaaSourceParentId is: " + getHipaaSourceParentId());
-		
+
 		String destinationParentId = getProperties().getProperty("destinationParentId", null);
 		setDestinationParentId(destinationParentId);
 		logger.info(LOGTAG + "destinationParentId is: " + getDestinationParentId());
-	
-		
+
+
 		// Set the AWS account credentials
-		BasicAWSCredentials creds = new BasicAWSCredentials(accessKey, 
+		BasicAWSCredentials creds = new BasicAWSCredentials(accessKey,
 			secretKey);
-		
+
 		// Instantiate an AWS client builder
 		AWSOrganizationsClientBuilder builder = AWSOrganizationsClientBuilder
 				.standard().withCredentials(new AWSStaticCredentialsProvider(creds));
 		builder.setRegion("us-east-1");
-		
+
 		// Initialize the AWS client
 		logger.info("Initializing AmazonCloudFormationClient...");
 		AWSOrganizationsClient client = (AWSOrganizationsClient)builder.build();
 		logger.info("AWSOrganizationsClient initialized.");
 		ListAccountsRequest request = new ListAccountsRequest();
-		
+
 		// Perform a test query
 		ListAccountsResult result = client.listAccounts(request);
 		logger.info(LOGTAG + "List accounts result: " + result.toString());
-		
+
 		// Set the client
 		setAwsOrganizationsClient(client);
-		
+
 		// This step needs to send messages to the AWS account service
 		// to create account metadata.
 		ProducerPool p2p1 = null;
@@ -136,34 +136,34 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[MoveAccountToPendingDeleteOrg.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean accountMoved = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
-		// Get the AccountDeprovisinoingRequisition object.
+
+		// Get the AccountDeprovisioningRequisition object.
 	    AccountDeprovisioning ad = getAccountDeprovisioning();
 	    AccountDeprovisioningRequisition req = ad.getAccountDeprovisioningRequisition();
-	    
+
 		// Get the accountId.
 		String accountId = req.getAccountId();
 		addResultProperty("accountId", accountId);
-		
+
 		// Query to determine if the account is already in the destination org unit.
-		
+
 		// Build the request.
 		ListAccountsForParentRequest listAccountsForParentRequest = new ListAccountsForParentRequest();
 		listAccountsForParentRequest.setParentId(getDestinationParentId());
-		
+
 		// Send the request.
 		ListAccountsForParentResult listAccountsForParentResult = null;
 		try {
@@ -180,43 +180,43 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, e);
 		}
-		
+
 		List<com.amazonaws.services.organizations.model.Account> accounts =
 			listAccountsForParentResult.getAccounts();
-		
+
 		// Determine if the account is already in the organizational unit.
 		boolean isAlreadyInDestinationOrgUnit = false;
 		logger.info(LOGTAG + "There are " + accounts.size() + " accounts in the " +
 			"destination org unit.");
 		ListIterator li = accounts.listIterator();
 		while (li.hasNext()) {
-			com.amazonaws.services.organizations.model.Account account = 
+			com.amazonaws.services.organizations.model.Account account =
 			(com.amazonaws.services.organizations.model.Account)li.next();
-		
+
 			if (account.getId().equalsIgnoreCase(accountId)) {
 				logger.info(LOGTAG + "Matched accountId. Account is already in " +
 					"destination org unit.");
 				isAlreadyInDestinationOrgUnit = true;
 			}
 		}
-		
+
 		// If the account is already in the destination org unit, there is nothing to do.
 		if (isAlreadyInDestinationOrgUnit) {
-			
+
 			addResultProperty("message", "Account is already in destination org unit. " +
 				"Nothing to move.");
-			
+
 			// Update the step.
 			update(COMPLETED_STATUS, SUCCESS_RESULT);
-			
+
 	    	// Log completion time.
 	    	long time = System.currentTimeMillis() - startTime;
 	    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-	    	
+
 	    	// Return the properties.
-	    	return getResultProperties();	
+	    	return getResultProperties();
 		}
-		
+
 		// Query for the account metadata to get the compliance class.
 		Account account = queryForAccount(accountId);
 		if (account == null) {
@@ -224,17 +224,17 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 				+ ". Cannot determine compliance class. Cannot move account.";
 			logger.warn(LOGTAG + msg);
 			addResultProperty("message", msg);
-			
+
 		}
 		else {
 			logger.info(LOGTAG + "Attempting to move the account to the pending " +
 				"delete org unit.");
-			
+
 			// Determine the sourceParentId.
 			setSourceParentId(getRootSourceParentId());
-			
+
 			// Set the sourceParentId based on compliance class.
-			
+
 			if (account.getComplianceClass().equalsIgnoreCase("HIPAA")) {
 				logger.info(LOGTAG + "Account is a HIPAA account.");
 				setSourceParentId(getHipaaSourceParentId());
@@ -243,18 +243,18 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 				logger.info(LOGTAG + "Account is a standard account.");
 				setSourceParentId(getStandardSourceParentId());
 			}
-			
+
 			// Move the account to the pending delete organizational unit.
-			logger.info(LOGTAG + "Moving the account " + accountId + 
+			logger.info(LOGTAG + "Moving the account " + accountId +
 				" from the " + getSourceParentId() + " to the admin org unit "
 				+ getDestinationParentId());
-			
+
 			// Build the request.
 			MoveAccountRequest request = new MoveAccountRequest();
 			request.setAccountId(accountId);
 			request.setDestinationParentId(getDestinationParentId());
 			request.setSourceParentId(getSourceParentId());
-			
+
 			// Send the request.
 			try {
 				logger.info(LOGTAG + "Sending the move account request...");
@@ -271,15 +271,15 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, e);
 			}
-			
-			addResultProperty("sourceParentId", getSourceParentId());	
+
+			addResultProperty("sourceParentId", getSourceParentId());
 			addResultProperty("destinationParentId", getDestinationParentId());
 			addResultProperty("movedAccount", Boolean.toString(accountMoved));
-			
+
 			if 	(accountMoved) {
 				logger.info(LOGTAG + "Successfully moved account " +
 					accountId + "to org unit " + getDestinationParentId());
-				
+
 			}
 			else {
 				logger.info(LOGTAG + "Account was not moved.");
@@ -291,103 +291,103 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 		if (accountMoved == true) {
 			stepResult = SUCCESS_RESULT;
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-		
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[MoveAccountToPendingDeleteOrg.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[MoveAccountToPendingDeleteOrg.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[MoveAccountToPendingDeleteOrg.rollback] ";
 		logger.info(LOGTAG + "Rollback called, nothing to roll back.");
-		
+
 		// Get the result props
 		List<Property> props = getResultProperties();
-		
+
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsOrganizationsClient(AWSOrganizationsClient client) {
 		m_awsOrganizationsClient = client;
 	}
-	
+
 	private AWSOrganizationsClient getAwsOrganizationsClient() {
 		return m_awsOrganizationsClient;
 	}
-	
-	private void setAccessKey (String accessKey) throws 
+
+	private void setAccessKey (String accessKey) throws
 		StepException {
-	
+
 		if (accessKey == null) {
 			String errMsg = "accessKey property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-		
+
 		m_accessKey = accessKey;
 	}
 
 	private String getAccessKey() {
 		return m_accessKey;
 	}
-	
-	private void setSecretKey (String secretKey) throws 
+
+	private void setSecretKey (String secretKey) throws
 		StepException {
 
 		if (secretKey == null) {
@@ -395,39 +395,39 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_secretKey = secretKey;
 	}
 
 	private String getSecretKey() {
 		return m_secretKey;
 	}
-	
-	private void setRootSourceParentId (String id) throws 
+
+	private void setRootSourceParentId (String id) throws
 		StepException {
-	
+
 		if (id == null) {
 			String errMsg = "rootSourceParentId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_rootSourceParentId = id;
 	}
 
 	private String getRootSourceParentId() {
 		return m_rootSourceParentId;
 	}
-	
-	private void setStandardSourceParentId (String id) throws 
+
+	private void setStandardSourceParentId (String id) throws
 		StepException {
-	
+
 		if (id == null) {
 			String errMsg = "standardSourceParentId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_standardSourceParentId = id;
 	}
 
@@ -435,57 +435,57 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 		return m_standardSourceParentId;
 	}
 
-	private void setHipaaSourceParentId (String id) throws 
+	private void setHipaaSourceParentId (String id) throws
 		StepException {
-	
+
 		if (id == null) {
 			String errMsg = "hipaaSourceParentId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_hipaaSourceParentId = id;
 	}
-	
+
 	private String getHipaaSourceParentId() {
 		return m_hipaaSourceParentId;
 	}
-	
-	private void setDestinationParentId (String id) throws 
+
+	private void setDestinationParentId (String id) throws
 		StepException {
-	
+
 		if (id == null) {
 			String errMsg = "destinationParentId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_destinationParentId = id;
 	}
 
 	private String getDestinationParentId() {
 		return m_destinationParentId;
 	}
-	
-	private void setSourceParentId (String id) throws 
+
+	private void setSourceParentId (String id) throws
 		StepException {
-	
+
 		if (id == null) {
 			String errMsg = "sourceParentId property is null. " +
 				"Can't continue.";
 			throw new StepException(errMsg);
 		}
-	
+
 		m_sourceParentId = id;
 	}
-	
+
 	private String getSourceParentId() {
 		return m_sourceParentId;
 	}
-	
+
 	private Account queryForAccount(String accountId) throws StepException {
 		String LOGTAG = "[MoveAccountToPendingDeleteOrg.queryForAccountMetadata] ";
-		
+
 		// Query for the account
 		// Get a configured account object and account query spec
 		// from AppConfig.
@@ -503,7 +503,7 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException(errMsg, ecoe);
 	    }
-	    
+
 	    // Set the values of the query spec
 	    try {
 	    	querySpec.setAccountId(accountId);
@@ -514,7 +514,7 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException();
 	    }
-	    
+
 	    // Get a producer from the pool
 		RequestService rs = null;
 		try {
@@ -527,10 +527,10 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, jmse);
 		}
-		    
+
 		// Query for the account metadata
 		List results = null;
-		try { 
+		try {
 			long queryStartTime = System.currentTimeMillis();
 			results = account.query(querySpec, rs);
 			long createTime = System.currentTimeMillis() - queryStartTime;
@@ -548,20 +548,20 @@ public class MoveAccountToPendingDeleteOrg extends AbstractStep implements Step 
 			getAwsAccountServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
 		}
-		
+
 		Account resultAccount = null;
 		if (results.get(0) != null) {
 			resultAccount = (Account)results.get(0);
 		}
 		return resultAccount;
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}
-	
+
 }

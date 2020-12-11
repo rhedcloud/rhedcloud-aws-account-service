@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service.provider;
@@ -112,7 +112,7 @@ import edu.emory.moa.objects.resources.v2_0.PersonQuerySpecification;
  * @author Steve Wheat (swheat@emory.edu)
  *
  */
-public class  EmoryAccountNotificationProvider extends OpenEaiObject 
+public class  EmoryAccountNotificationProvider extends OpenEaiObject
 implements AccountNotificationProvider {
 
 	private Category logger = OpenEaiObject.logger;
@@ -127,7 +127,7 @@ implements AccountNotificationProvider {
 	private int m_lockSleepInterval = 1000;
 	private boolean m_suppressNotifications = true;
 	private ArrayList m_ignoreRegexes = new ArrayList();
-	
+
 	/**
 	 * @see AccountNotificationProvider.java
 	 */
@@ -141,41 +141,41 @@ implements AccountNotificationProvider {
 		try {
 			pConfig = (PropertyConfig)aConfig
 				.getObject("AccountNotificationProviderProperties");
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException eoce) {
 			String errMsg = "Error retrieving a PropertyConfig object from "
 					+ "AppConfig: The exception is: " + eoce.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, eoce);
 		}
-		
+
 		Properties props = pConfig.getProperties();
 		setProperties(props);
 		logger.info(LOGTAG + getProperties().toString());
-		
+
 		// Set the verbose property.
 		setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
 		logger.info(LOGTAG + "Verbose property is: " + getVerbose());
-		
+
 		// Set the suppressNotifications property.
 		setSuppressNotifications(Boolean.valueOf(getProperties()
 			.getProperty("suppressNotifications", "true")));
 		logger.info(LOGTAG + "suppressNotifications property is: " + getSuppressNotifications());
-		
+
 		// Set the suppressionInterval property.
 		String sInterval = getProperties()
 			.getProperty("suppressionIntervalInMillis", "3600000");
 		setSuppressionIntervalInMillis(Integer.parseInt(sInterval));
 		logger.info(LOGTAG + "suppressionIntervalInMillis is: " +
 			getSuppressionIntervalInMillis());
-		
+
 		// Set the requestTimeoutInterval property.
 		String tInterval = getProperties()
 			.getProperty("requestTimeoutIntervalInMillis", "10000");
 		setRequestTimeoutIntervalInMillis(Integer.parseInt(tInterval));
 		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
 			getRequestTimeoutIntervalInMillis());
-		
+
 		Enumeration<Object> keys = getProperties().keys();
 		ArrayList ignoreRegexes = new ArrayList();
 		while (keys.hasMoreElements()) {
@@ -187,10 +187,10 @@ implements AccountNotificationProvider {
 		}
 		setIgnoreRegexes(ignoreRegexes);
 		if (getIgnoreRegexes().size() > 0) {
-		logger.info(LOGTAG + "There are " + ignoreRegexes.size() + 
+		logger.info(LOGTAG + "There are " + ignoreRegexes.size() +
 			" to ignore. They are: " + ignoreRegexes.toString());
 		}
-		
+
 		// This provider needs to send messages to the AWS account service
 		// to initialize provisioning transactions.
 		ProducerPool p2p1 = null;
@@ -206,8 +206,8 @@ implements AccountNotificationProvider {
 					"AppConfig. The exception is: " + ecoe.getMessage();
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
-		}	
-		
+		}
+
 		// This provider needs an AccountNotification lock.
 		Lock lock = null;
 		try {
@@ -222,25 +222,25 @@ implements AccountNotificationProvider {
 					"AppConfig. The exception is: " + ecoe.getMessage();
 			logger.fatal(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
-		}	
-		
+		}
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
 
 	/**
 	 * @see AccountNotificationProvider.java
-	 * 
-	 * This method proxys a query to an RDBMS command that handles it. The 
+	 *
+	 * This method proxys a query to an RDBMS command that handles it. The
 	 * purpose of including this operation in this command (and not just the
 	 * generate) operations is that it will give us one command that should
 	 * handle all broad access to the AccountNotification service operations.
 	 */
-	public List<AccountNotification> 
+	public List<AccountNotification>
 		query(AccountNotificationQuerySpecification querySpec)
 			throws ProviderException {
 			String LOGTAG = "[EmoryAccountNotificationProvider.query] ";
 			logger.info(LOGTAG + "Querying for AccountNotification.");
-		
+
 			logger.info(LOGTAG + "Getting a configured AccountNotification object " +
 				"from AppConfig...");
 			// Get a configured AccountNotification object to use.
@@ -284,7 +284,7 @@ implements AccountNotificationProvider {
 			}
 			catch (EnterpriseObjectQueryException eoce) {
 				String errMsg = "An error occurred querying the Account" +
-					"Notification object The exception is: " + 
+					"Notification object The exception is: " +
 					eoce.getMessage();
 					logger.error(LOGTAG + errMsg);
 					throw new ProviderException(errMsg, eoce);
@@ -293,18 +293,18 @@ implements AccountNotificationProvider {
 			finally {
 				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 			}
-			
+
 			// Return the results
 			return results;
 	}
-	
+
 	/**
 	 * @see AccountNotificationProvider.java
 	 */
-	public void create(AccountNotification aNotification) 
+	public void create(AccountNotification aNotification)
 		throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
-		
+
 		if (ignoreNotification(aNotification) == true) {
 			String xmlString = null;
 			try {
@@ -319,12 +319,12 @@ implements AccountNotificationProvider {
 			logger.info(LOGTAG + "Ignoring AccountNotification: " + xmlString);
 			return;
 		}
-		
+
 		logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
-		
+
 		// Get a configured AccountNotificationQuerySpecification to use.
 		logger.info(LOGTAG + "Getting a configured query spec from AppConfig...");
-		AccountNotificationQuerySpecification querySpec = 
+		AccountNotificationQuerySpecification querySpec =
 				new AccountNotificationQuerySpecification();
 		try {
 			querySpec = (AccountNotificationQuerySpecification)getAppConfig()
@@ -336,8 +336,8 @@ implements AccountNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, ecoe);
 		}
-		
-		// Get the annotation text 
+
+		// Get the annotation text
 		logger.info(LOGTAG + "Getting the annotation text...");
 		List<Annotation> aList = aNotification.getAnnotation();
 		ListIterator li = aList.listIterator();
@@ -350,7 +350,7 @@ implements AccountNotificationProvider {
 				annotationText = annotation.getText();
 			}
 		}
-		
+
 		// If there is a ReferenceId, acquire a lock.
 		String refId = aNotification.getReferenceId();
 		String type = aNotification.getType();
@@ -365,7 +365,7 @@ implements AccountNotificationProvider {
 			lock = getAccountNotificationLock();
 			key = null;
 			boolean isLockSet = false;
-			
+
 			while (isLockSet == false) {
 				try {
 					key = lock.set(lockName);
@@ -403,7 +403,7 @@ implements AccountNotificationProvider {
 		else {
 			logger.info(LOGTAG + "The ReferenceId is null.");
 		}
-		
+
 		logger.info(LOGTAG + "Setting the values of the query spec...");
 		long endTime = System.currentTimeMillis();
 		long startTime = endTime - getSuppressionIntervalInMillis();
@@ -414,7 +414,7 @@ implements AccountNotificationProvider {
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting a field value " +
-				"on the query specification. The exception is: " + 
+				"on the query specification. The exception is: " +
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			if (lock != null) {
@@ -428,10 +428,10 @@ implements AccountNotificationProvider {
 						le.getMessage();
 					logger.error(LOGTAG + errMsg2);
 				}
-			}	
+			}
 			throw new ProviderException(errMsg, efe);
 		}
-		
+
 		// Convert the query spec to an XML string.
 		try {
 			String xmlQuerySpec = querySpec.toXmlString();
@@ -439,7 +439,7 @@ implements AccountNotificationProvider {
 		}
 		catch (XmlEnterpriseObjectException xeoe) {
 			String errMsg = "An error occurred serializing the query " +
-				"spec to an XML string. The exception is: " + 
+				"spec to an XML string. The exception is: " +
 				xeoe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			if (lock != null) {
@@ -453,10 +453,10 @@ implements AccountNotificationProvider {
 						le.getMessage();
 					logger.error(LOGTAG + errMsg2);
 				}
-			}	
+			}
 			throw new ProviderException(errMsg, xeoe);
 		}
-		
+
 		// Query for any notifications during the suppression interval
 		logger.info(LOGTAG + "Querying any notifications during the " +
 			"suppression interval");
@@ -466,19 +466,19 @@ implements AccountNotificationProvider {
 		logger.info(LOGTAG + "Queried for AccountNotifications in the " +
 			"suppression interval in " + queryTime + " ms. Found " +
 			results.size() + " result(s)");
-		
+
 		boolean suppressNotification = false;
 		if (results.size() > 0) {
 			logger.info(LOGTAG + "There are AccountNotifications in the " +
 				"suppression interval, setting suppressNotification to true.");
 			suppressNotification = true;
 		}
-		
-		// If suppress is true, log it, do not create a new AccountNotification, 
+
+		// If suppress is true, log it, do not create a new AccountNotification,
 		// but update the most recent account notification to indicate that another
 		// notification was dropped.
 		if (suppressNotification == true) {
-			
+
 			String notification = null;
 			try {
 				notification = aNotification.toXmlString();
@@ -487,7 +487,7 @@ implements AccountNotificationProvider {
 			}
 			catch (XmlEnterpriseObjectException xeoe) {
 				String errMsg = "An error occurred serializing an " +
-					"object to an XML string. The exception is: " + 
+					"object to an XML string. The exception is: " +
 					xeoe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, xeoe);
@@ -504,11 +504,11 @@ implements AccountNotificationProvider {
 							le.getMessage();
 						logger.error(LOGTAG + errMsg);
 					}
-				}	
+				}
 			}
 		}
 		// Otherwise, create the AccountNotification
-		else {	
+		else {
 			// Get a RequestService to use for this transaction.
 			RequestService rs = null;
 			try {
@@ -530,7 +530,7 @@ implements AccountNotificationProvider {
 							le.getMessage();
 						logger.error(LOGTAG + errMsg2);
 					}
-				}	
+				}
 				throw new ProviderException(errMsg, jmse);
 			}
 			try {
@@ -542,7 +542,7 @@ implements AccountNotificationProvider {
 			}
 			catch (EnterpriseObjectCreateException eoce) {
 				String errMsg = "An error occurred creating the " +
-					"AccountNotification object The exception is: " + 
+					"AccountNotification object The exception is: " +
 						eoce.getMessage();
 					logger.error(LOGTAG + errMsg);
 					throw new ProviderException(errMsg, eoce);
@@ -552,7 +552,7 @@ implements AccountNotificationProvider {
 			finally {
 				getAwsAccountServiceProducerPool()
 					.releaseProducer((PointToPointProducer)rs);
-		
+
 				if (lock != null) {
 					try {
 						lock.release(lockName, key);
@@ -564,7 +564,7 @@ implements AccountNotificationProvider {
 							le.getMessage();
 						logger.error(LOGTAG + errMsg);
 					}
-				}	
+				}
 			}
 		}
 
@@ -574,9 +574,9 @@ implements AccountNotificationProvider {
 	/**
 	 * @see AccountNotificationProvider.java
 	 */
-	public void update(AccountNotification aNotification) throws ProviderException {		
+	public void update(AccountNotification aNotification) throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.update] ";
-		
+
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -590,29 +590,14 @@ implements AccountNotificationProvider {
 			throw new ProviderException(errMsg, jmse);
 		}
 		// Update the AccountNotification
-		Result result = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			result = (Result)aNotification.update(rs);
+			aNotification.update(rs);
 			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Updated AccountNotification " +
-				"object in " + time + " ms.");
+			logger.info(LOGTAG + "Updated AccountNotification object in " + time + " ms.");
 		}
 		catch (EnterpriseObjectUpdateException eoce) {
-			List<org.openeai.moa.objects.resources.Error> errors = result.getError();
-			String errList = "";
-			if (errors != null) {
-				ListIterator li = errors.listIterator();
-				while (li.hasNext()) {
-					org.openeai.moa.objects.resources.Error error = 
-						(org.openeai.moa.objects.resources.Error)li.next();
-					errList = errList + error.getErrorNumber() + ": " + 
-						error.getErrorDescription() + " ";
-				}
-			}
-			String errMsg = "An error occurred updating the " +
-				"AccountNotification object The exception is: " + 
-				eoce.getMessage() + "The error list is: " + errList;
+			String errMsg = "An error occurred updating the AccountNotification object The exception is: " + eoce.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, eoce);
 		}
@@ -622,13 +607,13 @@ implements AccountNotificationProvider {
 				.releaseProducer((PointToPointProducer)rs);
 		}
 	}
-	
+
 	/**
 	 * @see AccountNotificationProvider.java
 	 */
-	public void delete(AccountNotification aNotification) throws ProviderException {		
+	public void delete(AccountNotification aNotification) throws ProviderException {
 		String LOGTAG = "[EmoryAccountNotificationProvider.delete] ";
-		
+
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -650,7 +635,7 @@ implements AccountNotificationProvider {
 		}
 		catch (EnterpriseObjectDeleteException eode) {
 			String errMsg = "An error occurred deleting the " +
-					"AccountNotification object The exception is: " + 
+					"AccountNotification object The exception is: " +
 					eode.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eode);
@@ -661,7 +646,7 @@ implements AccountNotificationProvider {
 				.releaseProducer((PointToPointProducer)rs);
 		}
 	}
-	
+
 	/**
 	 * @param boolean, the verbose logging property
 	 * <P>
@@ -679,12 +664,12 @@ implements AccountNotificationProvider {
 	private boolean getVerbose() {
 		return m_verbose;
 	}
-	
-	
+
+
     /**
      * @param ProducerPool, the AWS account service producer pool.
      *            <P>
-     *            This method sets the producer pool to use to send 
+     *            This method sets the producer pool to use to send
      *            messages to the AWS Account Service.
      */
     private void setAwsAccountServiceProducerPool(ProducerPool pool) {
@@ -700,11 +685,11 @@ implements AccountNotificationProvider {
     private ProducerPool getAwsAccountServiceProducerPool() {
         return m_awsAccountServiceProducerPool;
     }
-    
+
     /**
      * @param ProducerPool, the ServiceNow service producer pool.
      *            <P>
-     *            This method sets the producer pool to use to send 
+     *            This method sets the producer pool to use to send
      *            messages to the ServiceNow Service.
      */
     private void setServiceNowServiceProducerPool(ProducerPool pool) {
@@ -720,7 +705,7 @@ implements AccountNotificationProvider {
     private ProducerPool getServiceNowServiceProducerPool() {
         return m_serviceNowServiceProducerPool;
     }
-	
+
     /**
      * @param AppConfig
      *            , the AppConfig object of this provider.
@@ -731,7 +716,7 @@ implements AccountNotificationProvider {
     private void setAppConfig(AppConfig aConfig) {
         m_appConfig = aConfig;
     }
-    
+
     /**
      * @return AppConfig, the AppConfig of this provider.
      *         <P>
@@ -741,58 +726,58 @@ implements AccountNotificationProvider {
     private AppConfig getAppConfig() {
         return m_appConfig;
     }
-    
+
     private void setRequestTimeoutIntervalInMillis(int time) {
 		m_requestTimeoutIntervalInMillis = time;
 	}
-	
+
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
 	}
-	
+
 	private void setSuppressionIntervalInMillis(int time) {
 		m_suppressionIntervalInMillis = time;
 	}
-	
+
 	private int getSuppressionIntervalInMillis() {
 		return m_suppressionIntervalInMillis;
 	}
-	
+
 	private void setSuppressNotifications(boolean suppressNotifications) {
 		m_suppressNotifications = suppressNotifications;
 	}
-	
+
 	private boolean getSuppressNotifications() {
 		return m_suppressNotifications;
 	}
-	
+
 	private void setAccountNotificationLock(Lock lock) {
 		m_accountNotificationLock = lock;
 	}
-	
+
 	private Lock getAccountNotificationLock() {
 		return m_accountNotificationLock;
 	}
-	
+
 	private int getLockSleepInterval() {
 		return m_lockSleepInterval;
 	}
-	
+
 	private void setIgnoreRegexes(ArrayList list) {
 		m_ignoreRegexes = list;
 	}
-	
+
 	private ArrayList getIgnoreRegexes() {
 		return m_ignoreRegexes;
 	}
-	
-	public Incident generateIncident(IncidentRequisition req) 
+
+	public Incident generateIncident(IncidentRequisition req)
 		throws ProviderException {
-		
+
 		String LOGTAG = "[EmoryAccountNotificationProvider.generateIncident] ";
-		
+
 		if (req == null) {
-			String errMsg = "IncidentRequisision is null. " + 
+			String errMsg = "IncidentRequisision is null. " +
 				"Can't generate an Incident.";
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg);
@@ -810,7 +795,7 @@ implements AccountNotificationProvider {
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new ProviderException(errMsg, ecoe);
 	    }
-	    
+
 	    // Log the state of the requisition.
 	    try {
 	    	logger.info(LOGTAG + "Incident requisition is: " + req.toXmlString());
@@ -820,8 +805,8 @@ implements AccountNotificationProvider {
 	  	    	  "to XML. The exception is: " + xeoe.getMessage();
   	    	logger.error(LOGTAG + errMsg);
   	    	throw new ProviderException(errMsg, xeoe);
-	    }    
-		
+	    }
+
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
@@ -834,14 +819,14 @@ implements AccountNotificationProvider {
 			logger.error(LOGTAG + errMsg);
 			throw new ProviderException(errMsg, jmse);
 		}
-	    
+
 		List results = null;
-		try { 
+		try {
 			long generateStartTime = System.currentTimeMillis();
 			results = incident.generate(req, rs);
 			long generateTime = System.currentTimeMillis() - generateStartTime;
 			logger.info(LOGTAG + "Generated Incident in " +
-				+ generateTime + " ms. Returned " + results.size() + 
+				+ generateTime + " ms. Returned " + results.size() +
 				" result.");
 		}
 		catch (EnterpriseObjectGenerateException eoge) {
@@ -855,10 +840,10 @@ implements AccountNotificationProvider {
 			getServiceNowServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
 		}
-		
+
 		return (Incident)results.get(0);
 	}
-	
+
 	private String parseUserId(String dn) {
 		StringTokenizer st1 = new StringTokenizer(dn, ",");
 		String firstToken = st1.nextToken();
@@ -867,10 +852,10 @@ implements AccountNotificationProvider {
 		String userId = st2.nextToken();
 		return userId;
 	}
-	
+
 	private void createUserNotification (UserNotification notification)
 		throws ProviderException {
-		
+
 		// Create the UserNotification in the AWS Account Service.
 		// Get a RequestService to use for this transaction.
 		RequestService rs = null;
@@ -893,7 +878,7 @@ implements AccountNotificationProvider {
 		}
 		catch (EnterpriseObjectCreateException eoce) {
 			String errMsg = "An error occurred creating the " +
-					"UserNotification object The exception is: " + 
+					"UserNotification object The exception is: " +
 					eoce.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new ProviderException(errMsg, eoce);
@@ -903,13 +888,13 @@ implements AccountNotificationProvider {
 			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
 		}
 	}
-	
+
 	private boolean ignoreNotification(AccountNotification aNotification) {
 		String LOGTAG = "[EmoryAccountNotificationProvider.ignoreNotification] ";
 		String text = aNotification.getText();
 		logger.info(LOGTAG + "AccountNotification text is: " + text);
 		if (getIgnoreRegexes().size() > 0) {
-			logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() + 
+			logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() +
 				" patterns to consider to drop notification.");
 			ListIterator li = getIgnoreRegexes().listIterator();
 			while (li.hasNext()) {
@@ -932,5 +917,5 @@ implements AccountNotificationProvider {
 			return false;
 		}
 	}
-}		
-	
+}
+
