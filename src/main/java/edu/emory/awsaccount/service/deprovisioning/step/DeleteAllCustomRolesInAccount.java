@@ -12,11 +12,14 @@ import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
+import edu.emory.moa.jmsobjects.lightweightdirectoryservices.v1_0.OrganizationalUnit;
+import edu.emory.moa.objects.resources.v1_0.OrganizationalUnitQuerySpecification;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.XmlEnterpriseObjectException;
@@ -33,12 +36,12 @@ import java.util.stream.Collectors;
  */
 public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step {
 	private ProducerPool awsAccountServiceProducerPool;
+	private ProducerPool ldsServiceProducerPool = null;
+	private String organizationalUnitDnTemplate;
 
 	public void init (String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider vpcpp) throws StepException {
 		super.init(deprovisioningId, props, aConfig, vpcpp);
 		String LOGTAG = getStepTag() + "[DeleteAllCustomRolesInAccount.init] ";
-
-		logger.info(LOGTAG + "Getting custom step properties...");
 
 		// This step needs to send messages to the AWS account service to deprovision CustomRoles.
 		try {
@@ -50,6 +53,25 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, e);
 		}
+		// This step needs to send messages to the LDS Service
+		try {
+			ProducerPool p = (ProducerPool) getAppConfig().getObject("LdsServiceProducerPool");
+			setLdsServiceProducerPool(p);
+		}
+		catch (EnterpriseConfigurationObjectException e) {
+			String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+			logger.fatal(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+
+		logger.info(LOGTAG + "Getting custom step properties...");
+
+		String organizationalUnitDnTemplate = getProperties().getProperty("organizationalUnitDnTemplate", null);
+		if (organizationalUnitDnTemplate == null || organizationalUnitDnTemplate.equals("")) {
+			throw new StepException("No organizationalUnitDnTemplate property specified. Can't continue.");
+		}
+		setOrganizationalUnitDnTemplate(organizationalUnitDnTemplate);
+		logger.info(LOGTAG + "organizationalUnitDnTemplate is: " + organizationalUnitDnTemplate);
 
 		logger.info(LOGTAG + "Initialization complete.");
 	}
@@ -68,7 +90,6 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 		}
 		try {
 			querySpec.setAccountId(accountId);
-
 			logger.info(LOGTAG + "CustomRoleQuerySpecification is: " + querySpec.toXmlString());
 		}
 		catch (EnterpriseFieldException e) {
@@ -98,7 +119,7 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 			@SuppressWarnings("unchecked")
 			List<CustomRole> results = customRole.query(querySpec, rs);
 			long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
-			logger.info(LOGTAG + "Queried CustomRole in " + elapsedTime + " ms.");
+			logger.info(LOGTAG + "CustomRole query took " + elapsedTime + " ms.");
 
 			return results.stream().map(CustomRole::getRoleName).collect(Collectors.toList());
 		}
@@ -112,7 +133,7 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 		}
 	}
 
-	private void deprovisionCustomRole(String accountId, String roleName, String LOGTAG) throws StepException {
+	private void roleDeprovisioningGenerate(String accountId, String roleName, String LOGTAG) throws StepException {
 		RoleDeprovisioning roleDeprovisioning;
 		RoleDeprovisioningRequisition requisition;
 		RoleDeprovisioningQuerySpecification querySpec;
@@ -130,7 +151,6 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 		try {
 			requisition.setAccountId(accountId);
 			requisition.setRoleName(roleName);
-
 			logger.info(LOGTAG + "RoleDeprovisioningRequisition is: " + requisition.toXmlString());
 		}
 		catch (EnterpriseFieldException e) {
@@ -144,6 +164,10 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 			throw new StepException(errMsg, e);
 		}
 
+		/*
+		 * Deprovision Custom Roles by sending RoleDeprovisioning.Generate-Request messages (to ourselves).
+		 * Once the deprovisioning has started, poll the status until it's complete (but don't wait endlessly).
+		 */
 
 		// Get a producer from the pool
 		RequestService rs;
@@ -162,7 +186,7 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 			@SuppressWarnings("unchecked")
 			List<RoleDeprovisioning> results = roleDeprovisioning.generate(requisition, rs);
 			long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
-			logger.info(LOGTAG + "RoleDeprovisioning generate in " + elapsedTime + " ms.");
+			logger.info(LOGTAG + "RoleDeprovisioning generate took " + elapsedTime + " ms.");
 
 			if (results.size() != 1) {
 				String errMsg = "Unexpected number of RoleDeprovisioning results. Found " + results.size() + ". Expected 1.";
@@ -183,7 +207,6 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 
 		try {
 			querySpec.setRoleDeprovisioningId(roleDeprovisioningId);
-
 			logger.info(LOGTAG + "RoleDeprovisioningQuerySpecification is: " + querySpec.toXmlString());
 		}
 		catch (EnterpriseFieldException e) {
@@ -199,6 +222,7 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 
 		final long waitingForCompleteStartTime = System.currentTimeMillis();
 		do {
+			// don't wait for ever
 			if ((waitingForCompleteStartTime + 200_000) < System.currentTimeMillis()) {
 				String errMsg = "Took too long waiting for RoleDeprovisioning completion status.";
 				logger.error(LOGTAG + errMsg);
@@ -220,7 +244,7 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 				@SuppressWarnings("unchecked")
 				List<RoleDeprovisioning> results = roleDeprovisioning.query(querySpec, rs);
 				long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
-				logger.info(LOGTAG + "RoleDeprovisioning query in " + elapsedTime + " ms.");
+				logger.info(LOGTAG + "RoleDeprovisioning query took " + elapsedTime + " ms.");
 
 				if (results.size() != 1) {
 					String errMsg = "Unexpected number of RoleDeprovisioning results. Found " + results.size() + ". Expected 1.";
@@ -228,6 +252,10 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 					throw new StepException(errMsg);
 				}
 
+				// if deprovisioning for an individual custom role fails then this entire step
+				// will fail because deprovisioning of the account would subsequently fail. so it's
+				// better to fail here with a known reason instead of later for a strange reason
+				// i.e., later when the account is deleted from LDS it fails with CANT_ON_NON_LEAF
 				String status = results.get(0).getStatus();
 				if ("completed".equals(status)) {
 					String deprovisioningResult = results.get(0).getDeprovisioningResult();
@@ -260,6 +288,79 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 		} while (true);
 	}
 
+	private void deleteCustomRolesOrganizationalUnit(String accountId, String LOGTAG) throws StepException {
+		OrganizationalUnit ou;
+		OrganizationalUnitQuerySpecification ouQuerySpec;
+		try {
+			ou = (OrganizationalUnit) getAppConfig().getObjectByType(OrganizationalUnit.class.getName());
+			ouQuerySpec = (OrganizationalUnitQuerySpecification) getAppConfig().getObjectByType(OrganizationalUnitQuerySpecification.class.getName());
+		}
+		catch (EnterpriseConfigurationObjectException e) {
+			String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+
+		try {
+			ouQuerySpec.setdistinguishedName(fromTemplate(getOrganizationalUnitDnTemplate(), accountId));
+			logger.info(LOGTAG + "OrganizationalUnitQuerySpecification is: " + ouQuerySpec.toXmlString());
+		}
+		catch (EnterpriseFieldException e) {
+			String errMsg = "An error occurred setting the values of the object. The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+		catch (XmlEnterpriseObjectException e) {
+			String errMsg = "An error occurred serializing the object to XML. The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+
+		// Get a producer from the pool
+		RequestService rs;
+		try {
+			rs = (RequestService) getLdsServiceProducerPool().getExclusiveProducer();
+		}
+		catch (JMSException e) {
+			String errMsg = "An error occurred getting a producer from the pool. The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+
+		try {
+			long elapsedStartTime = System.currentTimeMillis();
+			@SuppressWarnings("unchecked")
+			List<OrganizationalUnit> results = ou.query(ouQuerySpec, rs);
+			long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
+			logger.info(LOGTAG + "OrganizationalUnit query took " + elapsedTime + " ms. There are " + results.size() + " result(s).");
+
+			/*
+			 * there is a failure mode we're not coding for.
+			 * if the custom role metadata gets out of sync with what is in LDS then there could still be entries
+			 * under OU=customroles and that would cause this next delete call to fail (CANT_ON_NON_LEAF).
+			 */
+			if (results.size() == 1) {
+				elapsedStartTime = System.currentTimeMillis();
+				results.get(0).delete("Delete", rs);
+				elapsedTime = System.currentTimeMillis() - elapsedStartTime;
+				logger.info(LOGTAG + "OrganizationalUnit delete took " + elapsedTime + " ms.");
+			}
+		}
+		catch (EnterpriseObjectQueryException e) {
+			String errMsg = "An error occurred querying for the OU object. The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+		catch (EnterpriseObjectDeleteException e) {
+			String errMsg = "An error occurred deleting the OU object. The exception is: " + e.getMessage();
+			logger.error(LOGTAG + errMsg);
+			throw new StepException(errMsg, e);
+		}
+		finally {
+			getLdsServiceProducerPool().releaseProducer((MessageProducer) rs);
+		}
+	}
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[DeleteAllCustomRolesInAccount.run] ";
@@ -267,14 +368,23 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 
 		String accountId = getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId();
 		List<String> customRoleNamesInAccount = getCustomRoleNamesInAccount(accountId, LOGTAG);
-		logger.info(LOGTAG + "Custom roles in account are " + String.join(" and ", customRoleNamesInAccount));
+		if (customRoleNamesInAccount.size() == 0) {
+			logger.info(LOGTAG + "There are no custom roles in account");
+			addResultProperty("customRolesInAccount", "none");
+		}
+		else {
+			logger.info(LOGTAG + "Custom roles in account are " + String.join(" and ", customRoleNamesInAccount));
+			for (int i = 0; i < customRoleNamesInAccount.size(); i++) {
+				addResultProperty("customRolesInAccount" + i, customRoleNamesInAccount.get(i));
+			}
+		}
 
-		for (int i = 0; i < customRoleNamesInAccount.size(); i++) {
-			addResultProperty("customRoleInAccount" + i, customRoleNamesInAccount.get(i));
-		}
+		// deprovision each custom role
 		for (String roleName : customRoleNamesInAccount) {
-			deprovisionCustomRole(accountId, roleName, LOGTAG);
+			roleDeprovisioningGenerate(accountId, roleName, LOGTAG);
 		}
+		// then delete the OU=customroles under the account
+		deleteCustomRolesOrganizationalUnit(accountId, LOGTAG);
 
 		// Set return properties.
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
@@ -341,4 +451,12 @@ public class DeleteAllCustomRolesInAccount extends AbstractStep implements Step 
 
 	private ProducerPool getAwsAccountServiceProducerPool() { return awsAccountServiceProducerPool; }
 	private void setAwsAccountServiceProducerPool(ProducerPool v) { this.awsAccountServiceProducerPool = v; }
+	private ProducerPool getLdsServiceProducerPool() { return ldsServiceProducerPool; }
+	private void setLdsServiceProducerPool(ProducerPool v) { ldsServiceProducerPool = v; }
+	public String getOrganizationalUnitDnTemplate() { return organizationalUnitDnTemplate; }
+	public void setOrganizationalUnitDnTemplate(String v) { organizationalUnitDnTemplate = v; }
+
+	private String fromTemplate(String template, String accountId) {
+		return template.replace("ACCOUNT_NUMBER", accountId);
+	}
 }
