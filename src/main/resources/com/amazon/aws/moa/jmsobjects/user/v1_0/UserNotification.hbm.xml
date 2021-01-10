@@ -12,6 +12,9 @@
 <property name="Type" column="TYPE_"/>
 <property name="Priority" column="PRIORITY"/>
 <property name="Subject" column="SUBJECT"/>
+<!-- for Oracle
+<property name="Text" column="TEXT" type="materialized_clob"/>
+-->
 <property name="Text" column="TEXT" type="text"/>
 <property name="ReferenceId" column="REFERENCE_ID" />
 <property name="Read" column="READ_"/>

@@ -6,7 +6,6 @@ mkdir -p WEB-INF/modules
 mkdir -p WEB-INF/conf
 cp rhedcloud-awsaccount-webservice-1.0.aar WEB-INF/services
 cp ../../../build-test/libs/AwsAccountService/*.jar WEB-INF/lib
-cp -r ../../../build-test/configs/messaging/Environments/Examples/Jars/AwsAccountService/hibernate/* WEB-INF/classes
 #cp ../../../build-test/libs/Axis2/openeai-authorization-module.mar WEB-INF/modules
 #cp ../../../build-test/libs/Axis2/axis2.xml WEB-INF/conf
 #cp ../../../build-test/libs/Axis2/*.jar WEB-INF/lib
