@@ -11,34 +11,14 @@
 
 package edu.emory.awsaccount.service.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-// Java utilities
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Properties;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.jms.JMSException;
-
-import org.apache.commons.io.IOUtils;
-// Log4j
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
+import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
+import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
+import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
 import org.apache.log4j.Category;
-
-// JDOM
-import org.jdom.Document;
-import org.jdom.Element;
-
-// OpenEAI foundation
 import org.openeai.OpenEaiObject;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
@@ -47,630 +27,569 @@ import org.openeai.config.PropertyConfig;
 import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectDeleteException;
 import org.openeai.moa.EnterpriseObjectGenerateException;
 import org.openeai.moa.EnterpriseObjectQueryException;
 import org.openeai.moa.EnterpriseObjectUpdateException;
 import org.openeai.moa.XmlEnterpriseObjectException;
-import org.openeai.moa.objects.resources.Result;
-import org.openeai.moa.objects.resources.v1_0.QueryLanguage;
-import org.openeai.threadpool.ThreadPool;
-import org.openeai.threadpool.ThreadPoolException;
 import org.openeai.transport.RequestService;
-import org.openeai.utils.filetransfer.handlers.TransferHandlerException;
 import org.openeai.utils.lock.Key;
 import org.openeai.utils.lock.Lock;
 import org.openeai.utils.lock.LockAlreadySetException;
 import org.openeai.utils.lock.LockException;
-import org.openeai.utils.sequence.Sequence;
-import org.openeai.utils.sequence.SequenceException;
-import org.openeai.xml.XmlDocumentReader;
-import org.openeai.xml.XmlDocumentReaderException;
 
-import com.amazon.aws.moa.jmsobjects.cloudformation.v1_0.Stack;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
-
-//AWS Message Object API (MOA)
-
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
-import com.amazon.aws.moa.jmsobjects.user.v1_0.AccountUser;
-import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
-import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
-import com.amazon.aws.moa.objects.resources.v1_0.Output;
-import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.StackRequisition;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
-import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
-
-import edu.emory.awsaccount.service.provider.step.Step;
-import edu.emory.awsaccount.service.provider.step.StepException;
-import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
-import edu.emory.moa.jmsobjects.identity.v2_0.Person;
-import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
-import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
-import edu.emory.moa.jmsobjects.validation.v1_0.EmailAddressValidation;
-import edu.emory.moa.objects.resources.v1_0.CidrRequisition;
-import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
-import edu.emory.moa.objects.resources.v2_0.PersonQuerySpecification;
+import javax.jms.JMSException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- *  A provider for AccountNotifications that suppresses duplicate
- *  account notifications for the create action and passes all
- *  other actions through to a deployment of the RDBMS request
- *  command.
+ * A provider for AccountNotifications that suppresses duplicate
+ * account notifications for the create action and passes all
+ * other actions through to a deployment of the RDBMS request
+ * command.
  *
  * @author Steve Wheat (swheat@emory.edu)
- *
  */
-public class  EmoryAccountNotificationProvider extends OpenEaiObject
-implements AccountNotificationProvider {
+public class EmoryAccountNotificationProvider extends OpenEaiObject
+        implements AccountNotificationProvider {
 
-	private Category logger = OpenEaiObject.logger;
-	private AppConfig m_appConfig;
-	private boolean m_verbose = false;
-	private Lock m_accountNotificationLock = null;
-	private ProducerPool m_awsAccountServiceProducerPool = null;
-	private ProducerPool m_serviceNowServiceProducerPool = null;
-	private String LOGTAG = "[EmoryAccountNotificationProvider] ";
-	private int m_requestTimeoutIntervalInMillis = 10000;
-	private int m_suppressionIntervalInMillis = 3600000;
-	private int m_lockSleepInterval = 1000;
-	private boolean m_suppressNotifications = true;
-	private ArrayList m_ignoreRegexes = new ArrayList();
+    private Category logger = OpenEaiObject.logger;
+    private AppConfig m_appConfig;
+    private boolean m_verbose = false;
+    private Lock m_accountNotificationLock = null;
+    private ProducerPool m_awsAccountServiceProducerPool = null;
+    private ProducerPool m_serviceNowServiceProducerPool = null;
+    private String LOGTAG = "[EmoryAccountNotificationProvider] ";
+    private int m_requestTimeoutIntervalInMillis = 10000;
+    private int m_suppressionIntervalInMillis = 3600000;
+    private int m_lockSleepInterval = 1000;
+    private boolean m_suppressNotifications = true;
+    private ArrayList m_ignoreRegexes = new ArrayList();
 
-	/**
-	 * @see AccountNotificationProvider.java
-	 */
-	@Override
-	public void init(AppConfig aConfig) throws ProviderException {
-		logger.info(LOGTAG + "Initializing...");
-		setAppConfig(aConfig);
+    /**
+     * @see AccountNotificationProvider.java
+     */
+    @Override
+    public void init(AppConfig aConfig) throws ProviderException {
+        logger.info(LOGTAG + "Initializing...");
+        setAppConfig(aConfig);
 
-		// Get the provider properties
-		PropertyConfig pConfig = new PropertyConfig();
-		try {
-			pConfig = (PropertyConfig)aConfig
-				.getObject("AccountNotificationProviderProperties");
-		}
-		catch (EnterpriseConfigurationObjectException eoce) {
-			String errMsg = "Error retrieving a PropertyConfig object from "
-					+ "AppConfig: The exception is: " + eoce.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, eoce);
-		}
+        // Get the provider properties
+        PropertyConfig pConfig = new PropertyConfig();
+        try {
+            pConfig = (PropertyConfig) aConfig
+                    .getObject("AccountNotificationProviderProperties");
+        } catch (EnterpriseConfigurationObjectException eoce) {
+            String errMsg = "Error retrieving a PropertyConfig object from "
+                    + "AppConfig: The exception is: " + eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eoce);
+        }
 
-		Properties props = pConfig.getProperties();
-		setProperties(props);
-		logger.info(LOGTAG + getProperties().toString());
+        Properties props = pConfig.getProperties();
+        setProperties(props);
+        logger.info(LOGTAG + getProperties().toString());
 
-		// Set the verbose property.
-		setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
-		logger.info(LOGTAG + "Verbose property is: " + getVerbose());
+        // Set the verbose property.
+        setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
+        logger.info(LOGTAG + "Verbose property is: " + getVerbose());
 
-		// Set the suppressNotifications property.
-		setSuppressNotifications(Boolean.valueOf(getProperties()
-			.getProperty("suppressNotifications", "true")));
-		logger.info(LOGTAG + "suppressNotifications property is: " + getSuppressNotifications());
+        // Set the suppressNotifications property.
+        setSuppressNotifications(Boolean.valueOf(getProperties()
+                .getProperty("suppressNotifications", "true")));
+        logger.info(LOGTAG + "suppressNotifications property is: " + getSuppressNotifications());
 
-		// Set the suppressionInterval property.
-		String sInterval = getProperties()
-			.getProperty("suppressionIntervalInMillis", "3600000");
-		setSuppressionIntervalInMillis(Integer.parseInt(sInterval));
-		logger.info(LOGTAG + "suppressionIntervalInMillis is: " +
-			getSuppressionIntervalInMillis());
+        // Set the suppressionInterval property.
+        String sInterval = getProperties()
+                .getProperty("suppressionIntervalInMillis", "3600000");
+        setSuppressionIntervalInMillis(Integer.parseInt(sInterval));
+        logger.info(LOGTAG + "suppressionIntervalInMillis is: " +
+                getSuppressionIntervalInMillis());
 
-		// Set the requestTimeoutInterval property.
-		String tInterval = getProperties()
-			.getProperty("requestTimeoutIntervalInMillis", "10000");
-		setRequestTimeoutIntervalInMillis(Integer.parseInt(tInterval));
-		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
-			getRequestTimeoutIntervalInMillis());
+        // Set the requestTimeoutInterval property.
+        String tInterval = getProperties()
+                .getProperty("requestTimeoutIntervalInMillis", "10000");
+        setRequestTimeoutIntervalInMillis(Integer.parseInt(tInterval));
+        logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
+                getRequestTimeoutIntervalInMillis());
 
-		Enumeration<Object> keys = getProperties().keys();
-		ArrayList ignoreRegexes = new ArrayList();
-		while (keys.hasMoreElements()) {
-			String key = (String)keys.nextElement();
-			if (key.startsWith("ignoreRegex")) {
-				String value = getProperties().getProperty(key);
-				ignoreRegexes.add(value);
-			}
-		}
-		setIgnoreRegexes(ignoreRegexes);
-		if (getIgnoreRegexes().size() > 0) {
-		logger.info(LOGTAG + "There are " + ignoreRegexes.size() +
-			" to ignore. They are: " + ignoreRegexes.toString());
-		}
+        Enumeration<Object> keys = getProperties().keys();
+        ArrayList ignoreRegexes = new ArrayList();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            if (key.startsWith("ignoreRegex")) {
+                String value = getProperties().getProperty(key);
+                ignoreRegexes.add(value);
+            }
+        }
+        setIgnoreRegexes(ignoreRegexes);
+        if (getIgnoreRegexes().size() > 0) {
+            logger.info(LOGTAG + "There are " + ignoreRegexes.size() +
+                    " to ignore. They are: " + ignoreRegexes.toString());
+        }
 
-		// This provider needs to send messages to the AWS account service
-		// to initialize provisioning transactions.
-		ProducerPool p2p1 = null;
-		try {
-			p2p1 = (ProducerPool)getAppConfig()
-				.getObject("AwsAccountServiceProducerPool");
-			setAwsAccountServiceProducerPool(p2p1);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new ProviderException(errMsg);
-		}
+        // This provider needs to send messages to the AWS account service
+        // to initialize provisioning transactions.
+        ProducerPool p2p1 = null;
+        try {
+            p2p1 = (ProducerPool) getAppConfig()
+                    .getObject("AwsAccountServiceProducerPool");
+            setAwsAccountServiceProducerPool(p2p1);
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            // An error occurred retrieving an object from AppConfig. Log it and
+            // throw an exception.
+            String errMsg = "An error occurred retrieving an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new ProviderException(errMsg);
+        }
 
-		// This provider needs an AccountNotification lock.
-		Lock lock = null;
-		try {
-			lock = (Lock)getAppConfig()
-				.getObject("AccountNotificationLock");
-			setAccountNotificationLock(lock);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new ProviderException(errMsg);
-		}
+        // This provider needs an AccountNotification lock.
+        Lock lock = null;
+        try {
+            lock = (Lock) getAppConfig()
+                    .getObject("AccountNotificationLock");
+            setAccountNotificationLock(lock);
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            // An error occurred retrieving an object from AppConfig. Log it and
+            // throw an exception.
+            String errMsg = "An error occurred retrieving an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new ProviderException(errMsg);
+        }
 
-		logger.info(LOGTAG + "Initialization complete.");
-	}
+        logger.info(LOGTAG + "Initialization complete.");
+    }
 
-	/**
-	 * @see AccountNotificationProvider.java
-	 *
-	 * This method proxys a query to an RDBMS command that handles it. The
-	 * purpose of including this operation in this command (and not just the
-	 * generate) operations is that it will give us one command that should
-	 * handle all broad access to the AccountNotification service operations.
-	 */
-	public List<AccountNotification>
-		query(AccountNotificationQuerySpecification querySpec)
-			throws ProviderException {
-			String LOGTAG = "[EmoryAccountNotificationProvider.query] ";
-			logger.info(LOGTAG + "Querying for AccountNotification.");
+    /**
+     * @see AccountNotificationProvider.java
+     * <p>
+     * This method proxys a query to an RDBMS command that handles it. The
+     * purpose of including this operation in this command (and not just the
+     * generate) operations is that it will give us one command that should
+     * handle all broad access to the AccountNotification service operations.
+     */
+    public List<AccountNotification>
+    query(AccountNotificationQuerySpecification querySpec)
+            throws ProviderException {
+        String LOGTAG = "[EmoryAccountNotificationProvider.query] ";
+        logger.info(LOGTAG + "Querying for AccountNotification.");
 
-			logger.info(LOGTAG + "Getting a configured AccountNotification object " +
-				"from AppConfig...");
-			// Get a configured AccountNotification object to use.
-			AccountNotification aNotification = new AccountNotification();
-			try {
-				aNotification = (AccountNotification)getAppConfig()
-					.getObjectByType(aNotification.getClass().getName());
-			}
-			catch (EnterpriseConfigurationObjectException ecoe) {
-				String errMsg = "An error occurred getting an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException();
-			}
+        logger.info(LOGTAG + "Getting a configured AccountNotification object " +
+                "from AppConfig...");
+        // Get a configured AccountNotification object to use.
+        AccountNotification aNotification = new AccountNotification();
+        try {
+            aNotification = (AccountNotification) getAppConfig()
+                    .getObjectByType(aNotification.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException();
+        }
 
-			logger.info(LOGTAG + "Getting a producer to use in " +
-					"this transaction...");
-			// Get a RequestService to use for this transaction.
-			RequestService rs = null;
-			try {
-				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
-				PointToPointProducer p2p = (PointToPointProducer)rs;
-				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a request service to use " +
-					"in this transaction. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, jmse);
-			}
-			// Query for AccountNotification.
-			List results = null;
-			try {
-				logger.info(LOGTAG + "Querying for AccountNotification...");
-				long startTime = System.currentTimeMillis();
-				results = aNotification.query(querySpec, rs);
-				long time = System.currentTimeMillis() - startTime;
-				logger.info(LOGTAG + "Queried for AccountNotification " +
-					"objects in " + time + " ms. Found " + results.size() +
-					" results.");
-			}
-			catch (EnterpriseObjectQueryException eoce) {
-				String errMsg = "An error occurred querying the Account" +
-					"Notification object The exception is: " +
-					eoce.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new ProviderException(errMsg, eoce);
-			}
-			// In any case, release the producer back to the pool.
-			finally {
-				getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
-			}
+        logger.info(LOGTAG + "Getting a producer to use in " +
+                "this transaction...");
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+            PointToPointProducer p2p = (PointToPointProducer) rs;
+            p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use " +
+                    "in this transaction. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, jmse);
+        }
+        // Query for AccountNotification.
+        List results = null;
+        try {
+            logger.info(LOGTAG + "Querying for AccountNotification...");
+            long startTime = System.currentTimeMillis();
+            results = aNotification.query(querySpec, rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Queried for AccountNotification " +
+                    "objects in " + time + " ms. Found " + results.size() +
+                    " results.");
+        } catch (EnterpriseObjectQueryException eoce) {
+            String errMsg = "An error occurred querying the Account" +
+                    "Notification object The exception is: " +
+                    eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eoce);
+        }
+        // In any case, release the producer back to the pool.
+        finally {
+            getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer) rs);
+        }
 
-			// Return the results
-			return results;
-	}
+        // Return the results
+        return results;
+    }
 
-	/**
-	 * @see AccountNotificationProvider.java
-	 */
-	public void create(AccountNotification aNotification)
-		throws ProviderException {
-		String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
+    /**
+     * @see AccountNotificationProvider.java
+     */
+    public void create(AccountNotification aNotification)
+            throws ProviderException {
+        String LOGTAG = "[EmoryAccountNotificationProvider.create] ";
 
-		if (ignoreNotification(aNotification) == true) {
-			String xmlString = null;
-			try {
-				xmlString = aNotification.toXmlString();
-			}
-			catch (XmlEnterpriseObjectException xeoe) {
-				String errMsg = "An error occurred serializing an object " +
-					"to XML. The exception is: " + xeoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, xeoe);
-			}
-			logger.info(LOGTAG + "Ignoring AccountNotification: " + xmlString);
-			return;
-		}
+        if (ignoreNotification(aNotification) == true) {
+            String xmlString = null;
+            try {
+                xmlString = aNotification.toXmlString();
+            } catch (XmlEnterpriseObjectException xeoe) {
+                String errMsg = "An error occurred serializing an object " +
+                        "to XML. The exception is: " + xeoe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new ProviderException(errMsg, xeoe);
+            }
+            logger.info(LOGTAG + "Ignoring AccountNotification: " + xmlString);
+            return;
+        }
 
-		logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
+        logger.info(LOGTAG + "Evaluating AccountNotification for create action...");
 
-		// Get a configured AccountNotificationQuerySpecification to use.
-		logger.info(LOGTAG + "Getting a configured query spec from AppConfig...");
-		AccountNotificationQuerySpecification querySpec =
-				new AccountNotificationQuerySpecification();
-		try {
-			querySpec = (AccountNotificationQuerySpecification)getAppConfig()
-				.getObjectByType(querySpec.getClass().getName());
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			String errMsg = "An error occurred getting an object from " +
-				"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, ecoe);
-		}
+        // Get a configured AccountNotificationQuerySpecification to use.
+        logger.info(LOGTAG + "Getting a configured query spec from AppConfig...");
+        AccountNotificationQuerySpecification querySpec =
+                new AccountNotificationQuerySpecification();
+        try {
+            querySpec = (AccountNotificationQuerySpecification) getAppConfig()
+                    .getObjectByType(querySpec.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred getting an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, ecoe);
+        }
 
-		// Get the annotation text
-		logger.info(LOGTAG + "Getting the annotation text...");
-		List<Annotation> aList = aNotification.getAnnotation();
-		ListIterator li = aList.listIterator();
-		String annotationText = null;
-		while (li.hasNext()) {
-			Annotation annotation = (Annotation)li.next();
-			if (annotation.getText().contains("SRDOBJECT")) {
-				logger.info(LOGTAG + "SecurityRiskDetection Annotation is: " +
-					annotation.getText());
-				annotationText = annotation.getText();
-			}
-		}
+        // Get the annotation text
+        logger.info(LOGTAG + "Getting the annotation text...");
+        List<Annotation> aList = aNotification.getAnnotation();
+        ListIterator li = aList.listIterator();
+        String annotationText = null;
+        while (li.hasNext()) {
+            Annotation annotation = (Annotation) li.next();
+            if (annotation.getText().contains("SRDOBJECT")) {
+                logger.info(LOGTAG + "SecurityRiskDetection Annotation is: " +
+                        annotation.getText());
+                annotationText = annotation.getText();
+            }
+        }
 
-		// If there is a ReferenceId, acquire a lock.
-		String refId = aNotification.getReferenceId();
-		String type = aNotification.getType();
-		String lockName = type + "-" + refId + "-" + annotationText;
-		if (lockName.length() > 255) {
-			lockName = lockName.substring(0, 254);
-		}
-		Lock lock = null;
-		Key key = null;
-		if (refId != null) {
-			logger.info(LOGTAG + "The ReferenceId is not null.");
-			lock = getAccountNotificationLock();
-			key = null;
-			boolean isLockSet = false;
+        // If there is a ReferenceId, acquire a lock.
+        String refId = aNotification.getReferenceId();
+        String type = aNotification.getType();
+        String lockName = type + "-" + refId + "-" + annotationText;
+        if (lockName.length() > 255) {
+            lockName = lockName.substring(0, 254);
+        }
+        Lock lock = null;
+        Key key = null;
+        if (refId != null) {
+            logger.info(LOGTAG + "The ReferenceId is not null.");
+            lock = getAccountNotificationLock();
+            key = null;
+            boolean isLockSet = false;
 
-			while (isLockSet == false) {
-				try {
-					key = lock.set(lockName);
-					logger.info(LOGTAG + "Set AccountNotificationLock for " +
-						"lockName: " + lockName);
-					isLockSet = true;
-				}
-				catch (LockAlreadySetException lase) {
-					logger.info(LOGTAG + "Lock already set. SRD already being processed. Returning.");
-					return;
-					/**
-					String msg = "Lock " + lockName + " is already set. " +
-						"Sleeping for " + getLockSleepInterval() + " ms.";
-					logger.info(LOGTAG + msg);
-					try {
-						Thread.sleep(getLockSleepInterval());
-					}
-					catch (InterruptedException ie) {
-						String errMsg = "An error occurred sleeping " +
-							"between lock acquisition attempts. The " +
-							"exception is: " + ie.getMessage();
-						logger.error(LOGTAG + errMsg);
-					}
-					**/
-				}
-				catch (LockException le) {
-					String errMsg = "An error occurred setting the " +
-						"AccountNotificationLock. The exception is: " +
-						le.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new ProviderException(errMsg, le);
-				}
-			}
-		}
-		else {
-			logger.info(LOGTAG + "The ReferenceId is null.");
-		}
+            while (isLockSet == false) {
+                try {
+                    key = lock.set(lockName);
+                    logger.info(LOGTAG + "Set AccountNotificationLock for " +
+                            "lockName: " + lockName);
+                    isLockSet = true;
+                } catch (LockAlreadySetException lase) {
+                    logger.info(LOGTAG + "Lock already set. SRD already being processed. Returning.");
+                    return;
+                    /**
+                     String msg = "Lock " + lockName + " is already set. " +
+                     "Sleeping for " + getLockSleepInterval() + " ms.";
+                     logger.info(LOGTAG + msg);
+                     try {
+                     Thread.sleep(getLockSleepInterval());
+                     }
+                     catch (InterruptedException ie) {
+                     String errMsg = "An error occurred sleeping " +
+                     "between lock acquisition attempts. The " +
+                     "exception is: " + ie.getMessage();
+                     logger.error(LOGTAG + errMsg);
+                     }
+                     **/
+                } catch (LockException le) {
+                    String errMsg = "An error occurred setting the " +
+                            "AccountNotificationLock. The exception is: " +
+                            le.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new ProviderException(errMsg, le);
+                }
+            }
+        } else {
+            logger.info(LOGTAG + "The ReferenceId is null.");
+        }
 
-		logger.info(LOGTAG + "Setting the values of the query spec...");
-		long endTime = System.currentTimeMillis();
-		long startTime = endTime - getSuppressionIntervalInMillis();
-		try {
-			querySpec.setStartCreateDatetime(new Datetime("StartCreate", startTime));
-			querySpec.setEndCreateDatetime(new Datetime("EndCreate", endTime));
-			querySpec.setAnnotationText(annotationText);
-		}
-		catch (EnterpriseFieldException efe) {
-			String errMsg = "An error occurred setting a field value " +
-				"on the query specification. The exception is: " +
-				efe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			if (lock != null) {
-				try {
-					lock.release(lockName, key);
-					logger.info(LOGTAG + "released lock: " + lockName);
-				}
-				catch (LockException le) {
-					String errMsg2 = "An error occurred releasing " +
-						"with name " + lockName + ". The exception is: " +
-						le.getMessage();
-					logger.error(LOGTAG + errMsg2);
-				}
-			}
-			throw new ProviderException(errMsg, efe);
-		}
+        logger.info(LOGTAG + "Setting the values of the query spec...");
+        long endTime = System.currentTimeMillis();
+        long startTime = endTime - getSuppressionIntervalInMillis();
+        try {
+            querySpec.setStartCreateDatetime(new Datetime("StartCreate", startTime));
+            querySpec.setEndCreateDatetime(new Datetime("EndCreate", endTime));
+            querySpec.setAnnotationText(annotationText);
+        } catch (EnterpriseFieldException efe) {
+            String errMsg = "An error occurred setting a field value " +
+                    "on the query specification. The exception is: " +
+                    efe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            if (lock != null) {
+                try {
+                    lock.release(lockName, key);
+                    logger.info(LOGTAG + "released lock: " + lockName);
+                } catch (LockException le) {
+                    String errMsg2 = "An error occurred releasing " +
+                            "with name " + lockName + ". The exception is: " +
+                            le.getMessage();
+                    logger.error(LOGTAG + errMsg2);
+                }
+            }
+            throw new ProviderException(errMsg, efe);
+        }
 
-		// Convert the query spec to an XML string.
-		try {
-			String xmlQuerySpec = querySpec.toXmlString();
-			logger.info(LOGTAG + "The query spec is: " + xmlQuerySpec);
-		}
-		catch (XmlEnterpriseObjectException xeoe) {
-			String errMsg = "An error occurred serializing the query " +
-				"spec to an XML string. The exception is: " +
-				xeoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			if (lock != null) {
-				try {
-					lock.release(lockName, key);
-					logger.info(LOGTAG + "released lock: " + lockName);
-				}
-				catch (LockException le) {
-					String errMsg2 = "An error occurred releasing " +
-						"with name " + lockName + ". The exception is: " +
-						le.getMessage();
-					logger.error(LOGTAG + errMsg2);
-				}
-			}
-			throw new ProviderException(errMsg, xeoe);
-		}
+        // Convert the query spec to an XML string.
+        try {
+            String xmlQuerySpec = querySpec.toXmlString();
+            logger.info(LOGTAG + "The query spec is: " + xmlQuerySpec);
+        } catch (XmlEnterpriseObjectException xeoe) {
+            String errMsg = "An error occurred serializing the query " +
+                    "spec to an XML string. The exception is: " +
+                    xeoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            if (lock != null) {
+                try {
+                    lock.release(lockName, key);
+                    logger.info(LOGTAG + "released lock: " + lockName);
+                } catch (LockException le) {
+                    String errMsg2 = "An error occurred releasing " +
+                            "with name " + lockName + ". The exception is: " +
+                            le.getMessage();
+                    logger.error(LOGTAG + errMsg2);
+                }
+            }
+            throw new ProviderException(errMsg, xeoe);
+        }
 
-		// Query for any notifications during the suppression interval
-		logger.info(LOGTAG + "Querying any notifications during the " +
-			"suppression interval");
-		long queryStartTime = System.currentTimeMillis();
-		List<AccountNotification> results = query(querySpec);
-		long queryTime = System.currentTimeMillis() - queryStartTime;
-		logger.info(LOGTAG + "Queried for AccountNotifications in the " +
-			"suppression interval in " + queryTime + " ms. Found " +
-			results.size() + " result(s)");
+        // Query for any notifications during the suppression interval
+        logger.info(LOGTAG + "Querying any notifications during the " +
+                "suppression interval");
+        long queryStartTime = System.currentTimeMillis();
+        List<AccountNotification> results = query(querySpec);
+        long queryTime = System.currentTimeMillis() - queryStartTime;
+        logger.info(LOGTAG + "Queried for AccountNotifications in the " +
+                "suppression interval in " + queryTime + " ms. Found " +
+                results.size() + " result(s)");
 
-		boolean suppressNotification = false;
-		if (results.size() > 0) {
-			logger.info(LOGTAG + "There are AccountNotifications in the " +
-				"suppression interval, setting suppressNotification to true.");
-			suppressNotification = true;
-		}
+        boolean suppressNotification = false;
+        if (results.size() > 0) {
+            logger.info(LOGTAG + "There are AccountNotifications in the " +
+                    "suppression interval, setting suppressNotification to true.");
+            suppressNotification = true;
+        }
 
-		// If suppress is true, log it, do not create a new AccountNotification,
-		// but update the most recent account notification to indicate that another
-		// notification was dropped.
-		if (suppressNotification == true) {
+        // If suppress is true, log it, do not create a new AccountNotification,
+        // but update the most recent account notification to indicate that another
+        // notification was dropped.
+        if (suppressNotification == true) {
 
-			String notification = null;
-			try {
-				notification = aNotification.toXmlString();
-				logger.info(LOGTAG + "suppressNotification is true, will not create " +
-						"AccountNotification: " + notification);
-			}
-			catch (XmlEnterpriseObjectException xeoe) {
-				String errMsg = "An error occurred serializing an " +
-					"object to an XML string. The exception is: " +
-					xeoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, xeoe);
-			}
-			finally {
-				if (lock != null) {
-					try {
-						lock.release(lockName, key);
-						logger.info(LOGTAG + "released lock: " + lockName);
-					}
-					catch (LockException le) {
-						String errMsg = "An error occurred releasing " +
-							"with name " + lockName + ". The exception is: " +
-							le.getMessage();
-						logger.error(LOGTAG + errMsg);
-					}
-				}
-			}
-		}
-		// Otherwise, create the AccountNotification
-		else {
-			// Get a RequestService to use for this transaction.
-			RequestService rs = null;
-			try {
-				logger.info(LOGTAG + "Getting an exclusive producer for the AWS Account Service...");
-				rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
-			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a request service to use " +
-					"in this transaction. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				if (lock != null) {
-					try {
-						lock.release(lockName, key);
-						logger.info(LOGTAG + "released lock: " + lockName);
-					}
-					catch (LockException le) {
-						String errMsg2 = "An error occurred releasing " +
-							"with name " + lockName + ". The exception is: " +
-							le.getMessage();
-						logger.error(LOGTAG + errMsg2);
-					}
-				}
-				throw new ProviderException(errMsg, jmse);
-			}
-			try {
-				long createStartTime = System.currentTimeMillis();
-				aNotification.create(rs);
-				long time = System.currentTimeMillis() - createStartTime;
-				logger.info(LOGTAG + "Created AccountNotification " +
-					"object in " + time + " ms.");
-			}
-			catch (EnterpriseObjectCreateException eoce) {
-				String errMsg = "An error occurred creating the " +
-					"AccountNotification object The exception is: " +
-						eoce.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new ProviderException(errMsg, eoce);
-			}
-			// In any case, release the producer back to the pool and
-			// release the lock if set.
-			finally {
-				getAwsAccountServiceProducerPool()
-					.releaseProducer((PointToPointProducer)rs);
+            String notification = null;
+            try {
+                notification = aNotification.toXmlString();
+                logger.info(LOGTAG + "suppressNotification is true, will not create " +
+                        "AccountNotification: " + notification);
+            } catch (XmlEnterpriseObjectException xeoe) {
+                String errMsg = "An error occurred serializing an " +
+                        "object to an XML string. The exception is: " +
+                        xeoe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new ProviderException(errMsg, xeoe);
+            } finally {
+                if (lock != null) {
+                    try {
+                        lock.release(lockName, key);
+                        logger.info(LOGTAG + "released lock: " + lockName);
+                    } catch (LockException le) {
+                        String errMsg = "An error occurred releasing " +
+                                "with name " + lockName + ". The exception is: " +
+                                le.getMessage();
+                        logger.error(LOGTAG + errMsg);
+                    }
+                }
+            }
+        }
+        // Otherwise, create the AccountNotification
+        else {
+            // Get a RequestService to use for this transaction.
+            RequestService rs = null;
+            try {
+                logger.info(LOGTAG + "Getting an exclusive producer for the AWS Account Service...");
+                rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+            } catch (JMSException jmse) {
+                String errMsg = "An error occurred getting a request service to use " +
+                        "in this transaction. The exception is: " + jmse.getMessage();
+                logger.error(LOGTAG + errMsg);
+                if (lock != null) {
+                    try {
+                        lock.release(lockName, key);
+                        logger.info(LOGTAG + "released lock: " + lockName);
+                    } catch (LockException le) {
+                        String errMsg2 = "An error occurred releasing " +
+                                "with name " + lockName + ". The exception is: " +
+                                le.getMessage();
+                        logger.error(LOGTAG + errMsg2);
+                    }
+                }
+                throw new ProviderException(errMsg, jmse);
+            }
+            try {
+                long createStartTime = System.currentTimeMillis();
+                aNotification.create(rs);
+                long time = System.currentTimeMillis() - createStartTime;
+                logger.info(LOGTAG + "Created AccountNotification " +
+                        "object in " + time + " ms.");
+            } catch (EnterpriseObjectCreateException eoce) {
+                String errMsg = "An error occurred creating the " +
+                        "AccountNotification object The exception is: " +
+                        eoce.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new ProviderException(errMsg, eoce);
+            }
+            // In any case, release the producer back to the pool and
+            // release the lock if set.
+            finally {
+                getAwsAccountServiceProducerPool()
+                        .releaseProducer((PointToPointProducer) rs);
 
-				if (lock != null) {
-					try {
-						lock.release(lockName, key);
-						logger.info(LOGTAG + "released lock: " + lockName);
-					}
-					catch (LockException le) {
-						String errMsg = "An error occurred releasing " +
-							"with name " + lockName + ". The exception is: " +
-							le.getMessage();
-						logger.error(LOGTAG + errMsg);
-					}
-				}
-			}
-		}
+                if (lock != null) {
+                    try {
+                        lock.release(lockName, key);
+                        logger.info(LOGTAG + "released lock: " + lockName);
+                    } catch (LockException le) {
+                        String errMsg = "An error occurred releasing " +
+                                "with name " + lockName + ". The exception is: " +
+                                le.getMessage();
+                        logger.error(LOGTAG + errMsg);
+                    }
+                }
+            }
+        }
 
-		return;
-	}
+        return;
+    }
 
-	/**
-	 * @see AccountNotificationProvider.java
-	 */
-	public void update(AccountNotification aNotification) throws ProviderException {
-		String LOGTAG = "[EmoryAccountNotificationProvider.update] ";
+    /**
+     * @see AccountNotificationProvider.java
+     */
+    public void update(AccountNotification aNotification) throws ProviderException {
+        String LOGTAG = "[EmoryAccountNotificationProvider.update] ";
 
-		// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool()
-				.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use " +
-				"in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, jmse);
-		}
-		// Update the AccountNotification
-		try {
-			long startTime = System.currentTimeMillis();
-			aNotification.update(rs);
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Updated AccountNotification object in " + time + " ms.");
-		}
-		catch (EnterpriseObjectUpdateException eoce) {
-			String errMsg = "An error occurred updating the AccountNotification object The exception is: " + eoce.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, eoce);
-		}
-		// In any case, release the producer back to the pool.
-		finally {
-			getAwsAccountServiceProducerPool()
-				.releaseProducer((PointToPointProducer)rs);
-		}
-	}
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool()
+                    .getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use " +
+                    "in this transaction. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, jmse);
+        }
+        // Update the AccountNotification
+        try {
+            long startTime = System.currentTimeMillis();
+            aNotification.update(rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Updated AccountNotification object in " + time + " ms.");
+        } catch (EnterpriseObjectUpdateException eoce) {
+            String errMsg = "An error occurred updating the AccountNotification object The exception is: " + eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eoce);
+        }
+        // In any case, release the producer back to the pool.
+        finally {
+            getAwsAccountServiceProducerPool()
+                    .releaseProducer((PointToPointProducer) rs);
+        }
+    }
 
-	/**
-	 * @see AccountNotificationProvider.java
-	 */
-	public void delete(AccountNotification aNotification) throws ProviderException {
-		String LOGTAG = "[EmoryAccountNotificationProvider.delete] ";
+    /**
+     * @see AccountNotificationProvider.java
+     */
+    public void delete(AccountNotification aNotification) throws ProviderException {
+        String LOGTAG = "[EmoryAccountNotificationProvider.delete] ";
 
-		// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use " +
-				"in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, jmse);
-		}
-		// Delete the AccountNotification
-		try {
-			long startTime = System.currentTimeMillis();
-			aNotification.delete("Delete", rs);
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Deleted AccountNotification " +
-				"object in " + time + " ms.");
-		}
-		catch (EnterpriseObjectDeleteException eode) {
-			String errMsg = "An error occurred deleting the " +
-					"AccountNotification object The exception is: " +
-					eode.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, eode);
-		}
-		// In any case, release the producer back to the pool.
-		finally {
-			getAwsAccountServiceProducerPool()
-				.releaseProducer((PointToPointProducer)rs);
-		}
-	}
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use " +
+                    "in this transaction. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, jmse);
+        }
+        // Delete the AccountNotification
+        try {
+            long startTime = System.currentTimeMillis();
+            aNotification.delete("Delete", rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Deleted AccountNotification " +
+                    "object in " + time + " ms.");
+        } catch (EnterpriseObjectDeleteException eode) {
+            String errMsg = "An error occurred deleting the " +
+                    "AccountNotification object The exception is: " +
+                    eode.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eode);
+        }
+        // In any case, release the producer back to the pool.
+        finally {
+            getAwsAccountServiceProducerPool()
+                    .releaseProducer((PointToPointProducer) rs);
+        }
+    }
 
-	/**
-	 * @param boolean, the verbose logging property
-	 * <P>
-	 * This method sets the verbose logging property
-	 */
-	private void setVerbose(boolean verbose) {
-		m_verbose = verbose;
-	}
+    /**
+     * @param boolean, the verbose logging property
+     *                 <p>
+     *                 This method sets the verbose logging property
+     */
+    private void setVerbose(boolean verbose) {
+        m_verbose = verbose;
+    }
 
-	/**
-	 * @return boolean, the verbose logging property
-	 * <P>
-	 * This method returns the verbose logging property
-	 */
-	private boolean getVerbose() {
-		return m_verbose;
-	}
+    /**
+     * @return boolean, the verbose logging property
+     * <p>
+     * This method returns the verbose logging property
+     */
+    private boolean getVerbose() {
+        return m_verbose;
+    }
 
 
     /**
      * @param ProducerPool, the AWS account service producer pool.
-     *            <P>
-     *            This method sets the producer pool to use to send
-     *            messages to the AWS Account Service.
+     *                      <p>
+     *                      This method sets the producer pool to use to send
+     *                      messages to the AWS Account Service.
      */
     private void setAwsAccountServiceProducerPool(ProducerPool pool) {
         m_awsAccountServiceProducerPool = pool;
@@ -678,9 +597,9 @@ implements AccountNotificationProvider {
 
     /**
      * @return ProducerPool, the AWS account service producer pool.
-     *         <P>
-     *         This method returns a reference to the producer pool to use to
-     *         send messages to the AWS account service.
+     * <p>
+     * This method returns a reference to the producer pool to use to
+     * send messages to the AWS account service.
      */
     private ProducerPool getAwsAccountServiceProducerPool() {
         return m_awsAccountServiceProducerPool;
@@ -688,9 +607,9 @@ implements AccountNotificationProvider {
 
     /**
      * @param ProducerPool, the ServiceNow service producer pool.
-     *            <P>
-     *            This method sets the producer pool to use to send
-     *            messages to the ServiceNow Service.
+     *                      <p>
+     *                      This method sets the producer pool to use to send
+     *                      messages to the ServiceNow Service.
      */
     private void setServiceNowServiceProducerPool(ProducerPool pool) {
         m_serviceNowServiceProducerPool = pool;
@@ -698,20 +617,19 @@ implements AccountNotificationProvider {
 
     /**
      * @return ProducerPool, the ServiceNow service producer pool.
-     *         <P>
-     *         This method returns a reference to the producer pool to use to
-     *         send messages to the ServiceNow service.
+     * <p>
+     * This method returns a reference to the producer pool to use to
+     * send messages to the ServiceNow service.
      */
     private ProducerPool getServiceNowServiceProducerPool() {
         return m_serviceNowServiceProducerPool;
     }
 
     /**
-     * @param AppConfig
-     *            , the AppConfig object of this provider.
-     *            <P>
-     *            This method sets the AppConfig object for this provider to
-     *            use.
+     * @param AppConfig , the AppConfig object of this provider.
+     *                  <p>
+     *                  This method sets the AppConfig object for this provider to
+     *                  use.
      */
     private void setAppConfig(AppConfig aConfig) {
         m_appConfig = aConfig;
@@ -719,203 +637,194 @@ implements AccountNotificationProvider {
 
     /**
      * @return AppConfig, the AppConfig of this provider.
-     *         <P>
-     *         This method returns a reference to the AppConfig this provider is
-     *         using.
+     * <p>
+     * This method returns a reference to the AppConfig this provider is
+     * using.
      */
     private AppConfig getAppConfig() {
         return m_appConfig;
     }
 
     private void setRequestTimeoutIntervalInMillis(int time) {
-		m_requestTimeoutIntervalInMillis = time;
-	}
+        m_requestTimeoutIntervalInMillis = time;
+    }
 
-	private int getRequestTimeoutIntervalInMillis() {
-		return m_requestTimeoutIntervalInMillis;
-	}
+    private int getRequestTimeoutIntervalInMillis() {
+        return m_requestTimeoutIntervalInMillis;
+    }
 
-	private void setSuppressionIntervalInMillis(int time) {
-		m_suppressionIntervalInMillis = time;
-	}
+    private void setSuppressionIntervalInMillis(int time) {
+        m_suppressionIntervalInMillis = time;
+    }
 
-	private int getSuppressionIntervalInMillis() {
-		return m_suppressionIntervalInMillis;
-	}
+    private int getSuppressionIntervalInMillis() {
+        return m_suppressionIntervalInMillis;
+    }
 
-	private void setSuppressNotifications(boolean suppressNotifications) {
-		m_suppressNotifications = suppressNotifications;
-	}
+    private void setSuppressNotifications(boolean suppressNotifications) {
+        m_suppressNotifications = suppressNotifications;
+    }
 
-	private boolean getSuppressNotifications() {
-		return m_suppressNotifications;
-	}
+    private boolean getSuppressNotifications() {
+        return m_suppressNotifications;
+    }
 
-	private void setAccountNotificationLock(Lock lock) {
-		m_accountNotificationLock = lock;
-	}
+    private void setAccountNotificationLock(Lock lock) {
+        m_accountNotificationLock = lock;
+    }
 
-	private Lock getAccountNotificationLock() {
-		return m_accountNotificationLock;
-	}
+    private Lock getAccountNotificationLock() {
+        return m_accountNotificationLock;
+    }
 
-	private int getLockSleepInterval() {
-		return m_lockSleepInterval;
-	}
+    private int getLockSleepInterval() {
+        return m_lockSleepInterval;
+    }
 
-	private void setIgnoreRegexes(ArrayList list) {
-		m_ignoreRegexes = list;
-	}
+    private void setIgnoreRegexes(ArrayList list) {
+        m_ignoreRegexes = list;
+    }
 
-	private ArrayList getIgnoreRegexes() {
-		return m_ignoreRegexes;
-	}
+    private ArrayList getIgnoreRegexes() {
+        return m_ignoreRegexes;
+    }
 
-	public Incident generateIncident(IncidentRequisition req)
-		throws ProviderException {
+    public Incident generateIncident(IncidentRequisition req)
+            throws ProviderException {
 
-		String LOGTAG = "[EmoryAccountNotificationProvider.generateIncident] ";
+        String LOGTAG = "[EmoryAccountNotificationProvider.generateIncident] ";
 
-		if (req == null) {
-			String errMsg = "IncidentRequisision is null. " +
-				"Can't generate an Incident.";
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg);
-		}
+        if (req == null) {
+            String errMsg = "IncidentRequisision is null. " +
+                    "Can't generate an Incident.";
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg);
+        }
 
-		// Get a configured Incident object from AppConfig.
-		Incident incident = new Incident();
-	    try {
-	    	incident = (Incident)getAppConfig()
-		    		.getObjectByType(incident.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new ProviderException(errMsg, ecoe);
-	    }
+        // Get a configured Incident object from AppConfig.
+        Incident incident = new Incident();
+        try {
+            incident = (Incident) getAppConfig()
+                    .getObjectByType(incident.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred retrieving an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, ecoe);
+        }
 
-	    // Log the state of the requisition.
-	    try {
-	    	logger.info(LOGTAG + "Incident requisition is: " + req.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the requisition " +
-	  	    	  "to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new ProviderException(errMsg, xeoe);
-	    }
+        // Log the state of the requisition.
+        try {
+            logger.info(LOGTAG + "Incident requisition is: " + req.toXmlString());
+        } catch (XmlEnterpriseObjectException xeoe) {
+            String errMsg = "An error occurred serializing the requisition " +
+                    "to XML. The exception is: " + xeoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, xeoe);
+        }
 
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getServiceNowServiceProducerPool()
-				.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, jmse);
-		}
+        // Get a producer from the pool
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getServiceNowServiceProducerPool()
+                    .getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a producer " +
+                    "from the pool. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, jmse);
+        }
 
-		List results = null;
-		try {
-			long generateStartTime = System.currentTimeMillis();
-			results = incident.generate(req, rs);
-			long generateTime = System.currentTimeMillis() - generateStartTime;
-			logger.info(LOGTAG + "Generated Incident in " +
-				+ generateTime + " ms. Returned " + results.size() +
-				" result.");
-		}
-		catch (EnterpriseObjectGenerateException eoge) {
-			String errMsg = "An error occurred generating the  " +
-	    	  "Incident object. The exception is: " + eoge.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new ProviderException(errMsg, eoge);
-		}
-		finally {
-			// Release the producer back to the pool
-			getServiceNowServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
+        List results = null;
+        try {
+            long generateStartTime = System.currentTimeMillis();
+            results = incident.generate(req, rs);
+            long generateTime = System.currentTimeMillis() - generateStartTime;
+            logger.info(LOGTAG + "Generated Incident in " +
+                    +generateTime + " ms. Returned " + results.size() +
+                    " result.");
+        } catch (EnterpriseObjectGenerateException eoge) {
+            String errMsg = "An error occurred generating the  " +
+                    "Incident object. The exception is: " + eoge.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eoge);
+        } finally {
+            // Release the producer back to the pool
+            getServiceNowServiceProducerPool()
+                    .releaseProducer((MessageProducer) rs);
+        }
 
-		return (Incident)results.get(0);
-	}
+        return (Incident) results.get(0);
+    }
 
-	private String parseUserId(String dn) {
-		StringTokenizer st1 = new StringTokenizer(dn, ",");
-		String firstToken = st1.nextToken();
-		StringTokenizer st2 = new StringTokenizer(firstToken, "=");
-		st2.nextToken();
-		String userId = st2.nextToken();
-		return userId;
-	}
+    private String parseUserId(String dn) {
+        StringTokenizer st1 = new StringTokenizer(dn, ",");
+        String firstToken = st1.nextToken();
+        StringTokenizer st2 = new StringTokenizer(firstToken, "=");
+        st2.nextToken();
+        String userId = st2.nextToken();
+        return userId;
+    }
 
-	private void createUserNotification (UserNotification notification)
-		throws ProviderException {
+    private void createUserNotification(UserNotification notification)
+            throws ProviderException {
 
-		// Create the UserNotification in the AWS Account Service.
-		// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool().getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use " +
-				"in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new ProviderException(errMsg, jmse);
-		}
-		// Create the UserNotification object.
-		try {
-			long startTime = System.currentTimeMillis();
-			notification.create(rs);
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Created UserNotification " +
-				"object in " + time + " ms.");
-		}
-		catch (EnterpriseObjectCreateException eoce) {
-			String errMsg = "An error occurred creating the " +
-					"UserNotification object The exception is: " +
-					eoce.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new ProviderException(errMsg, eoce);
-		}
-		// In any case, release the producer back to the pool.
-		finally {
-			getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer)rs);
-		}
-	}
+        // Create the UserNotification in the AWS Account Service.
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use " +
+                    "in this transaction. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, jmse);
+        }
+        // Create the UserNotification object.
+        try {
+            long startTime = System.currentTimeMillis();
+            notification.create(rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Created UserNotification " +
+                    "object in " + time + " ms.");
+        } catch (EnterpriseObjectCreateException eoce) {
+            String errMsg = "An error occurred creating the " +
+                    "UserNotification object The exception is: " +
+                    eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new ProviderException(errMsg, eoce);
+        }
+        // In any case, release the producer back to the pool.
+        finally {
+            getAwsAccountServiceProducerPool().releaseProducer((PointToPointProducer) rs);
+        }
+    }
 
-	private boolean ignoreNotification(AccountNotification aNotification) {
-		String LOGTAG = "[EmoryAccountNotificationProvider.ignoreNotification] ";
-		String text = aNotification.getText();
-		logger.info(LOGTAG + "AccountNotification text is: " + text);
-		if (getIgnoreRegexes().size() > 0) {
-			logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() +
-				" patterns to consider to drop notification.");
-			ListIterator li = getIgnoreRegexes().listIterator();
-			while (li.hasNext()) {
-				String regex = (String)li.next();
-				Pattern p = Pattern.compile(regex);
-				Matcher m = p.matcher(text);
-				logger.info(LOGTAG + "m.find");
-				if (m.find() == true) {
-					logger.info(LOGTAG + "Text matches pattern: " + regex);
-					return true;
-				}
-				else {
-					logger.info(LOGTAG + "Text does not match pattern: " + regex);
-				}
-			}
-			return false;
-		}
-		else {
-			logger.info(LOGTAG + "No regex patterns to consider to drop notification.");
-			return false;
-		}
-	}
+    private boolean ignoreNotification(AccountNotification aNotification) {
+        String LOGTAG = "[EmoryAccountNotificationProvider.ignoreNotification] ";
+        String text = aNotification.getText();
+        logger.info(LOGTAG + "AccountNotification text is: " + text);
+        if (getIgnoreRegexes().size() > 0) {
+            logger.info(LOGTAG + "There are " + getIgnoreRegexes().size() +
+                    " patterns to consider to drop notification.");
+            ListIterator li = getIgnoreRegexes().listIterator();
+            while (li.hasNext()) {
+                String regex = (String) li.next();
+                Pattern p = Pattern.compile(regex);
+                Matcher m = p.matcher(text);
+                logger.info(LOGTAG + "m.find");
+                if (m.find() == true) {
+                    logger.info(LOGTAG + "Text matches pattern: " + regex);
+                    return true;
+                } else {
+                    logger.info(LOGTAG + "Text does not match pattern: " + regex);
+                }
+            }
+            return false;
+        } else {
+            logger.info(LOGTAG + "No regex patterns to consider to drop notification.");
+            return false;
+        }
+    }
 }
 
