@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Tod Jackson (University of Illinois) -->
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Tod Jackson (Administrative Information Technology Services) -->
+<!--		
+		$Revision: 1.1 $
+		$Date: 2006/10/23 13:56:42 $
+		$Source: /cvs/repositories/openii2/openii2/distributions/toolkit-examples-3.0/configs/messaging/Environments/Examples/EnterpriseObjects/3.0/org/openeai/Resources/1.0/ControlAreaEO.xml,v $
+-->
+<!DOCTYPE EnterpriseObjects SYSTEM "http://xml.openeai.org/xml/configs/xml/dtd/1.0/EnterpriseObjects.dtd">
+<EnterpriseObjects>
+  <ObjectDefinition name="Authentication">
+    <Description>Authentication is one of the ControlArea objects</Description>
+    <ClassName>org.openeai.moa.objects.resources.Authentication</ClassName>
+    <Field name="AuthUserId" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="AuthUserSignature" type="Element" isKey="false">
+      <Description/>
+      <Format required="false"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="ControlAreaRequest">
+    <Description>ControlArea Element used in request messages.</Description>
+    <ClassName>org.openeai.moa.objects.resources.ControlAreaRequest</ClassName>
+    <Field name="MessageCategory" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageObject" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageAction" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageRelease" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessagePriority" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageType" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="SourceInfo" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="TargetInfo" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Sender" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Datetime" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="ExpectedReplyFormat" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="ControlAreaReply">
+    <Description>ControlArea Element used in replies.</Description>
+    <ClassName>org.openeai.moa.objects.resources.ControlAreaReply</ClassName>
+    <Field name="MessageCategory" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageObject" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageAction" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageRelease" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessagePriority" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageType" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="SourceInfo" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="TargetInfo" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Sender" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Datetime" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Result" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="ControlAreaSync">
+    <Description>ControlArea Element used in all Sync messages.</Description>
+    <ClassName>org.openeai.moa.objects.resources.ControlAreaSync</ClassName>
+    <Field name="MessageCategory" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageObject" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageAction" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageRelease" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessagePriority" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageType" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="SourceInfo" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="TargetInfo" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Sender" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Datetime" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Result" type="Object" isKey="false">
+      <Description/>
+      <Format required="false"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="Datetime">
+    <Description>Datetime associated to the message being produced/published.  This should be the time of the business event.</Description>
+    <ClassName>org.openeai.moa.objects.resources.Datetime</ClassName>
+    <Field name="Year" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Month" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Day" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Hour" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Minute" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Second" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="SubSecond" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Timezone" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="Error">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.Error</ClassName>
+    <Field name="Type" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="ErrorNumber" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="ErrorDescription" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="ExpectedReplyFormat">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.ExpectedReplyFormat</ClassName>
+    <Field name="MessageCategory" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageObject" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageAction" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageRelease" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageType" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="MessageId">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.MessageId</ClassName>
+    <Field name="SenderAppId" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="ProducerId" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageSeq" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="ProcessedMessageId">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.ProcessedMessageId</ClassName>
+    <Field name="SenderAppId" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="ProducerId" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="MessageSeq" type="Element" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="Result">
+    <Description>A result used in sending responses (Generic-Response-Reply)</Description>
+    <ClassName>org.openeai.moa.objects.resources.Result</ClassName>
+    <Field name="Action" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Status" type="Attribute" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="ProcessedMessageId" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="Error" type="Object" isKey="false">
+      <Description/>
+      <Format required="false"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="Sender">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.Sender</ClassName>
+    <Field name="MessageId" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+    <Field name="TestId" type="Object" isKey="false">
+      <Description/>
+      <Format required="false"/>
+    </Field>
+    <Field name="Authentication" type="Object" isKey="false">
+      <Description/>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="SourceInfo">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.SourceInfo</ClassName>
+    <Field name="SourceId" type="Element" isKey="false">
+      <Description/>
+      <Format required="false"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="TargetInfo">
+    <Description/>
+    <ClassName>org.openeai.moa.objects.resources.TargetInfo</ClassName>
+    <Field name="TargetId" type="Element" isKey="false">
+      <Description/>
+      <Format required="false"/>
+    </Field>
+  </ObjectDefinition>
+  <ObjectDefinition name="TestId">
+    <Description>Id used to correlate requests sent by the test harness to syncs that should be published by a gateway.</Description>
+    <ClassName>org.openeai.moa.objects.testsuite.TestId</ClassName>
+    <Field name="TestSuiteName" type="Element" isKey="true">
+      <Description>This field maintains the type of address.</Description>
+      <Format required="true" datatype="char"/>
+    </Field>
+    <Field name="TestSeriesNumber" type="Element" isKey="false">
+      <Description>This field maintains the status of address.</Description>
+      <Format required="true"/>
+    </Field>
+    <Field name="TestCaseNumber" type="Element" isKey="false">
+      <Description>This field maintains the first line of the address.</Description>
+      <Format required="true"/>
+    </Field>
+    <Field name="TestStepNumber" type="Element" isKey="false">
+      <Description>This field maintains the first line of the address.</Description>
+      <Format required="true"/>
+    </Field>
+  </ObjectDefinition>
+</EnterpriseObjects>
