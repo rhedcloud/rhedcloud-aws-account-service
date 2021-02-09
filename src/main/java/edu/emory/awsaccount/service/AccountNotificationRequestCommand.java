@@ -6,29 +6,21 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2019 Emory University. All rights reserved. 
+ Copyright (C) 2019 Emory University. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service;
 
-// Core Java
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
-// Java Message Service
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-
-// Log4j
-import org.apache.log4j.*;
-
-// JDOM
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
+import edu.emory.awsaccount.service.provider.AccountNotificationProvider;
+import edu.emory.awsaccount.service.provider.ProviderException;
+import org.apache.commons.validator.GenericValidator;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
-
-// OpenEAI foundation components
 import org.openeai.config.CommandConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -36,45 +28,31 @@ import org.openeai.config.LoggerConfig;
 import org.openeai.config.PropertyConfig;
 import org.openeai.jms.consumer.commands.CommandException;
 import org.openeai.jms.consumer.commands.RequestCommand;
-import org.openeai.jms.producer.MessageProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.layouts.EnterpriseLayoutException;
-import org.openeai.moa.EnterpriseObjectSyncException;
 import org.openeai.moa.XmlEnterpriseObjectException;
-import org.openeai.moa.objects.resources.Authentication;
 import org.openeai.moa.objects.testsuite.TestId;
-import org.openeai.transport.SyncService;
 
-
-// AWS MOA objects
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
-import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
-
-// VPC Provider Implementation
-import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-import edu.emory.awsaccount.service.provider.AccountNotificationProvider;
-import edu.emory.awsaccount.service.provider.ProviderException;
-
-//Apache Commons Validators
-import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.routines.InetAddressValidator;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * This command handles requests for the AccountNotification objects.
- * Specifically, it handles query, create, update, and delete requests. 
+ * Specifically, it handles query, create, update, and delete requests.
  * For the create action it determines whether or not an AccountNotification
  * has been created for the same ARN and detector within a configurable time interval,
- * and if so it logs and does not create the AccountNotification. All other actions 
- * for the AccountNotification object are proxied to a deployment of the 
- * RDBMS connector for persistence and retrieval purposes only. 
+ * and if so it logs and does not create the AccountNotification. All other actions
+ * for the AccountNotification object are proxied to a deployment of the
+ * RDBMS connector for persistence and retrieval purposes only.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 25 April 2019
- * 
+ *
  */
 public class AccountNotificationRequestCommand extends AwsAccountRequestCommand implements RequestCommand {
     private static String LOGTAG = "[AccountNotificationRequestCommand] ";
@@ -105,7 +83,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             LoggerConfig lConfig = new LoggerConfig();
             lConfig = (LoggerConfig) getAppConfig().getObjectByType(lConfig.getClass().getName());
             PropertyConfigurator.configure(lConfig.getProperties());
-        } 
+        }
         catch (Exception e) {
         	String errMsg = "An error occurred configuring a command-specific " +
         		"logger. The exception is: " + e.getMessage();
@@ -120,7 +98,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             // An error occurred retrieving a property config from AppConfig.
             // Log it
             // and throw an exception.
-            String errMsg = "An error occurred retrieving a property config from " 
+            String errMsg = "An error occurred retrieving a property config from "
             		+ "AppConfig. The exception is: " + ecoe.getMessage();
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
@@ -137,7 +115,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
         }
         logger.info(LOGTAG + "accountNotificationProviderClassName" +
         	"is: " + className);
-        
+
         AccountNotificationProvider provider = null;
         try {
             logger.info(LOGTAG + "Getting class for name: " + className);
@@ -168,28 +146,28 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             logger.fatal(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
-      
+
         // Verify that we have all required objects in the AppConfig.
         // Get a configured AccountNotification from AppConfig.
         AccountNotification notification = new AccountNotification();
         try {
             notification = (AccountNotification) getAppConfig()
             	.getObjectByType(notification.getClass().getName());
-        } 
+        }
         catch (EnterpriseConfigurationObjectException eoce) {
-            String errMsg = "Error retrieving an object from AppConfig: The exception" 
+            String errMsg = "Error retrieving an object from AppConfig: The exception"
             	+ "is: " + eoce.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new InstantiationException(errMsg);
         }
 
         // Get an AccountNotificationQuerySpecification from AppConfig.
-        AccountNotificationQuerySpecification querySpec = 
+        AccountNotificationQuerySpecification querySpec =
         	new AccountNotificationQuerySpecification();
         try {
             querySpec = (AccountNotificationQuerySpecification) getAppConfig()
             	.getObjectByType(querySpec.getClass().getName());
-        } 
+        }
         catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving an object from AppConfig: " +
             	"The exception" + "is: " + eoce.getMessage();
@@ -214,7 +192,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
      *             preparation for the reply, gets the ControlArea from the XML
      *             document, and verifies that message object of the message is
      *             a VirtualPrivateCloud and the action is a query,
-     *             generate, update, or delete. Then this method uses the 
+     *             generate, update, or delete. Then this method uses the
      *             configured VirtualPrivateCloudProvisioningProvider to perform each
      *             operation.
      */
@@ -285,10 +263,10 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
     	if (authUserId.equalsIgnoreCase("TestSuiteApplication")) {
     		authUserId = "testsuiteapp@emory.edu/127.0.0.1";
     	}
-        
+
         // Validate the format of the AuthUserId. If the format is invalid,
         // respond with an error.
-/**    	
+/**
         if (validateAuthUserId(authUserId) == false) {
             String errType = "application";
             String errCode = "AwsAccountService-1001";
@@ -307,14 +285,14 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
 
         // Get the EPPN from from AuthUserId.
         String eppn = getEppnFromAuthUserId(authUserId);
-        
+
 **/
-        
+
         // Get the TestId from AppConfig
         TestId testId = new TestId();
         try {
             testId = (TestId) getAppConfig().getObjectByType(testId.getClass().getName());
-        } 
+        }
         catch (EnterpriseConfigurationObjectException eoce) {
             String errMsg = "Error retrieving an object from AppConfig: " +
             	"The exception" + "is: " + eoce.getMessage();
@@ -323,7 +301,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
         }
         Element eTestId = inDoc.getRootElement().getChild("ControlAreaRequest")
         	.getChild("Sender").getChild("TestId");
-        
+
         if (eTestId != null) {
         	try {
         		testId.buildObjectFromInput(eTestId);
@@ -335,7 +313,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 throw new CommandException(errMsg, ele);
         	}
         }
-        
+
         // Handle a Query-Request.
         if (msgAction.equalsIgnoreCase("Query")) {
             logger.info(LOGTAG + "Handling an com.amazon.aws.Provisioning." +
@@ -343,20 +321,20 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             Element eQuerySpec = inDoc.getRootElement().getChild("DataArea")
                     .getChild("AccountNotificationQuerySpecification");
 
-            // Get a configured query object from AppConfig.            
-            AccountNotificationQuerySpecification querySpec = 
+            // Get a configured query object from AppConfig.
+            AccountNotificationQuerySpecification querySpec =
             	new AccountNotificationQuerySpecification();
             try {
-                querySpec = (AccountNotificationQuerySpecification) 
+                querySpec = (AccountNotificationQuerySpecification)
                 	getAppConfig().getObjectByType(querySpec.getClass().getName());
-            } 
+            }
             catch (EnterpriseConfigurationObjectException eoce) {
                 String errMsg = "Error retrieving an object from AppConfig: " +
                 	"The exception" + "is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
             }
-            
+
             // If the query object is null, return and error.
             if (eQuerySpec != null) {
             	try {
@@ -366,15 +344,15 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                     // element.
                     String errType = "application";
                     String errCode = "AwsAccontService-100X";
-                    String errDesc = "An error occurred building the query " 
-                    		+ "object from the DataArea element in the " 
+                    String errDesc = "An error occurred building the query "
+                    		+ "object from the DataArea element in the "
                     		+ "Query-Request message. The exception " + "is: "
                             + ele.getMessage();
                     logger.error(LOGTAG + errDesc);
                     logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                     ArrayList errors = new ArrayList();
                     errors.add(buildError(errType, errCode, errDesc));
-                    String replyContents = buildReplyDocumentWithErrors(eControlArea, 
+                    String replyContents = buildReplyDocumentWithErrors(eControlArea,
                     	localResponseDoc, errors);
                     return getMessage(msg, replyContents);
                 }
@@ -383,18 +361,18 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 // The query spec is null.
                 String errType = "application";
                 String errCode = "AwsAccontService-100X";
-                String errDesc = "An error occurred building the query " 
-                		+ "object from the DataArea element in the " 
+                String errDesc = "An error occurred building the query "
+                		+ "object from the DataArea element in the "
                 		+ "Query-Request message. The query spec is null.";
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
                 ArrayList errors = new ArrayList();
                 errors.add(buildError(errType, errCode, errDesc));
-                String replyContents = buildReplyDocumentWithErrors(eControlArea, 
+                String replyContents = buildReplyDocumentWithErrors(eControlArea,
                 		localResponseDoc, errors);
-                return getMessage(msg, replyContents);  
-            }           
-            
+                return getMessage(msg, replyContents);
+            }
+
             // Query for the AccountNotification from the provider.
             logger.info(LOGTAG + "Querying for the AccountNotification...");
 
@@ -404,12 +382,12 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 results = getProvider().query(querySpec);
                 long queryTime = System.currentTimeMillis() - queryStartTime;
                 logger.info(LOGTAG + "Queried for AccountNotification in " + queryTime + "ms.");
-            } 
+            }
             catch (ProviderException pe) {
                 // There was an error querying for the AccountNotification
                 String errType = "application";
                 String errCode = "AwsAccountService-100X";
-                String errDesc = "An error occurred querying for the " 
+                String errDesc = "An error occurred querying for the "
                 		+ "AccountNotification. The " + "exception is: "
                         + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
@@ -419,9 +397,9 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             if (results != null) {
-            	logger.info(LOGTAG + "Found " + results.size() + " matching result(s)."); 
+            	logger.info(LOGTAG + "Found " + results.size() + " matching result(s).");
             }
             else {
             	logger.info(LOGTAG + "Results are null; no matching AccountNotification found.");
@@ -431,12 +409,12 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             localProvideDoc.getRootElement().getChild("DataArea").removeContent();
             // If there are results, place them in the response.
             if (results != null && results.size() > 0) {
-            	
+
                 ArrayList notificationList = new ArrayList();
                 for (int i = 0; i < results.size(); i++) {
                     Element eNotification = null;
                     try {
-                        AccountNotification notification = 
+                        AccountNotification notification =
                         	(AccountNotification) results.get(i);
                         if (eTestId != null) notification.setTestId(testId);
                         eNotification = (Element) notification.buildOutputFromObject();
@@ -444,8 +422,8 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                     }
                     catch (EnterpriseLayoutException ele) {
                         String errMsg = "An error occurred serializing the "
-                                + "AccountNotification object to an XML element."  
-                        		+ " The exception is: " 
+                                + "AccountNotification object to an XML element."
+                        		+ " The exception is: "
                                 + ele.getMessage();
                         logger.error(LOGTAG + errMsg);
                         throw new CommandException(errMsg, ele);
@@ -457,8 +435,8 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
 
             // Return the response with status success.
             return getMessage(msg, replyContents);
-        }     
-        
+        }
+
         // Handle a Create-Request.
         if (msgAction.equalsIgnoreCase("Create")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
@@ -480,7 +458,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             // Get a configured AccountNotification from AppConfig.
             AccountNotification notification = new AccountNotification();
             try {
@@ -497,12 +475,12 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             // message.
             try {
                 notification.buildObjectFromInput(eNotification);
-                if (eTestId != null) { 
+                if (eTestId != null) {
                 	testId.buildObjectFromInput(eTestId);
                 	notification.setTestId(testId);
                 	logger.info(LOGTAG + "TestId is: " + notification.getTestId().toString());
                 }
-            } 
+            }
             catch (EnterpriseLayoutException ele) {
                 // There was an error building the delete object from the
                 // delete element.
@@ -524,10 +502,10 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
 
             try {
             	long createStartTime = System.currentTimeMillis();
-                getProvider().create(notification); 
+                getProvider().create(notification);
                 long createTime = System.currentTimeMillis() - createStartTime;
                 logger.info(LOGTAG + "Created the AccountNotification in " + createTime + " ms.");
-            } 
+            }
             catch (ProviderException pe) {
                 // There was an error creating the VPC
                 String errType = "application";
@@ -541,7 +519,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             // No need to public a Create-Sync, because it will be done by the
             // underlying RDBMS connector infrastructure
 
@@ -549,7 +527,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply contents
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -560,7 +538,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
-        
+
         // Handle an Update-Request.
         if (msgAction.equalsIgnoreCase("Update")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
@@ -585,9 +563,9 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 	.getObjectByType(baselineNotification.getClass().getName());
                 newNotification = (AccountNotification) getAppConfig()
                 	.getObjectByType(newNotification.getClass().getName());
-            } 
+            }
             catch (EnterpriseConfigurationObjectException ecoe) {
-                String errMsg = "An error occurred retrieving an object from " 
+                String errMsg = "An error occurred retrieving an object from "
                 	+ "AppConfig. The exception is: " + ecoe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg, ecoe);
@@ -599,23 +577,23 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             try {
                 baselineNotification.buildObjectFromInput(eBaselineData);
                 newNotification.buildObjectFromInput(eNewData);
-                if (eTestId != null) { 
+                if (eTestId != null) {
                 	testId.buildObjectFromInput(eTestId);
                 	newNotification.setTestId(testId);
                 }
                 logger.info(LOGTAG + "TestId is: " + newNotification.getTestId().toString());
             } catch (EnterpriseLayoutException ele) {
                 String errMsg = "An error occurred building the baseline and newdata"
-                        + " states of the AccountNotification object passed in. " 
+                        + " states of the AccountNotification object passed in. "
                 		+ "The exception is: " + ele.getMessage();
                 throw new CommandException(errMsg, ele);
             }
 
             // Perform the baseline check.
-            
+
             // Get a configured AccountNotificationQuerySpecofication from
             // AppConfig.
-            AccountNotificationQuerySpecification querySpec = 
+            AccountNotificationQuerySpecification querySpec =
             	new AccountNotificationQuerySpecification();
             try {
                 querySpec = (AccountNotificationQuerySpecification) getAppConfig()
@@ -626,7 +604,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
             }
-            
+
             // Set the value of the VpcId.
             try {
             	querySpec.setAccountNotificationId(baselineNotification
@@ -639,7 +617,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             	logger.error(LOGTAG + errMsg);
             	throw new CommandException(errMsg, efe);
             }
-          
+
             // Query for the AccountNotification.
             AccountNotification notification = null;
             try {
@@ -651,8 +629,8 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 // There was an error querying the VPCP service
                 String errType = "application";
                 String errCode = "AmazonAccountService-100X";
-                String errDesc = "An error occurred querying the AccountNotificationProvider " 
-                		+ "to verify the baseline state of the AccountNotification. " 
+                String errDesc = "An error occurred querying the AccountNotificationProvider "
+                		+ "to verify the baseline state of the AccountNotification. "
                 		+ "The exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errDesc);
                 logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -661,7 +639,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-           
+
             if (notification != null) {
                 // Compare the retrieved baseline with the baseline in the
                 // update request message.
@@ -708,7 +686,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                     String errType = "application";
                     String errCode = "AwsAccountService-100X";
                     String errDesc = "Baseline state and new state of the "
-                            + "AccountNotification are equal. No update operation " 
+                            + "AccountNotification are equal. No update operation "
                     		+ "may be performed.";
                     logger.error(LOGTAG + errDesc);
                     logger.error("Message sent in is: \n" + getMessageBody(inDoc));
@@ -731,7 +709,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 	"in the AccountNotificationProvider...");
                 getProvider().update(newNotification);
                 long updateTime = System.currentTimeMillis() - updateStartTime;
-                logger.info(LOGTAG + "AccountNotification update processed by " 
+                logger.info(LOGTAG + "AccountNotification update processed by "
                 	+ "AccountNotificationProvider in " + updateTime + " ms.");
             } catch (ProviderException pe) {
                 // There was an error updating the VPC
@@ -748,8 +726,8 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             logger.info(LOGTAG + "Updated AccountNotification: " + newNotification.toString());
 
             // Set the baseline on the new state of the AccountNotification.
-            newNotification.setBaseline(baselineNotification);          
-            
+            newNotification.setBaseline(baselineNotification);
+
             // No need to public an Update-Sync, because it will be done by the
             // underlying RDBMS connector infrastructure
 
@@ -757,7 +735,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply document.
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -767,8 +745,8 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
 
             // Return the response with status success.
             return getMessage(msg, replyContents);
-        }         
-        
+        }
+
         // Handle a Delete-Request.
         if (msgAction.equalsIgnoreCase("Delete")) {
             logger.info(LOGTAG + "Handling a com.amazon.aws.Provisioning." +
@@ -790,7 +768,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 String replyContents = buildReplyDocumentWithErrors(eControlArea, localResponseDoc, errors);
                 return getMessage(msg, replyContents);
             }
-            
+
             // Get a configured AccountNotification from AppConfig.
             AccountNotification notification = new AccountNotification();
             try {
@@ -801,15 +779,15 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
                 	"The exception" + "is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new CommandException(errMsg);
-            }           
-            
+            }
+
             // Now build an AccountNotification object from the element in the
             // message.
             try {
                 notification.buildObjectFromInput(eVpc);
                 if (eTestId != null) testId.buildObjectFromInput(eTestId);
                 notification.setTestId(testId);
-            } 
+            }
             catch (EnterpriseLayoutException ele) {
                 // There was an error building the delete object from the
                 // delete element.
@@ -831,10 +809,10 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
 
             try {
             	long deleteStartTime = System.currentTimeMillis();
-                getProvider().delete(notification); 
+                getProvider().delete(notification);
                 long deleteTime = System.currentTimeMillis() - deleteStartTime;
                 logger.info(LOGTAG + "Deleted AccountNotification in " + deleteTime + " ms.");
-            } 
+            }
             catch (ProviderException pe) {
                 // There was an error deleting the VPC
                 String errType = "application";
@@ -856,7 +834,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
             if (localResponseDoc.getRootElement().getChild("DataArea") != null) {
             	localResponseDoc.getRootElement().getChild("DataArea").removeContent();
             }
-            
+
             // Build the reply document.
             String replyContents = buildReplyDocument(eControlArea, localResponseDoc);
 
@@ -869,7 +847,7 @@ public class AccountNotificationRequestCommand extends AwsAccountRequestCommand 
         }
 
         else {
-            // The messageAction is invalid; it is not a query, generate, 
+            // The messageAction is invalid; it is not a query, generate,
         	// create. update, or delete
             String errType = "application";
             String errCode = "OpenEAI-1002";
