@@ -940,7 +940,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     public Incident generateIncident(IncidentRequisition req)
             throws ProviderException {
 
-        String LOGTAG = "[EmoryVirtualPrivateCloudProvisinoingProvider.generateIncident] ";
+        String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.generateIncident] ";
 
         if (req == null) {
             String errMsg = "IncidentRequisision is null. " +
