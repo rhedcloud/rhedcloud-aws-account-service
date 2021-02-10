@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -36,27 +36,27 @@ import java.util.ListIterator;
 import java.util.Properties;
 
 /**
- * Send a VpnConnectionProfileAssignment.Generate-Request to the 
+ * Send a VpnConnectionProfileAssignment.Generate-Request to the
  * NetworkOpsService to reserve a VpnConnectionProfile for this
  * provisioning run.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 2 September 2018
  **/
 public class DetermineVpcCidr extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_networkOpsServiceProducerPool = null;
 	private int m_requestTimeoutInterval = 30000;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[DetermineVpcCidr.init] ";
-		
+
 		// This step needs to send messages to the Network Ops Service
 		// to determine the VPC CIDR.
 		ProducerPool p2p1 = null;
@@ -74,27 +74,27 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 			addResultProperty("errorMessage", errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// requestTimeoutInterval is the time to wait for the
 		// response to the request
 		String timeout = getProperties().getProperty("requestTimeoutInterval",
 			"10000");
 		int requestTimeoutInterval = Integer.parseInt(timeout);
 		setRequestTimeoutInterval(requestTimeoutInterval);
-		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+		logger.info(LOGTAG + "requestTimeoutInterval is: " +
 			getRequestTimeoutInterval());
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[DetermineVpcCidr.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean isAuthorized = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
@@ -143,7 +143,7 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 
 			// Log the state of the requisition.
 			try {
-				logger.info(LOGTAG + "Requistion is: " + vcpar.toXmlString());
+				logger.info(LOGTAG + "Requisition is: " + vcpar.toXmlString());
 			} catch (XmlEnterpriseObjectException xeoe) {
 				String errMsg = "An error occurred serializing the requisition " +
 						"to XML. The exception is: " + xeoe.getMessage();
@@ -339,67 +339,67 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 				throw new StepException(errMsg);
 			}
 		}
-			
+
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[DetermineVpcCidr.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[DetermineVpcCidr.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[DetermineVpcCidr.rollback] ";
-		logger.info(LOGTAG + "Rollback called, if vpcConnectionProfileId was " + 
+		logger.info(LOGTAG + "Rollback called, if vpcConnectionProfileId was " +
 			"set, query for and delete the VpnConnectionProfileAssignment.");
 
 		// if we created a VPC of type 0 then there's nothing to rollback
@@ -566,28 +566,28 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 				}
 			}
 		}
-		
+
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setNetworkOpsServiceProducerPool(ProducerPool pool) {
 		m_networkOpsServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getNetworkOpsServiceProducerPool() {
 		return m_networkOpsServiceProducerPool;
 	}
-	
+
 	private void setRequestTimeoutInterval(int i) {
 		m_requestTimeoutInterval = i;
 	}
-	
+
 	private int getRequestTimeoutInterval() {
 		return m_requestTimeoutInterval;
 	}
-	
+
 }
