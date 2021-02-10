@@ -287,6 +287,7 @@ public class AuthorizeRequestor extends AbstractStep implements Step {
 
         addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
         addResultProperty("isAuthorized", "true");
+        addResultProperty("accountId", getAccountDeprovisioning().getAccountDeprovisioningRequisition().getAccountId());
 
         update(COMPLETED_STATUS, SUCCESS_RESULT);
 
