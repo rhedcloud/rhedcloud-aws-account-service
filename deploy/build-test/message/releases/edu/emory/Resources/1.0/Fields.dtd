@@ -24,33 +24,33 @@
 		License along with this library; if not, write to the Free Software
 		Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-		For specific licensing details and examples of how this software 
+		For specific licensing details and examples of how this software
 		can be used to build commercial integration software or to implement
 		integrations for your enterprise, visit http://www.OpenEai.org/licensing.
  -->
-<!--	Fields.dtd is a file where definitions of all elements without 
+<!--	Fields.dtd is a file where definitions of all elements without
 		children appear.
-		
+
 		The OpenEAI Deployment Patterns suggest that, when using DTDs,
 		an enterprise should separate its definitions into four slices
 		to improve the management of definitions and to promote the use
 		of common object definitions.  The four slices are:
-		
+
 		Resources - 	a  file for including definitions from enternal
 							organizations.  For examaple, in their own
 							Resources.dtd, an enterprise will reference
 							the OpenEAI definitions, which give them the
 							ControlArea* definitions required by the OpenEAI
-							Message Protocol. 
-							
+							Message Protocol.
+
 		Segments - 	a file where definitions of all elements with
 							children appear
-							
+
 		Fields - 		a file where all elements without children appear
-		
+
 		Domains - 	a file in which any custom datatypes are defined
-		
-		This approach was learned by observing contraint practices of the 
+
+		This approach was learned by observing contraint practices of the
 		Open Application Group, and these same practices have served the
 		practitioners of OpenEAI well.
  -->
@@ -71,6 +71,8 @@
 <!ELEMENT AccessKeyId %STRDOM;>
 <!-- Account added 01/31/2009 for Finance/AccountCategory -->
 <!ELEMENT Account %STRDOM;>
+<!-- AccountAlternateName added for Authentication/SecurityAssertion -->
+<!ELEMENT AccountAlternateName %STRDOM;>
 <!-- AccountId added 9/29/14 for Ace/ExactTarget -->
 <!ELEMENT AccountId %STRDOM;>
 <!-- AccountDescription added 01/31/2009 for Finance/AccountCategory -->
@@ -102,6 +104,8 @@
 <!-- Association added 04/14/2009 for Identity/EnterpriseIdentity -->
 <!-- Association removed 12/16/2009 and replaced with version in Segments -->
 <!-- <!ELEMENT Association %STRDOM;>-->
+<!-- AssociationRouteTableId added 1/25/2021 for TransitGateway -->
+<!ELEMENT AssociationRouteTableId %STRDOM;>
 <!-- AssumedRoleId added 4/19/2018 for TKI Service -->
 <!ELEMENT AssumedRoleId %STRDOM;>
 <!-- Audience added 4/19/2018 for TKI Service -->
@@ -144,6 +148,8 @@
 <!ELEMENT ChosenFullName %STRDOM;>
 <!-- ChosenName added 04/14/2009 for Identity/EnterpriseIdentity -->
 <!ELEMENT ChosenName %STRDOM;>
+<!-- CidrRange added 1/25/2021 for TransitGateway -->
+<!ELEMENT CidrRange %STRDOM;>
 <!-- CityOrLocality added 04/14/2009 for Network/NetworkLocation -->
 <!ELEMENT CityOrLocality %STRDOM;>
 <!-- ClassField added 12/03/2008 for Finance/SmartKey -->
@@ -177,11 +183,11 @@
 <!-- CreateDatetime added 05/16/2012 for Logging/HipaaAuditLogEntry/Comment -->
 <!ELEMENT CreateDatetime %DATETIME; >
 <!ELEMENT CreateUser %STRDOM; >
-<!-- CreditHours added 1/12/2010 for BlackBoard --> 
+<!-- CreditHours added 1/12/2010 for BlackBoard -->
 <!ELEMENT  CreditHours %STRDOM; >
-<!-- CryptoKeyring1 added 4/5/2018 for Network/VpnConnection --> 
+<!-- CryptoKeyring1 added 4/5/2018 for Network/VpnConnection -->
 <!ELEMENT  CryptoKeyring1 %STRDOM; >
-<!-- CryptoKeyring2 added 4/5/2018 for Network/VpnConnection --> 
+<!-- CryptoKeyring2 added 4/5/2018 for Network/VpnConnection -->
 <!ELEMENT  CryptoKeyring2 %STRDOM; >
 <!-- CurrentHireDate added 12/16/2009 for Identity/Employee -->
 <!ELEMENT CurrentHireDate %DATE;>
@@ -240,7 +246,7 @@
 
 <!ELEMENT EndDate %DATE;>
 <!ELEMENT EndDatetime %DATETIME;>
-<!-- EndTime added 3/1/2010 for BlackboardMobile  --> 
+<!-- EndTime added 3/1/2010 for BlackboardMobile  -->
 <!ELEMENT EndTime %TIME; >
 <!-- Environment added 4/5/2018 for Network/VpnConnection -->
 <!ELEMENT Environment %STRDOM;>
@@ -282,7 +288,7 @@
 <!ELEMENT GcrcId %STRDOM;>
 <!-- Gender added 04/14/2009 for Identity/EnterpriseIdentity -->
 <!ELEMENT Gender %STRDOM;>
-<!-- GradingBasis added 1/12/2010 for BlackBoard --> 
+<!-- GradingBasis added 1/12/2010 for BlackBoard -->
 <!ELEMENT  GradingBasis %STRDOM; >
 <!-- GrantTitle added 04/16/2009 for SponsoredPrograms/ExtramuralProposal -->
 <!ELEMENT GrantTitle %STRDOM;>
@@ -338,6 +344,8 @@
 <!ELEMENT ListId %STRDOM;>
 <!-- LocId added 12/18/2009 for Identity/Location -->
 <!ELEMENT LocId %STRDOM;>
+<!-- LocalTunnelId -->
+<!ELEMENT LocalTunnelId %STRDOM;>
 <!-- LogEntryId added 05/16/2012 for Logging/HipaaLogEntry -->
 <!ELEMENT LogEntryId %STRDOM;>
 <!-- LoginEu added 05/29/2009 for Identity/Person -->
@@ -362,6 +370,8 @@
 <!ELEMENT NameSuffix %STRDOM;>
 <!-- Nation added 04/14/2009 for Network/NetworkLocation -->
 <!ELEMENT Nation %STRDOM;>
+<!-- NeighborId added 07/02/2018 for BgpState -->
+<!ELEMENT NeighborId %STRDOM;>
 <!-- NetId added 04/17/2009 for Identity/Person -->
 <!ELEMENT NetId %STRDOM;>
 <!-- Node added 04/14/2009 for Network/NetworkLocation -->
@@ -408,6 +418,8 @@
 <!ELEMENT POLineNumber %STRDOM;>
 <!-- Prefix added 04/14/2009 for Identity/EnterpriseIdentity -->
 <!ELEMENT Prefix %STRDOM;>
+<!-- PrincipalArn added 07/09/2018 for TKI Service -->
+<!ELEMENT PrincipalArn %STRDOM;>
 <!-- Prsni added 04/22/2009 for Identity/Person -->
 <!ELEMENT Prsni %STRDOM;>
 <!-- ProductDescription added 05/12/2014 for Billing -->
@@ -416,6 +428,8 @@
 <!ELEMENT ProgramCode %STRDOM;>
 <!-- ProjectId added 12/03/2008 for Finance/SmartKey -->
 <!ELEMENT ProjectId %STRDOM;>
+<!-- PropagationRouteTableId added 1/25/2021 for TransitGateway -->
+<!ELEMENT PropagationRouteTableId %STRDOM;>
 <!-- PropertyName added for Property -->
 <!ELEMENT PropertyName %STRDOM;>
 <!-- PropertyValue added for Property -->
@@ -438,6 +452,10 @@
 <!ELEMENT Reason %STRDOM;>
 <!--  Region added 4/19/2018 for TKI Service -->
 <!ELEMENT Region %STRDOM;>
+<!--  RemoteVpnConnectionId -->
+<!ELEMENT RemoteVpnConnectionId %STRDOM;>
+<!-- RoleArn added 07/09/2018 for TKI Service -->
+<!ELEMENT RoleArn %STRDOM;>
 <!-- RoleName added 08/19/2009 for SponsoredPrograms/ExtramuralProposal -->
 <!ELEMENT RoleName %STRDOM;>
 <!-- Room added 04/14/2009 for Network/NetworkLocation -->
@@ -466,6 +484,8 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT Secret %STRDOM;>
 <!-- SecretAccessKey added 4/19/2018 for TKI Service -->
 <!ELEMENT SecretAccessKey %STRDOM;>
+<!-- SecurityAssertionId added 7/12/2018 for TKI Service -->
+<!ELEMENT SecurityAssertionId %STRDOM;>
 <!--  SendDate added 9/29/14 for Ace/ExactTarget -->
 <!ELEMENT SendDate %DATE;>
 <!--  SentCount added 9/29/14 for Ace/ExactTarget -->
@@ -514,7 +534,7 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT StartAuditDatetime %DATETIME;>
 
 
-<!-- StartTime added 3/1/2010 for BlackboardMobile  --> 
+<!-- StartTime added 3/1/2010 for BlackboardMobile  -->
 <!ELEMENT StartTime %TIME; >
 <!-- State added 04/14/2009 for Identity/EnterpriseIdentity -->
 <!ELEMENT State %STRDOM;>
@@ -556,6 +576,11 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT Title %STRDOM;>
 <!-- TransactionId added 02/02/2010 for Identity Query Specifications -->
 <!ELEMENT TransactionId %STRDOM;>
+<!-- these fields added 1/25/2021 for TransitGateway -->
+<!ELEMENT TransitGatewayConnectionProfileAssignmentId %STRDOM;>
+<!ELEMENT TransitGatewayConnectionProfileId %STRDOM;>
+<!ELEMENT TransitGatewayId %STRDOM;>
+<!ELEMENT TransitGatewayProfileId %STRDOM;>
 <!-- TunnelInterface1 added 4/5/2018 for Network/VpnConnection -->
 <!ELEMENT TunnelInterface1 %STRDOM;>
 <!-- TunnelInterface2 added 4/5/2018 for Network/VpnConnection -->
@@ -672,6 +697,11 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT LastModifiedDatetime %DATETIME;>
 <!ELEMENT LastModifiedDate %DATE;>
 <!ELEMENT Principal %STRDOM;>
+<!--TestMoa-->
+<!ELEMENT TmString %STRDOM;>
+<!ELEMENT TmStar %STRDOM;>
+<!ELEMENT TmDate %DATE;>
+<!ELEMENT TmDatetime %DATETIME;>
 
 <!-- LDS Service -->
 <!ELEMENT ou %STRDOM;>
@@ -725,6 +755,39 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT PublicIp %STRDOM;>
 <!ELEMENT PrivateIp %STRDOM;>
 
+<!-- added 5/14/2018 for Network Ops Service VpnConnectionProfile -->
+<!ELEMENT VpnConnectionProfileId %STRDOM;>
+<!ELEMENT VpcNetwork %STRDOM;>
+<!ELEMENT TunnelId %STRDOM;>
+<!ELEMENT CryptoKeyringName %STRDOM;>
+<!ELEMENT IsakampProfileName %STRDOM;>
+<!ELEMENT IpsecProfileName %STRDOM;>
+<!ELEMENT IpsecTransformSetName %STRDOM;>
+<!ELEMENT CustomerGatewayIp %STRDOM;>
+<!ELEMENT VpnInsideIpCidr1 %STRDOM;>
+<!ELEMENT VpnInsideIpCidr2 %STRDOM;>
+<!ELEMENT TunnelDescription %STRDOM;>
+
+<!--  added 5/15/2018 for Network Ops Service VpnConnectionProvisioning -->
+<!ELEMENT ProvisioningId %STRDOM;>
+<!ELEMENT VpnConnectionProvisinoingRequisition %STRDOM;>
+<!ELEMENT ProvisioningResult %STRDOM;>
+<!ELEMENT ActualTime %STRDOM;>
+<!ELEMENT AnticipatedTime %STRDOM;>
+<!ELEMENT StepId %STRDOM;>
+
+<!-- clean up of undeclared fields 5/16/2018 - swheat@emory.edu -->
+<!ELEMENT AssociatedIpAddress %STRDOM;>
+<!ELEMENT TestRequest %STRDOM;>
+<!ELEMENT cn %STRDOM;>
+<!ELEMENT LogId %STRDOM;>
+<!ELEMENT ProvisioningStepId %STRDOM;>
+<!ELEMENT StepResult %STRDOM;>
+<!ELEMENT VpnConnectionProfileAssignmentId %STRDOM;>
+<!ELEMENT DeleteUser %STRDOM;>
+<!ELEMENT DeleteDatetime %DATETIME;>
+<!ELEMENT Token %STRDOM;>
+
 <!-- ================================================== -->
 <!--  Changelog
 	04/14/2009	tsj	clean up
@@ -752,6 +815,6 @@ moved to Segments on 2/16/2012 in order to include description
     3/5/2012    jleon  re-added Term field, and renamed Term segment to Semester so as not to conflict.
     03/15/2012 jleon Updated Action to CourseSiteErrorLog for LmsXControlPanel enrollment synchronization project
     09/29/2014 jleon Added fields for Ace/ExactTarget integration: AccountId, AceProcessedDate, AppealCode, DeliveredCount, EmaklSource,
-                          EventDate, IdNumber, JobId, ListId, MailCode, NoSolicitation, NoSolicitationThisFiscalYear, OpenCount, Reason, 
+                          EventDate, IdNumber, JobId, ListId, MailCode, NoSolicitation, NoSolicitationThisFiscalYear, OpenCount, Reason,
                           SendDate, SentCount, SubscriberId, SubscriberKey, SubscriberStatus, UndeliveredCount, UnsubscribedCount
 -->

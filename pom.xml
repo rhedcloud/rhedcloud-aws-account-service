@@ -74,10 +74,10 @@
     </dependency>
     <dependency>
       <groupId>org.rhedcloud.awsaccount.service</groupId>
-      <artifactId>emory-moa-1.2</artifactId>
-      <version>1.2</version>
+      <artifactId>emory-moas</artifactId>
+      <version>master-14</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/rhedcloud-emory-moas-master-6.jar</systemPath>
+      <systemPath>${project.basedir}/lib/rhedcloud-emory-moas-master-14.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.rhedcloud.awsaccount.service</groupId>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.TransitGatewayConnectionProfileAssignment.Response SYSTEM "../dtd/Response-Reply.dtd">
+<edu.emory.Network.TransitGatewayConnectionProfileAssignment.Response>
+    <ControlAreaReply messageCategory="edu.emory.Network" messageObject="TransitGatewayConnectionProfileAssignment"
+        messageAction="Response" messageRelease="1.0" messagePriority="9" messageType="Reply">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>testsuiteapp</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2018</Year>
+            <Month>5</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>842</SubSecond>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+        <Result action="Generate" status="success">
+            <ProcessedMessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </ProcessedMessageId>
+        </Result>
+    </ControlAreaReply>
+    <DataArea>
+        <TransitGatewayConnectionProfileAssignment>
+            <TransitGatewayConnectionProfileId>1</TransitGatewayConnectionProfileId>
+            <OwnerId>vpc-17552e6c</OwnerId>
+            <CreateUser>NetworkOps</CreateUser>
+            <CreateDatetime>
+                <Year>2018</Year>
+                <Month>5</Month>
+                <Day>17</Day>
+                <Hour>13</Hour>
+                <Minute>47</Minute>
+                <Second>30</Second>
+                <SubSecond>842</SubSecond>
+                <Timezone>6:00-GMT</Timezone>
+            </CreateDatetime>
+        </TransitGatewayConnectionProfileAssignment>
+    </DataArea>
+</edu.emory.Network.TransitGatewayConnectionProfileAssignment.Response>

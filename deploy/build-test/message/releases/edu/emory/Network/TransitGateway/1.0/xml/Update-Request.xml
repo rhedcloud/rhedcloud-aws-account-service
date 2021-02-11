@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.TransitGateway.Update SYSTEM "../dtd/Update-Request.dtd">
+<edu.emory.Network.TransitGateway.Update>
+    <ControlAreaRequest messageCategory="edu.emory.Network" messageObject="TransitGateway"
+        messageAction="Update" messageRelease="1.0" messagePriority="9" messageType="Request">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>testsuiteapp</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2018</Year>
+            <Month>5</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>842</SubSecond>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+        <ExpectedReplyFormat messageCategory="org.openeai.CoreMessaging" messageObject="Generic"
+            messageAction="Response" messageRelease="1.0" messageType="Reply"/>
+    </ControlAreaRequest>
+    <DataArea>
+        <NewData>
+            <TransitGateway>
+                <TransitGatewayId>tgw-04153a75d2fa64437</TransitGatewayId>
+                <Environment>DEV</Environment>
+                <Region>us-east-1</Region>
+                <AccountId>284975909247</AccountId>
+                <TransitGatewayProfile>
+                    <TransitGatewayProfileId>1</TransitGatewayProfileId>
+                    <TransitGatewayId>tgw-04153a75d2fa64437</TransitGatewayId>
+                    <AssociationRouteTableId>tgw-rtb-04aeb824093fa6469</AssociationRouteTableId>
+                    <PropagationRouteTableId>tgw-rtb-030dd9a222d631301</PropagationRouteTableId>
+                    <PropagationRouteTableId>tgw-rtb-0e546f1bdf55aa77b</PropagationRouteTableId>
+                </TransitGatewayProfile>
+            </TransitGateway>
+        </NewData>
+        <BaselineData>
+            <TransitGateway>
+                <TransitGatewayId>tgw-04153a75d2fa64437</TransitGatewayId>
+                <Environment>DEV</Environment>
+                <Region>us-east-1</Region>
+                <AccountId>284975909247</AccountId>
+                <TransitGatewayProfile>
+                    <TransitGatewayProfileId>1</TransitGatewayProfileId>
+                    <TransitGatewayId>tgw-04153a75d2fa64437</TransitGatewayId>
+                    <AssociationRouteTableId>tgw-rtb-04aeb824093fa6469</AssociationRouteTableId>
+                    <PropagationRouteTableId>tgw-rtb-030dd9a222d631301</PropagationRouteTableId>
+                    <PropagationRouteTableId>tgw-rtb-0e546f1bdf55aa77b</PropagationRouteTableId>
+                </TransitGatewayProfile>
+            </TransitGateway>
+        </BaselineData>
+    </DataArea>
+</edu.emory.Network.TransitGateway.Update>
