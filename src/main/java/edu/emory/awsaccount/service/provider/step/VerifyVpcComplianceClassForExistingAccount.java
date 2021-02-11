@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -40,23 +40,23 @@ import edu.emory.moa.objects.resources.v1_0.EmailAddressValidationQuerySpecifica
  * to get the compliance class of the account and then determine if the
  * requested VPC compliance class is allowed in this account
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 22 February 2019
  **/
 public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 	private int m_requestTimeoutInterval = 10000;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[VerifyVpcTypeForExistingAccount.init] ";
-	
+
 		// This step needs to send messages to the AwsAccountService to
 		// retrieve account information.
 		ProducerPool p2p1 = null;
@@ -73,42 +73,42 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// requestTimeoutInterval is the time to wait for the
 		// response to the request
 		String timeout = getProperties().getProperty("requestTimeoutInterval",
 			"10000");
 		int requestTimeoutInterval = Integer.parseInt(timeout);
 		setRequestTimeoutInterval(requestTimeoutInterval);
-		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+		logger.info(LOGTAG + "requestTimeoutInterval is: " +
 			getRequestTimeoutInterval());
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[VerifyVpcTypeForExistingAccount.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean isValid = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		String sAllocateNewAccount = 
+		String sAllocateNewAccount =
 			getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-				
+
 		// If allocateNewAccount is perform the evaluation.
 		if (allocateNewAccount == false) {
 			logger.info(LOGTAG + "allocateNewAccount is false. Sending an " +
 				"Account.Query-Request to get the account metadata to  " +
 				"determined of the requested VPC type is valid for this account.");
-			
+
 			// Get a configured Account object and query spec from AppConfig.
 			Account account = new Account();
 			AccountQuerySpecification querySpec = new AccountQuerySpecification();
@@ -123,13 +123,13 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-		    
+
 		    // Build the querySpec.
-		    String accountId = 
+		    String accountId =
 				getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "accountId");
  			logger.info(LOGTAG + "accountId is: " + accountId);
  			addResultProperty("accountId", accountId);
-		    
+
 		    // Set the values of the query spec.
 		    try {
 		    	querySpec.setAccountId(accountId);
@@ -140,7 +140,7 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
-		    
+
 		    // Log the state of the query spec.
 		    try {
 		    	logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
@@ -150,12 +150,12 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
+		    }
+
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				PointToPointProducer p2p = 
+				PointToPointProducer p2p =
 					(PointToPointProducer)getAwsAccountServiceProducerPool()
 					.getExclusiveProducer();
 				p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
@@ -167,14 +167,14 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-		    
+
 			List results = null;
-			try { 
+			try {
 				long queryStartTime = System.currentTimeMillis();
 				results = account.query(querySpec, rs);
 				long queryTime = System.currentTimeMillis() - queryStartTime;
 				logger.info(LOGTAG + "Queried for Account for AccountId " +
-					accountId + " in " + queryTime + " ms. Returned " + results.size() + 
+					accountId + " in " + queryTime + " ms. Returned " + results.size() +
 					" result(s).");
 			}
 			catch (EnterpriseObjectQueryException eoqe) {
@@ -187,7 +187,7 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 				// Release the producer back to the pool
 				getAwsAccountServiceProducerPool().releaseProducer((MessageProducer)rs);
 			}
-			
+
 			if (results.size() == 1) {
 				Account accountResult = (Account)results.get(0);
 				String accountComplianceClass = accountResult.getComplianceClass();
@@ -210,7 +210,7 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 			}
 			else {
 				String errMsg = "Invalid number of results returned from " +
-					"Account.Query-Request. " + results.size() + 
+					"Account.Query-Request. " + results.size() +
 					" results returned. Expected exactly 1.";
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg);
@@ -220,11 +220,11 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is true. " +
 				"no need to verify VPC type.");
-			addResultProperty("allocateNewAccount", 
+			addResultProperty("allocateNewAccount",
 				Boolean.toString(allocateNewAccount));
 			addResultProperty("isValid", "not applicable");
 		}
-		
+
 		// Update the step.
 		String stepResult = FAILURE_RESULT;
 		if (allocateNewAccount == false && isValid == true) {
@@ -233,92 +233,92 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		if (allocateNewAccount == true) {
 			stepResult = SUCCESS_RESULT;
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-		
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyVpcTypeForExistingAccount.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	
+
     	String isValid = "true";
 		logger.info(LOGTAG + "isValid is: " + isValid);
 		addResultProperty("isValid", isValid);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyVpcTypeForExistingAccount.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in "
     		+ time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyVpcTypeForExistingAccount.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}
-	
+
 	private void setRequestTimeoutInterval(int i) {
 		m_requestTimeoutInterval = i;
 	}
-	
+
 	private int getRequestTimeoutInterval() {
 		return m_requestTimeoutInterval;
 	}

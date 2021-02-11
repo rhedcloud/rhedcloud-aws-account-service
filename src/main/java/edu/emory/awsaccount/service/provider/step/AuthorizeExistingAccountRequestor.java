@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -36,25 +36,25 @@ import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
  * is an account administrator or central administrator of the
  * account.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2018
  **/
 public class AuthorizeExistingAccountRequestor extends AbstractStep implements Step {
-	
+
 	private String m_adminRoleDnTemplate = null;
 	private String m_centralAdminRoleDnTemplate = null;
 	private String m_userDnTemplate = null;
 	private ProducerPool m_idmServiceProducerPool = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.init] ";
-		
+
 		// This step needs to send messages to the IDM service
 		// to authorize requestors.
 		ProducerPool p2p1 = null;
@@ -71,52 +71,52 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-			
+
 		logger.info(LOGTAG + "Getting custom step properties...");
 		String adminRoleTemplate = getProperties()
 				.getProperty("adminRoleDnTemplate", null);
 		setAdminRoleDnTemplate(adminRoleTemplate);
-		logger.info(LOGTAG + "adminRoleDnTemplate is: " + 
+		logger.info(LOGTAG + "adminRoleDnTemplate is: " +
 				getAdminRoleDnTemplate());
-		
+
 		String centralAdminRoleTemplate = getProperties()
 				.getProperty("centralAdminRoleDnTemplate", null);
 		setCentralAdminRoleDnTemplate(centralAdminRoleTemplate);
-		logger.info(LOGTAG + "centralAdminRoleDnTemplate is: " + 
+		logger.info(LOGTAG + "centralAdminRoleDnTemplate is: " +
 				getCentralAdminRoleDnTemplate());
-		
+
 		String userDnTemplate = getProperties()
 				.getProperty("userDnTemplate", null);
 		setUserDnTemplate(userDnTemplate);
-		logger.info(LOGTAG + "userDnTemplate is: " + 
+		logger.info(LOGTAG + "userDnTemplate is: " +
 				getUserDnTemplate());
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean isAuthorized = false;
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
-		
-		// If allocateNewAccount is false, send a RoleAssignment.Query-Request 
+
+		// If allocateNewAccount is false, send a RoleAssignment.Query-Request
 		// messages to the IdmService to determine if the user is an administrator
 		// or central administrator of the account.
 		if (allocateNewAccount == false) {
 			logger.info(LOGTAG + "allocateNewAccount is false...must determine " +
-				"if the requestor is authorized to provisiong a new VPC into " +
+				"if the requestor is authorized to provision a new VPC into " +
 				"the existing account.");
-			
+
 			// Get the UserId
 			String requestorUserId = getVirtualPrivateCloudProvisioning()
 					.getVirtualPrivateCloudRequisition()
@@ -124,22 +124,22 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			logger.info(LOGTAG + "requestorUserId is: " + requestorUserId);
 			addResultProperty("requestorUserId", requestorUserId);
 			List roleAssignments = roleAssignmentQuery(requestorUserId);
-			
+
 			// Get the the AccountId
 			String accountId = getVirtualPrivateCloudProvisioning()
 					.getVirtualPrivateCloudRequisition()
 					.getAccountId();
 			logger.info(LOGTAG + "accountId is: " + accountId);
 			addResultProperty("accountId", accountId);
-			
+
 			// Build the administrator role dn
 			String adminRoleDn = getAdminRoleDn(accountId);
 			logger.info(LOGTAG + "adminRoleDn is: " + adminRoleDn);
 			addResultProperty("adminRoleDn", adminRoleDn);
-			
+
 			// Determine if the user is in the admin role
 			boolean isInAdminRole = isUserInRole(adminRoleDn, roleAssignments);
-			addResultProperty("isInAdminRole", 
+			addResultProperty("isInAdminRole",
 					Boolean.toString(isInAdminRole));
 			if (isInAdminRole == true) {
 				logger.info(LOGTAG + "User is in the admin role.");
@@ -147,16 +147,16 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			else {
 				logger.info("User is not in the admin role.");
 			}
-			
+
 			// Build the administrator role dn
 			String centralAdminRoleDn = getCentralAdminRoleDn(accountId);
 			logger.info(LOGTAG + "centralAdminRoleDn is: " + centralAdminRoleDn);
 			addResultProperty("centralAdminRoleDn", centralAdminRoleDn);
-			
+
 			// Determine if the user is in the central admin role
-			boolean isInCentralAdminRole = isUserInRole(centralAdminRoleDn, 
+			boolean isInCentralAdminRole = isUserInRole(centralAdminRoleDn,
 				roleAssignments);
-			addResultProperty("isInCentralAdminRole", 
+			addResultProperty("isInCentralAdminRole",
 					Boolean.toString(isInCentralAdminRole));
 			if (isInCentralAdminRole == true) {
 				logger.info(LOGTAG + "User is in the central admin role.");
@@ -164,12 +164,12 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			else {
 				logger.info("User is not in the central admin role.");
 			}
-			
+
 			if (isInAdminRole == true || isInCentralAdminRole) {
 				isAuthorized = true;
 			}
-			addResultProperty("isAuthorized", 
-					Boolean.toString(isAuthorized));	
+			addResultProperty("isAuthorized",
+					Boolean.toString(isAuthorized));
 		}
 		// If allocateNewAccount is true, there is nothing to do.
 		// update the properties and complete the step.
@@ -181,7 +181,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			addResultProperty("allocateNewAccount", "true");
 			addResultProperty("isAuthorized", "not applicable");
 		}
-		
+
 		// Determine the step result
 		String stepResult = null;
 		// If this is a new account allocation there was nothing to do,
@@ -199,78 +199,78 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		if (allocateNewAccount == false && isAuthorized == false) {
 			stepResult = FAILURE_RESULT;
 		}
-    	
+
 		// Update the step
 		update(COMPLETED_STATUS, stepResult);
-		
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	addResultProperty("isAuthorized", "true");
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
 			"roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
-	private void setUserDnTemplate(String template) 
+
+	private void setUserDnTemplate(String template)
 		throws StepException {
-		
-		String LOGTAG = getStepTag() + 
+
+		String LOGTAG = getStepTag() +
 			"[AuthorizeExistingAccountRequestor.setUserDnTemplate] ";
-		
+
 		if (template == null) {
 			String errMsg = "userDnTemplate property is null. " +
 				"Can't authorize existing account requestors.";
@@ -279,23 +279,23 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		}
 		m_userDnTemplate = template;
 	}
-		
+
 	private String getUserDnTemplate() {
 		return m_userDnTemplate;
 	}
-	
+
 	private String getUserDn(String userId) {
 		String userDn = getUserDnTemplate()
 			.replace("USER_ID", userId);
 		return userDn;
 	}
-	
-	private void setAdminRoleDnTemplate(String template) 
+
+	private void setAdminRoleDnTemplate(String template)
 		throws StepException {
-		
-		String LOGTAG = getStepTag() + 
+
+		String LOGTAG = getStepTag() +
 			"[AuthorizeExistingAccountRequestor.setAdminRoleDnTemplate] ";
-		
+
 		if (template == null) {
 			String errMsg = "adminRoleDnTemplate property " +
 				"is null. Can't authorize existing account requestors.";
@@ -304,23 +304,23 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		}
 		m_adminRoleDnTemplate = template;
 	}
-	
+
 	private String getAdminRoleDnTemplate() {
 		return m_adminRoleDnTemplate;
 	}
-	
+
 	private String getAdminRoleDn(String accountId) {
 		String adminRoleDn = getAdminRoleDnTemplate()
 			.replace("ACCOUNT_NUMBER", accountId);
 		return adminRoleDn;
 	}
-	
-	private void setCentralAdminRoleDnTemplate(String template) 
+
+	private void setCentralAdminRoleDnTemplate(String template)
 		throws StepException {
-		
+
 		String LOGTAG = getStepTag() +
 			"[AuthorizeExistingAccountRequestor.setCentralAdminRoleDnTemplate] ";
-		
+
 		if (template == null) {
 			String errMsg = "centralAdminRoleDnTemplate property " +
 				"is null. Can't authorize existing account requestors.";
@@ -329,25 +329,25 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		}
 		m_centralAdminRoleDnTemplate = template;
 	}
-	
+
 	private String getCentralAdminRoleDnTemplate() {
 		return m_centralAdminRoleDnTemplate;
 	}
-	
+
 	private String getCentralAdminRoleDn(String accountId) {
 		String centralAdminRoleDn = getCentralAdminRoleDnTemplate()
 			.replace("ACCOUNT_NUMBER", accountId);
 		return centralAdminRoleDn;
 	}
 
-	private List<RoleAssignment> roleAssignmentQuery(String userId) 
+	private List<RoleAssignment> roleAssignmentQuery(String userId)
 		throws StepException {
-		
+
 		String LOGTAG = getStepTag() +
 			"[AuthorizeExistingAccountrequestor.roleAssignmentQuery] ";
-		
+
     	// Query the IDM service for all users in the named role
-    	// Get a configured RoleAssignment and 
+    	// Get a configured RoleAssignment and
     	// RoleAssignmentQuerySpecification from AppConfig
 		RoleAssignment roleAssignment = new RoleAssignment();
     	RoleAssignmentQuerySpecification querySpec = new RoleAssignmentQuerySpecification();
@@ -363,10 +363,10 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, ecoe);
 		}
-		
+
 		// Build the UserDN
 		String userDn = getUserDn(userId);
-		
+
 		// Set the values of the querySpec.
 		try {
 			querySpec.setUserDN(userDn);
@@ -375,12 +375,12 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		}
 		catch (EnterpriseFieldException efe) {
 			String errMsg = "An error occurred setting the values of the " +
-				"query specification object. The exception is: " + 
+				"query specification object. The exception is: " +
 				efe.getMessage();
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, efe);
 		}
-    	
+
     	// Get a RequestService to use for this transaction.
 		RequestService rs = null;
 		try {
@@ -399,12 +399,12 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 			roleAssignments = roleAssignment.query(querySpec, rs);
 			long time = System.currentTimeMillis() - startTime;
 			logger.info(LOGTAG + "Queried for RoleAssignments for " +
-				"userDn " + userDn + " in " + time + " ms. Returned " + 
+				"userDn " + userDn + " in " + time + " ms. Returned " +
 				roleAssignments.size() + " RoleAssignments for user.");
 		}
 		catch (EnterpriseObjectQueryException eoqe) {
 			String errMsg = "An error occurred querying for the " +
-					"RoleAssignment objects The exception is: " + 
+					"RoleAssignment objects The exception is: " +
 					eoqe.getMessage();
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, eoqe);
@@ -413,14 +413,14 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 		finally {
 			getIdmServiceProducerPool().releaseProducer((PointToPointProducer)rs);
     	}
-		
+
 		return roleAssignments;
 	}
-	
+
 	private boolean isUserInRole(String roleDn, List<RoleAssignment> roleAssignments) {
-		
+
 		boolean isUserInRole = false;
-		
+
 		ListIterator li = roleAssignments.listIterator();
 		while (li.hasNext()) {
 			RoleAssignment ra = (RoleAssignment)li.next();
@@ -428,14 +428,14 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 				isUserInRole = true;
 			}
 		}
-		
+
 		return isUserInRole;
 	}
-	
+
 	private void setIdmServiceProducerPool(ProducerPool pool) {
 		m_idmServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getIdmServiceProducerPool() {
 		return m_idmServiceProducerPool;
 	}

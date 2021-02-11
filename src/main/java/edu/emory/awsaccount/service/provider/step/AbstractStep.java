@@ -949,23 +949,19 @@ public abstract class AbstractStep {
         String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 
         // Get the property value with the named step and key.
-        logger.info(LOGTAG + "Getting " + key + " property from "
-                + "preceding step " + stepType);
+        logger.info(LOGTAG + "Getting " + key + " property from preceding step " + stepType);
         ProvisioningStep step = getProvisioningStepByType(stepType);
-        String value = null;
         if (step != null) {
-            value = getResultProperty(step, key);
-            if (value == null || value.equals("")) value = "not available";
+            String value = getResultProperty(step, key);
+            if (value == null || value.equals(""))
+                value = "not available";
             addResultProperty(key, value);
-            logger.info(LOGTAG + "Property " + key + " from preceding " +
-                    "step " + stepType + " is: " + value);
+            logger.info(LOGTAG + "Property " + key + " from preceding step " + stepType + " is: " + value);
+            return value;
         } else {
-            String errMsg = "Step " + stepType + " not found. " +
-                    "Can't continue.";
+            String errMsg = "Step " + stepType + " not found. Can't continue.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-
-        return value;
     }
 }

@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -23,36 +23,36 @@ import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * Send a VpnConnectionProfileAssignment.Generate-Request to the 
+ * Send a VpnConnectionProfileAssignment.Generate-Request to the
  * NetworkOpsService to reserve a VpnConnectionProfile for this
  * provisioning run.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 2 September 2018
  **/
 public class ComputeVpcSubnets extends AbstractStep implements Step {
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[ComputeVpcSubnets.init] ";
-		
-		
+
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[ComputeVpcSubnets.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		String stepResult = FAILURE_RESULT;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
@@ -61,7 +61,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 		logger.info(LOGTAG + "applicableVpcNetwork=" + applicableVpcNetwork);
 		if(applicableVpcNetwork.equals("not applicable")) {
 			logger.info(LOGTAG + "VPC network is not applicable; skipping VPC subnet determination");
-			addResultProperty("vpcNetwork", "no applicable");
+			addResultProperty("vpcNetwork", "not applicable");
 			stepResult = SUCCESS_RESULT;
 		} else {
 			logger.info(LOGTAG + "Proceed with VPC subnet determination");
@@ -147,75 +147,111 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 				addResultProperty("vpcNetwork", "null");
 			}
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
+	/*
+	 * this can be used to run this step standalone to compute VPC subnets
+	 */
+	/*
+	public static void main(String[] args) {
+		String[] originalCidrArray = "10.66.142.0/23".split("/");
+		String originalCidrNetwork = originalCidrArray[0];
+		String originalCidrBits = originalCidrArray[1];
+		int bits = Integer.parseInt(originalCidrBits);
+
+		String mgmtPubMask =  Integer.toString(bits + 3);
+		String privMask = Integer.toString(bits + 2);
+
+		String mgmt1Subnet = originalCidrNetwork + "/" + mgmtPubMask;
+		System.out.println("mgmt1Subnet " + mgmt1Subnet);
+
+		String mgmt2Subnet = getNextSubnet(mgmt1Subnet, mgmtPubMask);
+		System.out.println("mgmt2Subnet " + mgmt2Subnet);
+
+		String public1Subnet = getNextSubnet(mgmt2Subnet, mgmtPubMask);
+		System.out.println("public1Subnet " + public1Subnet);
+
+		String public2Subnet = getNextSubnet(public1Subnet, mgmtPubMask);
+		System.out.println("public2Subnet " + public2Subnet);
+
+		String[] private1NetworkArray = getNextSubnet(public2Subnet, mgmtPubMask).split("/");
+		String private1Network = private1NetworkArray[0];
+
+		String private1Subnet = private1Network + "/" + privMask;
+		System.out.println("private1Subnet " + private1Subnet);
+
+		String private2Subnet = getNextSubnet(private1Subnet, privMask);
+		System.out.println("private2Subnet " + private2Subnet);
+	}
+    */
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[ComputeVpcSubnets.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[ComputeVpcSubnets.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[ComputeVpcSubnets.rollback] ";
 		logger.info(LOGTAG + "Rollback called, nothing to roll back.");
-		
+
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	// method provided by Paul Petersen.
 	private static final String nextIpAddress(final String input) {
 	    final String[] tokens = input.split("\\.");
@@ -238,7 +274,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 	    .append(tokens[3])
 	    .toString();
 	}
-	
+
 	// method pseudocode provided by Paul Petersen
 	private static final String getNextSubnet(String inputSubnet, String bits) {
 	   SubnetUtils utils = new SubnetUtils(inputSubnet);
@@ -248,7 +284,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
 	   String nextSubnet = nextNetwork + "/" + bits;
 	   return(nextSubnet);
 	}
-	
+
 	private String addToNetmask(String netmask, int i) {
 		String LOGTAG = getStepTag() + "[ComputeVpcSubnets.addToNetMask] ";
 		logger.info(LOGTAG + "netmask: " + netmask);
