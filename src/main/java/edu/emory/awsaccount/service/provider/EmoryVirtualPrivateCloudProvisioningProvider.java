@@ -64,19 +64,17 @@ import java.util.StringTokenizer;
 public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         implements VirtualPrivateCloudProvisioningProvider {
 
-    private Category logger = OpenEaiObject.logger;
+    private final Category logger = OpenEaiObject.logger;
     private AppConfig m_appConfig;
-    private String m_primedDocUrl = null;
     private boolean m_verbose = false;
     private Sequence m_provisioningIdSequence = null;
-    private Sequence m_accountSequence = null;
     private String m_centralAdminRoleDn = null;
     private ProducerPool m_awsAccountServiceProducerPool = null;
     private ProducerPool m_idmServiceProducerPool = null;
     private ProducerPool m_serviceNowServiceProducerPool = null;
     private ThreadPool m_threadPool = null;
-    private int m_threadPoolSleepInterval = 1000;
-    private String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider] ";
+    private final int m_threadPoolSleepInterval = 1000;
+    private final String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider] ";
     protected String COMPLETED_STATUS = "completed";
     protected String PENDING_STATUS = "pending";
     protected String ROLLBACK_STATUS = "rolled back";
@@ -86,9 +84,6 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     // TJ:11/12/2020 - Sprint 4.15
     private Properties incidentProperties;
 
-    /**
-     * @see VirtualPrivateCloudProvisioningProvider.java
-     */
     @Override
     public void init(AppConfig aConfig) throws ProviderException {
         logger.info(LOGTAG + "Initializing...");
@@ -107,7 +102,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
 
         // Get the provider properties
-        PropertyConfig pConfig = new PropertyConfig();
+        PropertyConfig pConfig;
         try {
             pConfig = (PropertyConfig) aConfig
                     .getObject("VirtualPrivateCloudProvisioningProviderProperties");
@@ -123,22 +118,17 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         logger.info(LOGTAG + getProperties().toString());
 
         // Set the verbose property.
-        setVerbose(Boolean.valueOf(getProperties().getProperty("verbose", "false")));
+        setVerbose(Boolean.parseBoolean(getProperties().getProperty("verbose", "false")));
         logger.info(LOGTAG + "Verbose property is: " + getVerbose());
 
         // Set the verbose property.
         setCentralAdminRoleDn(getProperties().getProperty("centralAdminRoleDn", null));
         logger.info(LOGTAG + "centralAdminRoleDn is: " + getCentralAdminRoleDn());
 
-        // Set the primed doc URL for a template provisioning object.
-        String primedDocUrl = getProperties().getProperty("primedDocumentUri");
-        setPrimedDocumentUrl(primedDocUrl);
-        logger.info(LOGTAG + "primedDocumentUrl property is: " + primedDocUrl);
-
         // Get the sequences to use.
         // This provider needs a sequence to generate a unique ProvisioningId
         // for each transaction in multiple threads and multiple instances.
-        Sequence seq = null;
+        Sequence seq;
         try {
             seq = (Sequence) getAppConfig().getObject("ProvisioningIdSequence");
             setProvisioningIdSequence(seq);
@@ -151,23 +141,9 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             throw new ProviderException(errMsg);
         }
 
-        // This provider needs a sequence to generate a unique account name.
-        Sequence accountSeq = null;
-        try {
-            accountSeq = (Sequence) getAppConfig().getObject("AccountSequence");
-            setAccountSequence(accountSeq);
-        } catch (EnterpriseConfigurationObjectException ecoe) {
-            // An error occurred retrieving an object from AppConfig. Log it and
-            // throw an exception.
-            String errMsg = "An error occurred retrieving an object from " +
-                    "AppConfig. The exception is: " + ecoe.getMessage();
-            logger.fatal(LOGTAG + errMsg);
-            throw new ProviderException(errMsg);
-        }
-
         // This provider needs to send messages to the AWS account service
         // to initialize provisioning transactions.
-        ProducerPool p2p1 = null;
+        ProducerPool p2p1;
         try {
             p2p1 = (ProducerPool) getAppConfig()
                     .getObject("AwsAccountServiceProducerPool");
@@ -183,7 +159,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
 
         // This provider needs to send messages to the ServiceNow service
         // to initialize provisioning transactions.
-        ProducerPool p2p2 = null;
+        ProducerPool p2p2;
         try {
             p2p2 = (ProducerPool) getAppConfig()
                     .getObject("ServiceNowServiceProducerPool");
@@ -199,7 +175,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
 
         // This provider needs to send messages to the IdmService service
         // to query for RoleAssignments.
-        ProducerPool p2p3 = null;
+        ProducerPool p2p3;
         try {
             p2p3 = (ProducerPool) getAppConfig()
                     .getObject("IdmServiceProducerPool");
@@ -216,7 +192,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         // Get the ThreadPool pool to use.
         // This provider needs a thread pool in which to process concurrent
         // provisioning transactions.
-        ThreadPool tp = null;
+        ThreadPool tp;
         try {
             tp = (ThreadPool) getAppConfig().getObject("VpcProcessingThreadPool");
             setThreadPool(tp);
@@ -232,7 +208,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         // Initialize all provisioning steps this provider will use to
         // verify the runtime configuration as best we can.
         // Get a list of all step properties.
-        List<PropertyConfig> stepPropConfigs = null;
+        List<PropertyConfig> stepPropConfigs;
         try {
             stepPropConfigs = getAppConfig().getObjectsLike("ProvisioningStep");
         } catch (EnterpriseConfigurationObjectException eoce) {
@@ -245,10 +221,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
 
         // Convert property configs to properties
-        List<Properties> stepProps = new ArrayList<Properties>();
-        ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
+        List<Properties> stepProps = new ArrayList<>();
+        ListIterator<PropertyConfig> stepPropConfigsIterator = stepPropConfigs.listIterator();
         while (stepPropConfigsIterator.hasNext()) {
-            PropertyConfig stepConfig = (PropertyConfig) stepPropConfigsIterator.next();
+            PropertyConfig stepConfig = stepPropConfigsIterator.next();
             Properties stepProp = stepConfig.getProperties();
             stepProps.add(stepProp);
         }
@@ -257,12 +233,9 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         stepProps.sort(new StepPropIdComparator(1));
 
         // For each property instantiate the step and log out its details.
-        List<Step> completedSteps = new ArrayList();
-        ListIterator stepPropsIterator = stepProps.listIterator();
-        int i = 0;
+        ListIterator<Properties> stepPropsIterator = stepProps.listIterator();
         while (stepPropsIterator.hasNext()) {
-            i++;
-            Properties sp = (Properties) stepPropsIterator.next();
+            Properties sp = stepPropsIterator.next();
             String className = sp.getProperty("className");
             String stepId = sp.getProperty("stepId");
             String stepType = sp.getProperty("type");
@@ -314,8 +287,6 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @see VirtualPrivateCloudProvisioningProvider.java
-     * <p>
      * This method proxys a query to an RDBMS command that handles it. The
      * purpose of including this operation in this command (and not just the
      * generate) operations is that it will give us one command that should
@@ -326,8 +297,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
      * and accessed by this command and administrative applications like the
      * VPCP web application.
      */
-    public List<VirtualPrivateCloudProvisioning>
-    query(VirtualPrivateCloudProvisioningQuerySpecification querySpec)
+    public List<VirtualPrivateCloudProvisioning> query(VirtualPrivateCloudProvisioningQuerySpecification querySpec)
             throws ProviderException {
         logger.info(LOGTAG + "Querying for VPCP with ProvisioningId: " +
                 querySpec.getProvisioningId());
@@ -345,7 +315,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
 
         // Get a RequestService to use for this transaction.
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
             PointToPointProducer p2p = (PointToPointProducer) rs;
@@ -357,7 +327,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             throw new ProviderException(errMsg, jmse);
         }
         // Create the VirtualPrivateCloudProvisioningObject.
-        List results = null;
+        List<VirtualPrivateCloudProvisioning> results;
         try {
             logger.info(LOGTAG + "Querying for the VPCP...");
             long startTime = System.currentTimeMillis();
@@ -381,16 +351,14 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         return results;
     }
 
-    /**
-     * @see VirtualPrivateCloudProvisioningProvider.java
-     */
     public void create(VirtualPrivateCloudProvisioning vpcp) throws ProviderException {
         String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.create] ";
 
         // Get a RequestService to use for this transaction.
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+            ((PointToPointProducer) rs).setRequestTimeoutInterval(1_000_000);
         } catch (JMSException jmse) {
             String errMsg = "An error occurred getting a request service to use " +
                     "in this transaction. The exception is: " + jmse.getMessage();
@@ -417,9 +385,6 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
     }
 
-    /**
-     * @see VirtualPrivateCloudProvisioningProvider.java
-     */
     public VirtualPrivateCloudProvisioning generate(VirtualPrivateCloudRequisition vpcr)
             throws ProviderException {
 
@@ -437,7 +402,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
 
         // Get the next sequence number to identify the VPCP.
-        String seq = null;
+        String seq;
         try {
             seq = getProvisioningIdSequence().next();
             logger.info(LOGTAG + "The ProvisioningIdSequence value is: " + seq);
@@ -469,7 +434,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         // Initialize all provisioning steps this provider will use to
         // verify the runtime configuration as best we can.
         // Get a list of all step properties.
-        List<PropertyConfig> stepPropConfigs = null;
+        List<PropertyConfig> stepPropConfigs;
         try {
             stepPropConfigs = getAppConfig().getObjectsLike("ProvisioningStep");
         } catch (EnterpriseConfigurationObjectException eoce) {
@@ -482,10 +447,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
 
         // Convert property configs to properties
-        List<Properties> stepProps = new ArrayList<Properties>();
-        ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
+        List<Properties> stepProps = new ArrayList<>();
+        ListIterator<PropertyConfig> stepPropConfigsIterator = stepPropConfigs.listIterator();
         while (stepPropConfigsIterator.hasNext()) {
-            PropertyConfig stepConfig = (PropertyConfig) stepPropConfigsIterator.next();
+            PropertyConfig stepConfig = stepPropConfigsIterator.next();
             Properties stepProp = stepConfig.getProperties();
             stepProps.add(stepProp);
         }
@@ -495,12 +460,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
 
         // For each property instantiate a provisioning step
         // and add it to the provisioning object.
-        ListIterator stepPropsIterator = stepProps.listIterator();
-        int i = 0;
+        ListIterator<Properties> stepPropsIterator = stepProps.listIterator();
         int totalAnticipatedTime = 0;
         while (stepPropsIterator.hasNext()) {
-            i++;
-            Properties sp = (Properties) stepPropsIterator.next();
+            Properties sp = stepPropsIterator.next();
             String stepId = sp.getProperty("stepId");
             String stepType = sp.getProperty("type");
             String stepDesc = sp.getProperty("description");
@@ -517,7 +480,6 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                 pStep.setStatus(PENDING_STATUS);
                 pStep.setAnticipatedTime(stepAnticipatedTime);
                 pStep.setCreateUser("AwsAccountService");
-                Datetime createDatetime = pStep.newCreateDatetime();
                 pStep.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
 
                 vpcp.addProvisioningStep(pStep);
@@ -529,9 +491,8 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                 throw new ProviderException(errMsg, efe);
 
             }
-            logger.info(LOGTAG + "Added step " + i + "to the provisioning object.");
-            logger.info(LOGTAG + "Total anticipated time of this provisioning " +
-                    "process is " + totalAnticipatedTime + " ms.");
+            logger.info(LOGTAG + "Added step " + stepId + " " + stepType + " to the provisioning object"
+                    + " bringing total anticipated time to " + totalAnticipatedTime + " ms.");
         }
 
         // update the VPCP anticipated time.
@@ -594,14 +555,11 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         return vpcp;
     }
 
-    /**
-     * @see VirtualPrivateCloudProvider.java
-     */
     public void update(VirtualPrivateCloudProvisioning vpcp) throws ProviderException {
         String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.update] ";
 
         // Get a RequestService to use for this transaction.
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
         } catch (JMSException jmse) {
@@ -627,14 +585,11 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
     }
 
-    /**
-     * @see VirtualPrivateCloudProvider.java
-     */
     public void delete(VirtualPrivateCloudProvisioning vpcp) throws ProviderException {
         String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.delete] ";
 
         // Get a RequestService to use for this transaction.
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
         } catch (JMSException jmse) {
@@ -664,9 +619,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @param String, the centralAdminRoleDn
-     *                <p>
-     *                This method sets the centralAdminRoleDn
+     * This method sets the centralAdminRoleDn
      */
     private void setCentralAdminRoleDn(String dn) throws ProviderException {
         if (dn == null) {
@@ -680,8 +633,6 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @return String, the centralAdminRoleDn property
-     * <p>
      * This method returns the centralAdminRoleDn
      */
     private String getCentralAdminRoleDn() {
@@ -689,17 +640,13 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @param boolean, the verbose logging property
-     *                 <p>
-     *                 This method sets the verbose logging property
+     * This method sets the verbose logging property
      */
     private void setVerbose(boolean verbose) {
         m_verbose = verbose;
     }
 
     /**
-     * @return boolean, the verbose logging property
-     * <p>
      * This method returns the verbose logging property
      */
     private boolean getVerbose() {
@@ -707,17 +654,13 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @param Sequence, the ProvisinoingId sequence.
-     *                  <p>
-     *                  This method sets the ProvisioningId sequence.
+     * This method sets the ProvisioningId sequence.
      */
     private void setProvisioningIdSequence(Sequence seq) {
         m_provisioningIdSequence = seq;
     }
 
     /**
-     * @return Sequence, the ProvisioningId sequence.
-     * <p>
      * This method returns a reference to the ProvisioningId sequence.
      */
     private Sequence getProvisioningIdSequence() {
@@ -725,36 +668,14 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @param Sequence, the Account sequence.
-     *                  <p>
-     *                  This method sets the Account sequence.
-     */
-    private void setAccountSequence(Sequence seq) {
-        m_accountSequence = seq;
-    }
-
-    /**
-     * @return Sequence, the Account sequence.
-     * <p>
-     * This method returns a reference to the Account sequence.
-     */
-    private Sequence getAccountSequence() {
-        return m_accountSequence;
-    }
-
-    /**
-     * @param ProducerPool, the AWS account service producer pool.
-     *                      <p>
-     *                      This method sets the producer pool to use to send
-     *                      messages to the AWS Account Service.
+     * This method sets the producer pool to use to send
+     * messages to the AWS Account Service.
      */
     private void setAwsAccountServiceProducerPool(ProducerPool pool) {
         m_awsAccountServiceProducerPool = pool;
     }
 
     /**
-     * @return ProducerPool, the AWS account service producer pool.
-     * <p>
      * This method returns a reference to the producer pool to use to
      * send messages to the AWS account service.
      */
@@ -763,18 +684,14 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @param ProducerPool, the ServiceNow service producer pool.
-     *                      <p>
-     *                      This method sets the producer pool to use to send
-     *                      messages to the ServiceNow Service.
+     * This method sets the producer pool to use to send
+     * messages to the ServiceNow Service.
      */
     private void setServiceNowServiceProducerPool(ProducerPool pool) {
         m_serviceNowServiceProducerPool = pool;
     }
 
     /**
-     * @return ProducerPool, the ServiceNow service producer pool.
-     * <p>
      * This method returns a reference to the producer pool to use to
      * send messages to the ServiceNow service.
      */
@@ -783,18 +700,14 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     }
 
     /**
-     * @param ProducerPool, the IDM service producer pool.
-     *                      <p>
-     *                      This method sets the producer pool to use to send
-     *                      messages to the IDM Service.
+     * This method sets the producer pool to use to send
+     * messages to the IDM Service.
      */
     private void setIdmServiceProducerPool(ProducerPool pool) {
         m_idmServiceProducerPool = pool;
     }
 
     /**
-     * @return ProducerPool, the IDM service producer pool.
-     * <p>
      * This method returns a reference to the producer pool to use to
      * send messages to the IDM service.
      */
@@ -812,71 +725,30 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
     /**
      * This method sets the thread pool.
      */
-    private final void setThreadPool(ThreadPool tp) {
+    private void setThreadPool(ThreadPool tp) {
         m_threadPool = tp;
     }
 
     /**
-     * This method gets the value of the threadPoolSleepInteval.
+     * This method gets the value of the threadPoolSleepInterval.
      */
     public final int getSleepInterval() {
         return m_threadPoolSleepInterval;
     }
 
     /**
-     * @param AppConfig , the AppConfig object of this provider.
-     *                  <p>
-     *                  This method sets the AppConfig object for this provider to
-     *                  use.
+     * This method sets the AppConfig object for this provider to use.
      */
     private void setAppConfig(AppConfig aConfig) {
         m_appConfig = aConfig;
     }
 
     /**
-     * @return AppConfig, the AppConfig of this provider.
-     * <p>
      * This method returns a reference to the AppConfig this provider is
      * using.
      */
     private AppConfig getAppConfig() {
         return m_appConfig;
-    }
-
-    private String vpcpToXmlString(VirtualPrivateCloudProvisioning vpcp) {
-        String sVpcp = null;
-        try {
-            sVpcp = vpcp.toXmlString();
-        } catch (XmlEnterpriseObjectException xeoe) {
-            logger.error(xeoe.getMessage());
-        }
-        return sVpcp;
-    }
-
-    /**
-     * @param String, the URL to a primed document containing a
-     *                sample object.
-     *                <p>
-     *                This method sets the primed document URL property
-     */
-    private void setPrimedDocumentUrl(String primedDocUrl) throws ProviderException {
-        if (primedDocUrl == null) {
-            String errMsg = "primedDocUrl is null. It is a required property.";
-            logger.error(LOGTAG + errMsg);
-            throw new ProviderException(errMsg);
-        }
-
-        m_primedDocUrl = primedDocUrl;
-    }
-
-    /**
-     * @return String, the URL to a primed document containing a
-     * sample object
-     * <p>
-     * This method returns the value of the primed document URL property
-     */
-    private String getPrimedDocumentUrl() {
-        return m_primedDocUrl;
     }
 
     private VirtualPrivateCloudProvisioningProvider getVirtualPrivateCloudProvisioningProvider() {
@@ -885,7 +757,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
 
     private class StepPropIdComparator implements Comparator<Properties> {
 
-        int m_order = 1;
+        int m_order;
 
         public StepPropIdComparator(int order) {
             m_order = order;
@@ -895,8 +767,8 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             int returnVal = 0;
 
             // Convert stepIds to integers
-            int stepId1 = Integer.valueOf(prop1.getProperty("stepId"));
-            int stepId2 = Integer.valueOf(prop2.getProperty("stepId"));
+            int stepId1 = Integer.parseInt(prop1.getProperty("stepId"));
+            int stepId2 = Integer.parseInt(prop2.getProperty("stepId"));
 
             // Compare integer stepIds.
             if (stepId1 < stepId2) {
@@ -912,7 +784,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
 
     private class StepIdComparator implements Comparator<Step> {
 
-        int m_order = 1;
+        int m_order;
 
         public StepIdComparator(int order) {
             m_order = order;
@@ -943,8 +815,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         String LOGTAG = "[EmoryVirtualPrivateCloudProvisioningProvider.generateIncident] ";
 
         if (req == null) {
-            String errMsg = "IncidentRequisision is null. " +
-                    "Can't generate an Incident.";
+            String errMsg = "IncidentRequisition is null. Can't generate an Incident.";
             logger.error(LOGTAG + errMsg);
             throw new ProviderException(errMsg);
         }
@@ -972,7 +843,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
 
         // Get a producer from the pool
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getServiceNowServiceProducerPool()
                     .getExclusiveProducer();
@@ -983,7 +854,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             throw new ProviderException(errMsg, jmse);
         }
 
-        List results = null;
+        List results;
         try {
             long generateStartTime = System.currentTimeMillis();
             results = incident.generate(req, rs);
@@ -1012,10 +883,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         List<RoleAssignment> roleAssignments =
                 roleAssignmentQuery(getCentralAdminRoleDn());
 
-        ListIterator li = roleAssignments.listIterator();
+        ListIterator<RoleAssignment> li = roleAssignments.listIterator();
         int i = 0;
         while (li.hasNext()) {
-            RoleAssignment ra = (RoleAssignment) li.next();
+            RoleAssignment ra = li.next();
             String userDn = (String) ra.getExplicitIdentityDNs().getDistinguishedName().get(0);
             String userId = parseUserId(userDn);
             try {
@@ -1041,10 +912,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         List<RoleAssignment> roleAssignments =
                 roleAssignmentQuery(getCentralAdminRoleDn());
 
-        ListIterator li = roleAssignments.listIterator();
-        List<String> userIds = new ArrayList<String>();
+        ListIterator<RoleAssignment> li = roleAssignments.listIterator();
+        List<String> userIds = new ArrayList<>();
         while (li.hasNext()) {
-            RoleAssignment ra = (RoleAssignment) li.next();
+            RoleAssignment ra = li.next();
             String userDn = (String) ra.getExplicitIdentityDNs().getDistinguishedName().get(0);
             String userId = parseUserId(userDn);
             userIds.add(userId);
@@ -1067,7 +938,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
 
         // Create the UserNotification in the AWS Account Service.
         // Get a RequestService to use for this transaction.
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
         } catch (JMSException jmse) {
@@ -1130,7 +1001,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         }
 
         // Get a RequestService to use for this transaction.
-        RequestService rs = null;
+        RequestService rs;
         try {
             rs = (RequestService) getIdmServiceProducerPool().getExclusiveProducer();
         } catch (JMSException jmse) {
@@ -1140,7 +1011,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             throw new ProviderException(errMsg, jmse);
         }
         // Query for the RoleAssignments for the Administrator Role.
-        List roleAssignments = null;
+        List roleAssignments;
         try {
             long startTime = System.currentTimeMillis();
             roleAssignments = roleAssignment.query(querySpec, rs);
@@ -1168,7 +1039,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
      */
     private class VirtualPrivateCloudProvisioningTransaction implements java.lang.Runnable {
 
-        VirtualPrivateCloudProvisioning m_vpcp = null;
+        VirtualPrivateCloudProvisioning m_vpcp;
         long m_executionStartTime = 0;
 
         public VirtualPrivateCloudProvisioningTransaction(VirtualPrivateCloudProvisioning vpcp) {
@@ -1203,7 +1074,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             }
 
             // Get a list of all step properties.
-            List<PropertyConfig> stepPropConfigs = null;
+            List<PropertyConfig> stepPropConfigs;
             try {
                 stepPropConfigs = getAppConfig().getObjectsLike("ProvisioningStep");
             } catch (EnterpriseConfigurationObjectException eoce) {
@@ -1216,10 +1087,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             logger.info(LOGTAG + "There are " + stepPropConfigs.size() + " steps.");
 
             // Convert property configs to properties
-            List<Properties> stepProps = new ArrayList<Properties>();
-            ListIterator stepPropConfigsIterator = stepPropConfigs.listIterator();
+            List<Properties> stepProps = new ArrayList<>();
+            ListIterator<PropertyConfig> stepPropConfigsIterator = stepPropConfigs.listIterator();
             while (stepPropConfigsIterator.hasNext()) {
-                PropertyConfig pConfig = (PropertyConfig) stepPropConfigsIterator.next();
+                PropertyConfig pConfig = stepPropConfigsIterator.next();
                 Properties stepProp = pConfig.getProperties();
                 stepProps.add(stepProp);
             }
@@ -1230,12 +1101,12 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             // For each property instantiate the step, call the execute
             // method, and if successful, place it in the map of
             // completed steps.
-            List<Step> completedSteps = new ArrayList();
-            ListIterator stepPropsIterator = stepProps.listIterator();
+            List<Step> completedSteps = new ArrayList<>();
+            ListIterator<Properties> stepPropsIterator = stepProps.listIterator();
             int i = 0;
             while (stepPropsIterator.hasNext()) {
                 i++;
-                Properties props = (Properties) stepPropsIterator.next();
+                Properties props = stepPropsIterator.next();
                 String className = props.getProperty("className");
                 if (className != null) {
                     // Instantiate the step
@@ -1331,7 +1202,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                     }
 
                     // Execute the step
-                    List<Property> resultProps = null;
+                    List<Property> resultProps;
                     try {
                         logger.info(LOGTAG + "Executing [Step-" +
                                 step.getStepId() + "] " +
@@ -1371,7 +1242,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                             logger.info(LOGTAG + "Setting completed status, "
                                     + "failure result, and final error details...");
                             // Add an error step property limited to 255 characters.
-                            String stepExecutionException = null;
+                            String stepExecutionException;
                             if (se.getMessage() != null) {
                                 int size = se.getMessage().length();
                                 logger.info(LOGTAG + "stepExecutionException size is: "
@@ -1441,10 +1312,6 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                         "The exception is: " + pe.getMessage();
                 logger.error(LOGTAG + errMsg);
             }
-
-            // And we're done.
-            return;
-
         }
 
         private void rollbackCompletedSteps(List<Step> completedSteps,
@@ -1454,10 +1321,10 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
             // Reverse the order of the completedSteps list.
             completedSteps.sort(new StepIdComparator(-1));
 
-            ListIterator completedStepsIterator = completedSteps.listIterator();
+            ListIterator<Step> completedStepsIterator = completedSteps.listIterator();
             long startTime = System.currentTimeMillis();
             while (completedStepsIterator.hasNext()) {
-                Step completedStep = (Step) completedStepsIterator.next();
+                Step completedStep = completedStepsIterator.next();
                 try {
                     completedStep.rollback();
                 } catch (StepException se) {
@@ -1520,16 +1387,8 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                     while (keys.hasNext()) {
                         Object key = keys.next();
                         try {
-                            Method setter = ir.getClass().getMethod(
-                                    "set" + key,
-                                    new Class[]{String.class}
-                            );
-                            setter.invoke(
-                                    ir,
-                                    new Object[]{
-                                            incidentProperties.getProperty((String) key)
-                                    }
-                            );
+                            Method setter = ir.getClass().getMethod("set" + key, String.class);
+                            setter.invoke(ir, incidentProperties.getProperty((String) key));
 
                         } catch (NoSuchMethodException e) {
                             e.printStackTrace();
@@ -1575,7 +1434,7 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
                     d = d.replaceAll("ERROR_DESCRIPTION", extraErrMsg);
                     d = d.replaceAll("STEP_ID", failedStepId);
                     ir.setDescription(d);
-                    logger.info(LOGTAG + "Provisioning Failure incident discription is: " + ir.getDescription());
+                    logger.info(LOGTAG + "Provisioning Failure incident description is: " + ir.getDescription());
 
                     Incident incident = generateIncident(ir);
                     String incidentNumber = incident.getNumber();
@@ -1605,13 +1464,11 @@ public class EmoryVirtualPrivateCloudProvisioningProvider extends OpenEaiObject
         private String resultPropsToXmlString(List<Property> resultProps) {
             String stringProps = "";
 
-            ListIterator li = resultProps.listIterator();
+            ListIterator<Property> li = resultProps.listIterator();
             while (li.hasNext()) {
-                Property prop = (Property) li.next();
-                String stringProp = "";
+                Property prop = li.next();
                 try {
-                    stringProp = prop.toXmlString();
-                    stringProps = stringProps + stringProp;
+                    stringProps = stringProps + prop.toXmlString();
                 } catch (XmlEnterpriseObjectException xeoe) {
                     String errMsg = "An error occurred serializing a Property "
                             + "object to an XML string.";
