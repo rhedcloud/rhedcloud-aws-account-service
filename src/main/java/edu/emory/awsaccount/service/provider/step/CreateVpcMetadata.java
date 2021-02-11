@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -45,22 +45,22 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
 /**
  * If this is a new account request, create account metadata
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 30 August 2018
  **/
 public class CreateVpcMetadata extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[CreateVpcMetadata.init] ";
-		
+
 		// This step needs to send messages to the AWS account service
 		// to create account metadata.
 		ProducerPool p2p1 = null;
@@ -77,11 +77,11 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateAccountMetadata.run] ";
@@ -95,7 +95,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 		} else {
 			addResultProperty("createVpc", String.valueOf(true));
             boolean vpcMetadataCreated = false;
-		
+
 		    // Return properties
 		    addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
@@ -121,10 +121,8 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 			String vpcType = getVirtualPrivateCloudProvisioning()
 					.getVirtualPrivateCloudRequisition()
 					.getType();
-			String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS",
-					"vpcNetwork");
-			String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR",
-					"vpnConnectionProfileId");
+			String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS", "vpcNetwork");
+			String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpnConnectionProfileId");
 
 			// Get the VirtualPrivateCloudRequisition
 			VirtualPrivateCloudRequisition req =
@@ -212,83 +210,83 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 						.releaseProducer((MessageProducer) rs);
 			}
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
 		long time = System.currentTimeMillis() - startTime;
 		logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-		
+
 		// Return the properties.
 		return getResultProperties();
-		
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateVpcMetadata.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	addResultProperty("accountMetadataCreated", "true");
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateVpcMetadata.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateVpcMetadata.rollback] ";
 		logger.info(LOGTAG + "Rollback called, deleting account metadata.");
-		
+
 		// Get the result props
 		List<Property> props = getResultProperties();
-		
+
 		// Get the VpcId
 		String vpcId = getResultProperty("vpcId");
-		
+
 		// If the vpcId is not null, query for the VPC object
 		// and then delete it.
 		if (vpcId != null) {
-		
+
 			// Query for the VPC
 			// Get a configured VPC object and account query spec
 			// from AppConfig.
 			VirtualPrivateCloud vpc = new VirtualPrivateCloud();
-			VirtualPrivateCloudQuerySpecification querySpec = 
+			VirtualPrivateCloudQuerySpecification querySpec =
 				new VirtualPrivateCloudQuerySpecification();
 		    try {
 		    	vpc = (VirtualPrivateCloud)getAppConfig()
@@ -302,7 +300,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-		    
+
 		    // Set the values of the query spec
 		    try {
 		    	querySpec.setVpcId(vpcId);
@@ -313,7 +311,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException();
 		    }
-		    
+
 		    // Get a producer from the pool
  			RequestService rs = null;
  			try {
@@ -326,10 +324,10 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
  				logger.error(LOGTAG + errMsg);
  				throw new StepException(errMsg, jmse);
  			}
- 		    
+
  			// Query for the account metadata
  			List results = null;
- 			try { 
+ 			try {
  				long queryStartTime = System.currentTimeMillis();
  				results = vpc.query(querySpec, rs);
  				long createTime = System.currentTimeMillis() - queryStartTime;
@@ -347,11 +345,11 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
  				getAwsAccountServiceProducerPool()
  					.releaseProducer((MessageProducer)rs);
  			}
- 			
+
  			// If there is a result, delete the account metadata
  			if (results.size() > 0) {
  				vpc = (VirtualPrivateCloud)results.get(0);
- 				
+
  				// Get a producer from the pool
  	 			rs = null;
  	 			try {
@@ -364,9 +362,9 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
  	 				logger.error(LOGTAG + errMsg);
  	 				throw new StepException(errMsg, jmse);
  	 			}
- 	 		    
+
  	 			// Delete the account metadata
- 	 			try { 
+ 	 			try {
  	 				long deleteStartTime = System.currentTimeMillis();
  	 				vpc.delete("Delete", rs);
  	 				long deleteTime = System.currentTimeMillis() - deleteStartTime;
@@ -394,20 +392,20 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 				"step, so there is nothing to roll back.");
 			addResultProperty("deletedVpcMetadataOnRollback", "not applicable");
 		}
-		
+
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}
-	
+
 }
