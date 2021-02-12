@@ -87,9 +87,7 @@ public class DetermineVpcCidr extends AbstractStep implements Step {
 
         // check if a VPC is being created
         String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
-        logger.info(LOGTAG + "createVpc=" + createVpc);
         String vpcConnectionMethod = getStepPropertyValue("DETERMINE_VPC_CONNECTION_METHOD", "vpcConnectionMethod");
-        logger.info(LOGTAG + "vpcConnectionMethod=" + vpcConnectionMethod);
 
         if (Boolean.valueOf(createVpc) == Boolean.FALSE) {
             logger.info(LOGTAG + "Bypassing VPN CIDR determination since no VPC is being created");
