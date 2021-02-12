@@ -756,10 +756,10 @@ public abstract class AbstractStep {
         }
     }
 
+    // Get the property value with the named step (stepType) and key.
     protected String getStepPropertyValue(String stepType, String key) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 
-        // Get the property value with the named step and key.
         logger.info(LOGTAG + "Getting " + key + " property from preceding step " + stepType);
         ProvisioningStep step = getProvisioningStepByType(stepType);
         if (step != null) {
@@ -767,7 +767,7 @@ public abstract class AbstractStep {
             if (value == null || value.equals(""))
                 value = "not available";
             addResultProperty(key, value);
-            logger.info(LOGTAG + "Property " + key + " from preceding step " + stepType + " is: " + value);
+            logger.info(LOGTAG + "Property " + key + " from preceding step " + stepType + " is " + value);
             return value;
         } else {
             String errMsg = "Step " + stepType + " not found. Can't continue.";
