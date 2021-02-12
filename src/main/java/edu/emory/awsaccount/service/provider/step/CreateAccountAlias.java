@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -44,22 +44,22 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
 /**
  * If this is a new account request, create and account alias.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 19 December 2018
  **/
 public class CreateAccountAlias extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[CreateAccountAlias.init] ";
-		
+
 		// This step needs to send messages to the AWS account service
 		// to create account metadata.
 		ProducerPool p2p1 = null;
@@ -76,41 +76,41 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateAccountAlias.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean accountAliasCreated = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get some properties from previous steps.
-		String allocateNewAccount = 
+		String allocateNewAccount =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
-		String newAccountId = 
+		String newAccountId =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		
+
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount);
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
-		
-		// If allocatedNewAccount is true and newAccountId is not null, 
+
+		// If allocatedNewAccount is true and newAccountId is not null,
 		// Send an AccountAlias.Create-Request to the AWS Account service.
 		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("not applicable") == false)) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
+			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
 				"is not null. Sending an AccountAlias.Create-Request to create an" +
 				"acount alias.");
-			
+
 			String name = getStepPropertyValue("VERIFY_NEW_ACCOUNT_ADMIN_DISTRO_LIST",
 				"accountAlias");
-			
+
 			// Get a configured account object from AppConfig.
 			AccountAlias accountAlias = new AccountAlias();
 		    try {
@@ -123,11 +123,11 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-		    
+
 		    // Get the VPCP requisition object.
 		    VirtualPrivateCloudRequisition req = getVirtualPrivateCloudProvisioning()
 		    	.getVirtualPrivateCloudRequisition();
-		    
+
 		    // Set the values of the account.
 		    try {
 		    	accountAlias.setAccountId(newAccountId);
@@ -139,7 +139,7 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
-		    
+
 		    // Log the state of the AccountAlias.
 		    try {
 		    	logger.info(LOGTAG + "AccountAlias to create is: " +
@@ -150,8 +150,8 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
+		    }
+
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
@@ -164,17 +164,17 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-		    
-			try { 
+
+			try {
 				long createStartTime = System.currentTimeMillis();
 				accountAlias.create(rs);
 				long createTime = System.currentTimeMillis() - createStartTime;
 				logger.info(LOGTAG + "Create Account in " + createTime +
 					" ms.");
 				accountAliasCreated = true;
-				addResultProperty("allocatedNewAccount", 
+				addResultProperty("allocatedNewAccount",
 					Boolean.toString(allocatedNewAccount));
-				addResultProperty("accountAliasCreated", 
+				addResultProperty("accountAliasCreated",
 					Boolean.toString(accountAliasCreated));
 			}
 			catch (EnterpriseObjectCreateException eoce) {
@@ -188,18 +188,18 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 				getAwsAccountServiceProducerPool()
 					.releaseProducer((MessageProducer)rs);
 			}
-			
+
 		}
 		// If allocatedNewAccount is false, log it and add result props.
 		else {
 			logger.info(LOGTAG + "allocatedNewAccount is false. " +
 				"no need to create account metadata.");
-			addResultProperty("allocatedNewAccount", 
+			addResultProperty("allocatedNewAccount",
 				Boolean.toString(allocatedNewAccount));
-			addResultProperty("accountAliasCreated", 
+			addResultProperty("accountAliasCreated",
 				"not applicable");
 		}
-		
+
 		// Update the step result.
 		String stepResult = FAILURE_RESULT;
 		if (accountAliasCreated == true && allocatedNewAccount == true) {
@@ -208,80 +208,78 @@ public class CreateAccountAlias extends AbstractStep implements Step {
 		if (allocatedNewAccount == false) {
 			stepResult = SUCCESS_RESULT;
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateAccountAlias.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	addResultProperty("accountAliasCreated", "true");
-    	
-		
+
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateAccountAlias.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
 		super.rollback();
-		String LOGTAG = getStepTag() + 
-				"[CreateAccountAlias.rollback] ";
+		String LOGTAG = getStepTag() + "[CreateAccountAlias.rollback] ";
 		long startTime = System.currentTimeMillis();
-		
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}

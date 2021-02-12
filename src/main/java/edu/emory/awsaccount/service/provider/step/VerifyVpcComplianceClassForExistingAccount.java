@@ -296,10 +296,8 @@ public class VerifyVpcComplianceClassForExistingAccount extends AbstractStep imp
 		super.rollback();
 
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[VerifyVpcTypeForExistingAccount.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
-			"roll back.");
+		String LOGTAG = getStepTag() + "[VerifyVpcTypeForExistingAccount.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
 		// Log completion time.

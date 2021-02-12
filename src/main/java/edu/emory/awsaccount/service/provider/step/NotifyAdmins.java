@@ -268,7 +268,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
 
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[NotifyAdmins.rollback] ";
-		logger.info(LOGTAG + "Rollback called, nothing to roll back.");
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
 		addResultProperty("adminNotificationRollback", "not applicable");
 

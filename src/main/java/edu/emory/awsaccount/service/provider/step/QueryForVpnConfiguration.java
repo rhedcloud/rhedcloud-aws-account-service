@@ -221,10 +221,9 @@ public class QueryForVpnConfiguration extends AbstractStep implements Step {
         super.rollback();
 
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[QueryForVpnConfiguration.rollback] ";
+        String LOGTAG = getStepTag() + "[QueryForVpnConfiguration.rollback] ";
 
-        logger.info(LOGTAG + "Rollback called, nothing to rollback.");
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         update(ROLLBACK_STATUS, SUCCESS_RESULT);
 

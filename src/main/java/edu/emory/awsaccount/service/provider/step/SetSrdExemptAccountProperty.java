@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -47,25 +47,25 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecificati
 /**
  * Set the srdExempt account property to prevent SRDs from running against this account.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 4 February 2019
  **/
 public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 
 	private ProducerPool m_awsAccountServiceProducerPool = null;
-	
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[SetSrdExemptAccountProperty.init] ";
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-		
+
 		// This step needs to send messages to the AWS account service
 		// to create account metadata.
 		ProducerPool p2p1 = null;
@@ -82,47 +82,47 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[SetSrdExemptAccountProperty.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-	    
+
 		// Determine if we are allocating a new account or not.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
 		boolean allocateNewAccount = false;
 		String accountId = null;
-		
-		String sAllocateNewAccount = 
+
+		String sAllocateNewAccount =
 			getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT",
 			"allocateNewAccount");
 		logger.info(LOGTAG + "allocateNewAccount property is: " + sAllocateNewAccount);
 		allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
 		logger.info(LOGTAG + "allocateNewAccount is: " + allocateNewAccount);
-		
+
 		// If allocateNewAccount is false, set the srdExempt property to true.
-		if (allocateNewAccount == false) { 
+		if (allocateNewAccount == false) {
 			logger.info(LOGTAG + "allocateNewAccount is false, setting srdExempt to " +
 				"true for this account.");
 
 			// Get the VirtualPrivateCloudRequisition object.
 		    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
 		    VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
-		
+
 		    // Get the AccountId from the requisition
 		    accountId = req.getAccountId();
 			logger.info(LOGTAG + "The accountId is: " + accountId);
-	
-			// Get a configured Account object and 
+
+			// Get a configured Account object and
 			// AccountQuerySpecification from AppConfig.
 			Account account = new Account();
-			AccountQuerySpecification querySpec = 
+			AccountQuerySpecification querySpec =
 				new AccountQuerySpecification();
 		    try {
 		    	account = (Account)getAppConfig()
@@ -136,7 +136,7 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-		    
+
 		    // Set the values of the querySpec.
 		    try {
 		    	querySpec.setAccountId(accountId);
@@ -147,10 +147,10 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
-		    
+
 		    // Log the state of the querySpec.
 		    try {
-		    	logger.info(LOGTAG + "Account query spec: " + 
+		    	logger.info(LOGTAG + "Account query spec: " +
 		    		querySpec.toXmlString());
 		    }
 		    catch (XmlEnterpriseObjectException xeoe) {
@@ -158,8 +158,8 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
+		    }
+
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
@@ -172,10 +172,10 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-		    
+
 			List results = null;
-			
-			try { 
+
+			try {
 				long queryStartTime = System.currentTimeMillis();
 				results = account.query(querySpec, rs);
 				long queryTime = System.currentTimeMillis() - queryStartTime;
@@ -193,7 +193,7 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 				getAwsAccountServiceProducerPool()
 					.releaseProducer((MessageProducer)rs);
 			}
-			
+
 			// If there is exactly one result, inspect the account.
 			// If there is an account property srdExempt=false, then
 			// set its value to true.
@@ -213,11 +213,11 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 								"values. The exception is: " + efe.getMessage();
 							logger.error(LOGTAG + errMsg);
 							throw new StepException(errMsg, efe);
-						} 
+						}
 						updatedPropValue = true;
 					}
 				}
-				
+
 				// If the property value was updated, update the
 				// Account metadata. Otherwise there is nothing to do.
 				if(updatedPropValue) {
@@ -233,8 +233,8 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 						logger.error(LOGTAG + errMsg);
 						throw new StepException(errMsg, jmse);
 					}
-					
-					try { 
+
+					try {
 						long updateStartTime = System.currentTimeMillis();
 						account.update(rs);
 						long updateTime = System.currentTimeMillis() - updateStartTime;
@@ -273,78 +273,76 @@ public class SetSrdExemptAccountProperty extends AbstractStep implements Step {
 				"nothing to do for this step.");
 			addResultProperty("srdExempt", "no modification attempted");
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[SetSrdExemptAccountProperty.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[SetSrdExemptAccountProperty.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return props;
 	}
-	
+
 	public void rollback() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[SetSrdExemptAccountPropert.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[SetSrdExemptAccountPropert.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}
-	
+
 }

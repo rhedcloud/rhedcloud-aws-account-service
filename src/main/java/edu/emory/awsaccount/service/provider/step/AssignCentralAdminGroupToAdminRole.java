@@ -186,10 +186,8 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
 
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[AssignCentralAdminGroupToAdminRole.rollback] ";
-        logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
-                "roll back.");
+        String LOGTAG = getStepTag() + "[AssignCentralAdminGroupToAdminRole.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
         update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
         // Log completion time.

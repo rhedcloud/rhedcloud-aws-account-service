@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -41,25 +41,25 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
  * Veridy that the VpnConnection was provisioned properly by querying
  * for the VpnConnectionProvisioning object and evaluating the results.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 21 May 2017
  **/
 public class VerifyVpnConnectionProvisioning extends AbstractStep implements Step {
-	
+
 	int m_sleepTimeInMillis = 5000;
 	int m_maxWaitTimeInMillis = 600000;
 	int m_requestTimeoutIntervalInMillis = 10000;
 	private ProducerPool m_networkOpsServiceProducerPool = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[VerifyVpnConnectionProvisioning.init] ";
-		
+
 		// This step needs to send messages to the Network Ops Service
 		// to provision or deprovision the VPN connection.
 		ProducerPool p2p1 = null;
@@ -77,34 +77,34 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 			addResultProperty("errorMessage", errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-		
+
 		String sleepTime = getProperties()
 			.getProperty("sleepTimeInMillis", "5000");
 		int sleepTimeInMillis = Integer.parseInt(sleepTime);
 		setSleepTimeInMillis(sleepTimeInMillis);
-		logger.info(LOGTAG + "sleepTimeInMillis is: " + 
+		logger.info(LOGTAG + "sleepTimeInMillis is: " +
 			getSleepTimeInMillis());
-		
+
 		String maxWaitTime = getProperties()
 				.getProperty("maxWaitTimeInMillis", "600000");
 			int maxWaitTimeInMillis = Integer.parseInt(maxWaitTime);
 			setMaxWaitTimeInMillis(maxWaitTimeInMillis);
-			logger.info(LOGTAG + "maxWaitTimeInMillis is: " + 
+			logger.info(LOGTAG + "maxWaitTimeInMillis is: " +
 				getMaxWaitTimeInMillis());
-			
+
 		String requestTimeoutInterval = getProperties()
 				.getProperty("requestTimeoutIntervalInMillis", "10000");
 			int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
 			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
 				getRequestTimeoutIntervalInMillis());
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[VerifyVpnConnectionProvisioning.run] ";
@@ -200,112 +200,110 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyVpnConnectionProvisioning.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyVpnConnectionProvisioning.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
 		ArrayList<Property> props = new ArrayList<Property>();
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return props;
 	}
-	
+
 	public void rollback() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[VerifyVpnConnectionProvisioning.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[VerifyVpnConnectionProvisioning.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setNetworkOpsServiceProducerPool(ProducerPool pool) {
 		m_networkOpsServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getNetworkOpsServiceProducerPool() {
 		return m_networkOpsServiceProducerPool;
 	}
-	
+
 	private void setSleepTimeInMillis(int time) {
 		m_sleepTimeInMillis = time;
 	}
-	
+
 	private int getSleepTimeInMillis() {
 		return m_sleepTimeInMillis;
 	}
-	
+
 	private void setMaxWaitTimeInMillis(int time) {
 		m_maxWaitTimeInMillis = time;
 	}
-	
+
 	private int getMaxWaitTimeInMillis() {
 		return m_maxWaitTimeInMillis;
 	}
-	
+
 	private void setRequestTimeoutIntervalInMillis(int time) {
 		m_requestTimeoutIntervalInMillis = time;
 	}
-	
+
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
 	}
-	
+
 	private boolean isSuccess(VpnConnectionProvisioning vcp) {
-		
+
 		if (vcp.getProvisioningResult() != null) {
 			if (vcp.getProvisioningResult().equalsIgnoreCase(SUCCESS_RESULT)) {
 				return true;
 			}
 			else return false;
 		}
-		
+
 		else return false;
 	}
-	
+
 	private boolean isFailure(VpnConnectionProvisioning vcp) {
-		
+
 		if (vcp.getProvisioningResult() != null) {
 			if (vcp.getProvisioningResult().equalsIgnoreCase(FAILURE_RESULT)) {
 				return true;
@@ -314,9 +312,9 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 		}
 		else return false;
 	}
-	
+
 	private boolean isPartialSuccess(VpnConnectionProvisioning vcp) {
-		
+
 		List<ProvisioningStep> steps = vcp.getProvisioningStep();
 		ListIterator<ProvisioningStep> li = steps.listIterator();
 		while (li.hasNext()) {
@@ -330,20 +328,20 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 				}
 			}
 		}
-		
+
 		return false;
-	}	
-	
+	}
+
 	private VpnConnectionProvisioning queryForVpnProvisioning(String provisioningId)
 		throws StepException {
-		
+
 		String LOGTAG = getStepTag() + "[VerifyVpnConnection.queryForVpnProvisioning] ";
-		
+
 	    // Get a configured VpnConnectionProvisioning object and
 	    // VpnConnectionProvisioningQuerySpecification object from AppConfig
-	    VpnConnectionProvisioning vpnProvisioning = new 
+	    VpnConnectionProvisioning vpnProvisioning = new
 			VpnConnectionProvisioning();
-		VpnConnectionProvisioningQuerySpecification querySpec = 
+		VpnConnectionProvisioningQuerySpecification querySpec =
 			new VpnConnectionProvisioningQuerySpecification();
 	    try {
 	    	vpnProvisioning = (VpnConnectionProvisioning)getAppConfig()
@@ -357,7 +355,7 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException(errMsg, ecoe);
 	    }
-		
+
 	    // Set the values of the query spec.
 	    try {
 	    	querySpec.setProvisioningId(provisioningId);
@@ -368,10 +366,10 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 	  	    logger.error(LOGTAG + errMsg);
 	  	    throw new StepException(errMsg, efe);
 	    }
-	    
+
 	    // Log the state of the object.
 	    try {
-	    	logger.info(LOGTAG + "query spec is: " 
+	    	logger.info(LOGTAG + "query spec is: "
 	    		+ querySpec.toXmlString());
 	    }
 	    catch (XmlEnterpriseObjectException xeoe) {
@@ -379,12 +377,12 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 	  	    	  "object to XML. The exception is: " + xeoe.getMessage();
   	    	logger.error(LOGTAG + errMsg);
   	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
+	    }
+
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
-			PointToPointProducer p2p = 
+			PointToPointProducer p2p =
 				(PointToPointProducer)getNetworkOpsServiceProducerPool()
 				.getExclusiveProducer();
 			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
@@ -396,9 +394,9 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, jmse);
 		}
-	    
+
 		List results = null;
-		try { 
+		try {
 			long queryStartTime = System.currentTimeMillis();
 			results = vpnProvisioning.query(querySpec, rs);
 			long queryTime = System.currentTimeMillis() - queryStartTime;
@@ -418,9 +416,9 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 			getNetworkOpsServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
 		}
-		
+
 		if (results.size() == 1) {
-			VpnConnectionProvisioning vcp = 
+			VpnConnectionProvisioning vcp =
 				(VpnConnectionProvisioning)results.get(0);
 			return vcp;
 		}
@@ -431,6 +429,6 @@ public class VerifyVpnConnectionProvisioning extends AbstractStep implements Ste
 				"Expected exactly 1.";
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
-		}	
+		}
 	}
 }

@@ -256,8 +256,7 @@ public class AuthorizeExistingAccountRequestor extends AbstractStep implements S
 
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
-			"roll back.");
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
 		// Log completion time.

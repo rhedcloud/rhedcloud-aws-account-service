@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2018 Emory University. All rights reserved. 
+ Copyright (C) 2018 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -32,26 +32,26 @@ import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If this is a new account request, send an 
- * AccountProvisioningAuthorization to determine if the owner 
+ * If this is a new account request, send an
+ * AccountProvisioningAuthorization to determine if the owner
  * is authorized to create a new account.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2018
  **/
 public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_awsAccountServiceProducerPool = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[AuthorizeNewAccountOwner.init] ";
-		
+
 		// This step needs to send messages to the AWS account service
 		// to authorize requestors.
 		ProducerPool p2p1 = null;
@@ -68,22 +68,22 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AuthorizeNewAccountOwner.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean isAuthorized = false;
-		
+
 		// Return properties
 		List<Property> props = new ArrayList<Property>();
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
@@ -104,17 +104,17 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
-		
+
+
 		// If allocateNewAccount is true, send an AccountProvisioningAuthorization.Query-Request
 		// to the AWS Account Service
 		if (allocateNewAccount) {
-			logger.info(LOGTAG + "allocateNewAccount is true. " + 
+			logger.info(LOGTAG + "allocateNewAccount is true. " +
 				"Sending an AccountProvisioningAuthorization.Query-Request " +
 				"to determine if the user is authorized to provisiong a new " +
 				"account.");
-			
-			// Query for the AccountProvisioningAuthorization object 
+
+			// Query for the AccountProvisioningAuthorization object
 			// in the AWS Account Service. Get a configured object and query spec
 			// from AppConfig.
 			AccountProvisioningAuthorization apa = new
@@ -133,12 +133,12 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-			
+
 		    // Get the UserId of the account owner.
 		    String requestorUserId = getVirtualPrivateCloudProvisioning()
 		    	.getVirtualPrivateCloudRequisition().getAccountOwnerUserId();
 		    addResultProperty("ownerUserId", requestorUserId);
-		    
+
 		    // Set the values of the query spec.
 		    try {
 		    	apaqs.setUserId(requestorUserId);
@@ -149,7 +149,7 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
-		    
+
 		    // Log the state of the query spec.
 		    try {
 		    	logger.info(LOGTAG + "Query spec is: " + apaqs.toXmlString());
@@ -159,8 +159,8 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
+		    }
+
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
@@ -173,15 +173,15 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-		    
+
 			List results = null;
-			try { 
+			try {
 				long queryStartTime = System.currentTimeMillis();
 				results = apa.query(apaqs, rs);
 				long queryTime = System.currentTimeMillis() - startTime;
 				logger.info(LOGTAG + "Queried for AccountProvisioning" +
 					"Authorization for UserId " + requestorUserId + " in "
-					+ queryTime + " ms. Returned " + results.size() + 
+					+ queryTime + " ms. Returned " + results.size() +
 					" result.");
 			}
 			catch (EnterpriseObjectQueryException eoqe) {
@@ -196,9 +196,9 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 				getAwsAccountServiceProducerPool()
 					.releaseProducer((MessageProducer)rs);
 			}
-			
+
 			if (results.size() == 1) {
-				AccountProvisioningAuthorization apaResult = 
+				AccountProvisioningAuthorization apaResult =
 						(AccountProvisioningAuthorization)results.get(0);
 				String sIsAuthorized = apaResult.getIsAuthorized();
 				if (sIsAuthorized.equalsIgnoreCase("true")) {
@@ -218,7 +218,7 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg);
 			}
-			
+
 		}
 		// If allocateNewAccount is false, log it and add result props.
 		else {
@@ -227,83 +227,81 @@ public class AuthorizeNewAccountOwner extends AbstractStep implements Step {
 			addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
 			addResultProperty("isAuthorized", "not applicable");
 		}
-		
+
 		// Update the step.
 		if (allocateNewAccount == false || isAuthorized == true) {
 			update(COMPLETED_STATUS, SUCCESS_RESULT);
 		}
 		else update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return props;
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[AuthorizeNewAccountOwner.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
     	addResultProperty("isAuthorized", "true");
-    	
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[AuthorizeNewAccountOwner.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[AuthorizeNewAccountOwner.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[AuthorizeNewAccountOwner.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
 		m_awsAccountServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getAwsAccountServiceProducerPool() {
 		return m_awsAccountServiceProducerPool;
 	}

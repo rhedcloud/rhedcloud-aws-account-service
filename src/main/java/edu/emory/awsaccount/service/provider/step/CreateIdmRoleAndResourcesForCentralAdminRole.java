@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2018 Emory University. All rights reserved. 
+ Copyright (C) 2018 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -40,23 +40,23 @@ import edu.emory.moa.objects.resources.v1_0.RoleRequisition;
  * If this is a new account request, create an IDM role for the
  * account auditor role.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 27 December 2018
  **/
 public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_idmServiceProducerPool = null;
 	private int m_requestTimeoutIntervalInMillis = 10000;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCentralAdminRole.init] ";
-		
+
 		// This step needs to send messages to the IDM service
 		// to create account roles.
 		ProducerPool p2p1 = null;
@@ -73,51 +73,51 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-			
+
 		String requestTimeoutInterval = getProperties()
 				.getProperty("requestTimeoutIntervalInMillis", "10000");
 			int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
 			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
 				getRequestTimeoutIntervalInMillis());
 
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCentralAdminRole.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean generatedRole = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get some properties from previous steps.
-		String allocateNewAccount = 
+		String allocateNewAccount =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
-		String newAccountId = 
+		String newAccountId =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		
+
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
-		
-		// If allocatedNewAccount is true and newAccountId is not null, 
+
+		// If allocatedNewAccount is true and newAccountId is not null,
 		// Send a Role.Generate-Request to the AWS Account service.
 		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
+			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
 				"is not null. Sending a Role.Generate-Request to generate an IDM" +
 				"role.");
-			
-			String centralAdminRoleGuid = 
+
+			String centralAdminRoleGuid =
 				getStepPropertyValue("CREATE_LDS_GROUP_FOR_CENTRAL_ADMIN_ROLE", "guid");
-			
+
 			// Get a configured Role object and RoleRequisision from AppConfig.
 			Role role = new Role();
 			RoleRequisition req = new RoleRequisition();
@@ -133,7 +133,7 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-		    
+
 		    // Set the values of the requisition.
 		    try {
 		    	// Main fields
@@ -141,7 +141,7 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 		    	req.setRoleName(roleNameTemplate.replace("ACCOUNT_NUMBER", newAccountId));
 		    	req.setRoleDescription("Provisions members to various AWS resources");
 		    	req.setRoleCategoryKey("aws");
-		    	
+
 		    	// Resource 1
 		    	Resource res1 = role.newResource();
 		    	String res1name = "MDSG_AWS-ACCOUNT_NUMBER-RHEDcloudCentralAdministratorRole";
@@ -155,7 +155,7 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 		    	ent1.setEntitlementApplication("UMD");
 		    	res1.setEntitlement(ent1);
 		    	req.addResource(res1);
-		    	
+
 		    	// Resource 2
 		    	Resource res2 = role.newResource();
 		    	String res2name = "HDSG_AWS-ACCOUNT_NUMBER-RHEDcloudCentralAdministratorRole";
@@ -176,7 +176,7 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
-		    
+
 		    // Log the state of the RoleRequisition.
 		    try {
 		    	logger.info(LOGTAG + "Role req is: " +
@@ -187,12 +187,12 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
+		    }
+
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				PointToPointProducer p2p = 
+				PointToPointProducer p2p =
 					(PointToPointProducer)getIdmServiceProducerPool()
 					.getExclusiveProducer();
 				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
@@ -204,18 +204,18 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-			
+
 			List results = null;
-			try { 
+			try {
 				long generateStartTime = System.currentTimeMillis();
 				results = role.generate(req, rs);
 				long generateTime = System.currentTimeMillis() - generateStartTime;
 				logger.info(LOGTAG + "Generated Role in " + generateTime +
 					" ms.");
 				generatedRole = true;
-				addResultProperty("allocatedNewAccount", 
+				addResultProperty("allocatedNewAccount",
 					Boolean.toString(allocatedNewAccount));
-				addResultProperty("generatedRole", 
+				addResultProperty("generatedRole",
 					Boolean.toString(generatedRole));
 			}
 			catch (EnterpriseObjectGenerateException eoge) {
@@ -229,7 +229,7 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 				getIdmServiceProducerPool()
 					.releaseProducer((MessageProducer)rs);
 			}
-			
+
 			// If there is exactly one result, log it.
 			if (results.size() == 1) {
 				role = (Role)results.get(0);
@@ -241,20 +241,20 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 			  	    	  "to XML. The exception is: " + xeoe.getMessage();
 		  	    	logger.error(LOGTAG + errMsg);
 		  	    	throw new StepException(errMsg, xeoe);
-			    }   
+			    }
 			}
-			
+
 		}
 		// If allocatedNewAccount is false, log it and add result props.
 		else {
 			logger.info(LOGTAG + "allocatedNewAccount is false. " +
 				"no need to generate a new role.");
-			addResultProperty("allocatedNewAccount", 
+			addResultProperty("allocatedNewAccount",
 				Boolean.toString(allocatedNewAccount));
-			addResultProperty("generatedRole", 
+			addResultProperty("generatedRole",
 				"not applicable");
 		}
-		
+
 		// Update the step result.
 		String stepResult = FAILURE_RESULT;
 		if (generatedRole == true && allocatedNewAccount == true) {
@@ -263,86 +263,84 @@ public class CreateIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 		if (allocatedNewAccount == false) {
 			stepResult = SUCCESS_RESULT;
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateIdmRoleAndResourcesForCentralAdminRole.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateIdmRoleAndResourcesForCentralAdminRole.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-		
+
 	public void rollback() throws StepException {
 		super.rollback();
-		String LOGTAG = getStepTag() + 
-				"[CreateIdmRoleAndResourcesForCentralAdminRole.rollback] ";
+		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForCentralAdminRole.rollback] ";
 		long startTime = System.currentTimeMillis();
-		
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setIdmServiceProducerPool(ProducerPool pool) {
 		m_idmServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getIdmServiceProducerPool() {
 		return m_idmServiceProducerPool;
 	}
-	
+
 	private void setRequestTimeoutIntervalInMillis(int time) {
 		m_requestTimeoutIntervalInMillis = time;
 	}
-	
+
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
 	}

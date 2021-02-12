@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -36,12 +36,12 @@ import java.util.Properties;
  * query request to verify the e-mail distribution list for
  * this account is valid.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 17 August 2018
  **/
 public class VerifyNewAccountAdminDistroList extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_emailAddressValidationServiceProducerPool = null;
 	private String m_accountSeriesPrefix = null;
 	private String m_accountSequenceNumber = null;
@@ -53,19 +53,19 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
     private List<String> validCodeList = new ArrayList<String>();
     private boolean isValidateEmail = true;
 
-    
+
 	public void init (String provisioningId, Properties props,
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[VerifyNewAccountAdminDistroList.init] ";
 
 		// TJ:11/03/2020 externalizing valid codes (START)
 	    String validateEmail = getProperties().getProperty("validateEmailAddress", "true");
 	    isValidateEmail = Boolean.parseBoolean(validateEmail);
-	    
+
         String validCodes = getProperties().getProperty("validCodes", "0,3,4");
         String[] validCodesArray = validCodes.split(",");
 
@@ -75,7 +75,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
         }
 		// TJ:11/03/2020 externalizing valid codes (END)
 
-		// This step needs to send messages to the 
+		// This step needs to send messages to the
 		// EmailAddressValidationService to validate e-mail
 		// addresses.
 		ProducerPool p2p1 = null;
@@ -98,21 +98,21 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 					+ "but validateEmailAddress is 'false' so processing will continue.");
 			}
 		}
-		
+
 		logger.info(LOGTAG + "Getting custom step properties...");
 		String accountSeriesPrefix = getProperties()
 				.getProperty("accountSeriesPrefix", null);
 		setAccountSeriesPrefix(accountSeriesPrefix);
-		logger.info(LOGTAG + "accountSeriesPrefix is: " + 
+		logger.info(LOGTAG + "accountSeriesPrefix is: " +
 				getAccountSeriesPrefix());
-		
+
 		// requestTimeoutInterval is the time to wait for the
 		// response to the request
 		String timeout = getProperties().getProperty("requestTimeoutInterval",
 			"10000");
 		int requestTimeoutInterval = Integer.parseInt(timeout);
 		setRequestTimeoutInterval(requestTimeoutInterval);
-		logger.info(LOGTAG + "requestTimeoutInterval is: " + 
+		logger.info(LOGTAG + "requestTimeoutInterval is: " +
 			getRequestTimeoutInterval());
 
 		emailDistroListUserNamePrefix = getProperties().getProperty("emailDistroListUserNamePrefix", emailDistroListUserNamePrefix);
@@ -122,17 +122,17 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[VerifyNewAccountAdminDistroList.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean isValid = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
@@ -153,7 +153,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// Get the accountSequenceNumbner property from the
 		// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
@@ -173,16 +173,16 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// If allocateNewAccount is true and the account sequence number is not null,
 		// send an EmailAddressValidation.Query-Request to the EmailAddressValidation
 		// service to validate the e-mail distribution list for the account.
 		if (allocateNewAccount == true && accountSequenceNumber != null) {
-			logger.info(LOGTAG + "allocateNewAccount is true and accountSequenceNumber " + 
+			logger.info(LOGTAG + "allocateNewAccount is true and accountSequenceNumber " +
 				"is " + accountSequenceNumber + ". Sending an " +
 				"EmailAccountValidation.Query-Request to determine if the " +
 				"e-mail distribution list is valid to use for a new account.");
-			
+
 			// Get a configured EmailAddressValidation object and query spec from AppConfig.
 			EmailAddressValidation eav = new EmailAddressValidation();
 			EmailAddressValidationQuerySpecification eavqs = new
@@ -199,14 +199,14 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-			
+
 		    // Build the account e-mail address to validate.
  			String accountEmailAddress = getAccountEmailAddress();
  			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
  			addResultProperty("accountEmailAddress", accountEmailAddress);
  			addResultProperty("accountSeriesPrefix", getAccountSeriesPrefix());
  			addResultProperty("accountAlias", getAccountAlias());
-		    
+
  			// TJ:11/03/2020: Only validate the email address if configured to do so (START)
  	        if (isValidateEmail) {
  			    // Set the values of the query spec.
@@ -219,7 +219,7 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
  			  	    logger.error(LOGTAG + errMsg);
  			  	    throw new StepException(errMsg, efe);
  			    }
- 			    
+
  			    // Log the state of the query spec.
  			    try {
  			    	logger.info(LOGTAG + "Query spec is: " + eavqs.toXmlString());
@@ -229,12 +229,12 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
  			  	    	  "to XML. The exception is: " + xeoe.getMessage();
  		  	    	logger.error(LOGTAG + errMsg);
  		  	    	throw new StepException(errMsg, xeoe);
- 			    }    
- 				
+ 			    }
+
  				// Get a producer from the pool
  				RequestService rs = null;
  				try {
- 					PointToPointProducer p2p = 
+ 					PointToPointProducer p2p =
  						(PointToPointProducer)getEmailAddressValidationServiceProducerPool()
  						.getExclusiveProducer();
  					p2p.setRequestTimeoutInterval(getRequestTimeoutInterval());
@@ -246,15 +246,15 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
  					logger.error(LOGTAG + errMsg);
  					throw new StepException(errMsg, jmse);
  				}
- 			    
+
  				List results = null;
- 				try { 
+ 				try {
  					long queryStartTime = System.currentTimeMillis();
  					results = eav.query(eavqs, rs);
  					long queryTime = System.currentTimeMillis() - queryStartTime;
  					logger.info(LOGTAG + "Queried for EmailAddressValidation" +
  						"for e-mail address " + accountEmailAddress + " in "
- 						+ queryTime + " ms. Returned " + results.size() + 
+ 						+ queryTime + " ms. Returned " + results.size() +
  						" result.");
  				}
  				catch (EnterpriseObjectQueryException eoqe) {
@@ -272,11 +272,11 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 
  				logger.info(LOGTAG + "received " + results.size() + " result(s)");
  				if (results.size() == 1) {
- 					EmailAddressValidation eavResult = 
+ 					EmailAddressValidation eavResult =
  							(EmailAddressValidation)results.get(0);
  					String statusCode = eavResult.getStatusCode();
  					logger.info(LOGTAG + "statusCode=" + statusCode);
- 					
+
  		 			// TJ:11/03/2020: get list of valid codes from AppConfig (START)
  					codeLoop: for (String code : validCodeList) {
  						if (statusCode.equalsIgnoreCase(code)) {
@@ -312,13 +312,13 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		else {
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"no need to verify a new account distro list.");
-			addResultProperty("allocateNewAccount", 
+			addResultProperty("allocateNewAccount",
 				Boolean.toString(allocateNewAccount));
-			addResultProperty("accountSequenceNumber", 
+			addResultProperty("accountSequenceNumber",
 				accountSequenceNumber);
 			addResultProperty("isValid", "not applicable");
 		}
-		
+
 		// Update the step.
 		String stepResult = FAILURE_RESULT;
 		if (allocateNewAccount == true && isValid == true) {
@@ -327,28 +327,28 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 		if (allocateNewAccount == false) {
 			stepResult = SUCCESS_RESULT;
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-		
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyNewAccountAdminDistroList.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	
+
 		// Get the accountSequenceNumbner property from the
 		// DETERMINE_NEW_ACCOUNT_SEQUENCE_VALUE step.
 		logger.info(LOGTAG + "Getting properties from preceding steps...");
@@ -368,100 +368,98 @@ public class VerifyNewAccountAdminDistroList extends AbstractStep implements Ste
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-    	
+
     	String accountEmailAddress = getAccountEmailAddress();
 			logger.info(LOGTAG + "accountEmailAddress is: " + accountEmailAddress);
 			addResultProperty("accountEmailAddress", accountEmailAddress);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[VerifyNewAccountAdminDistroList.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in "
     		+ time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[VerifyNewAccountAdminDistroList.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[VerifyNewAccountAdminDistroList.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setEmailAddressValidationServiceProducerPool(ProducerPool pool) {
 		m_emailAddressValidationServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getEmailAddressValidationServiceProducerPool() {
 		return m_emailAddressValidationServiceProducerPool;
 	}
-	
+
 	private void setAccountSeriesPrefix(String prefix) {
 		m_accountSeriesPrefix = prefix;
 	}
-	
+
 	private String getAccountSeriesPrefix() {
 		return m_accountSeriesPrefix;
 	}
-	
+
 	private String getAccountAlias() {
 		String alias = emailDistroListUserNamePrefix + getAccountSeriesPrefix() + "-"
 			+ getAccountSequenceNumber();
-				
+
 		return alias;
 	}
-	
+
 	private String getAccountEmailAddress() {
 		String emailAddress = getAccountAlias() + emailDistroListDomainName;
-				
+
 		return emailAddress;
 	}
-	
+
 	private void setAccountSequenceNumber(String accountSequenceNumber) {
 		m_accountSequenceNumber = accountSequenceNumber;
 	}
-	
+
 	private String getAccountSequenceNumber() {
 		return m_accountSequenceNumber;
 	}
-	
+
 	private void setRequestTimeoutInterval(int i) {
 		m_requestTimeoutInterval = i;
 	}
-	
+
 	private int getRequestTimeoutInterval() {
 		return m_requestTimeoutInterval;
 	}

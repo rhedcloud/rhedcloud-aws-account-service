@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2018 Emory University. All rights reserved. 
+ Copyright (C) 2018 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -35,12 +35,12 @@ import edu.emory.moa.objects.resources.v1_0.RoleRequisition;
  * If this is a new account request, create an IDM role for the
  * Grouper role/group it's configured for (admin, auditor, c_admin etc.).
  * <P>
- * 
+ *
  * @author Tod Jackson (jtjacks@emory.edu)
  * @version 1.0 - 6 November 2020
  **/
 public class CreateGrouperIdmGroup extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_idmServiceProducerPool = null;
 	private int m_requestTimeoutIntervalInMillis = 10000;
 	// group name we're configured to create
@@ -49,17 +49,17 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 	private String siteName = null;
 	private String cloudPlatformName = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[CreateGrouperIdmGroup.init] ";
-		
+
 		siteName = getProperties().getProperty("siteName", "Rice");
 		cloudPlatformName = getProperties().getProperty("cloudPlatformName", "AWS");
-		
+
 		groupNameTemplate = getProperties().getProperty("groupNameTemplate");
 		if (groupNameTemplate == null) {
 			throw new StepException("Configuration error.  The "
@@ -88,48 +88,48 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-			
+
 		String requestTimeoutInterval = getProperties()
 				.getProperty("requestTimeoutIntervalInMillis", "10000");
 			int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
 			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
 				getRequestTimeoutIntervalInMillis());
-			
+
 		logger.info(LOGTAG + "Initialization complete.");
-		
+
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[CreateGrouperIdmGroup.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		boolean generatedRole = false;
-		
+
 		// Return properties
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get some properties from previous steps.
-		String allocateNewAccount = 
+		String allocateNewAccount =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
-		String newAccountId = 
+		String newAccountId =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		
+
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
-		
-		// If allocatedNewAccount is true and newAccountId is not null, 
+
+		// If allocatedNewAccount is true and newAccountId is not null,
 		// Send a Role.Generate-Request to the AWS Account service.
 		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
+			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
 				"is not null. Sending a Role.Generate-Request to generate an IDM" +
 				"role.");
-			
+
 			// Get a configured Role object and RoleRequisision from AppConfig.
 			Role role = new Role();
 			RoleRequisition req = new RoleRequisition();
@@ -145,13 +145,13 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 		    	logger.error(LOGTAG + errMsg);
 		    	throw new StepException(errMsg, ecoe);
 		    }
-		    
+
 		    // Set the values of the requisition.
 		    try {
 		    	// Main fields
-		    	String groupName = groupNameTemplate.replace("ACCOUNT_NUMBER", newAccountId); 
+		    	String groupName = groupNameTemplate.replace("ACCOUNT_NUMBER", newAccountId);
 		    	req.setRoleName(groupName);
-		    	req.setRoleDescription(groupName + " group/role for " 
+		    	req.setRoleDescription(groupName + " group/role for "
 		    		+ cloudPlatformName + " at " + siteName);
 		    }
 		    catch (EnterpriseFieldException efe) {
@@ -160,7 +160,7 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 		  	    logger.error(LOGTAG + errMsg);
 		  	    throw new StepException(errMsg, efe);
 		    }
-		    
+
 		    // Log the state of the RoleRequisition.
 		    try {
 		    	logger.info(LOGTAG + "Role req is: " +
@@ -171,12 +171,12 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }    
-			
+		    }
+
 			// Get a producer from the pool
 			RequestService rs = null;
 			try {
-				PointToPointProducer p2p = 
+				PointToPointProducer p2p =
 					(PointToPointProducer)getIdmServiceProducerPool()
 					.getExclusiveProducer();
 				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
@@ -188,18 +188,18 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 				logger.error(LOGTAG + errMsg);
 				throw new StepException(errMsg, jmse);
 			}
-			
+
 			List results = null;
-			try { 
+			try {
 				long generateStartTime = System.currentTimeMillis();
 				results = role.generate(req, rs);
 				long generateTime = System.currentTimeMillis() - generateStartTime;
 				logger.info(LOGTAG + "Generated Role in " + generateTime +
 					" ms.");
 				generatedRole = true;
-				addResultProperty("allocatedNewAccount", 
+				addResultProperty("allocatedNewAccount",
 					Boolean.toString(allocatedNewAccount));
-				addResultProperty("generatedRole", 
+				addResultProperty("generatedRole",
 					Boolean.toString(generatedRole));
 			}
 			catch (EnterpriseObjectGenerateException eoge) {
@@ -213,7 +213,7 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 				getIdmServiceProducerPool()
 					.releaseProducer((MessageProducer)rs);
 			}
-			
+
 			// If there is exactly one result, log it.
 			if (results.size() == 1) {
 				role = (Role)results.get(0);
@@ -225,20 +225,20 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 			  	    	  "to XML. The exception is: " + xeoe.getMessage();
 		  	    	logger.error(LOGTAG + errMsg);
 		  	    	throw new StepException(errMsg, xeoe);
-			    }   
+			    }
 			}
-			
+
 		}
 		// If allocatedNewAccount is false, log it and add result props.
 		else {
 			logger.info(LOGTAG + "allocatedNewAccount is false. " +
 				"no need to generate a new role.");
-			addResultProperty("allocatedNewAccount", 
+			addResultProperty("allocatedNewAccount",
 				Boolean.toString(allocatedNewAccount));
-			addResultProperty("generatedRole", 
+			addResultProperty("generatedRole",
 				"not applicable");
 		}
-		
+
 		// Update the step result.
 		String stepResult = FAILURE_RESULT;
 		if (generatedRole == true && allocatedNewAccount == true) {
@@ -247,88 +247,86 @@ public class CreateGrouperIdmGroup extends AbstractStep implements Step {
 		if (allocatedNewAccount == false) {
 			stepResult = SUCCESS_RESULT;
 		}
-		
+
 		// Update the step.
 		update(COMPLETED_STATUS, stepResult);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateGrouperIdmGroup.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[CreateGrouperIdmGroup.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-		
+
 	public void rollback() throws StepException {
 		super.rollback();
-		String LOGTAG = getStepTag() + 
-				"[CreateGrouperIdmGroup.rollback] ";
+		String LOGTAG = getStepTag() + "[CreateGrouperIdmGroup.rollback] ";
 		long startTime = System.currentTimeMillis();
-		
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 	private void setIdmServiceProducerPool(ProducerPool pool) {
 		m_idmServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getIdmServiceProducerPool() {
 		return m_idmServiceProducerPool;
 	}
-	
+
 	private void setRequestTimeoutIntervalInMillis(int time) {
 		m_requestTimeoutIntervalInMillis = time;
 	}
-	
+
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
 	}
-	
+
 }

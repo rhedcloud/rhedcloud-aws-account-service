@@ -63,7 +63,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     private String m_caseSubject = null;
     private String m_caseSeverityCode = null;
     private ProducerPool m_directoryServiceProducerPool = null;
-    
+
     private AWSSupportClient m_awsSupportClient = null;
 
     public void init(String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
@@ -82,37 +82,37 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         String secretKey = getProperties().getProperty("secretKey", null);
         setSecretKey(secretKey);
         logger.info(LOGTAG + "secretKey is: present");
-        
+
         String caseServiceCode = getProperties().getProperty("caseServiceCode", null);
         setCaseServiceCode(caseServiceCode);
         logger.info(LOGTAG + "caseServiceCode is: " + getCaseServiceCode());
-        
+
         String caseCategoryCode = getProperties().getProperty("caseCategoryCode", null);
         setCaseCategoryCode(caseCategoryCode);
         logger.info(LOGTAG + "caseCategoryCode is: " + getCaseCategoryCode());
-        
+
         String caseLanguage = getProperties().getProperty("caseLanguage", null);
         setCaseLanguage(caseLanguage);
         logger.info(LOGTAG + "caseLanguage is: " + getCaseLanguage());
-        
+
         String caseCcEmailAddresses = getProperties().getProperty("caseCcEmailAddresses", null);
         setCaseCcEmailAddresses(caseCcEmailAddresses);
         logger.info(LOGTAG + "caseCcEmailAddresses is: " + getCaseCcEmailAddresses());
-        
+
         String caseCommunicationBody = getProperties().getProperty("caseCommunicationBody", null);
         setCaseCommunicationBody(caseCommunicationBody);
         logger.info(LOGTAG + "caseCommunicationBody is: " + getCaseCommunicationBody());
-        
+
         String caseSubject = getProperties().getProperty("caseSubject", null);
         setCaseSubject(caseSubject);
         logger.info(LOGTAG + "caseSubject is: " + caseSubject);
-        
+
         String caseSeverityCode = getProperties().getProperty("caseSeverityCode", null);
         setCaseSeverityCode(caseSeverityCode);
         logger.info(LOGTAG + "caseSeverityCode is: " + getCaseSeverityCode());
 
         // Set the AWS account credentials
-        BasicAWSCredentials awsCredentials = 
+        BasicAWSCredentials awsCredentials =
         	new BasicAWSCredentials(accessKey, secretKey);
 
         // Instantiate an AWS client builder
@@ -132,7 +132,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         // Set the client
         setAwsSupportClient(client);
-        
+
         // This step needs to send messages to the DirectoryService
         // to look up people to get e-mail addresses
         ProducerPool p2p2 = null;
@@ -156,26 +156,26 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         logger.info(LOGTAG + "Begin running the step.");
 
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-        
+
         // Get some properties from previous steps.
- 		String allocateNewAccount = 
+ 		String allocateNewAccount =
  			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
- 		String newAccountId = 
+ 		String newAccountId =
  			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
- 		
+
  		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
  		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
  		logger.info(LOGTAG + "newAccountId: " + newAccountId);
- 		
+
  		boolean createdSupportCase = false;
  		String caseId = null;
- 		
- 		// If allocatedNewAccount is true and newAccountId is not null, 
+
+ 		// If allocatedNewAccount is true and newAccountId is not null,
  		// Create a support case to add the account to the enterprise support plan.
  		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("not applicable") == false)) {
- 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
+ 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
  				"is not null. Will create a support case.");
-    
+
 			VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
 			VirtualPrivateCloudRequisition vpcr = vpcp.getVirtualPrivateCloudRequisition();
 			String ownerId = vpcr.getAccountOwnerUserId();
@@ -187,7 +187,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 			request.setServiceCode(getCaseServiceCode());
 			request.setCategoryCode(getCaseCategoryCode());
 			request.setLanguage(getCaseLanguage());
-			
+
 			List<String> caseCcEmailAddresses = buildCcEmailAddresses(ownerEmail, requestorEmail);
 			request.setCcEmailAddresses(caseCcEmailAddresses);
 			String communicationBody = replaceAccountNumber(getCaseCommunicationBody(), newAccountId);
@@ -195,9 +195,9 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 			String caseSubject = replaceAccountNumber(getCaseSubject(), newAccountId);
 			request.setSubject(caseSubject);
 			request.setSeverityCode(getCaseSeverityCode());
-			
+
 			logger.info(LOGTAG + "Built the request: " + request.toString());
-			
+
 			// Send the request.
 			try {
 				logger.info(LOGTAG + "Sending the case create request...");
@@ -223,15 +223,15 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
  				"case is necessary.");
  			addResultProperty("caseId", "not applicable");
  		}
-			
+
         String stepResult = FAILURE_RESULT;
         if (allocatedNewAccount == true && createdSupportCase == true) {
             stepResult = SUCCESS_RESULT;
-        } 
+        }
         if (allocatedNewAccount == false && createdSupportCase == false) {
             stepResult = SUCCESS_RESULT;
-        } 
-      
+        }
+
         addResultProperty("createdStupportCase", Boolean.toString(createdSupportCase));
         update(COMPLETED_STATUS, stepResult);
         long time = System.currentTimeMillis() - startTime;
@@ -285,7 +285,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[GenerateNewAccount.rollback] ";
 
-        logger.info(LOGTAG + "Rollback called, nothing to roll back.");
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
@@ -331,7 +331,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         m_secretKey = secretKey;
     }
-    
+
     private String getCaseServiceCode() {
         return m_caseServiceCode;
     }
@@ -347,7 +347,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         m_caseServiceCode = caseServiceCode;
     }
-    
+
     private String getCaseCategoryCode() {
         return m_caseCategoryCode;
     }
@@ -395,7 +395,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         m_caseCcEmailAddresses = caseCcEmailAddresses;
     }
-  
+
     private String getCaseCommunicationBody() {
         return m_caseCommunicationBody;
     }
@@ -411,7 +411,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         m_caseCommunicationBody = caseCommunicationBody;
     }
-    
+
     private String getCaseSubject() {
         return m_caseSubject;
     }
@@ -427,7 +427,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         m_caseSubject = caseSubject;
     }
-    
+
     private String getCaseSeverityCode() {
         return m_caseSeverityCode;
     }
@@ -443,7 +443,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         m_caseSeverityCode = caseSeverityCode;
     }
-    
+
     private void setDirectoryServiceProducerPool(ProducerPool pool) {
         m_directoryServiceProducerPool = pool;
     }
@@ -451,14 +451,14 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     private ProducerPool getDirectoryServiceProducerPool() {
         return m_directoryServiceProducerPool;
     }
-    
+
     private List<String> buildCcEmailAddresses(String ownerEmail, String requestorEmail)
     	throws StepException {
-    	
+
     	String LOGTAG = "[CreateCaseForEnterpriseSupport.buildCcEmailAddress] ";
-    	
+
     	List<String> ccEmailAddresses = new ArrayList();
-    	
+
     	if (getCaseCcEmailAddresses() != null && !getCaseCcEmailAddresses().equals("")) {
     		String[] emailAddresses = getCaseCcEmailAddresses().split("\\s*,\\s*");
     		for (int i=0; i < emailAddresses.length; i++) {
@@ -466,27 +466,27 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     			ccEmailAddresses.add(emailAddresses[i]);
     		}
     	}
-    	
+
     	logger.info(LOGTAG + "Adding ownerEmail: " + ownerEmail);
     	ccEmailAddresses.add(ownerEmail);
     	logger.info(LOGTAG + "Adding requestorEmail: " + requestorEmail);
     	ccEmailAddresses.add(requestorEmail);
-    	
+
     	logger.info(LOGTAG + "CcEmailAddresses is: " + ccEmailAddresses.toString());
-    	
+
     	return ccEmailAddresses;
     }
-    
+
     private String getEmailForUserId(String userId) throws StepException {
     	DirectoryPerson dp = directoryPersonQuery(userId);
     	String emailAddress = dp.getEmail().getEmailAddress();
     	return emailAddress;
     }
-    
+
     private DirectoryPerson directoryPersonQuery(String userId) throws StepException {
 
     	String LOGTAG = "[CreateCaseForEnterpriseSupport.directoryPersonQuery] ";
-    	
+
         // Query the DirectoryService service for the user's
         // DirectoryPerson object.
 
@@ -550,10 +550,10 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         DirectoryPerson dp = (DirectoryPerson) directoryPersonList.get(0);
         return dp;
     }
-    
+
     private String replaceAccountNumber(String text, String accountNumber) {
     	String result = text.replaceAll("ACCOUNT_NUMBER", accountNumber);
         return result;
     }
-    
+
 }

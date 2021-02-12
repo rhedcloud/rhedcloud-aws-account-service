@@ -360,8 +360,7 @@ public class GenerateNewAccount extends AbstractStep implements Step {
 		super.rollback();
 
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[GenerateNewAccount.rollback] ";
+		String LOGTAG = getStepTag() + "[GenerateNewAccount.rollback] ";
 
 		logger.info(LOGTAG + "Rollback called, if a new account was " +
 			"created successfully and if it is still in the destination ou, "

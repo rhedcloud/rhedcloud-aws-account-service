@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -27,50 +27,50 @@ import edu.emory.awsaccount.service.provider.ProviderException;
 import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
 
 /**
- * If a new account is needed, increment the account sequence to get the 
+ * If a new account is needed, increment the account sequence to get the
  * Emory serial number of the new AWS account.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2018
  **/
 public class DetermineNewAccountSequenceValue extends AbstractStep implements Step {
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[DetermineNewAccountSequenceValue.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		String accountSequenceNumber = null;
-		
+
 		// Get the allocateNewAccount property from the
 		// DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
 		String predecessorStepType = "DETERMINE_NEW_OR_EXISTING_ACCOUNT";
-		
+
 		logger.info(LOGTAG + "Getting predecessor step by type: " + predecessorStepType);
-		
+
 		ProvisioningStep step = getProvisioningStepByType(predecessorStepType);
-		
+
 		if (step != null) {
 			logger.info(LOGTAG + "Predecessor step found: " + step.getType());
 		}
 		else {
 			logger.error(LOGTAG + " step " + predecessorStepType + " not found.");
 		}
-		
+
 		logger.info(LOGTAG + "Getting predecessor step properties...");
 		String sAllocateNewAccount = getResultProperty(step, "allocateNewAccount");
 		boolean allocateNewAccount = Boolean.parseBoolean(sAllocateNewAccount);
 		logger.info(LOGTAG + "allocateNewAccount property is: " + allocateNewAccount);
-		
-		
+
+
 		// If allocateNewAccount is true, increment the sequence number and
 		// set the accountSequenceNumber property.
 		if (allocateNewAccount) {
@@ -87,11 +87,11 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 				logger.fatal(LOGTAG + errMsg);
 				throw new StepException(errMsg, ecoe);
 			}
-			
+
 			// Increment the sequence value
 			try {
 				accountSequenceNumber = accountSeq.next();
-				logger.info(LOGTAG + "Account sequence was incremented to: " 
+				logger.info(LOGTAG + "Account sequence was incremented to: "
 						+ accountSequenceNumber);
 			}
 			catch (SequenceException se) {
@@ -106,7 +106,7 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 			logger.info(LOGTAG + "allocateNewAccount is false. " +
 				"The account sequence was not incremented.");
 		}
-		
+
 		// Set return properties.
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 		if (accountSequenceNumber != null) {
@@ -115,74 +115,72 @@ public class DetermineNewAccountSequenceValue extends AbstractStep implements St
 		else {
 			addResultProperty("accountSequenceNumber", "not incremented");
 		}
-		addResultProperty("allocateNewAccount", 
+		addResultProperty("allocateNewAccount",
 				Boolean.toString(allocateNewAccount));
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[DetermineNewAccountSequenceValue.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[DetermineNewAccountSequenceValue.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
-		
+
 		super.rollback();
-		
+
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[DetermineNewAccountSequenceValue.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[DetermineNewAccountSequenceValue.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
+
 }

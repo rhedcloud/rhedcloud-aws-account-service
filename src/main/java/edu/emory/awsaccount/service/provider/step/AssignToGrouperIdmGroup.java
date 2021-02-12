@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -38,12 +38,12 @@ import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 /**
  * If this is a new account, add admins to the admin role.
  * <P>
- * 
+ *
  * @author Tod Jackson (jtjacks@emory.edu)
  * @version 1.0 - 6 November 2020
  **/
 public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
-	
+
 	private ProducerPool m_idmServiceProducerPool = null;
 	private int m_requestTimeoutIntervalInMillis = 10000;
 	private String identityDn = null;
@@ -51,18 +51,18 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 	private String siteName = null;
 	private String cloudPlatformName = null;
 
-	public void init (String provisioningId, Properties props, 
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) 
+	public void init (String provisioningId, Properties props,
+			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
 			throws StepException {
-		
+
 		super.init(provisioningId, props, aConfig, vpcpp);
-		
+
 		String LOGTAG = getStepTag() + "[AssignToGrouperIdmGroup.init] ";
-		
+
 		identityDn = getProperties().getProperty("identityDn", null);
 		siteName = getProperties().getProperty("siteName", "Rice");
 		cloudPlatformName = getProperties().getProperty("cloudPlatformName", "AWS");
-		
+
 		groupNameTemplate = getProperties().getProperty("groupNameTemplate");
 		if (groupNameTemplate == null) {
 			throw new StepException("Configuration error.  The "
@@ -91,71 +91,71 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 			logger.fatal(LOGTAG + errMsg);
 			throw new StepException(errMsg);
 		}
-		
+
 		// Get custom step properties.
 		logger.info(LOGTAG + "Getting custom step properties...");
-			
+
 		String requestTimeoutInterval = getProperties()
 			.getProperty("requestTimeoutIntervalInMillis", "10000");
 		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
 		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
+		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
 			getRequestTimeoutIntervalInMillis());
 
 		logger.info(LOGTAG + "Initialization complete.");
 	}
-	
+
 	protected List<Property> run() throws StepException {
 		long startTime = System.currentTimeMillis();
 		String LOGTAG = getStepTag() + "[AssignToGrouperIdmGroup.run] ";
 		logger.info(LOGTAG + "Begin running the step.");
-		
+
 		// Set result properties.
 		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		
+
 		// Get some properties from previous steps.
-		String allocateNewAccount = 
+		String allocateNewAccount =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
-		String newAccountId = 
+		String newAccountId =
 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-		
+
 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
-		
-		// If allocatedNewAccount is true and newAccountId is not null, 
+
+		// If allocatedNewAccount is true and newAccountId is not null,
 		// Build a list of all account admins and send a RoleAssignment.Generate-Request
 		// to add each admin to the admin role.
 		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " + 
+			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
 				"is not null. Adding administrators to admin role.");
-			
+
 			// Build a list of administrators.
 			VirtualPrivateCloudRequisition vpcr = getVirtualPrivateCloudProvisioning()
 				.getVirtualPrivateCloudRequisition();
-			
+
 			// Get the requestor and the account owner.
 			String requestorId = vpcr.getAuthenticatedRequestorUserId();
 			String ownerId = vpcr.getAccountOwnerUserId();
-			
+
 			List adminUserIds = vpcr.getCustomerAdminUserId();
-			
+
 			if (adminUserIds == null) {
 				adminUserIds = new ArrayList<String>();
 			}
-			
+
 			adminUserIds.add(requestorId);
 			adminUserIds.add(ownerId);
-			
+
 			logger.info(LOGTAG + "There are " + adminUserIds.size() + " admin user IDs.");
-			
+
 			List<String> distinctAdminUserIds = buildDistinctUserIdList(adminUserIds);
-			
-			logger.info(LOGTAG + "There are " + distinctAdminUserIds.size() + 
+
+			logger.info(LOGTAG + "There are " + distinctAdminUserIds.size() +
 				"distinct admin user IDs.");
 			logger.info(LOGTAG + "Distinct AdminUserIds are: " +
 				toUserIdListString(distinctAdminUserIds));
-			
+
 			ListIterator li = distinctAdminUserIds.listIterator();
 			int i = 0;
 			while (li.hasNext()) {
@@ -163,93 +163,91 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 				generateRoleAssignment(id, newAccountId);
 				i++;
 			}
-			
+
 			logger.info(LOGTAG + "Generated " + i + " admin RoleAssignments.");
 			addResultProperty("addedAdminsToAdminRole", "true");
-			addResultProperty("distinctCentralAdminUsers", 
+			addResultProperty("distinctCentralAdminUsers",
 				Integer.toString(distinctAdminUserIds.size()));
 		}
-		
+
 		// Otherwise, add result properties and log that no action was required.
 		else {
 			logger.info(LOGTAG + "No new account was created. No need to add admins to " +
 				"admin role.");
 			addResultProperty("addedAdminsToAdminRole", "not applicable");
 		}
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
-    	
+
 	}
-	
+
 	protected List<Property> simulate() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[ExampleStep.simulate] ";
 		logger.info(LOGTAG + "Begin step simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	protected List<Property> fail() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
+		String LOGTAG = getStepTag() +
 			"[ExampleStep.fail] ";
 		logger.info(LOGTAG + "Begin step failure simulation.");
-		
+
 		// Set return properties.
     	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
+
 		// Update the step.
     	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
+
     	// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
+
     	// Return the properties.
     	return getResultProperties();
 	}
-	
+
 	public void rollback() throws StepException {
 		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + 
-			"[ExampleStep.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to " + 
-			"roll back.");
+		String LOGTAG = getStepTag() + "[ExampleStep.rollback] ";
+		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
+
 		// Log completion time.
     	long time = System.currentTimeMillis() - startTime;
     	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
 	}
-	
-	private void generateRoleAssignment(String userId, String accountId) 
+
+	private void generateRoleAssignment(String userId, String accountId)
 		throws StepException {
-		
+
 		String LOGTAG = getStepTag() + "[AssignAdminsToAdminrole.generateRoleAssignment] ";
-		
-		logger.info(LOGTAG + "Generating admin RoleAssignment for user " + 
+
+		logger.info(LOGTAG + "Generating admin RoleAssignment for user " +
 			userId  + " for account " + accountId);
-		
+
 		// Get a configured RoleAssignment from AppConfig.
 		RoleAssignment ra = new RoleAssignment();
 		RoleAssignmentRequisition req = new RoleAssignmentRequisition();
@@ -265,14 +263,14 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 	    	logger.error(LOGTAG + errMsg);
 	    	throw new StepException(errMsg, ecoe);
 	    }
-	    
+
 	    // Set the values of the RoleAssignmentRequisition
 	    try {
 		    req.setRoleAssignmentActionType("grant");
 		    req.setRoleAssignmentType("USER_TO_ROLE");
 		    if (identityDn != null) {
 		    	// it's the org level c_admin assignment to account:c_admin
-		    	// identityDn was passed in via AppConfig property because 
+		    	// identityDn was passed in via AppConfig property because
 		    	// it's a static GUID value
 			    req.setIdentityDN(identityDn);
 		    }
@@ -291,7 +289,7 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
 	    }
-	    
+
 	    // Log the state of the RoleRequisition.
 	    try {
 	    	logger.info(LOGTAG + "RoleAssignment req is: " +
@@ -302,12 +300,12 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 	  	    	  "to XML. The exception is: " + xeoe.getMessage();
   	    	logger.error(LOGTAG + errMsg);
   	    	throw new StepException(errMsg, xeoe);
-	    }    
-		
+	    }
+
 		// Get a producer from the pool
 		RequestService rs = null;
 		try {
-			PointToPointProducer p2p = 
+			PointToPointProducer p2p =
 				(PointToPointProducer)getIdmServiceProducerPool()
 				.getExclusiveProducer();
 			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
@@ -319,13 +317,13 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 			logger.error(LOGTAG + errMsg);
 			throw new StepException(errMsg, jmse);
 		}
-		
+
 		List results = null;
-		try { 
+		try {
 			long generateStartTime = System.currentTimeMillis();
 			results = ra.generate(req, rs);
 			long generateTime = System.currentTimeMillis() - generateStartTime;
-			logger.info(LOGTAG + "Generated RoleAssignment in " + generateTime 
+			logger.info(LOGTAG + "Generated RoleAssignment in " + generateTime
 				+ " ms.");
 		}
 		catch (EnterpriseObjectGenerateException eoge) {
@@ -339,12 +337,12 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 			getIdmServiceProducerPool()
 				.releaseProducer((MessageProducer)rs);
 		}
-		
+
 		// If there is exactly one result, log it.
 		if (results.size() == 1) {
 			ra = (RoleAssignment)results.get(0);
 			try {
-				logger.info(LOGTAG + "Generated RoleAssignment: " + 
+				logger.info(LOGTAG + "Generated RoleAssignment: " +
 					ra.toXmlString());
 			}
 			catch (XmlEnterpriseObjectException xeoe) {
@@ -352,35 +350,35 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 		  	    	  "to XML. The exception is: " + xeoe.getMessage();
 	  	    	logger.error(LOGTAG + errMsg);
 	  	    	throw new StepException(errMsg, xeoe);
-		    }   
+		    }
 		}
 	}
-	
+
 	private void setIdmServiceProducerPool(ProducerPool pool) {
 		m_idmServiceProducerPool = pool;
 	}
-	
+
 	private ProducerPool getIdmServiceProducerPool() {
 		return m_idmServiceProducerPool;
 	}
-	
+
 	private void setRequestTimeoutIntervalInMillis(int time) {
 		m_requestTimeoutIntervalInMillis = time;
 	}
-	
+
 	private int getRequestTimeoutIntervalInMillis() {
 		return m_requestTimeoutIntervalInMillis;
 	}
-	
+
 	private String buildRoleDnFromTemplate(String accountId) {
 		String dn = groupNameTemplate.replace("ACCOUNT_NUMBER", accountId);
 		return dn;
 	}
-	
+
 	private String toUserIdListString(List ids) {
-		
+
 		String list = "";
-		
+
 		ListIterator<String> li = ids.listIterator();
 		while (li.hasNext()) {
 			String id = (String)li.next();
@@ -389,14 +387,14 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 				list = list + ", ";
 			}
 		}
-		
+
 		return list;
 	}
-	
+
 	private List<String> buildDistinctUserIdList(List userIds) {
-		
+
 		List<String> distinctUserIds = new ArrayList<String>();
-		
+
 		ListIterator li = userIds.listIterator();
 		while (li.hasNext()) {
 			String id = (String)li.next();
@@ -404,8 +402,8 @@ public class AssignToGrouperIdmGroup extends AbstractStep implements Step {
 				distinctUserIds.add(id);
 			}
 		}
-		
+
 		return distinctUserIds;
 	}
-	
+
 }
