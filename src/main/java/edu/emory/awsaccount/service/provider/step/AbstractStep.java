@@ -24,13 +24,11 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.moa.XmlEnterpriseObjectException;
-import org.openeai.transport.RequestService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -47,6 +45,8 @@ import java.util.TimeZone;
  * @version 1.0 - 21 May 2017
  */
 public abstract class AbstractStep {
+    private static final String LOGTAG = "[AbstractStep] ";
+    private static final String CREATE_USER = "AwsAccountService";
 
     protected Category logger = OpenEaiObject.logger;
     private String m_provisioningId = null;
@@ -55,15 +55,11 @@ public abstract class AbstractStep {
     private String m_description = null;
     private String m_status = null;
     private String m_result = null;
-    private String m_executionType = null;
-    private List<Property> m_resultProperties = new ArrayList<Property>();
+    private List<Property> m_resultProperties = new ArrayList<>();
     private String m_createUser = null;
     private Datetime m_createDatetime = null;
     private String m_lastUpdateUser = null;
     private Datetime m_lastUpdateDatetime = null;
-    private RequestService m_awsAccountService = null;
-    private String LOGTAG = "[AbstractStep] ";
-    private String CREATE_USER = "AwsAccountService";
     private boolean m_skipStep = false;
     private boolean m_simulateStep = false;
     private boolean m_failStep = false;
@@ -100,9 +96,9 @@ public abstract class AbstractStep {
         setStepId(props.getProperty("stepId"));
         setType(props.getProperty("type"));
         setDescription(props.getProperty("description"));
-        setSkipStep(Boolean.valueOf(props.getProperty("skipStep", "false")));
-        setSimulateStep(Boolean.valueOf(props.getProperty("simulateStep", "false")));
-        setFailStep(Boolean.valueOf(props.getProperty("failStep", "false")));
+        setSkipStep(Boolean.parseBoolean(props.getProperty("skipStep", "false")));
+        setSimulateStep(Boolean.parseBoolean(props.getProperty("simulateStep", "false")));
+        setFailStep(Boolean.parseBoolean(props.getProperty("failStep", "false")));
         setVirtualPrivateCloudProvisioningProvider(vpcpp);
         setProperties(props);
 
@@ -110,7 +106,7 @@ public abstract class AbstractStep {
         queryForVpcpBaseline();
 
         // If the VPCP object is not null, look for the step.
-        ProvisioningStep step = null;
+        ProvisioningStep step;
         if (getVirtualPrivateCloudProvisioning() != null) {
             step = getProvisioningStepById(getStepId());
 
@@ -142,14 +138,12 @@ public abstract class AbstractStep {
         // is a fatal step error.
         else {
             String errMsg = "No VirtualPrivateCloudProvisioning object " +
-                    "found for ProvisioningId " + provisioningId + ". Can't " +
-                    "continue.";
+                    "found for ProvisioningId " + provisioningId + ". Can't continue.";
             throw new StepException(errMsg);
         }
 
         // Set the step tag value.
-        String stepTag = "[ProvisioningId " + getProvisioningId() + "][Step-"
-                + getStepId() + "] ";
+        String stepTag = "[ProvisioningId " + getProvisioningId() + "][Step-" + getStepId() + "] ";
         setStepTag(stepTag);
 
         logger.info(LOGTAG + "Initialization complete #######################");
@@ -161,8 +155,7 @@ public abstract class AbstractStep {
         // Update the step to indicate it is in progress.
         update(IN_PROGRESS_STATUS, NO_RESULT);
 
-        String LOGTAG = getStepTag() +
-                "[AbstractStep.execute] ";
+        String LOGTAG = getStepTag() + "[AbstractStep.execute] ";
         logger.info(LOGTAG + "Determining execution method.");
 
         // Determine if the step should be skipped, simulated, or failed.
@@ -207,13 +200,9 @@ public abstract class AbstractStep {
     protected abstract List<Property> fail() throws StepException;
 
     /**
-     * @param AppConfig, the AppConfig
-     *                   <p>
-     *                   This method sets the AppConfig
+     * This method sets the AppConfig
      */
-    private void setAppConfig(AppConfig appConfig)
-            throws StepException {
-
+    private void setAppConfig(AppConfig appConfig) throws StepException {
         if (appConfig == null) {
             String errMsg = "AppConfig is null. AppConfig is required.";
             logger.error(LOGTAG + errMsg);
@@ -223,8 +212,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return AppConfig, the AppConfig
-     * <p>
      * This method returns the value of the AppConfig
      */
     protected AppConfig getAppConfig() {
@@ -232,8 +219,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return String, the ProvisioningId
-     * <p>
      * This method returns the value of the ProvisioningId
      */
     private String getProvisioningId() {
@@ -241,16 +226,11 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the ProvisioningId
-     *                <p>
-     *                This method sets the ProvisioningId
+     * This method sets the ProvisioningId
      */
-    private void setProvisioningId(String provisioningId)
-            throws StepException {
-
+    private void setProvisioningId(String provisioningId) throws StepException {
         if (provisioningId == null) {
-            String errMsg = "ProvisioiningId is null. StepId is a required " +
-                    "property.";
+            String errMsg = "ProvisioningId is null. StepId is a required property.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
@@ -259,8 +239,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return String, the StepId
-     * <p>
      * This method returns the value of the StepId
      */
     public String getStepId() {
@@ -268,9 +246,7 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the StepId
-     *                <p>
-     *                This method sets the StepId
+     * This method sets the StepId
      */
     private void setStepId(String stepId) throws StepException {
         if (stepId == null) {
@@ -282,8 +258,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return String, the StepTag
-     * <p>
      * This method returns the value of the StepTag
      */
     public String getStepTag() {
@@ -291,26 +265,20 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the StepTag
-     *                <p>
-     *                This method sets the StepTag
+     * This method sets the StepTag
      */
-    private void setStepTag(String stepTag) throws StepException {
+    private void setStepTag(String stepTag) {
         m_stepTag = stepTag;
     }
 
     /**
-     * @param boolean, the skipStep property
-     *                 <p>
-     *                 This method sets the skipStep property
+     * This method sets the skipStep property
      */
     private void setSkipStep(boolean skipStep) {
         m_skipStep = skipStep;
     }
 
     /**
-     * @return boolean, the skipStep property
-     * <p>
      * This method returns the value of the skipStep property
      */
     protected boolean getSkipStep() {
@@ -318,17 +286,13 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param boolean, the simluateStep property
-     *                 <p>
-     *                 This method sets the simulateStep property
+     * This method sets the simulateStep property
      */
     private void setSimulateStep(boolean simulateStep) {
         m_simulateStep = simulateStep;
     }
 
     /**
-     * @return boolean, the simulateStep property
-     * <p>
      * This method returns the value of the simulateStep property
      */
     protected boolean getSimulateStep() {
@@ -336,17 +300,13 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param boolean, the failStep property
-     *                 <p>
-     *                 This method sets the failStep property
+     * This method sets the failStep property
      */
     private void setFailStep(boolean failStep) {
         m_failStep = failStep;
     }
 
     /**
-     * @return boolean, the failStep property
-     * <p>
      * This method returns the value of the failStep property
      */
     private boolean getFailStep() {
@@ -354,56 +314,34 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param VirtualPrivateCloudProvisioningProvider, the VirtualPrivateCloudProvisioningProvider
-     *                                                 <p>
-     *                                                 This method sets the VirtualPrivateCloudProvisioningProvider
+     * This method sets the VirtualPrivateCloudProvisioningProvider
      */
-    private void setVirtualPrivateCloudProvisioningProvider
-    (VirtualPrivateCloudProvisioningProvider vpcpp) {
-
+    private void setVirtualPrivateCloudProvisioningProvider(VirtualPrivateCloudProvisioningProvider vpcpp) {
         m_vpcpp = vpcpp;
     }
 
     /**
-     * @return VirtualPrivateCloudProvisioningProvider,
-     * the VirtualPrivateCloudProvisioningProvider
-     * <p>
      * This method returns the VirtualPrivateCloudProvisioningProvider
      */
-    protected VirtualPrivateCloudProvisioningProvider
-    getVirtualPrivateCloudProvisioningProvider() {
-
+    protected VirtualPrivateCloudProvisioningProvider getVirtualPrivateCloudProvisioningProvider() {
         return m_vpcpp;
     }
 
     /**
-     * @param VirtualPrivateCloudProvisioning, the VirtualPrivateCloudProvisioning object containing state
-     *                                         for this step
-     *                                         <p>
-     *                                         This method sets the VirtualPrivateCloudProvisioning object
+     * This method sets the VirtualPrivateCloudProvisioning object
      */
-    private void setVirtualPrivateCloudProvisioning
-    (VirtualPrivateCloudProvisioning vpcp) {
-
+    private void setVirtualPrivateCloudProvisioning(VirtualPrivateCloudProvisioning vpcp) {
         m_vpcp = vpcp;
     }
 
     /**
-     * @return VirtualPrivateCloudProvisioning,
-     * the VirtualPrivateCloudProvisioning object containing state
-     * for this step.
-     * <p>
      * This method returns the VirtualPrivateCloudProvisioning object
      */
-    protected VirtualPrivateCloudProvisioning
-    getVirtualPrivateCloudProvisioning() {
-
+    protected VirtualPrivateCloudProvisioning getVirtualPrivateCloudProvisioning() {
         return m_vpcp;
     }
 
     /**
-     * @return String, the Type
-     * <p>
      * This method returns the value of the step Type
      */
     public String getType() {
@@ -411,12 +349,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the Type
-     *                <p>
-     *                This method sets the step Type
+     * This method sets the step Type
      */
     private void setType(String type) throws StepException {
-
         if (type == null) {
             String errMsg = "Type is null. Type is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -427,8 +362,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return String, the Description
-     * <p>
      * This method returns the value of the step Description
      */
     public String getDescription() {
@@ -436,12 +369,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the Description
-     *                <p>
-     *                This method sets the step Description
+     * This method sets the step Description
      */
     private void setDescription(String description) throws StepException {
-
         if (description == null) {
             String errMsg = "Description is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -452,8 +382,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return String, the Status
-     * <p>
      * This method returns the value of the status Description
      */
     public String getStatus() {
@@ -461,12 +389,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the Status
-     *                <p>
-     *                This method sets the step Status
+     * This method sets the step Status
      */
     private void setStatus(String status) throws StepException {
-
         if (status == null) {
             String errMsg = "Status is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -477,8 +402,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return Properties, the step properties
-     * <p>
      * This method returns the value of the step properties
      */
     public Properties getProperties() {
@@ -486,17 +409,13 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param Properties, the step properties
-     *                    <p>
-     *                    This method sets the step properties
+     * This method sets the step properties
      */
     private void setProperties(Properties props) {
         m_props = props;
     }
 
     /**
-     * @return String, the Result
-     * <p>
      * This method returns the value of the result
      */
     public String getResult() {
@@ -504,17 +423,13 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the result
-     *                <p>
-     *                This method sets the step result
+     * This method sets the step result
      */
     private void setResult(String result) {
         m_result = result;
     }
 
     /**
-     * @return String, the CreateUser
-     * <p>
      * This method returns the value of the CreateUser
      */
     private String getCreateUser() {
@@ -522,12 +437,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the CreateUser
-     *                <p>
-     *                This method sets the step CreateUser
+     * This method sets the step CreateUser
      */
     private void setCreateUser(String createUser) throws StepException {
-
         if (createUser == null) {
             String errMsg = "CreateUser is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -538,8 +450,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return Datetime, the CreateDatetime
-     * <p>
      * This method returns the value of the CreateDatetime
      */
     private Datetime getCreateDatetime() {
@@ -547,12 +457,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param Datetime, the CreateDatetime
-     *                  <p>
-     *                  This method sets the step CreateDatetime
+     * This method sets the step CreateDatetime
      */
     private void setCreateDatetime(Datetime createDatetime) throws StepException {
-
         if (createDatetime == null) {
             String errMsg = "CreateDatetime is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -563,8 +470,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return String, the LastUpdateUser
-     * <p>
      * This method returns the value of the LastUpdateUser
      */
     private String getLastUpdateUser() {
@@ -572,12 +477,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param String, the LastUpdateUser
-     *                <p>
-     *                This method sets the step LastUpdateUser
+     * This method sets the step LastUpdateUser
      */
     private void setLastUpdateUser(String lastUpdateUser) throws StepException {
-
         if (lastUpdateUser == null) {
             String errMsg = "LastUpdateUser is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -588,8 +490,6 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @return Datetime, the LastUpdateDatetime
-     * <p>
      * This method returns the value of the LastUpdateDatetime
      */
     private Datetime getLastUpdateDatetime() {
@@ -597,12 +497,9 @@ public abstract class AbstractStep {
     }
 
     /**
-     * @param Datetime, the LastUpdateDatetime
-     *                  <p>
-     *                  This method sets the step LastUpdateDatetime
+     * This method sets the step LastUpdateDatetime
      */
     private void setLastUpdateDatetime(Datetime lastUpdateDatetime) throws StepException {
-
         if (lastUpdateDatetime == null) {
             String errMsg = "LastUpdateDatetime is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -614,72 +511,39 @@ public abstract class AbstractStep {
 
 
     protected ProvisioningStep getProvisioningStepById(String stepId) {
-
-        ProvisioningStep pStep = null;
-        VirtualPrivateCloudProvisioning vpcp =
-                getVirtualPrivateCloudProvisioning();
-        List steps = vpcp.getProvisioningStep();
-        ListIterator li = steps.listIterator();
-        while (li.hasNext()) {
-            ProvisioningStep step = (ProvisioningStep) li.next();
+        VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+        @SuppressWarnings("unchecked")
+        List<ProvisioningStep> steps = vpcp.getProvisioningStep();
+        for (ProvisioningStep step : steps) {
             if (step.getStepId().equals(stepId)) {
-                pStep = step;
+                return step;
             }
         }
-        return pStep;
+        return null;
     }
 
     protected ProvisioningStep getProvisioningStepByType(String stepType) {
-
-        ProvisioningStep pStep = null;
-        VirtualPrivateCloudProvisioning vpcp =
-                getVirtualPrivateCloudProvisioning();
-        List steps = vpcp.getProvisioningStep();
-        ListIterator li = steps.listIterator();
-        while (li.hasNext()) {
-            ProvisioningStep step = (ProvisioningStep) li.next();
+        VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+        @SuppressWarnings("unchecked")
+        List<ProvisioningStep> steps = vpcp.getProvisioningStep();
+        for (ProvisioningStep step : steps) {
             if (step.getType().equalsIgnoreCase(stepType)) {
-                pStep = step;
+                return step;
             }
         }
-        return pStep;
+        return null;
     }
-
-    /**
-     * protected Property buildProperty(String key, String value) {
-     * Property prop = m_vpcp.newProvisioningStep().newProperty();
-     * try {
-     * prop.setKey(key);
-     * prop.setValue(value);
-     * }
-     * catch (EnterpriseFieldException efe) {
-     * String errMsg = "An error occurred setting the field values " +
-     * "of a property object. The exception is: " +
-     * efe.getMessage();
-     * logger.error(LOGTAG + errMsg);
-     * }
-     * return prop;
-     * }
-     **/
-
 
     protected void setResultProperties(List<Property> resultProps) {
         m_resultProperties = resultProps;
     }
 
-    private void addResultProperty(Property prop) {
-        m_resultProperties.add(prop);
-    }
-
-    public void addResultProperty(String key, String value)
-            throws StepException {
-
+    public void addResultProperty(String key, String value) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] ";
         logger.debug(LOGTAG + "Adding result property " + key + ": " + value);
 
         if (getResultProperties() == null) {
-            List<Property> resultProperties = new ArrayList<Property>();
-            setResultProperties(resultProperties);
+            setResultProperties(new ArrayList<>());
         }
 
         Property newProp = m_vpcp.newProvisioningStep().newProperty();
@@ -687,9 +551,7 @@ public abstract class AbstractStep {
             newProp.setKey(key);
             newProp.setValue(value);
         } catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the field values " +
-                    "of a property object. The exception is: " +
-                    efe.getMessage();
+            String errMsg = "An error occurred setting the field values of a property object. The exception is: " + efe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
@@ -698,18 +560,13 @@ public abstract class AbstractStep {
         // with this key value, update its value.
         boolean replacedValue = false;
         List<Property> properties = getResultProperties();
-        ListIterator li = properties.listIterator();
-        while (li.hasNext()) {
-            Property oldProp = (Property) li.next();
+        for (Property oldProp : properties) {
             if (oldProp.getKey().equalsIgnoreCase(key)) {
                 try {
                     oldProp.setValue(value);
-                    logger.debug(LOGTAG + "Found an existing property with " +
-                            "key " + key + ". Replaced its value with: " + value);
+                    logger.debug(LOGTAG + "Found an existing property with key " + key + ". Replaced its value with: " + value);
                 } catch (EnterpriseFieldException efe) {
-                    String errMsg = "An error occurred setting the field values " +
-                            "of a property object. The exception is: " +
-                            efe.getMessage();
+                    String errMsg = "An error occurred setting the field values of a property object. The exception is: " + efe.getMessage();
                     logger.error(LOGTAG + errMsg);
                     throw new StepException(errMsg, efe);
                 }
@@ -719,11 +576,8 @@ public abstract class AbstractStep {
         // Otherwise, add the new property.
         if (replacedValue == false) {
             properties.add(newProp);
-            logger.debug(LOGTAG + "No existing property with " +
-                    "key " + key + ". Added property with value: " +
-                    value);
+            logger.debug(LOGTAG + "No existing property with key " + key + ". Added property with value: " + value);
         }
-
     }
 
     public List<Property> getResultProperties() {
@@ -731,34 +585,27 @@ public abstract class AbstractStep {
     }
 
     protected String getResultProperty(String key) {
-        String value = null;
-        ListIterator li = m_resultProperties.listIterator();
-        while (li.hasNext()) {
-            Property prop = (Property) li.next();
+        for (Property prop : m_resultProperties) {
             if (prop.getKey().equalsIgnoreCase(key)) {
-                value = prop.getValue();
+                return prop.getValue();
             }
         }
-        return value;
+        return null;
     }
 
     protected String getResultProperty(ProvisioningStep step, String key) {
-        String value = null;
+        @SuppressWarnings("unchecked")
         List<Property> resultProperties = step.getProperty();
-        ListIterator li = resultProperties.listIterator();
-        while (li.hasNext()) {
-            Property prop = (Property) li.next();
+        for (Property prop : resultProperties) {
             if (prop.getKey().equalsIgnoreCase(key)) {
-                value = prop.getValue();
+                return prop.getValue();
             }
         }
-        return value;
+        return null;
     }
 
     protected void setExecutionStartTime() throws StepException {
-
-        String LOGTAG = getStepTag() +
-                "[AbstractStep.setExecutionStartTime] ";
+        String LOGTAG = getStepTag() + "[AbstractStep.setExecutionStartTime] ";
 
         m_executionStartTime = System.currentTimeMillis();
 
@@ -771,9 +618,7 @@ public abstract class AbstractStep {
 
         addResultProperty("startTimeFormatted", formattedDate);
 
-        logger.info(LOGTAG + "Set step startTime to "
-                + getExecutionStartTime() +
-                " or: " + formattedDate);
+        logger.info(LOGTAG + "Set step startTime to " + getExecutionStartTime() + " or " + formattedDate);
     }
 
     protected long getExecutionStartTime() {
@@ -783,17 +628,14 @@ public abstract class AbstractStep {
     protected void setExecutionTime() throws StepException {
         long currentTime = System.currentTimeMillis();
         m_executionTime = currentTime - getExecutionStartTime();
-        logger.info(LOGTAG + "Setting execution time: " + m_executionTime +
-                " = " + currentTime + " - " + m_executionStartTime);
+        logger.info(LOGTAG + "Setting execution time: " + m_executionTime + " = " + currentTime + " - " + m_executionStartTime);
 
         addResultProperty("executionTime", Long.toString(getExecutionTime()));
 
-        logger.info(LOGTAG + "Set step executionTime to "
-                + Long.toString(m_executionTime));
+        logger.info(LOGTAG + "Set step executionTime to " + m_executionTime);
     }
 
     protected long getExecutionTime() {
-        logger.info(LOGTAG + "Returning execution time: " + m_executionTime);
         return m_executionTime;
     }
 
@@ -809,8 +651,7 @@ public abstract class AbstractStep {
 
         addResultProperty("executionEndTimeFormatted", formattedDate);
 
-        logger.info(LOGTAG + "Set step executionEndTime to "
-                + getExecutionEndTime() + "or: " + formattedDate);
+        logger.info(LOGTAG + "Set step executionEndTime to " + getExecutionEndTime() + " or " + formattedDate);
     }
 
     protected long getExecutionEndTime() {
@@ -819,21 +660,10 @@ public abstract class AbstractStep {
 
     public void update(String status, String result) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.update] ";
-        logger.info(LOGTAG + "Updating step with status " + status +
-                " and result " + result);
+        logger.info(LOGTAG + "Updating step with status " + status + " and result " + result);
 
         // Update the baseline state of the VPCP
         queryForVpcpBaseline();
-
-        // If the current status is in progress, update the
-        // execution time. Note that we don't want to
-        // update the execution on update for steps that
-        // have already completed or are in any other status
-        // that in progress.
-        if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS)) {
-
-//			setExecutionTime();
-        }
 
         // If the status is changing from in progress to anything else,
         // set the executionEndTime.
@@ -843,7 +673,6 @@ public abstract class AbstractStep {
             setExecutionTime();
             setEndTime();
         }
-
 
         // Update the fields of this step.
         setStatus(status);
@@ -861,9 +690,7 @@ public abstract class AbstractStep {
             pStep.setLastUpdateDatetime(new Datetime("LastUpdate", System.currentTimeMillis()));
             pStep.setActualTime(Long.toString(getExecutionTime()));
         } catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the field values " +
-                    "of the ProvisioningStep. The exception is: " +
-                    efe.getMessage();
+            String errMsg = "An error occurred setting the field values of the ProvisioningStep. The exception is: " + efe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
@@ -872,14 +699,11 @@ public abstract class AbstractStep {
         try {
             long updateStartTime = System.currentTimeMillis();
             logger.info(LOGTAG + "Updating the VPCP with new step information...");
-            getVirtualPrivateCloudProvisioningProvider()
-                    .update(getVirtualPrivateCloudProvisioning());
+            getVirtualPrivateCloudProvisioningProvider().update(getVirtualPrivateCloudProvisioning());
             long time = System.currentTimeMillis() - updateStartTime;
             logger.info(LOGTAG = "Updated VPCP with new step state in " + time + " ms.");
         } catch (ProviderException pe) {
-            String errMsg = "An error occurred updating the VPCP object " +
-                    "with an updated ProvisioningStep. The exception is: " +
-                    pe.getMessage();
+            String errMsg = "An error occurred updating the VPCP object with an updated ProvisioningStep. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
         }
@@ -895,14 +719,11 @@ public abstract class AbstractStep {
     private void queryForVpcpBaseline() throws StepException {
         // Query for the VPCP object in the AWS Account Service.
         // Get a configured query spec from AppConfig
-        VirtualPrivateCloudProvisioningQuerySpecification vpcpqs = new
-                VirtualPrivateCloudProvisioningQuerySpecification();
+        VirtualPrivateCloudProvisioningQuerySpecification vpcpqs = new VirtualPrivateCloudProvisioningQuerySpecification();
         try {
-            vpcpqs = (VirtualPrivateCloudProvisioningQuerySpecification) getAppConfig()
-                    .getObjectByType(vpcpqs.getClass().getName());
+            vpcpqs = (VirtualPrivateCloudProvisioningQuerySpecification) getAppConfig().getObjectByType(vpcpqs.getClass().getName());
         } catch (EnterpriseConfigurationObjectException ecoe) {
-            String errMsg = "An error occurred retrieving an object from " +
-                    "AppConfig. The exception is: " + ecoe.getMessage();
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, ecoe);
         }
@@ -911,8 +732,7 @@ public abstract class AbstractStep {
         try {
             vpcpqs.setProvisioningId(getProvisioningId());
         } catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the values of the " +
-                    "VPCP query spec. The exception is: " + efe.getMessage();
+            String errMsg = "An error occurred setting the values of the VPCP query spec. The exception is: " + efe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
@@ -921,31 +741,22 @@ public abstract class AbstractStep {
         try {
             logger.info(LOGTAG + "Query spec is: " + vpcpqs.toXmlString());
         } catch (XmlEnterpriseObjectException xeoe) {
-            String errMsg = "An error occurred serializing the query spec " +
-                    "to XML. The exception is: " + xeoe.getMessage();
+            String errMsg = "An error occurred serializing the query spec to XML. The exception is: " + xeoe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, xeoe);
         }
 
-        List results = null;
         try {
-            results = getVirtualPrivateCloudProvisioningProvider()
-                    .query(vpcpqs);
+            List<VirtualPrivateCloudProvisioning> results = getVirtualPrivateCloudProvisioningProvider().query(vpcpqs);
+            setVirtualPrivateCloudProvisioning(results.get(0));
         } catch (ProviderException pe) {
-            String errMsg = "An error occurred querying for the  " +
-                    "current state of a VirtualPrivateCloudProvisioning object. " +
-                    "The exception is: " + pe.getMessage();
+            String errMsg = "An error occurred querying for the current state of a VirtualPrivateCloudProvisioning object. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
         }
-        VirtualPrivateCloudProvisioning vpcp =
-                (VirtualPrivateCloudProvisioning) results.get(0);
-
-        setVirtualPrivateCloudProvisioning(vpcp);
     }
 
-    protected String getStepPropertyValue(String stepType, String key)
-            throws StepException {
+    protected String getStepPropertyValue(String stepType, String key) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 
         // Get the property value with the named step and key.
