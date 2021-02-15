@@ -10,145 +10,130 @@
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
-import java.util.ArrayList;
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
+import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
+import org.openeai.config.AppConfig;
+
 import java.util.List;
 import java.util.Properties;
 
-import org.openeai.config.AppConfig;
-
-import com.amazon.aws.moa.objects.resources.v1_0.Property;
-import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-
-import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProvider;
-
 /**
- * Example step that can serve as a placholder.
- * <P>
+ * Example step that can serve as a placeholder.
+ * <p>
  *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 21 May 2017
  **/
 public class ExampleStep extends AbstractStep implements Step {
 
-	int m_sleepTimeInMillis = 5000;
+    int m_sleepTimeInMillis = 5000;
 
-	public void init (String provisioningId, Properties props,
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
-			throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
 
-		super.init(provisioningId, props, aConfig, vpcpp);
+        super.init(provisioningId, props, aConfig, vpcpp);
 
-		String LOGTAG = getStepTag() + "[ExampleStep.init] ";
+        String LOGTAG = getStepTag() + "[ExampleStep.init] ";
 
-		// Get custom step properties.
-		logger.info(LOGTAG + "Getting custom step properties...");
+        // Get custom step properties.
+        logger.info(LOGTAG + "Getting custom step properties...");
 
-		String sleepTime = getProperties()
-			.getProperty("sleepTimeInMillis", "5000");
+        String sleepTime = getProperties().getProperty("sleepTimeInMillis", "5000");
 
-		int sleepTimeInMillis = Integer.parseInt(sleepTime);
-		setSleepTimeInMillis(sleepTimeInMillis);
-		logger.info(LOGTAG + "sleepTimeInMillis is: " +
-			getSleepTimeInMillis());
+        int sleepTimeInMillis = Integer.parseInt(sleepTime);
+        setSleepTimeInMillis(sleepTimeInMillis);
+        logger.info(LOGTAG + "sleepTimeInMillis is: " + getSleepTimeInMillis());
 
-		logger.info(LOGTAG + "Initialization complete.");
-	}
+        logger.info(LOGTAG + "Initialization complete.");
+    }
 
-	protected List<Property> run() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[ExampleStep.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
+    protected List<Property> run() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[ExampleStep.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
 
-		logger.info(LOGTAG + "Sleeping for " + getSleepTimeInMillis()
-			+ " ms.");
+        logger.info(LOGTAG + "Sleeping for " + getSleepTimeInMillis() + " ms.");
 
-		// Wait some time.
-		try {
-			Thread.sleep(getSleepTimeInMillis());
-		}
-		catch (InterruptedException ie) {
-			String errMsg = "Error occurred sleeping.";
-			logger.error(LOGTAG + errMsg + ie.getMessage());
-			throw new StepException(errMsg, ie);
-		}
+        // Wait some time.
+        try {
+            Thread.sleep(getSleepTimeInMillis());
+        } catch (InterruptedException ie) {
+            String errMsg = "Error occurred sleeping.";
+            logger.error(LOGTAG + errMsg + ie.getMessage());
+            throw new StepException(errMsg, ie);
+        }
 
-		logger.info(LOGTAG + "Done sleeping.");
+        logger.info(LOGTAG + "Done sleeping.");
 
-		// Set return properties.
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		addResultProperty("sleepTimeInMillis",
-			Integer.toString(getSleepTimeInMillis()));
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        addResultProperty("sleepTimeInMillis", Integer.toString(getSleepTimeInMillis()));
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
+        // Return the properties.
+        return getResultProperties();
+    }
 
-	}
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[ExampleStep.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
 
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[ExampleStep.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+        // Return the properties.
+        return getResultProperties();
+    }
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[ExampleStep.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
 
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[ExampleStep.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 
-		// Set return properties.
-		ArrayList<Property> props = new ArrayList<Property>();
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+        // Return the properties.
+        return getResultProperties();
+    }
 
-    	// Return the properties.
-    	return props;
-	}
+    public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[ExampleStep.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
-	public void rollback() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[ExampleStep.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+    }
 
-	private void setSleepTimeInMillis(int time) {
-		m_sleepTimeInMillis = time;
-	}
+    private void setSleepTimeInMillis(int time) {
+        m_sleepTimeInMillis = time;
+    }
 
-	private int getSleepTimeInMillis() {
-		return m_sleepTimeInMillis;
-	}
-
+    private int getSleepTimeInMillis() {
+        return m_sleepTimeInMillis;
+    }
 }
