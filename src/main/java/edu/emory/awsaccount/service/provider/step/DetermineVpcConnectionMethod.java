@@ -130,9 +130,9 @@ public class DetermineVpcConnectionMethod extends AbstractStep implements Step {
 				long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
 				logger.info(LOGTAG + "TransitGateway.Query took " + elapsedTime + " ms. Returned " + gateways.size() + " results.");
 
-				// While we don’t have more than one TGW per region per account, it is possible to have up to 5 TGWs per region per account
+				// While we don't have more than one TGW per region per account, it is possible to have up to 5 TGWs per region per account
 				// A TGW resides in only one region (for VPCs in that region)
-				// so, if there are more than one gateway, for now just take the first one
+				// so, if there is more than one gateway, for now just take the first one
 				if (gateways.size() > 0) {
 					tgw = gateways.get(0);
 				}
