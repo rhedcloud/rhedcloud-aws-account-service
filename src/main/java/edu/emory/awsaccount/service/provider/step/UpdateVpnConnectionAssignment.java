@@ -74,15 +74,14 @@ public class UpdateVpnConnectionAssignment extends AbstractStep implements Step 
         logger.info(LOGTAG + "Begin running the step.");
 
         logger.info(LOGTAG + "Checking if VPC network is applicable");
-        String vpcNetwork = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpcNetwork");
+        String vpcNetwork = getStepPropertyValue("COMPUTE_VPC_SUBNETS", "vpcNetwork");
         logger.info(LOGTAG + "vpcNetwork=" + vpcNetwork);
         if (vpcNetwork.equals("not applicable")) {
             logger.info(LOGTAG + "bypassing: no applicable network");
-            addResultProperty("vpcNetwork", "not appplicable");
+            addResultProperty("vpcNetwork", "not applicable");
         } else {
             // Get the VpcId property from a previous step.
-            String vpcId =
-                    getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
+            String vpcId = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
 
             // Get a configured VpnConnectionProfileAssignment and
             // VpnConnectionProfileAssignmentQuerySpecification from

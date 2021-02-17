@@ -67,6 +67,8 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
             if (!reasonGiven)
                 logger.info(LOGTAG + "Bypassing VPC subnet determination since VPC network is not applicable");
         } else {
+            addResultProperty("vpcNetwork", applicableVpcNetwork);  // used by future steps
+
             // Begin pseudocode provided by Paul Petersen. Modified for proper syntax.
             String originalCidr = applicableVpcNetwork;
 
