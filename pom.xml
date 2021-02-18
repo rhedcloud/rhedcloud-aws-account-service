@@ -75,9 +75,9 @@
     <dependency>
       <groupId>org.rhedcloud.awsaccount.service</groupId>
       <artifactId>emory-moas</artifactId>
-      <version>master-14</version>
+      <version>master-15</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/rhedcloud-emory-moas-master-14.jar</systemPath>
+      <systemPath>${project.basedir}/lib/rhedcloud-emory-moas-master-15.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.rhedcloud.awsaccount.service</groupId>
