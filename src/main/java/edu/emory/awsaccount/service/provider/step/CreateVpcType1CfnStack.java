@@ -174,7 +174,7 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
             throw new StepException(errMsg);
         }
 
-        addResultProperty("accountId", accountId);
+        addResultProperty("accountId", accountId);  // used by future steps
 
         String transitGatewayId = null;
         String vpn1InsideTunnelCidr1 = null;
