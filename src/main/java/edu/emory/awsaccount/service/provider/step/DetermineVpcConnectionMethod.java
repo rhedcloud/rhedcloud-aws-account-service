@@ -21,231 +21,249 @@ import java.util.Properties;
  * Step to determine if a VPC should be Transit Gateway attached or use VPN connectivity.
  */
 public class DetermineVpcConnectionMethod extends AbstractStep implements Step {
-	private static final int REQUEST_TIMEOUT_INTERVAL_DEFAULT = 30_000;
+    private static final int REQUEST_TIMEOUT_INTERVAL_DEFAULT = 30_000;
 
-	private ProducerPool networkOpsServiceProducerPool = null;
-	private int requestTimeoutInterval = REQUEST_TIMEOUT_INTERVAL_DEFAULT;
-	private String environment;
+    private ProducerPool networkOpsServiceProducerPool = null;
+    private int requestTimeoutInterval = REQUEST_TIMEOUT_INTERVAL_DEFAULT;
+    private String environment;
 
-	public void init (String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
-		super.init(provisioningId, props, aConfig, vpcpp);
+    public void init (String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
+        super.init(provisioningId, props, aConfig, vpcpp);
 
-		String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.init] ";
+        String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.init] ";
 
-		try {
-			networkOpsServiceProducerPool = (ProducerPool) getAppConfig().getObject("NetworkOpsServiceProducerPool");
-		}
-		catch (EnterpriseConfigurationObjectException e) {
-			String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, e);
-		}
+        try {
+            networkOpsServiceProducerPool = (ProducerPool) getAppConfig().getObject("NetworkOpsServiceProducerPool");
+        }
+        catch (EnterpriseConfigurationObjectException e) {
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, e);
+        }
 
-		// requestTimeoutInterval is the time to wait for the response to the request
-		String timeout = getProperties().getProperty("requestTimeoutInterval", String.valueOf(REQUEST_TIMEOUT_INTERVAL_DEFAULT));
-		requestTimeoutInterval = Integer.parseInt(timeout);
-		logger.info(LOGTAG + "requestTimeoutInterval is: " + requestTimeoutInterval);
+        // requestTimeoutInterval is the time to wait for the response to the request
+        String timeout = getProperties().getProperty("requestTimeoutInterval", String.valueOf(REQUEST_TIMEOUT_INTERVAL_DEFAULT));
+        requestTimeoutInterval = Integer.parseInt(timeout);
+        logger.info(LOGTAG + "requestTimeoutInterval is: " + requestTimeoutInterval);
 
-		// environment is used for transit gateway determination
-		environment = getProperties().getProperty("environment");
-		logger.info(LOGTAG + "environment is: " + environment);
-	}
+        // environment is used for transit gateway determination
+        environment = getProperties().getProperty("environment");
+        logger.info(LOGTAG + "environment is: " + environment);
+    }
 
-	protected List<Property> run() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
+    protected List<Property> run() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
 
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
-		// region comes from the requisition
-		String region = getVirtualPrivateCloudProvisioning().getVirtualPrivateCloudRequisition().getRegion();
-		addResultProperty("region", region);
-		addResultProperty("environment", environment);
+        // region comes from the requisition
+        String region = getVirtualPrivateCloudProvisioning().getVirtualPrivateCloudRequisition().getRegion();
+        addResultProperty("region", region);
+        addResultProperty("environment", environment);
 
-		// previous steps set more inputs
-		boolean allocateNewAccount = Boolean.parseBoolean(getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "allocateNewAccount"));
-		boolean createVpc = Boolean.parseBoolean(getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc"));
+        // previous steps set more inputs
+        boolean allocateNewAccount = Boolean.parseBoolean(getStepPropertyValue("DETERMINE_NEW_OR_EXISTING_ACCOUNT", "allocateNewAccount"));
+        boolean createVpc = Boolean.parseBoolean(getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc"));
 
-		// for a new account, we'll determine the connection method only if a VPC is going to be created
-		// for an existing account, we know a VPC is going to be created (validated by DetermineVpcType)
-		boolean determineConnectionMethod;
-		if (allocateNewAccount) {
-			determineConnectionMethod = createVpc;
-		}
-		else {
-			determineConnectionMethod = true;
-		}
+        // for a new account, we'll determine the connection method only if a VPC is going to be created
+        // for an existing account, we know a VPC is going to be created (validated by DetermineVpcType)
+        boolean determineConnectionMethod;
+        if (allocateNewAccount) {
+            determineConnectionMethod = createVpc;
+        }
+        else {
+            determineConnectionMethod = true;
+        }
 
-		if (determineConnectionMethod) {
-			logger.info(LOGTAG + "Determining connection method");
+        if (determineConnectionMethod) {
+            logger.info(LOGTAG + "Determining connection method");
 
-			TransitGateway transitGateway;
-			TransitGatewayQuerySpecification transitGatewayQuerySpec;
-			try {
-				transitGateway = (TransitGateway) getAppConfig().getObjectByType(TransitGateway.class.getName());
-				transitGatewayQuerySpec = (TransitGatewayQuerySpecification) getAppConfig().getObjectByType(TransitGatewayQuerySpecification.class.getName());
-			}
-			catch (EnterpriseConfigurationObjectException e) {
-				String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
+            TransitGateway transitGateway;
+            TransitGatewayQuerySpecification transitGatewayQuerySpec;
+            try {
+                transitGateway = (TransitGateway) getAppConfig().getObjectByType(TransitGateway.class.getName());
+                transitGatewayQuerySpec = (TransitGatewayQuerySpecification) getAppConfig().getObjectByType(TransitGatewayQuerySpecification.class.getName());
+            }
+            catch (EnterpriseConfigurationObjectException e) {
+                String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
 
-			try {
-				transitGatewayQuerySpec.setEnvironment(environment);
-				transitGatewayQuerySpec.setRegion(region);
+            try {
+                transitGatewayQuerySpec.setEnvironment(environment);
+                transitGatewayQuerySpec.setRegion(region);
 
-				logger.info(LOGTAG + "TransitGatewayQuerySpecification is: " + transitGatewayQuerySpec.toXmlString());
-			}
-			catch (EnterpriseFieldException e) {
-				String errMsg = "An error occurred setting the values of the TransitGatewayQuerySpecification. The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
-			catch (XmlEnterpriseObjectException e) {
-				String errMsg = "An error occurred serializing the TransitGatewayQuerySpecification to XML. The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
+                logger.info(LOGTAG + "TransitGatewayQuerySpecification is: " + transitGatewayQuerySpec.toXmlString());
+            }
+            catch (EnterpriseFieldException e) {
+                String errMsg = "An error occurred setting the values of the TransitGatewayQuerySpecification. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+            catch (XmlEnterpriseObjectException e) {
+                String errMsg = "An error occurred serializing the TransitGatewayQuerySpecification to XML. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
 
-			// Get a producer from the pool
-			PointToPointProducer p2p;
-			try {
-				p2p = (PointToPointProducer) networkOpsServiceProducerPool.getExclusiveProducer();
-				p2p.setRequestTimeoutInterval(requestTimeoutInterval);
-			}
-			catch (JMSException e) {
-				String errMsg = "An error occurred getting a producer from the pool. The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
+            // Get a producer from the pool
+            PointToPointProducer p2p;
+            try {
+                p2p = (PointToPointProducer) networkOpsServiceProducerPool.getExclusiveProducer();
+                p2p.setRequestTimeoutInterval(requestTimeoutInterval);
+            }
+            catch (JMSException e) {
+                String errMsg = "An error occurred getting a producer from the pool. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
 
-			TransitGateway tgw = null;
+            TransitGateway tgw = null;
 
-			try {
-				long elapsedStartTime = System.currentTimeMillis();
-				@SuppressWarnings("unchecked")
-				List<TransitGateway> gateways = transitGateway.query(transitGatewayQuerySpec, p2p);
-				long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
-				logger.info(LOGTAG + "TransitGateway.Query took " + elapsedTime + " ms. Returned " + gateways.size() + " results.");
+            try {
+                long elapsedStartTime = System.currentTimeMillis();
+                @SuppressWarnings("unchecked")
+                List<TransitGateway> gateways = transitGateway.query(transitGatewayQuerySpec, p2p);
+                long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
+                logger.info(LOGTAG + "TransitGateway.Query took " + elapsedTime + " ms. Returned " + gateways.size() + " results.");
 
-				// While we don't have more than one TGW per region per account, it is possible to have up to 5 TGWs per region per account
-				// A TGW resides in only one region (for VPCs in that region)
-				// so, if there is more than one gateway, for now just take the first one
-				if (gateways.size() > 0) {
-					tgw = gateways.get(0);
-				}
+                // While we don't have more than one TGW per region per account, it is possible to have up to 5 TGWs per region per account
+                // A TGW resides in only one region (for VPCs in that region)
+                // for now, we don't expect to find more than one so log a warning but continue with the first one
+                if (gateways.size() > 1) {
+                    addResultProperty("transitGatewayExceedsExpected", Integer.toString(gateways.size()));
+                    logger.warn(LOGTAG + "TransitGateway.Query returned " + gateways.size() + " results.");
+                }
+                if (gateways.size() > 0) {
+                    tgw = gateways.get(0);
+                }
 
-				// Set result properties.
-				if (tgw == null) {
-					addResultProperty("vpcConnectionMethod", "VPN");
-					addResultProperty("transitGatewayId", "not applicable");
-					addResultProperty("transitGatewayAccountId", "not applicable");
-					addResultProperty("transitGatewayAssociationRouteTableId_0", "not applicable");
-					addResultProperty("transitGatewayPropagationRouteTableId_0_0", "not applicable");
-				}
-				else {
-					addResultProperty("vpcConnectionMethod", "TGW");
-					addResultProperty("transitGatewayId", tgw.getTransitGatewayId());
-					addResultProperty("transitGatewayAccountId", tgw.getAccountId());
-					for (int i = 0; i < tgw.getTransitGatewayProfile().size(); i++) {
-						TransitGatewayProfile tgwProfile = (TransitGatewayProfile) tgw.getTransitGatewayProfile().get(i);
-						addResultProperty("transitGatewayAssociationRouteTableId_" + i, tgwProfile.getAssociationRouteTableId());
-						for (int j = 0; j < tgwProfile.getPropagationRouteTableId().size(); j++) {
-							addResultProperty("transitGatewayPropagationRouteTableId_" + i + "_" + j, (String) tgwProfile.getPropagationRouteTableId().get(j));
-						}
-					}
-				}
-			}
-			catch (EnterpriseObjectQueryException e) {
-				String errMsg = "An error occurred for TransitGateway.Query. The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
-			finally {
-				networkOpsServiceProducerPool.releaseProducer(p2p);
-			}
-		}
-		else {
-			logger.info(LOGTAG + "Not determining connection method");
+                // Set result properties.
+                if (tgw == null) {
+                    addResultProperty("vpcConnectionMethod", "VPN");
+                    addResultProperty("transitGatewayId", "not applicable");
+                    addResultProperty("transitGatewayAccountId", "not applicable");
+                    addResultProperty("transitGatewayAssociationRouteTableId_0", "not applicable");
+                    addResultProperty("transitGatewayPropagationRouteTableId_0_0", "not applicable");
+                }
+                else {
+                    // TGWs support multiple associations but we do not have logic to select between them yet.
+                    // in the future, they might be classified by some type information and selected as part of provisioning.
+                    // but for now, if there isn't exactly one it will be flagged as an error and stop provisioning
+                    if (tgw.getTransitGatewayProfile().size() > 1) {
+                        String errMsg = "The TransitGateway has too many profiles with " + tgw.getTransitGatewayProfile().size();
+                        logger.error(LOGTAG + errMsg);
+                        throw new StepException(errMsg);
+                    }
+                    if (tgw.getTransitGatewayProfile().size() == 0) {
+                        String errMsg = "The TransitGateway has no profiles";
+                        logger.error(LOGTAG + errMsg);
+                        throw new StepException(errMsg);
+                    }
 
-			addResultProperty("vpcConnectionMethod", "not applicable");
-			addResultProperty("transitGatewayId", "not applicable");
-			addResultProperty("transitGatewayAccountId", "not applicable");
-			addResultProperty("transitGatewayAssociationRouteTableId_0", "not applicable");
-			addResultProperty("transitGatewayPropagationRouteTableId_0_0", "not applicable");
-		}
+                    addResultProperty("vpcConnectionMethod", "TGW");
+                    addResultProperty("transitGatewayId", tgw.getTransitGatewayId());
+                    addResultProperty("transitGatewayAccountId", tgw.getAccountId());
+                    for (int i = 0; i < tgw.getTransitGatewayProfile().size(); i++) {
+                        TransitGatewayProfile tgwProfile = (TransitGatewayProfile) tgw.getTransitGatewayProfile().get(i);
+                        addResultProperty("transitGatewayAssociationRouteTableId_" + i, tgwProfile.getAssociationRouteTableId());
+                        for (int j = 0; j < tgwProfile.getPropagationRouteTableId().size(); j++) {
+                            addResultProperty("transitGatewayPropagationRouteTableId_" + i + "_" + j, (String) tgwProfile.getPropagationRouteTableId().get(j));
+                        }
+                    }
+                }
+            }
+            catch (EnterpriseObjectQueryException e) {
+                String errMsg = "An error occurred for TransitGateway.Query. The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+            finally {
+                networkOpsServiceProducerPool.releaseProducer(p2p);
+            }
+        }
+        else {
+            logger.info(LOGTAG + "Not determining connection method");
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+            addResultProperty("vpcConnectionMethod", "not applicable");
+            addResultProperty("transitGatewayId", "not applicable");
+            addResultProperty("transitGatewayAccountId", "not applicable");
+            addResultProperty("transitGatewayAssociationRouteTableId_0", "not applicable");
+            addResultProperty("transitGatewayPropagationRouteTableId_0_0", "not applicable");
+        }
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step run completed in " + time + " ms.");
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + " ms.");
 
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
+        // Return the properties.
+        return getResultProperties();
+    }
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
 
-		// Simulated result properties.
-		addResultProperty("vpcConnectionMethod", "VPN");
-		addResultProperty("transitGatewayId", "not applicable");
-		addResultProperty("transitGatewayAccountId", "not applicable");
-		addResultProperty("transitGatewayAssociationRouteTableId_0", "not applicable");
-		addResultProperty("transitGatewayPropagationRouteTableId_0_0", "not applicable");
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Simulated result properties.
+        addResultProperty("vpcConnectionMethod", "VPN");
+        addResultProperty("transitGatewayId", "not applicable");
+        addResultProperty("transitGatewayAccountId", "not applicable");
+        addResultProperty("transitGatewayAssociationRouteTableId_0", "not applicable");
+        addResultProperty("transitGatewayPropagationRouteTableId_0_0", "not applicable");
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + " ms.");
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + " ms.");
 
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
+        // Return the properties.
+        return getResultProperties();
+    }
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
 
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + " ms.");
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + " ms.");
 
-	public void rollback() throws StepException {
-		long startTime = System.currentTimeMillis();
+        // Return the properties.
+        return getResultProperties();
+    }
 
-		super.rollback();
+    public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
 
-		String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
+        super.rollback();
 
-		// Update the step.
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
+        String LOGTAG = getStepTag() + "[DetermineVpcConnectionMethod.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + " ms.");
-	}
+        // Update the step.
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + " ms.");
+    }
 }
