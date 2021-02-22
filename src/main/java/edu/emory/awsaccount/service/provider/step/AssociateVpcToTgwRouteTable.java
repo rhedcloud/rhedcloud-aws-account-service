@@ -19,6 +19,9 @@ import org.openeai.config.AppConfig;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * This step will associate the VPC to a TGW route table.
+ */
 public class AssociateVpcToTgwRouteTable extends AbstractStep implements Step {
     private String accessKeyId = null;
     private String secretKey = null;
