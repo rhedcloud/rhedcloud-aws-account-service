@@ -169,8 +169,8 @@ public class DetermineVpcTgwCidr extends AbstractStep implements Step {
 			// the prize
 			TransitGatewayConnectionProfile assignedConnectionProfile = profiles.get(0);
 
-			addResultProperty("TransitGatewayConnectionProfileId", assignedConnectionProfile.getTransitGatewayConnectionProfileId());
-			addResultProperty("CidrId", assignedConnectionProfile.getCidrId());
+			addResultProperty("transitGatewayConnectionProfileId", assignedConnectionProfile.getTransitGatewayConnectionProfileId());
+			addResultProperty("cidrId", assignedConnectionProfile.getCidrId());
 			addResultProperty("vpcNetwork", assignedConnectionProfile.getCidrRange());  // used by future steps
 		}
 		catch (EnterpriseObjectGenerateException e) {
