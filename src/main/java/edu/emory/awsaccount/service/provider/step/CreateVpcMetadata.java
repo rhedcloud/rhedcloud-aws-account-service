@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * If this is a new account request, create account metadata
+ * Create VPC metadata to go along with the new VPC in the account.
  * <p>
  *
  * @author Steve Wheat (swheat@emory.edu)
@@ -53,8 +53,8 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
         // This step needs to send messages to the AWS account service
         // to create account metadata.
         try {
-            ProducerPool p2p1 = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
-            setAwsAccountServiceProducerPool(p2p1);
+            ProducerPool p = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
+            setAwsAccountServiceProducerPool(p);
         } catch (EnterpriseConfigurationObjectException ecoe) {
             String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
             logger.fatal(LOGTAG + errMsg);
@@ -69,24 +69,21 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
         String LOGTAG = getStepTag() + "[CreateAccountMetadata.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
-        String createVpc = getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc");
-        logger.info(LOGTAG + "createVpc=" + createVpc);
-        if (!Boolean.valueOf(createVpc)) {
-            logger.info(LOGTAG + "Bypassing: no VPC created");
-            addResultProperty("createVpc", String.valueOf(false));
-        } else {
-            addResultProperty("createVpc", String.valueOf(true));
-            boolean vpcMetadataCreated;
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
-            // Return properties
-            addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        boolean createVpc = Boolean.parseBoolean(getStepPropertyValue("DETERMINE_VPC_TYPE", "createVpc"));
+        String vpcConnectionMethod = getStepPropertyValue("DETERMINE_VPC_CONNECTION_METHOD", "vpcConnectionMethod");
 
+        if (!createVpc) {
+            logger.info(LOGTAG + "Bypassing VPC metadata creation since no VPC is being created");
+        }
+        else {
             // Get the requisition
             VirtualPrivateCloudRequisition req = getVirtualPrivateCloudProvisioning().getVirtualPrivateCloudRequisition();
 
             // Get some properties from previous steps.
             String accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-            if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
+            if (accountId == null || accountId.equalsIgnoreCase("not applicable") || accountId.equalsIgnoreCase("not available")) {
                 accountId = req.getAccountId();
                 if (accountId == null || accountId.equals("")) {
                     String errMsg = "No account number for the new VPC can be found. Can't continue.";
@@ -98,8 +95,23 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
             String vpcId = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
             String region = req.getRegion();
             String vpcType = req.getType();
-            String vpcCidr = getStepPropertyValue("COMPUTE_VPC_SUBNETS", "vpcNetwork");
-            String vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpnConnectionProfileId");
+            String vpcCidr;
+            String vpnConnectionProfileId;
+            String transitGatewayConnectionProfileId;
+
+            if (vpcConnectionMethod.equals("VPN")) {
+                vpcCidr = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpcNetwork");
+                vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpnConnectionProfileId");
+                transitGatewayConnectionProfileId = null;
+            } else if (vpcConnectionMethod.equals("TGW")) {
+                vpcCidr = getStepPropertyValue("DETERMINE_VPC_TGW_CIDR", "vpcNetwork");
+                transitGatewayConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_TGW_CIDR", "transitGatewayConnectionProfileId");
+                vpnConnectionProfileId = null;
+            } else {
+                String errMsg = "Error during VPC metadata creation due to unknown VPC connection method: " + vpcConnectionMethod;
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg);
+            }
 
 
             // Get a configured VPC object from AppConfig.
@@ -119,22 +131,26 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                 vpc.setRegion(region);
                 vpc.setType(vpcType);
                 vpc.setCidr(vpcCidr);
-                vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
+                if (vpcConnectionMethod.equals("VPN")) {
+                    vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
+                } else {
+                    vpc.setVpnConnectionProfileId(transitGatewayConnectionProfileId);
+//                    vpc.setTransitGatewayProfileId(transitGatewayProfileId);
+//                    vpc.setTransitGatewayConnectionProfileId(transitGatewayConnectionProfileId);
+                }
                 vpc.setPurpose(req.getPurpose());
                 vpc.setCreateUser(req.getAuthenticatedRequestorUserId());
-                Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
-                vpc.setCreateDatetime(createDatetime);
+                vpc.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
             } catch (EnterpriseFieldException efe) {
-                String errMsg = "An error occurred setting the values of the query spec. The exception is: " + efe.getMessage();
+                String errMsg = "An error occurred setting the values of the VirtualPrivateCloud object. The exception is: " + efe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, efe);
             }
 
-            // Log the state of the account.
             try {
                 logger.info(LOGTAG + "VPC to create is: " + vpc.toXmlString());
             } catch (XmlEnterpriseObjectException xeoe) {
-                String errMsg = "An error occurred serializing the query spec to XML. The exception is: " + xeoe.getMessage();
+                String errMsg = "An error occurred serializing the VirtualPrivateCloud to XML. The exception is: " + xeoe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, xeoe);
             }
@@ -153,9 +169,8 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                 long createStartTime = System.currentTimeMillis();
                 vpc.create(rs);
                 long createTime = System.currentTimeMillis() - createStartTime;
-                logger.info(LOGTAG + "Create Account in " + createTime + " ms.");
-                vpcMetadataCreated = true;
-                addResultProperty("vpcMetadataCreated", Boolean.toString(vpcMetadataCreated));
+                logger.info(LOGTAG + "VirtualPrivateCloud.Create took " + createTime + " ms.");
+                addResultProperty("vpcMetadataCreated", "true");
                 addResultProperty("accountId", accountId);
                 addResultProperty("vpcId", vpcId);
                 addResultProperty("region", region);
@@ -189,7 +204,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 
         // Set return properties.
         addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-        addResultProperty("accountMetadataCreated", "true");
+        addResultProperty("vpcMetadataCreated", "false");
 
         // Update the step.
         update(COMPLETED_STATUS, SUCCESS_RESULT);
@@ -227,13 +242,12 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
         super.rollback();
 
         String LOGTAG = getStepTag() + "[CreateVpcMetadata.rollback] ";
-        logger.info(LOGTAG + "Rollback called, deleting account metadata.");
+        logger.info(LOGTAG + "Rollback called, deleting VPC metadata.");
 
         // Get the VpcId
         String vpcId = getResultProperty("vpcId");
 
-        // If the vpcId is not null, query for the VPC object
-        // and then delete it.
+        // If the vpcId is not null, query for the VPC object and then delete it.
         if (vpcId != null) {
             // Query for the VPC
             // Get a configured VPC object and account query spec from AppConfig.
@@ -282,7 +296,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                 getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
             }
 
-            // If there is a result, delete the account metadata
+            // If there is a result, delete the VPC metadata
             if (results.size() > 0) {
                 vpc = (VirtualPrivateCloud) results.get(0);
 
@@ -295,7 +309,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                     throw new StepException(errMsg, jmse);
                 }
 
-                // Delete the account metadata
+                // Delete the VPC metadata
                 try {
                     long deleteStartTime = System.currentTimeMillis();
                     vpc.delete("Delete", rs);
