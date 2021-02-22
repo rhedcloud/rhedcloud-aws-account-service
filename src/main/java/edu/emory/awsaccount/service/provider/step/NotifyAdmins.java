@@ -31,296 +31,261 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * If this is a new account request, create account metadata
- * <P>
+ * Notify administrators about the provisioning.
+ * <p>
  *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 30 August 2018
  **/
 public class NotifyAdmins extends AbstractStep implements Step {
 
-	private ProducerPool m_awsAccountServiceProducerPool = null;
-	private String m_notificationTemplate;
+    private ProducerPool m_awsAccountServiceProducerPool = null;
+    private String m_notificationTemplateVpn;
+    private String m_notificationTemplateTgw;
 
-	public void init (String provisioningId, Properties props,
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
-			throws StepException {
+    public void init(String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
+        super.init(provisioningId, props, aConfig, vpcpp);
 
-		super.init(provisioningId, props, aConfig, vpcpp);
+        String LOGTAG = getStepTag() + "[NotifyAdmins.init] ";
 
-		String LOGTAG = getStepTag() + "[NotifyAdmins.init] ";
+        try {
+            ProducerPool p = (ProducerPool) getAppConfig().getObject("AwsAccountServiceProducerPool");
+            setAwsAccountServiceProducerPool(p);
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new StepException(errMsg);
+        }
 
-		// This step needs to send messages to the AWS account service
-		// to create account metadata.
-		ProducerPool p2p1 = null;
-		try {
-			p2p1 = (ProducerPool)getAppConfig()
-				.getObject("AwsAccountServiceProducerPool");
-			setAwsAccountServiceProducerPool(p2p1);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
+        setNotificationTemplateVpn(getProperties().getProperty("notificationTemplateVpn"));
+        setNotificationTemplateTgw(getProperties().getProperty("notificationTemplateTgw"));
+        logger.info(LOGTAG + "notificationTemplateVpn is: " + getNotificationTemplateVpn());
+        logger.info(LOGTAG + "notificationTemplateTgw is: " + getNotificationTemplateTgw());
 
-		String notificationTemplate = getProperties()
-			.getProperty("notificationTemplate", null);
-		setNotificationTemplate(notificationTemplate);
-		logger.info(LOGTAG + "notificationTemplate is: " +
-			getNotificationTemplate());
+        logger.info(LOGTAG + "Initialization complete.");
+    }
 
-		logger.info(LOGTAG + "Initialization complete.");
-	}
+    protected List<Property> run() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[NotifyAdmins.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
 
-	protected List<Property> run() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[NotifyAdmins.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
+        // Return properties
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
-		boolean sentNotification = false;
+        // Get the VirtualPrivateCloudRequisition object.
+        VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+        VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
 
-		// Return properties
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        // Get the allocatedNewAccount property from the
+        // GENERATE_NEW_ACCOUNT step.
+        logger.info(LOGTAG + "Getting properties from preceding steps...");
+        String accountId;
+        String newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+        String vpcConnectionMethod = getStepPropertyValue("DETERMINE_VPC_CONNECTION_METHOD", "vpcConnectionMethod");
 
-		// Get the VirtualPrivateCloudRequisition object.
-	    VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
-	    VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
+        // If the newAccountId is null, get the accountId from the VPCP requisition. Otherwise accountId is the value of the newAccountId
+        if (newAccountId == null || newAccountId.equalsIgnoreCase("null")) {
+            accountId = req.getAccountId();
+            logger.info(LOGTAG + "newAccountId is null, getting the accountId from the requisition object: " + accountId);
+        } else {
+            accountId = newAccountId;
+        }
 
-		// Get the allocatedNewAccount property from the
-		// GENERATE_NEW_ACCOUNT step.
-		logger.info(LOGTAG + "Getting properties from preceding steps...");
-		String accountId = null;
-		String newAccountId = null;
+        if (accountId == null) {
+            String errMsg = "accountId is null. Can't continue.";
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg);
+        }
 
-		newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT",
-			"newAccountId");
-		addResultProperty("newAccountId", newAccountId);
-		logger.info(LOGTAG + "Property newAccountId from preceding " +
-			"step is: " + newAccountId);
+        // Get a configured account notification object from AppConfig.
+        AccountNotification aNotification = new AccountNotification();
+        try {
+            aNotification = (AccountNotification) getAppConfig().getObjectByType(aNotification.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, ecoe);
+        }
 
-		// If the newAccountId is null, get the accountId from the
-		// VPCP requisition. Otherwise accountId is the value of
-		// the newAccountId
-		if (newAccountId == null || newAccountId.equalsIgnoreCase("null")) {
-			accountId = req.getAccountId();
-			logger.info(LOGTAG + "newAccountId is null, getting the accountId " +
-				"from the requisition object: " + accountId);
-		}
-		else {
-			accountId = newAccountId;
-		}
+        // Set the values of the account.
+        try {
+            aNotification.setAccountId(accountId);
+            aNotification.setType("Provisioning");
+            aNotification.setPriority("High");
+            aNotification.setSubject("Successful Provisioning");
+            aNotification.setText(getNotificationText(req, vpcConnectionMethod));
+            aNotification.setReferenceId(vpcp.getProvisioningId());
+            aNotification.setCreateUser(req.getAuthenticatedRequestorUserId());
+            Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
+            aNotification.setCreateDatetime(createDatetime);
 
-		if (accountId == null || newAccountId.equalsIgnoreCase("null")) {
-			String errMsg = "accountId is null. Can't continue.";
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
+            Annotation annotation = aNotification.newAnnotation();
+            annotation.setText("AwsAccountService Provisioning");
+            annotation.setCreateUser(req.getAuthenticatedRequestorUserId());
+            annotation.setCreateDatetime(createDatetime);
+            aNotification.addAnnotation(annotation);
+        } catch (EnterpriseFieldException efe) {
+            String errMsg = "An error occurred setting the values of the query spec. The exception is: " + efe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, efe);
+        }
 
-		// Get a configured account notification object from AppConfig.
-		AccountNotification aNotification = new AccountNotification();
-	    try {
-	    	aNotification = (AccountNotification)getAppConfig()
-		    	.getObjectByType(aNotification.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
+        // Log the state of the account.
+        try {
+            logger.info(LOGTAG + "AccountNotification to create is: " + aNotification.toXmlString());
+        } catch (XmlEnterpriseObjectException xeoe) {
+            String errMsg = "An error occurred serializing the query spec to XML. The exception is: " + xeoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, xeoe);
+        }
 
-	    // Set the values of the account.
-	    try {
-	    	aNotification.setAccountId(accountId);
-	    	aNotification.setType("Provisioning");
-	    	aNotification.setPriority("High");
-	    	aNotification.setSubject("Successful Provisioning");
-	    	aNotification.setText(getNotificationText(req));
-	    	aNotification.setReferenceId(vpcp.getProvisioningId());
-	    	aNotification
-	    		.setCreateUser(req.getAuthenticatedRequestorUserId());
-	    	Datetime createDatetime = new Datetime("Create",
-	    		System.currentTimeMillis());
-	    	aNotification.setCreateDatetime(createDatetime);
+        // Get a producer from the pool
+        RequestService rs;
+        try {
+            rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a producer from the pool. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, jmse);
+        }
 
-	    	// Set the account to be SRD exempt initially.
-	    	// This will be changed later in the provisioning.
-	    	Annotation annotation = aNotification.newAnnotation();
-	    	annotation.setText("AwsAccountService Provisioning");
-	    	annotation.setCreateUser(req.getAuthenticatedRequestorUserId());
-	    	annotation.setCreateDatetime(createDatetime);
-	    	aNotification.addAnnotation(annotation);
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting the values of the " +
-	  	    	  "query spec. The exception is: " + efe.getMessage();
-	  	    logger.error(LOGTAG + errMsg);
-	  	    throw new StepException(errMsg, efe);
-	    }
+        try {
+            long createStartTime = System.currentTimeMillis();
+            aNotification.create(rs);
+            long createTime = System.currentTimeMillis() - createStartTime;
+            logger.info(LOGTAG + "Created AccountNotification in " + createTime + " ms.");
+            addResultProperty("sentNotification", "true");
+        } catch (EnterpriseObjectCreateException eoce) {
+            String errMsg = "An error occurred creating the object. The exception is: " + eoce.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, eoce);
+        } finally {
+            getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
+        }
 
-	    // Log the state of the account.
-	    try {
-	    	logger.info(LOGTAG + "AccountNotification to create is: "
-	    		+ aNotification.toXmlString());
-	    }
-	    catch (XmlEnterpriseObjectException xeoe) {
-	    	String errMsg = "An error occurred serializing the query spec " +
-	  	    	  "to XML. The exception is: " + xeoe.getMessage();
-  	    	logger.error(LOGTAG + errMsg);
-  	    	throw new StepException(errMsg, xeoe);
-	    }
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-		// Get a producer from the pool
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool()
-				.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
 
-		try {
-			long createStartTime = System.currentTimeMillis();
-			aNotification.create(rs);
-			long createTime = System.currentTimeMillis() - createStartTime;
-			logger.info(LOGTAG + "Created AccountNotification in "
-				+ createTime + " ms.");
-			sentNotification = true;
-			addResultProperty("sentNotification",
-				Boolean.toString(sentNotification));
-		}
-		catch (EnterpriseObjectCreateException eoce) {
-			String errMsg = "An error occurred creating the object. " +
-	    	  "The exception is: " + eoce.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoce);
-		}
-		finally {
-			// Release the producer back to the pool
-			getAwsAccountServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
+        // Return the properties.
+        return getResultProperties();
+    }
 
-		// Update the step.
-		update(COMPLETED_STATUS, SUCCESS_RESULT);
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[NotifyAdmins.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+        addResultProperty("sentNotification", "false");
 
-    	// Return the properties.
-    	return getResultProperties();
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
 
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[NotifyAdmins.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
+        // Return the properties.
+        return getResultProperties();
+    }
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	addResultProperty("accountMetadataCreated", "true");
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[NotifyAdmins.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
 
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[NotifyAdmins.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
+        // Return the properties.
+        return getResultProperties();
+    }
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+    public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
 
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
+        super.rollback();
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+        String LOGTAG = getStepTag() + "[NotifyAdmins.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        addResultProperty("adminNotificationRollback", "not applicable");
 
-	public void rollback() throws StepException {
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
-		super.rollback();
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+    }
 
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[NotifyAdmins.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
+    private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+        m_awsAccountServiceProducerPool = pool;
+    }
 
-		addResultProperty("adminNotificationRollback", "not applicable");
+    private ProducerPool getAwsAccountServiceProducerPool() {
+        return m_awsAccountServiceProducerPool;
+    }
 
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
+    private void setNotificationTemplateVpn(String template) throws StepException {
+        if (template == null) {
+            String errMsg = "notificationTemplateVpn property is null. Can't continue.";
+            throw new StepException(errMsg);
+        }
 
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
+        m_notificationTemplateVpn = template;
+    }
 
-	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
-		m_awsAccountServiceProducerPool = pool;
-	}
+    private String getNotificationTemplateVpn() {
+        return m_notificationTemplateVpn;
+    }
 
-	private ProducerPool getAwsAccountServiceProducerPool() {
-		return m_awsAccountServiceProducerPool;
-	}
+    private void setNotificationTemplateTgw(String template) throws StepException {
+        if (template == null) {
+            String errMsg = "notificationTemplateTgw property is null. Can't continue.";
+            throw new StepException(errMsg);
+        }
 
-	private void setNotificationTemplate (String template) throws
-		StepException {
+        m_notificationTemplateTgw = template;
+    }
 
-		if (template == null) {
-			String errMsg = "notificationTemplate property is null. " +
-				"Can't continue.";
-			throw new StepException(errMsg);
-		}
+    private String getNotificationTemplateTgw() {
+        return m_notificationTemplateTgw;
+    }
 
-		m_notificationTemplate = template;
-	}
+    private String getNotificationText(VirtualPrivateCloudRequisition req, String vpcConnectionMethod) throws StepException {
+        String text;
+        if (vpcConnectionMethod.equals("VPN")) {
+            text = getNotificationTemplateVpn();
+        } else if (vpcConnectionMethod.equals("TGW")) {
+            text = getNotificationTemplateTgw();
+        } else {
+            text = "";
+        }
+        text = text.replaceAll("\\s+", " ");
 
-	private String getNotificationTemplate() {
-		return m_notificationTemplate;
-	}
+        String request;
+        try {
+            request = req.toXmlString();
+        } catch (XmlEnterpriseObjectException xeoe) {
+            String errMsg = "An error occurred serializing the object to XML. The exception is: " + xeoe.getMessage();
+            logger.error(getStepTag() + errMsg);
+            throw new StepException(errMsg, xeoe);
+        }
+        text = text + "\n\nThe details of the request are:\n\n" + request;
 
-	private String getNotificationText(VirtualPrivateCloudRequisition req)
-		throws StepException {
-
-		String text = getNotificationTemplate().replaceAll("\\s+", " ");
-
-		String request = "";
-		try {
-			request = req.toXmlString();
-		}
-		catch (XmlEnterpriseObjectException xeoe) {
-			String errMsg = "An error occurred serializing the object to XML. "
-				+ "The exception is: " + xeoe.getMessage();
-			logger.error(getStepTag() + errMsg);
-			throw new StepException(errMsg, xeoe);
-		}
-		text = text + "\n\nThe details of the request are:\n\n" + request;
-
-		return text;
-	}
-
+        return text;
+    }
 }
