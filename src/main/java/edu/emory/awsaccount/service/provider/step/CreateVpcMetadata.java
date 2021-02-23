@@ -176,7 +176,11 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                 addResultProperty("region", region);
                 addResultProperty("vpcType", vpcType);
                 addResultProperty("vpcCidr", vpcCidr);
-                addResultProperty("vpnConnectionProfileId", vpnConnectionProfileId);
+                if (vpcConnectionMethod.equals("VPN")) {
+                    addResultProperty("vpnConnectionProfileId", vpnConnectionProfileId);
+                } else {
+                    addResultProperty("transitGatewayConnectionProfileId", transitGatewayConnectionProfileId);
+                }
             } catch (EnterpriseObjectCreateException eoce) {
                 String errMsg = "An error occurred creating the object. The exception is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
