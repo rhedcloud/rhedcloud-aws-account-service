@@ -553,8 +553,8 @@ Commented out 2/21/2012 due to being invalid and therefore also not implemented
 
 <!-- TransitGateway added 1/25/2021 -->
 <!ELEMENT TransitGateway (TransitGatewayId, Environment, Region, AccountId, TransitGatewayProfile+)>
-<!ELEMENT TransitGatewayProfile (TransitGatewayProfileId, TransitGatewayId, AssociationRouteTableId, PropagationRouteTableId+)>
-<!ELEMENT TransitGatewayQuerySpecification (Environment?, Region?)>
+<!ELEMENT TransitGatewayProfile (TransitGatewayProfileId?, TransitGatewayId, AssociationRouteTableId, PropagationRouteTableId+)>
+<!ELEMENT TransitGatewayQuerySpecification (TransitGatewayId?, Environment?, Region?)>
 <!ELEMENT TransitGatewayConnectionProfile (TransitGatewayConnectionProfileId?, CidrId, Region, TransitGatewayId, CidrRange)>
 <!ELEMENT TransitGatewayConnectionProfileQuerySpecification (TransitGatewayConnectionProfileId?, Region?, TransitGatewayId?)>
 <!ELEMENT TransitGatewayConnectionProfileAssignment (TransitGatewayConnectionProfileAssignmentId?, TransitGatewayConnectionProfileId, OwnerId, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
