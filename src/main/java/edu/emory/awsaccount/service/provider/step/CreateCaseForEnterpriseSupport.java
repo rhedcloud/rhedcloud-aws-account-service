@@ -113,11 +113,11 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
 
         // Set the AWS account credentials
         BasicAWSCredentials awsCredentials =
-        	new BasicAWSCredentials(accessKey, secretKey);
+            new BasicAWSCredentials(accessKey, secretKey);
 
         // Instantiate an AWS client builder
         AWSSupportClientBuilder builder = AWSSupportClientBuilder.standard()
-        	.withCredentials(new AWSStaticCredentialsProvider(awsCredentials));
+            .withCredentials(new AWSStaticCredentialsProvider(awsCredentials));
         builder.setRegion("us-east-1");
 
         // Initialize the AWS client
@@ -158,71 +158,69 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         // Get some properties from previous steps.
- 		String allocateNewAccount =
- 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
- 		String newAccountId =
- 			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+         String allocateNewAccount = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
+         String newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
 
- 		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
- 		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
- 		logger.info(LOGTAG + "newAccountId: " + newAccountId);
+         boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
+         logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
+         logger.info(LOGTAG + "newAccountId: " + newAccountId);
 
- 		boolean createdSupportCase = false;
- 		String caseId = null;
+         boolean createdSupportCase = false;
+         String caseId = null;
 
- 		// If allocatedNewAccount is true and newAccountId is not null,
- 		// Create a support case to add the account to the enterprise support plan.
- 		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("not applicable") == false)) {
- 			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
- 				"is not null. Will create a support case.");
+         // If allocatedNewAccount is true and newAccountId is not null,
+         // Create a support case to add the account to the enterprise support plan.
+        if (allocatedNewAccount && (newAccountId != null && !newAccountId.equals(PROPERTY_VALUE_NOT_AVAILABLE))) {
+             logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
+                 "is not null. Will create a support case.");
 
-			VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
-			VirtualPrivateCloudRequisition vpcr = vpcp.getVirtualPrivateCloudRequisition();
-			String ownerId = vpcr.getAccountOwnerUserId();
-			String requestorId = vpcr.getAuthenticatedRequestorUserId();
-			String ownerEmail = getEmailForUserId(ownerId);
-			String requestorEmail = getEmailForUserId(requestorId);
+            VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
+            VirtualPrivateCloudRequisition vpcr = vpcp.getVirtualPrivateCloudRequisition();
+            String ownerId = vpcr.getAccountOwnerUserId();
+            String requestorId = vpcr.getAuthenticatedRequestorUserId();
+            String ownerEmail = getEmailForUserId(ownerId);
+            String requestorEmail = getEmailForUserId(requestorId);
 
-			CreateCaseRequest request = new CreateCaseRequest();
-			request.setServiceCode(getCaseServiceCode());
-			request.setCategoryCode(getCaseCategoryCode());
-			request.setLanguage(getCaseLanguage());
+            CreateCaseRequest request = new CreateCaseRequest();
+            request.setServiceCode(getCaseServiceCode());
+            request.setCategoryCode(getCaseCategoryCode());
+            request.setLanguage(getCaseLanguage());
 
-			List<String> caseCcEmailAddresses = buildCcEmailAddresses(ownerEmail, requestorEmail);
-			request.setCcEmailAddresses(caseCcEmailAddresses);
-			String communicationBody = replaceAccountNumber(getCaseCommunicationBody(), newAccountId);
-			request.setCommunicationBody(communicationBody);
-			String caseSubject = replaceAccountNumber(getCaseSubject(), newAccountId);
-			request.setSubject(caseSubject);
-			request.setSeverityCode(getCaseSeverityCode());
+            List<String> caseCcEmailAddresses = buildCcEmailAddresses(ownerEmail, requestorEmail);
+            request.setCcEmailAddresses(caseCcEmailAddresses);
+            String communicationBody = replaceAccountNumber(getCaseCommunicationBody(), newAccountId);
+            request.setCommunicationBody(communicationBody);
+            String caseSubject = replaceAccountNumber(getCaseSubject(), newAccountId);
+            request.setSubject(caseSubject);
+            request.setSeverityCode(getCaseSeverityCode());
 
-			logger.info(LOGTAG + "Built the request: " + request.toString());
+            logger.info(LOGTAG + "Built the request: " + request.toString());
 
-			// Send the request.
-			try {
-				logger.info(LOGTAG + "Sending the case create request...");
-				long createStartTime = System.currentTimeMillis();
-				CreateCaseResult result = getAwsSupportClient().createCase(request);
-				long createTime = System.currentTimeMillis() - createStartTime;
-				caseId = result.getCaseId();
-				logger.info(LOGTAG + "received response to case create request in " +
-					createTime + " ms. Case ID is: " + caseId);
-				createdSupportCase = true;
-				addResultProperty("caseId", caseId);
-			}
-			catch (Exception e) {
-				String errMsg = "An error occurred creating the case. " +
-					"The exception is: " + e.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, e);
-			}
- 		}
- 		// This is not a new account, so no support request is needed.
- 		else {
- 			logger.info(LOGTAG + "This is not a new account, no support " +
- 				"case is necessary.");
- 			addResultProperty("caseId", "not applicable");
- 		}
+            // Send the request.
+            try {
+                logger.info(LOGTAG + "Sending the case create request...");
+                long createStartTime = System.currentTimeMillis();
+                CreateCaseResult result = getAwsSupportClient().createCase(request);
+                long createTime = System.currentTimeMillis() - createStartTime;
+                caseId = result.getCaseId();
+                logger.info(LOGTAG + "received response to case create request in " +
+                    createTime + " ms. Case ID is: " + caseId);
+                createdSupportCase = true;
+                addResultProperty("caseId", caseId);
+            }
+            catch (Exception e) {
+                String errMsg = "An error occurred creating the case. " +
+                    "The exception is: " + e.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, e);
+            }
+         }
+         // This is not a new account, so no support request is needed.
+         else {
+             logger.info(LOGTAG + "This is not a new account, no support " +
+                 "case is necessary.");
+             addResultProperty("caseId", "not applicable");
+         }
 
         String stepResult = FAILURE_RESULT;
         if (allocatedNewAccount == true && createdSupportCase == true) {
@@ -453,39 +451,39 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     }
 
     private List<String> buildCcEmailAddresses(String ownerEmail, String requestorEmail)
-    	throws StepException {
+        throws StepException {
 
-    	String LOGTAG = "[CreateCaseForEnterpriseSupport.buildCcEmailAddress] ";
+        String LOGTAG = "[CreateCaseForEnterpriseSupport.buildCcEmailAddress] ";
 
-    	List<String> ccEmailAddresses = new ArrayList();
+        List<String> ccEmailAddresses = new ArrayList();
 
-    	if (getCaseCcEmailAddresses() != null && !getCaseCcEmailAddresses().equals("")) {
-    		String[] emailAddresses = getCaseCcEmailAddresses().split("\\s*,\\s*");
-    		for (int i=0; i < emailAddresses.length; i++) {
-    			logger.info(LOGTAG + "Adding email address: " + emailAddresses[i]);
-    			ccEmailAddresses.add(emailAddresses[i]);
-    		}
-    	}
+        if (getCaseCcEmailAddresses() != null && !getCaseCcEmailAddresses().equals("")) {
+            String[] emailAddresses = getCaseCcEmailAddresses().split("\\s*,\\s*");
+            for (int i=0; i < emailAddresses.length; i++) {
+                logger.info(LOGTAG + "Adding email address: " + emailAddresses[i]);
+                ccEmailAddresses.add(emailAddresses[i]);
+            }
+        }
 
-    	logger.info(LOGTAG + "Adding ownerEmail: " + ownerEmail);
-    	ccEmailAddresses.add(ownerEmail);
-    	logger.info(LOGTAG + "Adding requestorEmail: " + requestorEmail);
-    	ccEmailAddresses.add(requestorEmail);
+        logger.info(LOGTAG + "Adding ownerEmail: " + ownerEmail);
+        ccEmailAddresses.add(ownerEmail);
+        logger.info(LOGTAG + "Adding requestorEmail: " + requestorEmail);
+        ccEmailAddresses.add(requestorEmail);
 
-    	logger.info(LOGTAG + "CcEmailAddresses is: " + ccEmailAddresses.toString());
+        logger.info(LOGTAG + "CcEmailAddresses is: " + ccEmailAddresses.toString());
 
-    	return ccEmailAddresses;
+        return ccEmailAddresses;
     }
 
     private String getEmailForUserId(String userId) throws StepException {
-    	DirectoryPerson dp = directoryPersonQuery(userId);
-    	String emailAddress = dp.getEmail().getEmailAddress();
-    	return emailAddress;
+        DirectoryPerson dp = directoryPersonQuery(userId);
+        String emailAddress = dp.getEmail().getEmailAddress();
+        return emailAddress;
     }
 
     private DirectoryPerson directoryPersonQuery(String userId) throws StepException {
 
-    	String LOGTAG = "[CreateCaseForEnterpriseSupport.directoryPersonQuery] ";
+        String LOGTAG = "[CreateCaseForEnterpriseSupport.directoryPersonQuery] ";
 
         // Query the DirectoryService service for the user's
         // DirectoryPerson object.
@@ -552,7 +550,7 @@ public class CreateCaseForEnterpriseSupport extends AbstractStep implements Step
     }
 
     private String replaceAccountNumber(String text, String accountNumber) {
-    	String result = text.replaceAll("ACCOUNT_NUMBER", accountNumber);
+        String result = text.replaceAll("ACCOUNT_NUMBER", accountNumber);
         return result;
     }
 

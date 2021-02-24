@@ -31,128 +31,128 @@ import edu.emory.awsaccount.service.provider.VirtualPrivateCloudProvisioningProv
  **/
 public class DetermineNewOrExistingAwsAccount extends AbstractStep implements Step {
 
-	public void init (String provisioningId, Properties props,
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
-			throws StepException {
+    public void init (String provisioningId, Properties props,
+            AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
+            throws StepException {
 
-		super.init(provisioningId, props, aConfig, vpcpp);
-	}
+        super.init(provisioningId, props, aConfig, vpcpp);
+    }
 
-	protected List<Property> run() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineNewOrExistingAccount.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
+    protected List<Property> run() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[DetermineNewOrExistingAccount.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
 
-		// By default, allocateNewAccount is false.
-		boolean allocateNewAccount = false;
+        // By default, allocateNewAccount is false.
+        boolean allocateNewAccount = false;
 
-		// Get the requisition.
-		VirtualPrivateCloudRequisition vpcr =
-			getVirtualPrivateCloudProvisioning()
-			.getVirtualPrivateCloudRequisition();
+        // Get the requisition.
+        VirtualPrivateCloudRequisition vpcr =
+            getVirtualPrivateCloudProvisioning()
+            .getVirtualPrivateCloudRequisition();
 
-		if (vpcr != null) {
-			logger.info(LOGTAG + "The VirtualPrivateCloudRequisition " +
-				"is not null.");
-			String accountId = vpcr.getAccountId();
-			if (accountId != null) {
-				logger.info(LOGTAG + "The AccountId in the requisition is: "
-					+ vpcr.getAccountId());
-			}
-			else {
-				logger.info(LOGTAG + "The AccountId in the requisition is null.");
-			}
-		}
+        if (vpcr != null) {
+            logger.info(LOGTAG + "The VirtualPrivateCloudRequisition " +
+                "is not null.");
+            String accountId = vpcr.getAccountId();
+            if (accountId != null) {
+                logger.info(LOGTAG + "The AccountId in the requisition is: "
+                    + vpcr.getAccountId());
+            }
+            else {
+                logger.info(LOGTAG + "The AccountId in the requisition is null.");
+            }
+        }
 
-		// If there is no AWS account ID specified, a new account is
-		// needed.
-		if (vpcr.getAccountId() == null) {
-			allocateNewAccount = true;
-		}
+        // If there is no AWS account ID specified, a new account is
+        // needed.
+        if (vpcr.getAccountId() == null) {
+            allocateNewAccount = true;
+        }
 
-		// If the value of AccountId is Select from the VPCP app,
-		// a new account is needed.
-		else if (vpcr.getAccountId().equalsIgnoreCase("-- Select --")) {
-			allocateNewAccount = true;
-		}
+        // If the value of AccountId is Select from the VPCP app,
+        // a new account is needed.
+        else if (vpcr.getAccountId().equalsIgnoreCase("-- Select --")) {
+            allocateNewAccount = true;
+        }
 
-		logger.info(LOGTAG + "allocateNewAccount is: " + allocateNewAccount);
-		logger.info(LOGTAG + "accountId is: " + vpcr.getAccountId());
+        logger.info(LOGTAG + "allocateNewAccount is: " + allocateNewAccount);
+        logger.info(LOGTAG + "accountId is: " + vpcr.getAccountId());
 
-		// Set result properties.
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-		addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
-		if (vpcr.getAccountId() != null) {
-			addResultProperty("accountId", vpcr.getAccountId());
-		}
-		else {
-			addResultProperty("accountId", "null");
-		}
+        // Set result properties.
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        addResultProperty("allocateNewAccount", Boolean.toString(allocateNewAccount));
+        if (vpcr.getAccountId() != null) {
+            addResultProperty("accountId", vpcr.getAccountId());
+        }
+        else {
+            addResultProperty("accountId", "null");
+        }
 
-		// Update the step.
-		logger.info(LOGTAG + "Performing update...");
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Update the step.
+        logger.info(LOGTAG + "Performing update...");
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
+        // Return the properties.
+        return getResultProperties();
 
-	}
+    }
 
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[DetermineNewOrExistingAccount.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[DetermineNewOrExistingAccount.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Return the properties.
+        return getResultProperties();
+    }
 
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[DetermineNewOrExistingAccount.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[DetermineNewOrExistingAccount.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Return the properties.
+        return getResultProperties();
+    }
 
-	public void rollback() throws StepException {
+    public void rollback() throws StepException {
 
-		super.rollback();
+        super.rollback();
 
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[DetermineNewOrExistingAccount.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[DetermineNewOrExistingAccount.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+    }
 }

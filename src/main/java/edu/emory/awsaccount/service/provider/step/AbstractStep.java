@@ -83,6 +83,9 @@ public abstract class AbstractStep {
     protected long m_executionEndTime = 0;
     protected Properties m_props = null;
 
+    protected final String PROPERTY_VALUE_NOT_APPLICABLE = "not applicable";
+    protected final String PROPERTY_VALUE_NOT_AVAILABLE = "not available";
+
     public void init(String provisioningId, Properties props,
                      AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
             throws StepException {
@@ -764,8 +767,9 @@ public abstract class AbstractStep {
         ProvisioningStep step = getProvisioningStepByType(stepType);
         if (step != null) {
             String value = getResultProperty(step, key);
-            if (value == null || value.equals(""))
-                value = "not available";
+            if (value == null || value.equals("")) {
+                value = PROPERTY_VALUE_NOT_AVAILABLE;
+            }
             addResultProperty(key, value);
             logger.info(LOGTAG + "Property " + key + " from preceding step " + stepType + " is " + value);
             return value;

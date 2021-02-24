@@ -80,23 +80,17 @@ public class NotifyAdmins extends AbstractStep implements Step {
         // Get the allocatedNewAccount property from the
         // GENERATE_NEW_ACCOUNT step.
         logger.info(LOGTAG + "Getting properties from preceding steps...");
-        String accountId;
-        String newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-        String vpcConnectionMethod = getStepPropertyValue("DETERMINE_VPC_CONNECTION_METHOD", "vpcConnectionMethod");
 
-        // If the newAccountId is null, get the accountId from the VPCP requisition. Otherwise accountId is the value of the newAccountId
-        if (newAccountId == null || newAccountId.equalsIgnoreCase("null")) {
+        String accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+        if (accountId.equals(PROPERTY_VALUE_NOT_APPLICABLE) || accountId.equals(PROPERTY_VALUE_NOT_AVAILABLE)) {
             accountId = req.getAccountId();
-            logger.info(LOGTAG + "newAccountId is null, getting the accountId from the requisition object: " + accountId);
-        } else {
-            accountId = newAccountId;
+            if (accountId == null || accountId.equals("")) {
+                String errMsg = "No account number for the notification can be found. Can't continue.";
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg);
+            }
         }
-
-        if (accountId == null) {
-            String errMsg = "accountId is null. Can't continue.";
-            logger.error(LOGTAG + errMsg);
-            throw new StepException(errMsg);
-        }
+        String vpcConnectionMethod = getStepPropertyValue("DETERMINE_VPC_CONNECTION_METHOD", "vpcConnectionMethod");
 
         // Get a configured account notification object from AppConfig.
         AccountNotification aNotification = new AccountNotification();

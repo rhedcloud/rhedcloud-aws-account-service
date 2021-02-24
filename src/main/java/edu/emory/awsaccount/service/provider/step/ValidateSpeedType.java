@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 package edu.emory.awsaccount.service.provider.step;
 
@@ -34,219 +34,219 @@ import java.util.Properties;
  * is an account administrator or central administrator of the
  * account.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 5 August 2018
  **/
 public class ValidateSpeedType extends AbstractStep implements Step {
-	
-	private String m_stackName = null;
-	private long m_maxWaitTimeInMillis = 60000;
-	private ProducerPool peopleSoftProducerPool = null;
+
+    private String m_stackName = null;
+    private long m_maxWaitTimeInMillis = 60000;
+    private ProducerPool peopleSoftProducerPool = null;
 
 
-	public void init (String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
-		
-		super.init(provisioningId, props, aConfig, vpcpp);
+    public void init (String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
+
+        super.init(provisioningId, props, aConfig, vpcpp);
 
 
-		String LOGTAG = getStepTag() + "[ValidateSpeedType.init] ";
+        String LOGTAG = getStepTag() + "[ValidateSpeedType.init] ";
 
 
-		ProducerPool p2p1 = null;
+        ProducerPool p2p1 = null;
 
-		try {
-			p2p1 = (ProducerPool)getAppConfig().getObject("PeopleSoftServiceProducerPool");
-			setPeopleSoftServiceProducerPool(p2p1);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " + "AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-			
-		logger.info(LOGTAG + "Getting custom step properties...");
-		String stackName = getProperties().getProperty("stackName", null);
-		setStackName(stackName);
-		logger.info(LOGTAG + "stackName is: " + getStackName());
-		
-		String sMaxWaitTime = getProperties().getProperty("maxWaitTimeInMillis", "60000");
-		setMaxWaitTimeInMillis(Long.parseLong(sMaxWaitTime));
-		
-		logger.info(LOGTAG + "Initialization complete.");
-		
-	}
-	
-	protected List<Property> run() throws StepException {
+        try {
+            p2p1 = (ProducerPool)getAppConfig().getObject("PeopleSoftServiceProducerPool");
+            setPeopleSoftServiceProducerPool(p2p1);
+        }
+        catch (EnterpriseConfigurationObjectException ecoe) {
+            // An error occurred retrieving an object from AppConfig. Log it and
+            // throw an exception.
+            String errMsg = "An error occurred retrieving an object from " + "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new StepException(errMsg);
+        }
 
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[ValidateSpeedType.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
+        logger.info(LOGTAG + "Getting custom step properties...");
+        String stackName = getProperties().getProperty("stackName", null);
+        setStackName(stackName);
+        logger.info(LOGTAG + "stackName is: " + getStackName());
 
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+        String sMaxWaitTime = getProperties().getProperty("maxWaitTimeInMillis", "60000");
+        setMaxWaitTimeInMillis(Long.parseLong(sMaxWaitTime));
 
-		ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
+        logger.info(LOGTAG + "Initialization complete.");
 
-		VirtualPrivateCloudProvisioning virtualPrivateCloudProvisioning = getVirtualPrivateCloudProvisioning();
-		VirtualPrivateCloudRequisition virtualPrivateCloudRequisition = virtualPrivateCloudProvisioning.getVirtualPrivateCloudRequisition();
+    }
 
-		SPEEDCHART speedchart = new SPEEDCHART();
-		SPEEDCHART_QUERY querySpec = new SPEEDCHART_QUERY();
+    protected List<Property> run() throws StepException {
 
-		try {
-			speedchart = (SPEEDCHART)getAppConfig().getObjectByType(speedchart.getClass().getName());
-			querySpec = (SPEEDCHART_QUERY)getAppConfig().getObjectByType(querySpec.getClass().getName());
-		} catch (EnterpriseConfigurationObjectException ecoe) {
-			String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, ecoe);
-		}
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[ValidateSpeedType.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
 
-		querySpec.addSPEEDCHART_KEY(virtualPrivateCloudRequisition.getFinancialAccountNumber());
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
-		// Get a RequestService to use for this transaction.
-		RequestService rs = null;
-		
-		// Get a request service (producer) to use in this transaction
-		try {
-			rs = (RequestService)getPeopleSoftServiceProducerPool().getExclusiveProducer();
-		} catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a request service to use in this transaction. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
+        ProvisioningStep step = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
 
-		// Query for the SPEEDCHART.
-		List<SPEEDCHART> speedChartList = null;
-		String stepResult = null;
+        VirtualPrivateCloudProvisioning virtualPrivateCloudProvisioning = getVirtualPrivateCloudProvisioning();
+        VirtualPrivateCloudRequisition virtualPrivateCloudRequisition = virtualPrivateCloudProvisioning.getVirtualPrivateCloudRequisition();
 
-		try {
-			startTime = System.currentTimeMillis();
-			speedChartList = speedchart.query(querySpec, rs);
-			long time = System.currentTimeMillis() - startTime;
-			logger.info(LOGTAG + "Queried for SPEEDCHART in " + time + " ms. Returned " + speedChartList.size() + " results.");
-		} catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the SPEEDCHART object. The exception is: " + eoqe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, eoqe);
-		} finally {
-			getPeopleSoftServiceProducerPool().releaseProducer((PointToPointProducer)rs);
-		}
-		
-		// If there is a result, evaluate it.
-		if (speedChartList != null && speedChartList.size() > 0) {
+        SPEEDCHART speedchart = new SPEEDCHART();
+        SPEEDCHART_QUERY querySpec = new SPEEDCHART_QUERY();
 
-			SPEEDCHART speedchart1 = speedChartList.get(0);
-			addResultProperty("validationCode", speedchart1.getVALID_CODE());
-			addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
+        try {
+            speedchart = (SPEEDCHART)getAppConfig().getObjectByType(speedchart.getClass().getName());
+            querySpec = (SPEEDCHART_QUERY)getAppConfig().getObjectByType(querySpec.getClass().getName());
+        } catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, ecoe);
+        }
 
-			if (speedChartList.size() == 1) {
-				if (speedchart1.getVALID_CODE().equals("Y")) {
-					stepResult = SUCCESS_RESULT;
-				} else if (speedchart1.getVALID_CODE().equals("N")) {
-					// invalid
-					stepResult = FAILURE_RESULT;
-				} else {
-					stepResult = SUCCESS_RESULT; // it will tell me if it's a warning
-				}
-			} else {
-				stepResult = FAILURE_RESULT;
-			}
-		} else {  // There is no result, so the SpeedType is invalid.
-			logger.info(LOGTAG + "There is no result from the SPEEDCHART.Query-Request, the SPEEDCHART is invalid.");
-			stepResult = FAILURE_RESULT;
-			addResultProperty("validationResult", "No such SPEEDCHART exist");
-		}
+        querySpec.addSPEEDCHART_KEY(virtualPrivateCloudRequisition.getFinancialAccountNumber());
 
-		addResultProperty("financialAccountNumber", virtualPrivateCloudRequisition.getFinancialAccountNumber());
+        // Get a RequestService to use for this transaction.
+        RequestService rs = null;
 
-		logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " + stepResult);
-		update(COMPLETED_STATUS, stepResult);
+        // Get a request service (producer) to use in this transaction
+        try {
+            rs = (RequestService)getPeopleSoftServiceProducerPool().getExclusiveProducer();
+        } catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a request service to use in this transaction. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, jmse);
+        }
 
-		return getResultProperties();
-	}
-	
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
-		
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-    	addResultProperty("isAuthorized", "true");
-		
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
-    	
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-    	
-    	// Return the properties.
-    	return getResultProperties();
-	}
-	
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
-		
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-		
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
-    	
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-    	
-    	// Return the properties.
-    	return getResultProperties();
-	}
-	
-	public void rollback() throws StepException {
-		
-		super.rollback();
-		
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-		
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
+        // Query for the SPEEDCHART.
+        List<SPEEDCHART> speedChartList = null;
+        String stepResult = null;
 
-	private ProducerPool getPeopleSoftServiceProducerPool() {
-		return peopleSoftProducerPool;
-	}
-	
-	private void setPeopleSoftServiceProducerPool(ProducerPool pool) {
-		peopleSoftProducerPool = pool;
-	}
-	
-	private String getStackName() {
-		return m_stackName;
-	}
-	
-	private void setStackName(String stackName) {
-		m_stackName = stackName;
-	}
-	
-	private Long getMaxWaitTimeInMillis() {
-		return m_maxWaitTimeInMillis;
-	}
-	
-	private void setMaxWaitTimeInMillis(long maxWaitTimeInMillis) {
-		m_maxWaitTimeInMillis = maxWaitTimeInMillis;
-	}
-	
-	private long getQueryTimeInMillis(long queryStartTime) {
-		return System.currentTimeMillis() - queryStartTime;
-	}
+        try {
+            startTime = System.currentTimeMillis();
+            speedChartList = speedchart.query(querySpec, rs);
+            long time = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Queried for SPEEDCHART in " + time + " ms. Returned " + speedChartList.size() + " results.");
+        } catch (EnterpriseObjectQueryException eoqe) {
+            String errMsg = "An error occurred querying for the SPEEDCHART object. The exception is: " + eoqe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, eoqe);
+        } finally {
+            getPeopleSoftServiceProducerPool().releaseProducer((PointToPointProducer)rs);
+        }
+
+        // If there is a result, evaluate it.
+        if (speedChartList != null && speedChartList.size() > 0) {
+
+            SPEEDCHART speedchart1 = speedChartList.get(0);
+            addResultProperty("validationCode", speedchart1.getVALID_CODE());
+            addResultProperty("validationResult", speedchart1.getEU_VALIDITY_DESCR());
+
+            if (speedChartList.size() == 1) {
+                if (speedchart1.getVALID_CODE().equals("Y")) {
+                    stepResult = SUCCESS_RESULT;
+                } else if (speedchart1.getVALID_CODE().equals("N")) {
+                    // invalid
+                    stepResult = FAILURE_RESULT;
+                } else {
+                    stepResult = SUCCESS_RESULT; // it will tell me if it's a warning
+                }
+            } else {
+                stepResult = FAILURE_RESULT;
+            }
+        } else {  // There is no result, so the SpeedType is invalid.
+            logger.info(LOGTAG + "There is no result from the SPEEDCHART.Query-Request, the SPEEDCHART is invalid.");
+            stepResult = FAILURE_RESULT;
+            addResultProperty("validationResult", "No such SPEEDCHART exist");
+        }
+
+        addResultProperty("financialAccountNumber", virtualPrivateCloudRequisition.getFinancialAccountNumber());
+
+        logger.info(LOGTAG + "Updating step with status " + COMPLETED_STATUS + " and result " + stepResult);
+        update(COMPLETED_STATUS, stepResult);
+
+        return getResultProperties();
+    }
+
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
+
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+        addResultProperty("isAuthorized", "true");
+
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+
+        // Return the properties.
+        return getResultProperties();
+    }
+
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
+
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+
+        // Return the properties.
+        return getResultProperties();
+    }
+
+    public void rollback() throws StepException {
+
+        super.rollback();
+
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[AuthorizeExistingAccountRequestor.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+    }
+
+    private ProducerPool getPeopleSoftServiceProducerPool() {
+        return peopleSoftProducerPool;
+    }
+
+    private void setPeopleSoftServiceProducerPool(ProducerPool pool) {
+        peopleSoftProducerPool = pool;
+    }
+
+    private String getStackName() {
+        return m_stackName;
+    }
+
+    private void setStackName(String stackName) {
+        m_stackName = stackName;
+    }
+
+    private Long getMaxWaitTimeInMillis() {
+        return m_maxWaitTimeInMillis;
+    }
+
+    private void setMaxWaitTimeInMillis(long maxWaitTimeInMillis) {
+        m_maxWaitTimeInMillis = maxWaitTimeInMillis;
+    }
+
+    private long getQueryTimeInMillis(long queryStartTime) {
+        return System.currentTimeMillis() - queryStartTime;
+    }
 
 }

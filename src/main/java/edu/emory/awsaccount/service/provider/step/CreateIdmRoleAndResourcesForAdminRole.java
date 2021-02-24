@@ -46,420 +46,415 @@ import edu.emory.moa.objects.resources.v1_0.RoleRequisition;
  **/
 public class CreateIdmRoleAndResourcesForAdminRole extends AbstractStep implements Step {
 
-	private ProducerPool m_idmServiceProducerPool = null;
-	private int m_requestTimeoutIntervalInMillis = 10000;
-	private String m_resource3EntitlementDnTemplate = null;
-	private String m_resource4EntitlementDn = null;
-	private String m_resource5EntitlementDn = null;
-
-	public void init (String provisioningId, Properties props,
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
-			throws StepException {
-
-		super.init(provisioningId, props, aConfig, vpcpp);
-
-		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.init] ";
-
-		// This step needs to send messages to the IDM service
-		// to create account roles.
-		ProducerPool p2p1 = null;
-		try {
-			p2p1 = (ProducerPool)getAppConfig()
-				.getObject("IdmServiceProducerPool");
-			setIdmServiceProducerPool(p2p1);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.fatal(LOGTAG + errMsg);
-			throw new StepException(errMsg);
-		}
-
-		// Get custom step properties.
-		logger.info(LOGTAG + "Getting custom step properties...");
-
-		String requestTimeoutInterval = getProperties()
-				.getProperty("requestTimeoutIntervalInMillis", "10000");
-			int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
-			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
-				getRequestTimeoutIntervalInMillis());
-
-		String resource3EntitlementDnTemplate = getProperties()
-				.getProperty("resource3EntitlementDnTemplate");
-		setResource3EntitlementDnTemplate(resource3EntitlementDnTemplate);
-		logger.info(LOGTAG + "resource3EntitlementDnTemplate is: " +
-				getResource3EntitlementDnTemplate());
-
-		String resource4EntitlementDn = getProperties()
-				.getProperty("resource4EntitlementDn");
-		setResource4EntitlementDn(resource4EntitlementDn);
-		logger.info(LOGTAG + "resource4EntitlementDn is: " +
-			resource4EntitlementDn);
-		logger.info(LOGTAG + getResource4EntitlementDn());
-
-		String resource5EntitlementDn = getProperties()
-				.getProperty("resource5EntitlementDn");
-		setResource5EntitlementDn(resource5EntitlementDn);
-		logger.info(LOGTAG + "resource5EntitlementDn is: " +
-			resource5EntitlementDn);
-		logger.info(LOGTAG + getResource5EntitlementDn());
-
-		logger.info(LOGTAG + "Initialization complete.");
-
-	}
-
-	protected List<Property> run() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
-
-		boolean generatedRole = false;
-
-		// Return properties
-		addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-
-		// Get some properties from previous steps.
-		String allocateNewAccount =
-			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
-		String newAccountId =
-			getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-
-		boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
-		logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
-		logger.info(LOGTAG + "newAccountId: " + newAccountId);
-
-		// If allocatedNewAccount is true and newAccountId is not null,
-		// Send a Role.Generate-Request to the AWS Account service.
-		if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
-			logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
-				"is not null. Sending a Role.Generate-Request to generate an IDM" +
-				"role.");
-
-			String accountAlias =
-					getStepPropertyValue("CREATE_ACCOUNT_ALIAS", "accountAlias");
-			String adminRoleGuid =
-					getStepPropertyValue("CREATE_LDS_GROUP_FOR_ADMIN_ROLE", "guid");
-
-			// Get a configured Role object and RoleRequisision from AppConfig.
-			Role role = new Role();
-			RoleRequisition req = new RoleRequisition();
-		    try {
-		    	role = (Role)getAppConfig()
-			    	.getObjectByType(role.getClass().getName());
-		    	req = (RoleRequisition)getAppConfig()
-		    		.getObjectByType(req.getClass().getName());
-		    }
-		    catch (EnterpriseConfigurationObjectException ecoe) {
-		    	String errMsg = "An error occurred retrieving an object from " +
-		    	  "AppConfig. The exception is: " + ecoe.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, ecoe);
-		    }
-
-		    // Set the values of the requisition.
-		    try {
-		    	// Main fields
-		    	String roleNameTemplate = "RGR_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
-		    	req.setRoleName(roleNameTemplate.replace("ACCOUNT_NUMBER", newAccountId));
-		    	req.setRoleDescription("Provisions members to various AWS resources");
-		    	req.setRoleCategoryKey("aws");
-
-		    	// Resource 1
-		    	logger.info(LOGTAG + "Setting values for resource 1.");
-		    	Resource res1 = role.newResource();
-		    	String res1name = "MDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
-		    	res1.setResourceName(res1name.replace("ACCOUNT_NUMBER", newAccountId));
-		    	res1.setResourceDescription("Provisions members to group RHEDcloudAdministratorRole on MS LDS University Connector");
-		    	res1.setResourceCategoryKey("group");
-		    	Entitlement ent1 = res1.newEntitlement();
-		    	String ent1dn = "CN=RHEDcloudAdministratorRole,OU=ACCOUNT_NUMBER,OU=AWS,DC=emory,DC=edu";
-		    	ent1.setEntitlementDN(ent1dn.replace("ACCOUNT_NUMBER", newAccountId));
-		    	ent1.setEntitlementGuid(adminRoleGuid);
-		    	ent1.setEntitlementApplication("UMD");
-		    	res1.setEntitlement(ent1);
-		    	req.addResource(res1);
-
-		    	// Resource 2
-		    	logger.info(LOGTAG + "Setting values for resource 2.");
-		    	Resource res2 = role.newResource();
-		    	String res2name = "HDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
-		    	res2.setResourceName(res2name.replace("ACCOUNT_NUMBER", newAccountId));
-		    	res2.setResourceDescription("Provisions members to group RHEDcloudAdministratorRole on MS LDS Healthcare Connector");
-		    	res2.setResourceCategoryKey("group");
-		    	Entitlement ent2 = res2.newEntitlement();
-		    	String ent2dn = "CN=RHEDcloudAdministratorRole,OU=ACCOUNT_NUMBER,OU=AWS,DC=emory,DC=edu";
-		    	ent2.setEntitlementDN(ent2dn.replace("ACCOUNT_NUMBER", newAccountId));
-		    	ent2.setEntitlementGuid(adminRoleGuid);
-		    	ent2.setEntitlementApplication("HMD");
-		    	res2.setEntitlement(ent2);
-		    	req.addResource(res2);
-
-		    	// Resource 3
-		    	logger.info(LOGTAG + "Setting values for resource 3.");
-		    	Resource res3 = role.newResource();
-		    	res3.setResourceName("EADG_" + accountAlias);
-		    	res3.setResourceDescription("Provisions members to group " + accountAlias + " on Enterprise AD Connector");
-		    	res3.setResourceCategoryKey("group");
-		    	Entitlement ent3 = res3.newEntitlement();
-		    	ent3.setEntitlementDN(getResource3EntitlementDn(accountAlias));
-		    	ent3.setEntitlementApplication("EAD");
-		    	res3.setEntitlement(ent3);
-		    	req.addResource(res3);
-
-		    	// Resource 4
-		    	logger.info(LOGTAG + "Setting values for resource 4.");
-		    	Resource res4 = role.newResource();
-		    	res4.setResourceName("RGR_AwsUsers");
-		    	res4.setResourceDescription("Provisions members to group AwsUsers on IDV Roles LBD Connector. This group contains all AWS users.");
-		    	res4.setResourceCategoryKey("group");
-		    	Entitlement ent4 = res4.newEntitlement();
-		    	ent4.setEntitlementDN(getResource4EntitlementDn());
-		    	ent4.setEntitlementApplication("IDV");
-		    	res4.setEntitlement(ent4);
-		    	req.addResource(res4);
-
-		    	// Resource 5
-		    	logger.info(LOGTAG + "Setting values for resource 5.");
-		    	Resource res5 = role.newResource();
-		    	res5.setResourceName("RGR_AwsVpnAllow");
-		    	res5.setResourceDescription("Provisions members to group AwsVpnAllow on IDV Roles LBD Connector. This group is used to automatically grant access to VPNAllow and AWSAllow.");
-		    	res5.setResourceCategoryKey("group");
-		    	Entitlement ent5 = res5.newEntitlement();
-		    	ent5.setEntitlementDN(getResource5EntitlementDn());
-		    	ent5.setEntitlementApplication("IDV");
-		    	res5.setEntitlement(ent5);
-		    	req.addResource(res5);
-		    }
-		    catch (EnterpriseFieldException efe) {
-		    	String errMsg = "An error occurred setting the values of the " +
-		  	    	  "RoleRequisition. The exception is: " + efe.getMessage();
-		  	    logger.error(LOGTAG + errMsg);
-		  	    throw new StepException(errMsg, efe);
-		    }
-
-		    // Log the state of the RoleRequisition.
-		    try {
-		    	logger.info(LOGTAG + "Role req is: " +
-		    		req.toXmlString());
-		    }
-		    catch (XmlEnterpriseObjectException xeoe) {
-		    	String errMsg = "An error occurred serializing the object " +
-		  	    	  "to XML. The exception is: " + xeoe.getMessage();
-	  	    	logger.error(LOGTAG + errMsg);
-	  	    	throw new StepException(errMsg, xeoe);
-		    }
-
-			// Get a producer from the pool
-			RequestService rs = null;
-			try {
-				PointToPointProducer p2p =
-					(PointToPointProducer)getIdmServiceProducerPool()
-					.getExclusiveProducer();
-				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-				rs = (RequestService)p2p;
-			}
-			catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-					"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
-
-			List results = null;
-			try {
-				long generateStartTime = System.currentTimeMillis();
-				results = role.generate(req, rs);
-				long generateTime = System.currentTimeMillis() - generateStartTime;
-				logger.info(LOGTAG + "Generated Role in " + generateTime +
-					" ms.");
-				generatedRole = true;
-				addResultProperty("allocatedNewAccount",
-					Boolean.toString(allocatedNewAccount));
-				addResultProperty("generatedRole",
-					Boolean.toString(generatedRole));
-			}
-			catch (EnterpriseObjectGenerateException eoge) {
-				String errMsg = "An error occurred generating the object. " +
-		    	  "The exception is: " + eoge.getMessage();
-		    	logger.error(LOGTAG + errMsg);
-		    	throw new StepException(errMsg, eoge);
-			}
-			finally {
-				// Release the producer back to the pool
-				getIdmServiceProducerPool()
-					.releaseProducer((MessageProducer)rs);
-			}
-
-			// If there is exactly one result, log it.
-			if (results.size() == 1) {
-				role = (Role)results.get(0);
-				try {
-					logger.info(LOGTAG + "Generated role: " + role.toXmlString());
-				}
-				catch (XmlEnterpriseObjectException xeoe) {
-			    	String errMsg = "An error occurred serializing the object " +
-			  	    	  "to XML. The exception is: " + xeoe.getMessage();
-		  	    	logger.error(LOGTAG + errMsg);
-		  	    	throw new StepException(errMsg, xeoe);
-			    }
-			}
-
-		}
-		// If allocatedNewAccount is false, log it and add result props.
-		else {
-			logger.info(LOGTAG + "allocatedNewAccount is false. " +
-				"no need to generate a new role.");
-			addResultProperty("allocatedNewAccount",
-				Boolean.toString(allocatedNewAccount));
-			addResultProperty("generatedRole",
-				"not applicable");
-		}
-
-		// Update the step result.
-		String stepResult = FAILURE_RESULT;
-		if (generatedRole == true && allocatedNewAccount == true) {
-			stepResult = SUCCESS_RESULT;
-		}
-		if (allocatedNewAccount == false) {
-			stepResult = SUCCESS_RESULT;
-		}
-
-		// Update the step.
-		update(COMPLETED_STATUS, stepResult);
-
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
-
-    	// Return the properties.
-    	return getResultProperties();
-
-	}
-
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[CreateIdmRoleAndResourcesForAdminRole.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
-
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
-
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
-
-    	// Return the properties.
-    	return getResultProperties();
-	}
-
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[CreateIdmRoleAndResourcesForAdminRole.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
-
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
-
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
-
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
-
-    	// Return the properties.
-    	return getResultProperties();
-	}
-
-	public void rollback() throws StepException {
-		super.rollback();
-		String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.rollback] ";
-		long startTime = System.currentTimeMillis();
-
-		logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
-
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
-
-	private void setIdmServiceProducerPool(ProducerPool pool) {
-		m_idmServiceProducerPool = pool;
-	}
-
-	private ProducerPool getIdmServiceProducerPool() {
-		return m_idmServiceProducerPool;
-	}
-
-	private void setRequestTimeoutIntervalInMillis(int time) {
-		m_requestTimeoutIntervalInMillis = time;
-	}
-
-	private int getRequestTimeoutIntervalInMillis() {
-		return m_requestTimeoutIntervalInMillis;
-	}
-
-	private void setResource3EntitlementDnTemplate (String template) throws
-		StepException {
-
-		if (template == null) {
-			String errMsg = "resource3EntitlementDnTemplate property is null. " +
-				"Can't continue.";
-			throw new StepException(errMsg);
-		}
-
-		m_resource3EntitlementDnTemplate = template;
-	}
-
-	private String getResource3EntitlementDnTemplate() {
-		return m_resource3EntitlementDnTemplate;
-	}
-
-	private String getResource3EntitlementDn(String accountAlias) {
-		String dn = getResource3EntitlementDnTemplate()
-			.replace("ACCOUNT_ALIAS", accountAlias);
-		return dn;
-	}
-
-	private void setResource4EntitlementDn(String dn) throws
-		StepException {
-
-		if (dn == null) {
-			String errMsg = "resource4EntitlementDn property is null. " +
-				"Can't continue.";
-			throw new StepException(errMsg);
-		}
-
-		m_resource4EntitlementDn = dn;
-	}
-
-	private String getResource4EntitlementDn() {
-		return m_resource4EntitlementDn;
-	}
-
-	private void setResource5EntitlementDn (String dn) throws
-		StepException {
-
-		if (dn == null) {
-			String errMsg = "resource5EntitlementDn property is null. " +
-				"Can't continue.";
-			throw new StepException(errMsg);
-		}
-
-		m_resource5EntitlementDn = dn;
-	}
-
-	private String getResource5EntitlementDn() {
-		return m_resource5EntitlementDn;
-	}
+    private ProducerPool m_idmServiceProducerPool = null;
+    private int m_requestTimeoutIntervalInMillis = 10000;
+    private String m_resource3EntitlementDnTemplate = null;
+    private String m_resource4EntitlementDn = null;
+    private String m_resource5EntitlementDn = null;
+
+    public void init (String provisioningId, Properties props,
+            AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
+            throws StepException {
+
+        super.init(provisioningId, props, aConfig, vpcpp);
+
+        String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.init] ";
+
+        // This step needs to send messages to the IDM service
+        // to create account roles.
+        ProducerPool p2p1 = null;
+        try {
+            p2p1 = (ProducerPool)getAppConfig()
+                .getObject("IdmServiceProducerPool");
+            setIdmServiceProducerPool(p2p1);
+        }
+        catch (EnterpriseConfigurationObjectException ecoe) {
+            // An error occurred retrieving an object from AppConfig. Log it and
+            // throw an exception.
+            String errMsg = "An error occurred retrieving an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.fatal(LOGTAG + errMsg);
+            throw new StepException(errMsg);
+        }
+
+        // Get custom step properties.
+        logger.info(LOGTAG + "Getting custom step properties...");
+
+        String requestTimeoutInterval = getProperties()
+                .getProperty("requestTimeoutIntervalInMillis", "10000");
+            int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+            setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+            logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
+                getRequestTimeoutIntervalInMillis());
+
+        String resource3EntitlementDnTemplate = getProperties()
+                .getProperty("resource3EntitlementDnTemplate");
+        setResource3EntitlementDnTemplate(resource3EntitlementDnTemplate);
+        logger.info(LOGTAG + "resource3EntitlementDnTemplate is: " +
+                getResource3EntitlementDnTemplate());
+
+        String resource4EntitlementDn = getProperties()
+                .getProperty("resource4EntitlementDn");
+        setResource4EntitlementDn(resource4EntitlementDn);
+        logger.info(LOGTAG + "resource4EntitlementDn is: " +
+            resource4EntitlementDn);
+        logger.info(LOGTAG + getResource4EntitlementDn());
+
+        String resource5EntitlementDn = getProperties()
+                .getProperty("resource5EntitlementDn");
+        setResource5EntitlementDn(resource5EntitlementDn);
+        logger.info(LOGTAG + "resource5EntitlementDn is: " +
+            resource5EntitlementDn);
+        logger.info(LOGTAG + getResource5EntitlementDn());
+
+        logger.info(LOGTAG + "Initialization complete.");
+
+    }
+
+    protected List<Property> run() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
+
+        boolean generatedRole = false;
+
+        // Return properties
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+
+        // Get some properties from previous steps.
+        String allocateNewAccount = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
+        String newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+
+        boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
+        logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
+        logger.info(LOGTAG + "newAccountId: " + newAccountId);
+
+        // If allocatedNewAccount is true and newAccountId is not null,
+        // Send a Role.Generate-Request to the AWS Account service.
+        if (allocatedNewAccount && (newAccountId != null && !newAccountId.equals(PROPERTY_VALUE_NOT_AVAILABLE))) {
+            logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
+                "is not null. Sending a Role.Generate-Request to generate an IDM role.");
+
+            String accountAlias = getStepPropertyValue("CREATE_ACCOUNT_ALIAS", "accountAlias");
+            String adminRoleGuid = getStepPropertyValue("CREATE_LDS_GROUP_FOR_ADMIN_ROLE", "guid");
+
+            // Get a configured Role object and RoleRequisision from AppConfig.
+            Role role = new Role();
+            RoleRequisition req = new RoleRequisition();
+            try {
+                role = (Role)getAppConfig()
+                    .getObjectByType(role.getClass().getName());
+                req = (RoleRequisition)getAppConfig()
+                    .getObjectByType(req.getClass().getName());
+            }
+            catch (EnterpriseConfigurationObjectException ecoe) {
+                String errMsg = "An error occurred retrieving an object from " +
+                  "AppConfig. The exception is: " + ecoe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, ecoe);
+            }
+
+            // Set the values of the requisition.
+            try {
+                // Main fields
+                String roleNameTemplate = "RGR_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
+                req.setRoleName(roleNameTemplate.replace("ACCOUNT_NUMBER", newAccountId));
+                req.setRoleDescription("Provisions members to various AWS resources");
+                req.setRoleCategoryKey("aws");
+
+                // Resource 1
+                logger.info(LOGTAG + "Setting values for resource 1.");
+                Resource res1 = role.newResource();
+                String res1name = "MDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
+                res1.setResourceName(res1name.replace("ACCOUNT_NUMBER", newAccountId));
+                res1.setResourceDescription("Provisions members to group RHEDcloudAdministratorRole on MS LDS University Connector");
+                res1.setResourceCategoryKey("group");
+                Entitlement ent1 = res1.newEntitlement();
+                String ent1dn = "CN=RHEDcloudAdministratorRole,OU=ACCOUNT_NUMBER,OU=AWS,DC=emory,DC=edu";
+                ent1.setEntitlementDN(ent1dn.replace("ACCOUNT_NUMBER", newAccountId));
+                ent1.setEntitlementGuid(adminRoleGuid);
+                ent1.setEntitlementApplication("UMD");
+                res1.setEntitlement(ent1);
+                req.addResource(res1);
+
+                // Resource 2
+                logger.info(LOGTAG + "Setting values for resource 2.");
+                Resource res2 = role.newResource();
+                String res2name = "HDSG_AWS-ACCOUNT_NUMBER-RHEDcloudAdministratorRole";
+                res2.setResourceName(res2name.replace("ACCOUNT_NUMBER", newAccountId));
+                res2.setResourceDescription("Provisions members to group RHEDcloudAdministratorRole on MS LDS Healthcare Connector");
+                res2.setResourceCategoryKey("group");
+                Entitlement ent2 = res2.newEntitlement();
+                String ent2dn = "CN=RHEDcloudAdministratorRole,OU=ACCOUNT_NUMBER,OU=AWS,DC=emory,DC=edu";
+                ent2.setEntitlementDN(ent2dn.replace("ACCOUNT_NUMBER", newAccountId));
+                ent2.setEntitlementGuid(adminRoleGuid);
+                ent2.setEntitlementApplication("HMD");
+                res2.setEntitlement(ent2);
+                req.addResource(res2);
+
+                // Resource 3
+                logger.info(LOGTAG + "Setting values for resource 3.");
+                Resource res3 = role.newResource();
+                res3.setResourceName("EADG_" + accountAlias);
+                res3.setResourceDescription("Provisions members to group " + accountAlias + " on Enterprise AD Connector");
+                res3.setResourceCategoryKey("group");
+                Entitlement ent3 = res3.newEntitlement();
+                ent3.setEntitlementDN(getResource3EntitlementDn(accountAlias));
+                ent3.setEntitlementApplication("EAD");
+                res3.setEntitlement(ent3);
+                req.addResource(res3);
+
+                // Resource 4
+                logger.info(LOGTAG + "Setting values for resource 4.");
+                Resource res4 = role.newResource();
+                res4.setResourceName("RGR_AwsUsers");
+                res4.setResourceDescription("Provisions members to group AwsUsers on IDV Roles LBD Connector. This group contains all AWS users.");
+                res4.setResourceCategoryKey("group");
+                Entitlement ent4 = res4.newEntitlement();
+                ent4.setEntitlementDN(getResource4EntitlementDn());
+                ent4.setEntitlementApplication("IDV");
+                res4.setEntitlement(ent4);
+                req.addResource(res4);
+
+                // Resource 5
+                logger.info(LOGTAG + "Setting values for resource 5.");
+                Resource res5 = role.newResource();
+                res5.setResourceName("RGR_AwsVpnAllow");
+                res5.setResourceDescription("Provisions members to group AwsVpnAllow on IDV Roles LBD Connector. This group is used to automatically grant access to VPNAllow and AWSAllow.");
+                res5.setResourceCategoryKey("group");
+                Entitlement ent5 = res5.newEntitlement();
+                ent5.setEntitlementDN(getResource5EntitlementDn());
+                ent5.setEntitlementApplication("IDV");
+                res5.setEntitlement(ent5);
+                req.addResource(res5);
+            }
+            catch (EnterpriseFieldException efe) {
+                String errMsg = "An error occurred setting the values of the " +
+                        "RoleRequisition. The exception is: " + efe.getMessage();
+                  logger.error(LOGTAG + errMsg);
+                  throw new StepException(errMsg, efe);
+            }
+
+            // Log the state of the RoleRequisition.
+            try {
+                logger.info(LOGTAG + "Role req is: " +
+                    req.toXmlString());
+            }
+            catch (XmlEnterpriseObjectException xeoe) {
+                String errMsg = "An error occurred serializing the object " +
+                        "to XML. The exception is: " + xeoe.getMessage();
+                  logger.error(LOGTAG + errMsg);
+                  throw new StepException(errMsg, xeoe);
+            }
+
+            // Get a producer from the pool
+            RequestService rs = null;
+            try {
+                PointToPointProducer p2p =
+                    (PointToPointProducer)getIdmServiceProducerPool()
+                    .getExclusiveProducer();
+                p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+                rs = (RequestService)p2p;
+            }
+            catch (JMSException jmse) {
+                String errMsg = "An error occurred getting a producer " +
+                    "from the pool. The exception is: " + jmse.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, jmse);
+            }
+
+            List results = null;
+            try {
+                long generateStartTime = System.currentTimeMillis();
+                results = role.generate(req, rs);
+                long generateTime = System.currentTimeMillis() - generateStartTime;
+                logger.info(LOGTAG + "Generated Role in " + generateTime +
+                    " ms.");
+                generatedRole = true;
+                addResultProperty("allocatedNewAccount",
+                    Boolean.toString(allocatedNewAccount));
+                addResultProperty("generatedRole",
+                    Boolean.toString(generatedRole));
+            }
+            catch (EnterpriseObjectGenerateException eoge) {
+                String errMsg = "An error occurred generating the object. " +
+                  "The exception is: " + eoge.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, eoge);
+            }
+            finally {
+                // Release the producer back to the pool
+                getIdmServiceProducerPool()
+                    .releaseProducer((MessageProducer)rs);
+            }
+
+            // If there is exactly one result, log it.
+            if (results.size() == 1) {
+                role = (Role)results.get(0);
+                try {
+                    logger.info(LOGTAG + "Generated role: " + role.toXmlString());
+                }
+                catch (XmlEnterpriseObjectException xeoe) {
+                    String errMsg = "An error occurred serializing the object " +
+                            "to XML. The exception is: " + xeoe.getMessage();
+                      logger.error(LOGTAG + errMsg);
+                      throw new StepException(errMsg, xeoe);
+                }
+            }
+
+        }
+        // If allocatedNewAccount is false, log it and add result props.
+        else {
+            logger.info(LOGTAG + "allocatedNewAccount is false. " +
+                "no need to generate a new role.");
+            addResultProperty("allocatedNewAccount",
+                Boolean.toString(allocatedNewAccount));
+            addResultProperty("generatedRole",
+                "not applicable");
+        }
+
+        // Update the step result.
+        String stepResult = FAILURE_RESULT;
+        if (generatedRole == true && allocatedNewAccount == true) {
+            stepResult = SUCCESS_RESULT;
+        }
+        if (allocatedNewAccount == false) {
+            stepResult = SUCCESS_RESULT;
+        }
+
+        // Update the step.
+        update(COMPLETED_STATUS, stepResult);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+
+        // Return the properties.
+        return getResultProperties();
+
+    }
+
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[CreateIdmRoleAndResourcesForAdminRole.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
+
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+
+        // Return the properties.
+        return getResultProperties();
+    }
+
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[CreateIdmRoleAndResourcesForAdminRole.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
+
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+
+        // Return the properties.
+        return getResultProperties();
+    }
+
+    public void rollback() throws StepException {
+        super.rollback();
+        String LOGTAG = getStepTag() + "[CreateIdmRoleAndResourcesForAdminRole.rollback] ";
+        long startTime = System.currentTimeMillis();
+
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
+
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+    }
+
+    private void setIdmServiceProducerPool(ProducerPool pool) {
+        m_idmServiceProducerPool = pool;
+    }
+
+    private ProducerPool getIdmServiceProducerPool() {
+        return m_idmServiceProducerPool;
+    }
+
+    private void setRequestTimeoutIntervalInMillis(int time) {
+        m_requestTimeoutIntervalInMillis = time;
+    }
+
+    private int getRequestTimeoutIntervalInMillis() {
+        return m_requestTimeoutIntervalInMillis;
+    }
+
+    private void setResource3EntitlementDnTemplate (String template) throws
+        StepException {
+
+        if (template == null) {
+            String errMsg = "resource3EntitlementDnTemplate property is null. " +
+                "Can't continue.";
+            throw new StepException(errMsg);
+        }
+
+        m_resource3EntitlementDnTemplate = template;
+    }
+
+    private String getResource3EntitlementDnTemplate() {
+        return m_resource3EntitlementDnTemplate;
+    }
+
+    private String getResource3EntitlementDn(String accountAlias) {
+        String dn = getResource3EntitlementDnTemplate()
+            .replace("ACCOUNT_ALIAS", accountAlias);
+        return dn;
+    }
+
+    private void setResource4EntitlementDn(String dn) throws
+        StepException {
+
+        if (dn == null) {
+            String errMsg = "resource4EntitlementDn property is null. " +
+                "Can't continue.";
+            throw new StepException(errMsg);
+        }
+
+        m_resource4EntitlementDn = dn;
+    }
+
+    private String getResource4EntitlementDn() {
+        return m_resource4EntitlementDn;
+    }
+
+    private void setResource5EntitlementDn (String dn) throws
+        StepException {
+
+        if (dn == null) {
+            String errMsg = "resource5EntitlementDn property is null. " +
+                "Can't continue.";
+            throw new StepException(errMsg);
+        }
+
+        m_resource5EntitlementDn = dn;
+    }
+
+    private String getResource5EntitlementDn() {
+        return m_resource5EntitlementDn;
+    }
 
 }

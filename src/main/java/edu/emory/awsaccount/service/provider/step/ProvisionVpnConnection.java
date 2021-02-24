@@ -50,514 +50,514 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
  **/
 public class ProvisionVpnConnection extends AbstractStep implements Step {
 
-	private ProducerPool m_networkOpsServiceProducerPool = null;
-	private String m_remoteVpnIpAddressForTesting = null;
-	private String m_presharedKeyTemplateForTesting = null;
-	private String m_vpnConnectionProfileId = null;
-	private int m_requestTimeoutIntervalInMillis = 600000;
+    private ProducerPool m_networkOpsServiceProducerPool = null;
+    private String m_remoteVpnIpAddressForTesting = null;
+    private String m_presharedKeyTemplateForTesting = null;
+    private String m_vpnConnectionProfileId = null;
+    private int m_requestTimeoutIntervalInMillis = 600000;
 
-	public void init (String provisioningId, Properties props,
-			AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
-			throws StepException {
+    public void init (String provisioningId, Properties props,
+            AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp)
+            throws StepException {
 
-		super.init(provisioningId, props, aConfig, vpcpp);
+        super.init(provisioningId, props, aConfig, vpcpp);
 
-		String LOGTAG = getStepTag() + "[ProvisionVpnConnection.init] ";
+        String LOGTAG = getStepTag() + "[ProvisionVpnConnection.init] ";
 
-		// This step needs to send messages to the Network Ops Service
-		// to provision or deprovision the VPN connection.
-		ProducerPool p2p1 = null;
-		try {
-			p2p1 = (ProducerPool)getAppConfig()
-				.getObject("NetworkOpsServiceProducerPool");
-			setNetworkOpsServiceProducerPool(p2p1);
-		}
-		catch (EnterpriseConfigurationObjectException ecoe) {
-			// An error occurred retrieving an object from AppConfig. Log it and
-			// throw an exception.
-			String errMsg = "An error occurred retrieving an object from " +
-					"AppConfig. The exception is: " + ecoe.getMessage();
-			logger.error(LOGTAG + errMsg);
-			addResultProperty("errorMessage", errMsg);
-			throw new StepException(errMsg);
-		}
+        // This step needs to send messages to the Network Ops Service
+        // to provision or deprovision the VPN connection.
+        ProducerPool p2p1 = null;
+        try {
+            p2p1 = (ProducerPool)getAppConfig()
+                .getObject("NetworkOpsServiceProducerPool");
+            setNetworkOpsServiceProducerPool(p2p1);
+        }
+        catch (EnterpriseConfigurationObjectException ecoe) {
+            // An error occurred retrieving an object from AppConfig. Log it and
+            // throw an exception.
+            String errMsg = "An error occurred retrieving an object from " +
+                    "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            addResultProperty("errorMessage", errMsg);
+            throw new StepException(errMsg);
+        }
 
-		logger.info(LOGTAG + "Getting custom step properties...");
-		String remoteVpnIpAddressForTesting = getProperties()
-				.getProperty("remoteVpnIpAddressForTesting", null);
-		setRemoteVpnIpAddressForTesting(remoteVpnIpAddressForTesting);
-		logger.info(LOGTAG + "remoteVpnIpAddressForTesting is: " +
-				getRemoteVpnIpAddressForTesting());
+        logger.info(LOGTAG + "Getting custom step properties...");
+        String remoteVpnIpAddressForTesting = getProperties()
+                .getProperty("remoteVpnIpAddressForTesting", null);
+        setRemoteVpnIpAddressForTesting(remoteVpnIpAddressForTesting);
+        logger.info(LOGTAG + "remoteVpnIpAddressForTesting is: " +
+                getRemoteVpnIpAddressForTesting());
 
-		String presharedKeyTemplateForTesting = getProperties()
-				.getProperty("presharedKeyTemplateForTesting", null);
-		setPresharedKeyTemplateForTesting(presharedKeyTemplateForTesting);
-		logger.info(LOGTAG + "presharedKeyTemplateForTesting is: " +
-				getPresharedKeyTemplateForTesting());
+        String presharedKeyTemplateForTesting = getProperties()
+                .getProperty("presharedKeyTemplateForTesting", null);
+        setPresharedKeyTemplateForTesting(presharedKeyTemplateForTesting);
+        logger.info(LOGTAG + "presharedKeyTemplateForTesting is: " +
+                getPresharedKeyTemplateForTesting());
 
-		String requestTimeoutInterval = getProperties()
-			.getProperty("requestTimeoutIntervalInMillis", "600000");
-		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
-		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
-			getRequestTimeoutIntervalInMillis());
+        String requestTimeoutInterval = getProperties()
+            .getProperty("requestTimeoutIntervalInMillis", "600000");
+        int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+        setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+        logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
+            getRequestTimeoutIntervalInMillis());
 
-		logger.info(LOGTAG + "Initialization complete.");
-	}
+        logger.info(LOGTAG + "Initialization complete.");
+    }
 
-	protected List<Property> run() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() + "[ProvisionVpnConnection.run] ";
-		logger.info(LOGTAG + "Begin running the step.");
+    protected List<Property> run() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() + "[ProvisionVpnConnection.run] ";
+        logger.info(LOGTAG + "Begin running the step.");
 
-		// check if creating a vpn connection
-		String createVpnConnection = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "createVpnConnection");
-		logger.info(LOGTAG + "createVpnConnection=" + createVpnConnection);
-		if(!Boolean.valueOf(createVpnConnection)) {
-			logger.info(LOGTAG + "Bypassing since not creating VPN connection");
-		} else {
-			// Get the VpcId property from a previous step.
-			String vpcId = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
-			String vpnConnectionProfileId = getStepPropertyValue("UPDATE_VPN_CONNECTION_ASSIGNMENT", "vpnConnectionProfileId");
-			setVpnConnectionProfileId(vpnConnectionProfileId);
-			String remoteVpnConnectionId1 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn1ConnectionId");
-			String vpnInsideIpCidr1 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn1InsideTunnelCidr1");
-			String remoteVpnConnectionId2 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
-			String vpnInsideIpCidr2 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
-			String remoteVpnIpAddress1 = null;
-			String remoteVpnIpAddress2 = null;
-			if (getRemoteVpnIpAddressForTesting() != null ) {
-				logger.info(LOGTAG + "There is a remote VPN IP address for testing. Using dummy IP: " + getRemoteVpnIpAddressForTesting());
-				addResultProperty("useDummyRemoteIp", "true");
-				addResultProperty("dummyRemoteIp", getRemoteVpnIpAddressForTesting());
-				remoteVpnIpAddress1 = getRemoteVpnIpAddressForTesting();
-				remoteVpnIpAddress2 = getRemoteVpnIpAddressForTesting();
-			}
-			else {
-				logger.info(LOGTAG + "There is no remote VPN IP address for testing. Using real address.");
-				addResultProperty("useDummyRemoteIp", "false");
-				remoteVpnIpAddress1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn1RemoteIpAddress");
-				remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn2RemoteIpAddress");
-			}
+        // check if creating a vpn connection
+        String createVpnConnection = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "createVpnConnection");
+        logger.info(LOGTAG + "createVpnConnection=" + createVpnConnection);
+        if(!Boolean.valueOf(createVpnConnection)) {
+            logger.info(LOGTAG + "Bypassing since not creating VPN connection");
+        } else {
+            // Get the VpcId property from a previous step.
+            String vpcId = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "VpcId");
+            String vpnConnectionProfileId = getStepPropertyValue("UPDATE_VPN_CONNECTION_ASSIGNMENT", "vpnConnectionProfileId");
+            setVpnConnectionProfileId(vpnConnectionProfileId);
+            String remoteVpnConnectionId1 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn1ConnectionId");
+            String vpnInsideIpCidr1 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn1InsideTunnelCidr1");
+            String remoteVpnConnectionId2 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "Vpn2ConnectionId");
+            String vpnInsideIpCidr2 = getStepPropertyValue("CREATE_VPC_TYPE1_CFN_STACK", "vpn2InsideTunnelCidr1");
+            String remoteVpnIpAddress1 = null;
+            String remoteVpnIpAddress2 = null;
+            if (getRemoteVpnIpAddressForTesting() != null ) {
+                logger.info(LOGTAG + "There is a remote VPN IP address for testing. Using dummy IP: " + getRemoteVpnIpAddressForTesting());
+                addResultProperty("useDummyRemoteIp", "true");
+                addResultProperty("dummyRemoteIp", getRemoteVpnIpAddressForTesting());
+                remoteVpnIpAddress1 = getRemoteVpnIpAddressForTesting();
+                remoteVpnIpAddress2 = getRemoteVpnIpAddressForTesting();
+            }
+            else {
+                logger.info(LOGTAG + "There is no remote VPN IP address for testing. Using real address.");
+                addResultProperty("useDummyRemoteIp", "false");
+                remoteVpnIpAddress1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn1RemoteIpAddress");
+                remoteVpnIpAddress2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn2RemoteIpAddress");
+            }
 
-			String presharedKey1 = null;
-			String presharedKey2 = null;
-			if (getPresharedKeyTemplateForTesting() != null ) {
-				logger.info(LOGTAG + "There is a preshared key template for testing. " +
-					"Using dummy key: " + getPresharedKeyForTesting(vpnConnectionProfileId));
-				addResultProperty("useDummyPresharedKey", "true");
-				presharedKey1 = getPresharedKeyForTesting(vpnConnectionProfileId);
-				presharedKey2 = getPresharedKeyForTesting(vpnConnectionProfileId);
-			}
-			else {
-				logger.info(LOGTAG + "There is no preshared key template for testing. " +
-					"Using real key.");
-				addResultProperty("useDummyPresharedKey", "false");
-				presharedKey1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn1PresharedKey");
-				presharedKey2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn2PresharedKey");
-			}
+            String presharedKey1 = null;
+            String presharedKey2 = null;
+            if (getPresharedKeyTemplateForTesting() != null ) {
+                logger.info(LOGTAG + "There is a preshared key template for testing. " +
+                    "Using dummy key: " + getPresharedKeyForTesting(vpnConnectionProfileId));
+                addResultProperty("useDummyPresharedKey", "true");
+                presharedKey1 = getPresharedKeyForTesting(vpnConnectionProfileId);
+                presharedKey2 = getPresharedKeyForTesting(vpnConnectionProfileId);
+            }
+            else {
+                logger.info(LOGTAG + "There is no preshared key template for testing. " +
+                    "Using real key.");
+                addResultProperty("useDummyPresharedKey", "false");
+                presharedKey1 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn1PresharedKey");
+                presharedKey2 = getStepPropertyValue("QUERY_FOR_VPN_CONFIGURATION", "vpn2PresharedKey");
+            }
 
-			// Compute the local tunnel ids
-			int tunnelId1 = 10000 + Integer.parseInt(vpnConnectionProfileId);
-			String localTunnelId1 = Integer.toString(tunnelId1);
-			int tunnelId2 = 20000 + Integer.parseInt(vpnConnectionProfileId);
-			String localTunnelId2 = Integer.toString(tunnelId2);
+            // Compute the local tunnel ids
+            int tunnelId1 = 10000 + Integer.parseInt(vpnConnectionProfileId);
+            String localTunnelId1 = Integer.toString(tunnelId1);
+            int tunnelId2 = 20000 + Integer.parseInt(vpnConnectionProfileId);
+            String localTunnelId2 = Integer.toString(tunnelId2);
 
-			// Get a configured VpnConnectionProfile and
-			// VpnConnectionProfileQuery from AppConfig
-			VpnConnectionProfile vpnConnectionProfile = new VpnConnectionProfile();
-			VpnConnectionProfileQuerySpecification querySpec = new VpnConnectionProfileQuerySpecification();
-			try {
-				vpnConnectionProfile = (VpnConnectionProfile) getAppConfig().getObjectByType(vpnConnectionProfile.getClass().getName());
-				querySpec = (VpnConnectionProfileQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
-			} catch (EnterpriseConfigurationObjectException ecoe) {
-				String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, ecoe);
-			}
+            // Get a configured VpnConnectionProfile and
+            // VpnConnectionProfileQuery from AppConfig
+            VpnConnectionProfile vpnConnectionProfile = new VpnConnectionProfile();
+            VpnConnectionProfileQuerySpecification querySpec = new VpnConnectionProfileQuerySpecification();
+            try {
+                vpnConnectionProfile = (VpnConnectionProfile) getAppConfig().getObjectByType(vpnConnectionProfile.getClass().getName());
+                querySpec = (VpnConnectionProfileQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
+            } catch (EnterpriseConfigurationObjectException ecoe) {
+                String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, ecoe);
+            }
 
-			String provisioningId = getVirtualPrivateCloudProvisioning().getProvisioningId();
+            String provisioningId = getVirtualPrivateCloudProvisioning().getProvisioningId();
 
-			// Set the values of the querySpec.
-			try {
-				querySpec.setVpnConnectionProfileId(vpnConnectionProfileId);
-			} catch (EnterpriseFieldException efe) {
-				String errMsg = "An error occurred setting the values of the " +
-						"requisition. The exception is: " + efe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, efe);
-			}
+            // Set the values of the querySpec.
+            try {
+                querySpec.setVpnConnectionProfileId(vpnConnectionProfileId);
+            } catch (EnterpriseFieldException efe) {
+                String errMsg = "An error occurred setting the values of the " +
+                        "requisition. The exception is: " + efe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, efe);
+            }
 
-			// Log the state of the querySpec.
-			try {
-				logger.info(LOGTAG + "querySpec is: " + querySpec.toXmlString());
-			} catch (XmlEnterpriseObjectException xeoe) {
-				String errMsg = "An error occurred serializing the querySpec " +
-						"to XML. The exception is: " + xeoe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, xeoe);
-			}
+            // Log the state of the querySpec.
+            try {
+                logger.info(LOGTAG + "querySpec is: " + querySpec.toXmlString());
+            } catch (XmlEnterpriseObjectException xeoe) {
+                String errMsg = "An error occurred serializing the querySpec " +
+                        "to XML. The exception is: " + xeoe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, xeoe);
+            }
 
-			// Get a producer from the pool
-			RequestService rs = null;
-			try {
-				PointToPointProducer p2p =
-						(PointToPointProducer) getNetworkOpsServiceProducerPool()
-								.getExclusiveProducer();
-				p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-				rs = (RequestService) p2p;
-			} catch (JMSException jmse) {
-				String errMsg = "An error occurred getting a producer " +
-						"from the pool. The exception is: " + jmse.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, jmse);
-			}
+            // Get a producer from the pool
+            RequestService rs = null;
+            try {
+                PointToPointProducer p2p =
+                        (PointToPointProducer) getNetworkOpsServiceProducerPool()
+                                .getExclusiveProducer();
+                p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+                rs = (RequestService) p2p;
+            } catch (JMSException jmse) {
+                String errMsg = "An error occurred getting a producer " +
+                        "from the pool. The exception is: " + jmse.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, jmse);
+            }
 
-			List profileResults = null;
-			try {
-				long queryStartTime = System.currentTimeMillis();
-				profileResults = vpnConnectionProfile.query(querySpec, rs);
-				long queryTime = System.currentTimeMillis() - queryStartTime;
-				logger.info(LOGTAG + "Queried for VpnConnectionProfile " +
-						"for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
-						+ queryTime + " ms. Returned " + profileResults.size() +
-						" result(s).");
-			} catch (EnterpriseObjectQueryException eoqe) {
-				String errMsg = "An error occurred querying for the  " +
-						"VpnConnectionProfile object. " +
-						"The exception is: " + eoqe.getMessage();
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg, eoqe);
-			} finally {
-				// Release the producer back to the pool
-				getNetworkOpsServiceProducerPool()
-						.releaseProducer((MessageProducer) rs);
-			}
+            List profileResults = null;
+            try {
+                long queryStartTime = System.currentTimeMillis();
+                profileResults = vpnConnectionProfile.query(querySpec, rs);
+                long queryTime = System.currentTimeMillis() - queryStartTime;
+                logger.info(LOGTAG + "Queried for VpnConnectionProfile " +
+                        "for VpnConnectionProfileId " + vpnConnectionProfileId + " in "
+                        + queryTime + " ms. Returned " + profileResults.size() +
+                        " result(s).");
+            } catch (EnterpriseObjectQueryException eoqe) {
+                String errMsg = "An error occurred querying for the  " +
+                        "VpnConnectionProfile object. " +
+                        "The exception is: " + eoqe.getMessage();
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg, eoqe);
+            } finally {
+                // Release the producer back to the pool
+                getNetworkOpsServiceProducerPool()
+                        .releaseProducer((MessageProducer) rs);
+            }
 
-			// If there is exactly one result, provision the VPN connection.
-			if (profileResults.size() == 1) {
-				vpnConnectionProfile = (VpnConnectionProfile) profileResults.get(0);
+            // If there is exactly one result, provision the VPN connection.
+            if (profileResults.size() == 1) {
+                vpnConnectionProfile = (VpnConnectionProfile) profileResults.get(0);
 
-				// Log the state of the object.
-				try {
-					logger.info(LOGTAG + "VpnConnectionProfile returned is: "
-							+ vpnConnectionProfile.toXmlString());
-				} catch (XmlEnterpriseObjectException xeoe) {
-					String errMsg = "An error occurred serializing the object " +
-							"to XML. The exception is: " + xeoe.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg, xeoe);
-				}
+                // Log the state of the object.
+                try {
+                    logger.info(LOGTAG + "VpnConnectionProfile returned is: "
+                            + vpnConnectionProfile.toXmlString());
+                } catch (XmlEnterpriseObjectException xeoe) {
+                    String errMsg = "An error occurred serializing the object " +
+                            "to XML. The exception is: " + xeoe.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg, xeoe);
+                }
 
-				// Get a configured VpnConnectionProvisioning object and
-				// VpnConnectionRequisition object from AppConfig
-				VpnConnectionProvisioning vpnProvisioning = new
-						VpnConnectionProvisioning();
-				VpnConnectionRequisition vpnReq =
-						new VpnConnectionRequisition();
-				try {
-					vpnProvisioning = (VpnConnectionProvisioning) getAppConfig()
-							.getObjectByType(vpnProvisioning.getClass().getName());
-					vpnReq = (VpnConnectionRequisition) getAppConfig()
-							.getObjectByType(vpnReq.getClass().getName());
-				} catch (EnterpriseConfigurationObjectException ecoe) {
-					String errMsg = "An error occurred retrieving an object from " +
-							"AppConfig. The exception is: " + ecoe.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg, ecoe);
-				}
+                // Get a configured VpnConnectionProvisioning object and
+                // VpnConnectionRequisition object from AppConfig
+                VpnConnectionProvisioning vpnProvisioning = new
+                        VpnConnectionProvisioning();
+                VpnConnectionRequisition vpnReq =
+                        new VpnConnectionRequisition();
+                try {
+                    vpnProvisioning = (VpnConnectionProvisioning) getAppConfig()
+                            .getObjectByType(vpnProvisioning.getClass().getName());
+                    vpnReq = (VpnConnectionRequisition) getAppConfig()
+                            .getObjectByType(vpnReq.getClass().getName());
+                } catch (EnterpriseConfigurationObjectException ecoe) {
+                    String errMsg = "An error occurred retrieving an object from " +
+                            "AppConfig. The exception is: " + ecoe.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg, ecoe);
+                }
 
-				// Set the values of the VpnConnectionRequisition.
-				try {
-					vpnReq.setVpnConnectionProfile(vpnConnectionProfile);
-					vpnReq.setOwnerId(vpcId);
+                // Set the values of the VpnConnectionRequisition.
+                try {
+                    vpnReq.setVpnConnectionProfile(vpnConnectionProfile);
+                    vpnReq.setOwnerId(vpcId);
 
-					RemoteVpnConnectionInfo rvci1 =
-							vpnReq.newRemoteVpnConnectionInfo();
-					rvci1.setRemoteVpnConnectionId(remoteVpnConnectionId1);
-					RemoteVpnTunnel rvt1 = rvci1.newRemoteVpnTunnel();
-					rvt1.setVpnInsideIpCidr(vpnInsideIpCidr1);
-					rvt1.setRemoteVpnIpAddress(remoteVpnIpAddress1);
-					rvt1.setPresharedKey(presharedKey1);
-					rvt1.setLocalTunnelId(localTunnelId1);
-					rvci1.addRemoteVpnTunnel(rvt1);
-					vpnReq.addRemoteVpnConnectionInfo(rvci1);
+                    RemoteVpnConnectionInfo rvci1 =
+                            vpnReq.newRemoteVpnConnectionInfo();
+                    rvci1.setRemoteVpnConnectionId(remoteVpnConnectionId1);
+                    RemoteVpnTunnel rvt1 = rvci1.newRemoteVpnTunnel();
+                    rvt1.setVpnInsideIpCidr(vpnInsideIpCidr1);
+                    rvt1.setRemoteVpnIpAddress(remoteVpnIpAddress1);
+                    rvt1.setPresharedKey(presharedKey1);
+                    rvt1.setLocalTunnelId(localTunnelId1);
+                    rvci1.addRemoteVpnTunnel(rvt1);
+                    vpnReq.addRemoteVpnConnectionInfo(rvci1);
 
-					RemoteVpnConnectionInfo rvci2 =
-							vpnReq.newRemoteVpnConnectionInfo();
-					rvci2.setRemoteVpnConnectionId(remoteVpnConnectionId2);
-					RemoteVpnTunnel rvt2 = rvci2.newRemoteVpnTunnel();
-					rvt2.setVpnInsideIpCidr(vpnInsideIpCidr2);
-					rvt2.setRemoteVpnIpAddress(remoteVpnIpAddress2);
-					rvt2.setPresharedKey(presharedKey2);
-					rvt2.setLocalTunnelId(localTunnelId2);
-					rvci2.addRemoteVpnTunnel(rvt2);
-					vpnReq.addRemoteVpnConnectionInfo(rvci2);
+                    RemoteVpnConnectionInfo rvci2 =
+                            vpnReq.newRemoteVpnConnectionInfo();
+                    rvci2.setRemoteVpnConnectionId(remoteVpnConnectionId2);
+                    RemoteVpnTunnel rvt2 = rvci2.newRemoteVpnTunnel();
+                    rvt2.setVpnInsideIpCidr(vpnInsideIpCidr2);
+                    rvt2.setRemoteVpnIpAddress(remoteVpnIpAddress2);
+                    rvt2.setPresharedKey(presharedKey2);
+                    rvt2.setLocalTunnelId(localTunnelId2);
+                    rvci2.addRemoteVpnTunnel(rvt2);
+                    vpnReq.addRemoteVpnConnectionInfo(rvci2);
 
-				} catch (EnterpriseFieldException efe) {
-					String errMsg = "An error occurred setting the values of the " +
-							"object. The exception is: " + efe.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg, efe);
-				}
+                } catch (EnterpriseFieldException efe) {
+                    String errMsg = "An error occurred setting the values of the " +
+                            "object. The exception is: " + efe.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg, efe);
+                }
 
-				// Log the state of the object.
-				try {
-					logger.info(LOGTAG + "updated VpnConnectionRequisition: "
-							+ vpnReq.toXmlString());
-				} catch (XmlEnterpriseObjectException xeoe) {
-					String errMsg = "An error occurred serializing the " +
-							"object to XML. The exception is: " + xeoe.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg, xeoe);
-				}
+                // Log the state of the object.
+                try {
+                    logger.info(LOGTAG + "updated VpnConnectionRequisition: "
+                            + vpnReq.toXmlString());
+                } catch (XmlEnterpriseObjectException xeoe) {
+                    String errMsg = "An error occurred serializing the " +
+                            "object to XML. The exception is: " + xeoe.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg, xeoe);
+                }
 
-				// Get a producer from the pool
-				rs = null;
-				try {
-					PointToPointProducer p2p =
-							(PointToPointProducer) getNetworkOpsServiceProducerPool()
-									.getExclusiveProducer();
-					p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-					rs = (RequestService) p2p;
-				} catch (JMSException jmse) {
-					String errMsg = "An error occurred getting a producer " +
-							"from the pool. The exception is: " + jmse.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg, jmse);
-				}
+                // Get a producer from the pool
+                rs = null;
+                try {
+                    PointToPointProducer p2p =
+                            (PointToPointProducer) getNetworkOpsServiceProducerPool()
+                                    .getExclusiveProducer();
+                    p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+                    rs = (RequestService) p2p;
+                } catch (JMSException jmse) {
+                    String errMsg = "An error occurred getting a producer " +
+                            "from the pool. The exception is: " + jmse.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg, jmse);
+                }
 
-				List results = null;
-				try {
-					long generateStartTime = System.currentTimeMillis();
-					results = vpnProvisioning.generate(vpnReq, rs);
-					long generateTime = System.currentTimeMillis() - generateStartTime;
-					logger.info(LOGTAG + "Generate VpnConnectionProvisioning" +
-							" in " + generateTime + " ms.");
-				} catch (EnterpriseObjectGenerateException eoge) {
-					String errMsg = "An error occurred generating the  " +
-							"VpnConnectionProvisinoing object. The " +
-							"exception is: " + eoge.getMessage();
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg, eoge);
-				} finally {
-					// Release the producer back to the pool
-					getNetworkOpsServiceProducerPool()
-							.releaseProducer((MessageProducer) rs);
-				}
+                List results = null;
+                try {
+                    long generateStartTime = System.currentTimeMillis();
+                    results = vpnProvisioning.generate(vpnReq, rs);
+                    long generateTime = System.currentTimeMillis() - generateStartTime;
+                    logger.info(LOGTAG + "Generate VpnConnectionProvisioning" +
+                            " in " + generateTime + " ms.");
+                } catch (EnterpriseObjectGenerateException eoge) {
+                    String errMsg = "An error occurred generating the  " +
+                            "VpnConnectionProvisinoing object. The " +
+                            "exception is: " + eoge.getMessage();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg, eoge);
+                } finally {
+                    // Release the producer back to the pool
+                    getNetworkOpsServiceProducerPool()
+                            .releaseProducer((MessageProducer) rs);
+                }
 
-				if (results.size() == 1) {
-					VpnConnectionProvisioning vcp =
-							(VpnConnectionProvisioning) results.get(0);
-					// Add result properties
-					addResultProperty("generatedVpnConnectionProvisioning",
-							"true");
-					addResultProperty("vpnConnectionProvisioningId",
-							vcp.getProvisioningId());
-					addResultProperty("vpnConnectionProfile",
-							vpnConnectionProfileId);
-					addResultProperty("ownerId", vpcId);
-					addResultProperty("remoteVpnConnectionId1",
-							remoteVpnConnectionId1);
-					addResultProperty("vpnInsideIpCidr1",
-							vpnInsideIpCidr1);
-					addResultProperty("remoteVpnIpAddress1",
-							remoteVpnIpAddress1);
-					addResultProperty("presharedKey1",
-							presharedKey1);
-					addResultProperty("localTunnelId1",
-							localTunnelId1);
-					addResultProperty("remoteVpnConnectionId2",
-							remoteVpnConnectionId2);
-					addResultProperty("vpnInsideIpCidr2",
-							vpnInsideIpCidr2);
-					addResultProperty("remoteVpnIpAddress2",
-							remoteVpnIpAddress2);
-					addResultProperty("presharedKey2",
-							presharedKey2);
-					addResultProperty("localTunnelId2",
-							localTunnelId2);
-				} else {
-					String errMsg = "Invalid number of results returned from " +
-							"VpnConnectionProvisioning.Generate-Request. " +
-							results.size() + " results returned. " +
-							"Expected exactly 1.";
-					logger.error(LOGTAG + errMsg);
-					throw new StepException(errMsg);
-				}
+                if (results.size() == 1) {
+                    VpnConnectionProvisioning vcp =
+                            (VpnConnectionProvisioning) results.get(0);
+                    // Add result properties
+                    addResultProperty("generatedVpnConnectionProvisioning",
+                            "true");
+                    addResultProperty("vpnConnectionProvisioningId",
+                            vcp.getProvisioningId());
+                    addResultProperty("vpnConnectionProfile",
+                            vpnConnectionProfileId);
+                    addResultProperty("ownerId", vpcId);
+                    addResultProperty("remoteVpnConnectionId1",
+                            remoteVpnConnectionId1);
+                    addResultProperty("vpnInsideIpCidr1",
+                            vpnInsideIpCidr1);
+                    addResultProperty("remoteVpnIpAddress1",
+                            remoteVpnIpAddress1);
+                    addResultProperty("presharedKey1",
+                            presharedKey1);
+                    addResultProperty("localTunnelId1",
+                            localTunnelId1);
+                    addResultProperty("remoteVpnConnectionId2",
+                            remoteVpnConnectionId2);
+                    addResultProperty("vpnInsideIpCidr2",
+                            vpnInsideIpCidr2);
+                    addResultProperty("remoteVpnIpAddress2",
+                            remoteVpnIpAddress2);
+                    addResultProperty("presharedKey2",
+                            presharedKey2);
+                    addResultProperty("localTunnelId2",
+                            localTunnelId2);
+                } else {
+                    String errMsg = "Invalid number of results returned from " +
+                            "VpnConnectionProvisioning.Generate-Request. " +
+                            results.size() + " results returned. " +
+                            "Expected exactly 1.";
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg);
+                }
 
-			}
-			// If there is not exactly one assignment returned, log it and
-			// throw an exception.
-			else {
-				String errMsg = "Invalid number of results returned from " +
-						"VpnConnectionProfile.Query-Request. " +
-						profileResults.size() + " results returned. " +
-						"Expected exactly 1.";
-				logger.error(LOGTAG + errMsg);
-				throw new StepException(errMsg);
-			}
-		}
+            }
+            // If there is not exactly one assignment returned, log it and
+            // throw an exception.
+            else {
+                String errMsg = "Invalid number of results returned from " +
+                        "VpnConnectionProfile.Query-Request. " +
+                        profileResults.size() + " results returned. " +
+                        "Expected exactly 1.";
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg);
+            }
+        }
 
-		// Update the step.
-		update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step run completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step run completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
+        // Return the properties.
+        return getResultProperties();
 
-	}
+    }
 
-	protected List<Property> simulate() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[ProvisionVpnConnection.simulate] ";
-		logger.info(LOGTAG + "Begin step simulation.");
+    protected List<Property> simulate() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[ProvisionVpnConnection.simulate] ";
+        logger.info(LOGTAG + "Begin step simulation.");
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, SUCCESS_RESULT);
+        // Update the step.
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step simulation completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Return the properties.
+        return getResultProperties();
+    }
 
-	protected List<Property> fail() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[ProvisionVpnConnection.fail] ";
-		logger.info(LOGTAG + "Begin step failure simulation.");
+    protected List<Property> fail() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[ProvisionVpnConnection.fail] ";
+        logger.info(LOGTAG + "Begin step failure simulation.");
 
-		// Set return properties.
-    	addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
+        // Set return properties.
+        addResultProperty("stepExecutionMethod", FAILURE_EXEC_TYPE);
 
-		// Update the step.
-    	update(COMPLETED_STATUS, FAILURE_RESULT);
+        // Update the step.
+        update(COMPLETED_STATUS, FAILURE_RESULT);
 
-    	// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Step failure simulation completed in " + time + "ms.");
 
-    	// Return the properties.
-    	return getResultProperties();
-	}
+        // Return the properties.
+        return getResultProperties();
+    }
 
-	public void rollback() throws StepException {
-		long startTime = System.currentTimeMillis();
-		String LOGTAG = getStepTag() +
-			"[ProvisiongVpnConnection.rollback] ";
+    public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
+        String LOGTAG = getStepTag() +
+            "[ProvisiongVpnConnection.rollback] ";
 
 // TODO: Implement deprovisioning
 
-		update(ROLLBACK_STATUS, SUCCESS_RESULT);
+        update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
-		// Log completion time.
-    	long time = System.currentTimeMillis() - startTime;
-    	logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
-	}
+        // Log completion time.
+        long time = System.currentTimeMillis() - startTime;
+        logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
+    }
 
-	private void setNetworkOpsServiceProducerPool(ProducerPool pool) {
-		m_networkOpsServiceProducerPool = pool;
-	}
+    private void setNetworkOpsServiceProducerPool(ProducerPool pool) {
+        m_networkOpsServiceProducerPool = pool;
+    }
 
-	private ProducerPool getNetworkOpsServiceProducerPool() {
-		return m_networkOpsServiceProducerPool;
-	}
+    private ProducerPool getNetworkOpsServiceProducerPool() {
+        return m_networkOpsServiceProducerPool;
+    }
 
-	private void setRemoteVpnIpAddressForTesting(String ipAddress)
-		throws StepException {
+    private void setRemoteVpnIpAddressForTesting(String ipAddress)
+        throws StepException {
 
-		m_remoteVpnIpAddressForTesting = ipAddress;
-	}
+        m_remoteVpnIpAddressForTesting = ipAddress;
+    }
 
-	private String getRemoteVpnIpAddressForTesting() {
-		return m_remoteVpnIpAddressForTesting;
-	}
+    private String getRemoteVpnIpAddressForTesting() {
+        return m_remoteVpnIpAddressForTesting;
+    }
 
-	private void setPresharedKeyTemplateForTesting(String template)
-		throws StepException {
+    private void setPresharedKeyTemplateForTesting(String template)
+        throws StepException {
 
-		m_presharedKeyTemplateForTesting = template;
-	}
+        m_presharedKeyTemplateForTesting = template;
+    }
 
-	private String getPresharedKeyTemplateForTesting() {
-		return m_presharedKeyTemplateForTesting;
-	}
+    private String getPresharedKeyTemplateForTesting() {
+        return m_presharedKeyTemplateForTesting;
+    }
 
-	private void setVpnConnectionProfileId(String id) {
-		m_vpnConnectionProfileId = id;
-	}
+    private void setVpnConnectionProfileId(String id) {
+        m_vpnConnectionProfileId = id;
+    }
 
-	private String getVpnConnectionProfileId() {
-		return m_vpnConnectionProfileId;
-	}
+    private String getVpnConnectionProfileId() {
+        return m_vpnConnectionProfileId;
+    }
 
-	private String getPresharedKey() {
+    private String getPresharedKey() {
 
-		String LOGTAG = getStepTag() + "[ProvisionVpnConnection.getPresharedKey] ";
-		String key = null;
-		String keyPrefix = getPresharedKeyTemplateForTesting();
-		String keySuffix = null;
-		int vpnConnectionProfileId = Integer.parseInt(getVpnConnectionProfileId());
-		if (getActualPresharedKey() == null) {
-			logger.info(LOGTAG + "Formatting " + vpnConnectionProfileId +
-				" as three padded characters...");
-			keySuffix =	String.format("%03d", vpnConnectionProfileId);
-			logger.info(LOGTAG + "keySuffix is: " + keySuffix);
-			key = keyPrefix + keySuffix;
-			logger.info(LOGTAG + "key is: " + key);
-		}
-		else {
-			key = getActualPresharedKey();
-		}
-		return key;
-	}
+        String LOGTAG = getStepTag() + "[ProvisionVpnConnection.getPresharedKey] ";
+        String key = null;
+        String keyPrefix = getPresharedKeyTemplateForTesting();
+        String keySuffix = null;
+        int vpnConnectionProfileId = Integer.parseInt(getVpnConnectionProfileId());
+        if (getActualPresharedKey() == null) {
+            logger.info(LOGTAG + "Formatting " + vpnConnectionProfileId +
+                " as three padded characters...");
+            keySuffix =    String.format("%03d", vpnConnectionProfileId);
+            logger.info(LOGTAG + "keySuffix is: " + keySuffix);
+            key = keyPrefix + keySuffix;
+            logger.info(LOGTAG + "key is: " + key);
+        }
+        else {
+            key = getActualPresharedKey();
+        }
+        return key;
+    }
 
-	private String getActualPresharedKey() {
-		return null;
-	}
+    private String getActualPresharedKey() {
+        return null;
+    }
 
-	private String getRemoteVpnIpAddress() {
+    private String getRemoteVpnIpAddress() {
 
-		String ip = null;
-		if (getActualRemoteVpnIpAddress() == null) {
-			ip = getRemoteVpnIpAddressForTesting();
-		}
-		else {
-			ip = getActualRemoteVpnIpAddress();
-		}
-		return ip;
-	}
+        String ip = null;
+        if (getActualRemoteVpnIpAddress() == null) {
+            ip = getRemoteVpnIpAddressForTesting();
+        }
+        else {
+            ip = getActualRemoteVpnIpAddress();
+        }
+        return ip;
+    }
 
-	private String getActualRemoteVpnIpAddress() {
-		return null;
-	}
+    private String getActualRemoteVpnIpAddress() {
+        return null;
+    }
 
-	private void setRequestTimeoutIntervalInMillis(int time) {
-		m_requestTimeoutIntervalInMillis = time;
-	}
+    private void setRequestTimeoutIntervalInMillis(int time) {
+        m_requestTimeoutIntervalInMillis = time;
+    }
 
-	private int getRequestTimeoutIntervalInMillis() {
-		return m_requestTimeoutIntervalInMillis;
-	}
+    private int getRequestTimeoutIntervalInMillis() {
+        return m_requestTimeoutIntervalInMillis;
+    }
 
-	private String getPresharedKeyForTesting(String vpnConnectionProfileId) {
+    private String getPresharedKeyForTesting(String vpnConnectionProfileId) {
 
-		int number = Integer.valueOf(vpnConnectionProfileId);
-		String str = String.format("%03d", number);
+        int number = Integer.valueOf(vpnConnectionProfileId);
+        String str = String.format("%03d", number);
 
-		String key = getPresharedKeyTemplateForTesting() + str;
-		return str;
+        String key = getPresharedKeyTemplateForTesting() + str;
+        return str;
 
-	}
+    }
 
 }

@@ -99,10 +99,8 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         // Get some properties from previous steps.
-        String allocateNewAccount =
-                getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
-        String newAccountId =
-                getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+        String allocateNewAccount = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
+        String newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
 
         boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount);
         logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
@@ -111,7 +109,7 @@ public class AssignCentralAdminGroupToAdminRole extends AbstractStep implements 
         // If allocatedNewAccount is true and newAccountId is not null,
         // Build a list of all account admins and send a RoleAssignment.Generate-Request
         // to add each admin to the admin role.
-        if (allocatedNewAccount && (newAccountId != null && newAccountId.equalsIgnoreCase("null") == false)) {
+        if (allocatedNewAccount && (newAccountId != null && !newAccountId.equals(PROPERTY_VALUE_NOT_AVAILABLE))) {
             logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
                     "is not null. Adding administrator group to admin role.");
 

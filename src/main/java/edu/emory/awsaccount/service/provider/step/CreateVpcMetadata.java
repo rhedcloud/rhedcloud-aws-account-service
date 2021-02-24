@@ -83,7 +83,7 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
 
             // Get some properties from previous steps.
             String accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-            if (accountId == null || accountId.equalsIgnoreCase("not applicable") || accountId.equalsIgnoreCase("not available")) {
+            if (accountId.equals(PROPERTY_VALUE_NOT_APPLICABLE) || accountId.equals(PROPERTY_VALUE_NOT_AVAILABLE)) {
                 accountId = req.getAccountId();
                 if (accountId == null || accountId.equals("")) {
                     String errMsg = "No account number for the new VPC can be found. Can't continue.";

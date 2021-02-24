@@ -141,37 +141,14 @@ public class CreateVpcType1CfnStack extends AbstractStep implements Step {
 
         boolean stackCreated = false;
 
-        // accountId can come from one of two different steps depending on if a new account is allocated or not
-        String accountId;
-
-        // Get the accountId property from the DETERMINE_NEW_OR_EXISTING_ACCOUNT step.
-        ProvisioningStep step_DETERMINE_NEW_OR_EXISTING_ACCOUNT = getProvisioningStepByType("DETERMINE_NEW_OR_EXISTING_ACCOUNT");
-        if (step_DETERMINE_NEW_OR_EXISTING_ACCOUNT != null) {
-            accountId = getResultProperty(step_DETERMINE_NEW_OR_EXISTING_ACCOUNT, "accountId");
-            logger.info(LOGTAG + "Property accountId from the DETERMINE_NEW_OR_EXISTING_ACCOUNT step is: " + accountId);
-        } else {
-            String errMsg = "Step DETERMINE_NEW_OR_EXISTING_ACCOUNT not found. Cannot determine what the accountId is from this step.";
-            logger.error(LOGTAG + errMsg);
-            throw new StepException(errMsg);
-        }
-
-        // If the existing accountId is null. Get the accountId of the newly generated account.
-        if (accountId == null || accountId.equalsIgnoreCase("null")) {
-            ProvisioningStep step_GENERATE_NEW_ACCOUNT = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-            if (step_GENERATE_NEW_ACCOUNT != null) {
-                accountId = getResultProperty(step_GENERATE_NEW_ACCOUNT, "newAccountId");
-                logger.info(LOGTAG + "Property newAccountId from the GENERATE_NEW_ACCOUNT step is: " + accountId);
-            } else {
-                String errMsg = "Step GENERATE_NEW_ACCOUNT not found. Cannot determine what the newAccountId is from this step.";
+        String accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+        if (accountId.equals(PROPERTY_VALUE_NOT_APPLICABLE) || accountId.equals(PROPERTY_VALUE_NOT_AVAILABLE)) {
+            accountId = vpcpr.getAccountId();
+            if (accountId == null || accountId.equals("")) {
+                String errMsg = "No account number for the stack creation can be found. Can't continue.";
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg);
             }
-        }
-
-        if (accountId == null || accountId.equalsIgnoreCase("null")) {
-            String errMsg = "The value of accountId could not be found in preceding steps. Can't continue.";
-            logger.error(LOGTAG + errMsg);
-            throw new StepException(errMsg);
         }
 
         addResultProperty("accountId", accountId);  // used by future steps

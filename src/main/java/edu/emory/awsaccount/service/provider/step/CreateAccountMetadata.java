@@ -88,56 +88,30 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
         // Return properties
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
-        // Get the allocatedNewAccount property from the
-        // GENERATE_NEW_ACCOUNT step.
-        logger.info(LOGTAG + "Getting properties from preceding steps...");
-        ProvisioningStep step1 = getProvisioningStepByType("GENERATE_NEW_ACCOUNT");
-        boolean allocatedNewAccount = false;
-        String newAccountId = null;
-        String newAccountName = null;
-        String accountEmailAddress = null;
-        if (step1 != null) {
-            logger.info(LOGTAG + "Step GENERATE_NEW_ACCOUNT found.");
-            String sAllocatedNewAccount = getResultProperty(step1, "allocatedNewAccount");
-            allocatedNewAccount = Boolean.parseBoolean(sAllocatedNewAccount);
-            addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
-            logger.info(LOGTAG + "Property allocatedNewAccount from preceding " +
-                    "step is: " + allocatedNewAccount);
-            newAccountId = getResultProperty(step1, "newAccountId");
-        } else {
-            String errMsg = "Step GENERATE_NEW_ACCOUNT not found. " +
-                    "Can't continue.";
-            logger.error(LOGTAG + errMsg);
-            throw new StepException(errMsg);
-        }
+        String allocateNewAccount = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "allocateNewAccount");
+        String newAccountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+
+        boolean allocatedNewAccount = Boolean.parseBoolean(allocateNewAccount) ;
+        logger.info(LOGTAG + "allocatedNewAccount: " + allocatedNewAccount);
+        logger.info(LOGTAG + "newAccountId: " + newAccountId);
 
         // If allocatedNewAccount is true and newAccountId is not null,
         // Send an Account.Create-Request to the AWS Account service.
-        if (allocatedNewAccount && newAccountId != null) {
+        if (allocatedNewAccount && (newAccountId != null && !newAccountId.equals(PROPERTY_VALUE_NOT_AVAILABLE))) {
             logger.info(LOGTAG + "allocatedNewAccount is true and newAccountId " +
-                    "is not null. Sending an Account.Create-Request to create account " +
-                    "metadata.");
+                    "is not null. Sending an Account.Create-Request to create account metadata.");
 
             addResultProperty("newAccountId", newAccountId);
-            logger.info(LOGTAG + "Property newAccountId from preceding " +
-                    "step is: " + newAccountId);
-            newAccountName = getResultProperty(step1, "newAccountName");
-            addResultProperty("newAccountName", newAccountName);
-            logger.info(LOGTAG + "Property newAccountName from preceding " +
-                    "step is: " + newAccountName);
-            accountEmailAddress = getResultProperty(step1, "accountEmailAddress");
-            addResultProperty("accountEmailAddress", accountEmailAddress);
-            logger.info(LOGTAG + "Property accountEmailAddress from preceding " +
-                    "step is: " + accountEmailAddress);
+
+            String newAccountName = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountName");
+            String accountEmailAddress = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "accountEmailAddress");
 
             // Get a configured account object from AppConfig.
             Account account = new Account();
             try {
-                account = (Account) getAppConfig()
-                        .getObjectByType(account.getClass().getName());
+                account = (Account) getAppConfig().getObjectByType(account.getClass().getName());
             } catch (EnterpriseConfigurationObjectException ecoe) {
-                String errMsg = "An error occurred retrieving an object from " +
-                        "AppConfig. The exception is: " + ecoe.getMessage();
+                String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, ecoe);
             }
@@ -165,10 +139,10 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
                 operationsEmailAddress.setEmail(accountEmailAddress);
                 account.addEmailAddress(operationsEmailAddress);
 
-//		    	EmailAddress securityEmailAddress = account.newEmailAddress();
-//		    	securityEmailAddress.setType("security");
-//		    	securityEmailAddress.setEmail(securityEmailAddress);
-//		    	account.addEmailAddress(securityEmailAddress);
+//                EmailAddress securityEmailAddress = account.newEmailAddress();
+//                securityEmailAddress.setType("security");
+//                securityEmailAddress.setEmail(securityEmailAddress);
+//                account.addEmailAddress(securityEmailAddress);
 
                 account.setCreateUser(req.getAuthenticatedRequestorUserId());
                 Datetime createDatetime = new Datetime("Create", System.currentTimeMillis());
@@ -188,8 +162,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
                 account.addProperty(prop2);
 
             } catch (EnterpriseFieldException efe) {
-                String errMsg = "An error occurred setting the values of the " +
-                        "query spec. The exception is: " + efe.getMessage();
+                String errMsg = "An error occurred setting the values of the query spec. The exception is: " + efe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, efe);
             }
@@ -198,20 +171,17 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
             try {
                 logger.info(LOGTAG + "Account to create is: " + account.toXmlString());
             } catch (XmlEnterpriseObjectException xeoe) {
-                String errMsg = "An error occurred serializing the query spec " +
-                        "to XML. The exception is: " + xeoe.getMessage();
+                String errMsg = "An error occurred serializing the query spec to XML. The exception is: " + xeoe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, xeoe);
             }
 
             // Get a producer from the pool
-            RequestService rs = null;
+            RequestService rs;
             try {
-                rs = (RequestService) getAwsAccountServiceProducerPool()
-                        .getExclusiveProducer();
+                rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
             } catch (JMSException jmse) {
-                String errMsg = "An error occurred getting a producer " +
-                        "from the pool. The exception is: " + jmse.getMessage();
+                String errMsg = "An error occurred getting a producer from the pool. The exception is: " + jmse.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, jmse);
             }
@@ -220,33 +190,24 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
                 long createStartTime = System.currentTimeMillis();
                 account.create(rs);
                 long createTime = System.currentTimeMillis() - createStartTime;
-                logger.info(LOGTAG + "Create Account in " + createTime +
-                        " ms.");
+                logger.info(LOGTAG + "Create Account in " + createTime + " ms.");
                 accountMetadataCreated = true;
-                addResultProperty("allocatedNewAccount",
-                        Boolean.toString(allocatedNewAccount));
-                addResultProperty("createdAccountMetadata",
-                        Boolean.toString(accountMetadataCreated));
+                addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
+                addResultProperty("createdAccountMetadata", Boolean.toString(accountMetadataCreated));
             } catch (EnterpriseObjectCreateException eoce) {
-                String errMsg = "An error occurred creating the object. " +
-                        "The exception is: " + eoce.getMessage();
+                String errMsg = "An error occurred creating the object. The exception is: " + eoce.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, eoce);
             } finally {
-                // Release the producer back to the pool
-                getAwsAccountServiceProducerPool()
-                        .releaseProducer((MessageProducer) rs);
+                getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
             }
 
         }
         // If allocatedNewAccount is false, log it and add result props.
         else {
-            logger.info(LOGTAG + "allocatedNewAccount is false. " +
-                    "no need to create account metadata.");
-            addResultProperty("allocatedNewAccount",
-                    Boolean.toString(allocatedNewAccount));
-            addResultProperty("createdAccountMetadata",
-                    "not applicable");
+            logger.info(LOGTAG + "allocatedNewAccount is false. no need to create account metadata.");
+            addResultProperty("allocatedNewAccount", Boolean.toString(allocatedNewAccount));
+            addResultProperty("createdAccountMetadata", "not applicable");
         }
 
         // Update the step result.
@@ -267,13 +228,11 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 
         // Return the properties.
         return getResultProperties();
-
     }
 
     protected List<Property> simulate() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[CreateAccountMetadata.simulate] ";
+        String LOGTAG = getStepTag() + "[CreateAccountMetadata.simulate] ";
         logger.info(LOGTAG + "Begin step simulation.");
 
         // Set return properties.
@@ -293,8 +252,7 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
 
     protected List<Property> fail() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[CreateAccountMetadata.fail] ";
+        String LOGTAG = getStepTag() + "[CreateAccountMetadata.fail] ";
         logger.info(LOGTAG + "Begin step failure simulation.");
 
         // Set return properties.
@@ -312,36 +270,25 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
     }
 
     public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
 
         super.rollback();
 
-        long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[CreateAccountMetadata.rollback] ";
         logger.info(LOGTAG + "Rollback called, deleting account metadata.");
-
-        // Get the result props
-        List<Property> props = getResultProperties();
 
         // Get the account number
         String newAccountId = getResultProperty("newAccountId");
 
-        // If the newAccountId is not null, query for the account object
-        // and then delete it.
+        // If the newAccountId is not null, query for the account object and then delete it.
         if (newAccountId != null) {
-
-            // Query for the account
-            // Get a configured account object and account query spec
-            // from AppConfig.
             Account account = new Account();
             AccountQuerySpecification querySpec = new AccountQuerySpecification();
             try {
-                account = (Account) getAppConfig()
-                        .getObjectByType(account.getClass().getName());
-                querySpec = (AccountQuerySpecification) getAppConfig()
-                        .getObjectByType(querySpec.getClass().getName());
+                account = (Account) getAppConfig().getObjectByType(account.getClass().getName());
+                querySpec = (AccountQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
             } catch (EnterpriseConfigurationObjectException ecoe) {
-                String errMsg = "An error occurred retrieving an object from " +
-                        "AppConfig. The exception is: " + ecoe.getMessage();
+                String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, ecoe);
             }
@@ -350,55 +297,44 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
             try {
                 querySpec.setAccountId(newAccountId);
             } catch (EnterpriseFieldException efe) {
-                String errMsg = "An error occurred setting a field value. " +
-                        "The exception is: " + efe.getMessage();
+                String errMsg = "An error occurred setting a field value. The exception is: " + efe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException();
             }
 
             // Get a producer from the pool
-            RequestService rs = null;
+            RequestService rs;
             try {
-                rs = (RequestService) getAwsAccountServiceProducerPool()
-                        .getExclusiveProducer();
+                rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
             } catch (JMSException jmse) {
-                String errMsg = "An error occurred getting a producer " +
-                        "from the pool. The exception is: " + jmse.getMessage();
+                String errMsg = "An error occurred getting a producer from the pool. The exception is: " + jmse.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, jmse);
             }
 
             // Query for the account metadata
-            List results = null;
+            List results;
             try {
                 long queryStartTime = System.currentTimeMillis();
                 results = account.query(querySpec, rs);
                 long createTime = System.currentTimeMillis() - queryStartTime;
-                logger.info(LOGTAG + "Queried for Account in " + createTime +
-                        " ms. Got " + results.size() + " result(s).");
+                logger.info(LOGTAG + "Queried for Account in " + createTime + " ms. Got " + results.size() + " result(s).");
             } catch (EnterpriseObjectQueryException eoqe) {
-                String errMsg = "An error occurred querying for the object. " +
-                        "The exception is: " + eoqe.getMessage();
+                String errMsg = "An error occurred querying for the object. The exception is: " + eoqe.getMessage();
                 logger.error(LOGTAG + errMsg);
                 throw new StepException(errMsg, eoqe);
             } finally {
-                // Release the producer back to the pool
-                getAwsAccountServiceProducerPool()
-                        .releaseProducer((MessageProducer) rs);
+                getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
             }
 
             // If there is a result, delete the account metadata
             if (results.size() > 0) {
                 account = (Account) results.get(0);
 
-                // Get a producer from the pool
-                rs = null;
                 try {
-                    rs = (RequestService) getAwsAccountServiceProducerPool()
-                            .getExclusiveProducer();
+                    rs = (RequestService) getAwsAccountServiceProducerPool().getExclusiveProducer();
                 } catch (JMSException jmse) {
-                    String errMsg = "An error occurred getting a producer " +
-                            "from the pool. The exception is: " + jmse.getMessage();
+                    String errMsg = "An error occurred getting a producer from the pool. The exception is: " + jmse.getMessage();
                     logger.error(LOGTAG + errMsg);
                     throw new StepException(errMsg, jmse);
                 }
@@ -408,26 +344,19 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
                     long deleteStartTime = System.currentTimeMillis();
                     account.delete("Delete", rs);
                     long deleteTime = System.currentTimeMillis() - deleteStartTime;
-                    logger.info(LOGTAG + "Deleted Account in " + deleteTime +
-                            " ms. Got " + results.size() + " result(s).");
+                    logger.info(LOGTAG + "Deleted Account in " + deleteTime + " ms. Got " + results.size() + " result(s).");
                     addResultProperty("deletedAccountMetadataOnRollback", "true");
                 } catch (EnterpriseObjectDeleteException eode) {
-                    String errMsg = "An error occurred deleting the object. " +
-                            "The exception is: " + eode.getMessage();
+                    String errMsg = "An error occurred deleting the object. The exception is: " + eode.getMessage();
                     logger.error(LOGTAG + errMsg);
                     throw new StepException(errMsg, eode);
                 } finally {
-                    // Release the producer back to the pool
-                    getAwsAccountServiceProducerPool()
-                            .releaseProducer((MessageProducer) rs);
+                    getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
                 }
             }
         }
-        // If newAccountId is null, there is nothing to roll back.
-        // Log it.
         else {
-            logger.info(LOGTAG + "No account metadata was created by this " +
-                    "step, so there is nothing to roll back.");
+            logger.info(LOGTAG + "No account metadata was created by this step, so there is nothing to roll back.");
             addResultProperty("deletedAccountMetadataOnRollback", "not applicable");
         }
 
@@ -446,12 +375,9 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
         return m_awsAccountServiceProducerPool;
     }
 
-    private void setPasswordLocation(String loc) throws
-            StepException {
-
+    private void setPasswordLocation(String loc) throws StepException {
         if (loc == null) {
-            String errMsg = "passwordLocation property is null. " +
-                    "Can't continue.";
+            String errMsg = "passwordLocation property is null. Can't continue.";
             throw new StepException(errMsg);
         }
 
@@ -461,5 +387,4 @@ public class CreateAccountMetadata extends AbstractStep implements Step {
     private String getPasswordLocation() {
         return m_passwordLocation;
     }
-
 }

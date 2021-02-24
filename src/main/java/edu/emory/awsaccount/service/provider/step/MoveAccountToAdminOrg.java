@@ -122,29 +122,18 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
         VirtualPrivateCloudProvisioning vpcp = getVirtualPrivateCloudProvisioning();
         VirtualPrivateCloudRequisition req = vpcp.getVirtualPrivateCloudRequisition();
 
+        boolean isExistingAccount = false;
+
         // Get the accountId.
-        logger.info(LOGTAG + "Getting properties from preceding steps...");
-        String accountId = null;
-        Boolean isExistingAccount = false;
-
-        accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
-        addResultProperty("newAccountId", accountId);
-        logger.info(LOGTAG + "Property newAccountId from preceding step is: " + accountId);
-
-        // If the newAccountId is null, get the accountId from the
-        // VPCP requisition. Otherwise the accountId is the newAccountId.
-        if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
+        String accountId = getStepPropertyValue("GENERATE_NEW_ACCOUNT", "newAccountId");
+        if (accountId.equals(PROPERTY_VALUE_NOT_APPLICABLE) || accountId.equals(PROPERTY_VALUE_NOT_AVAILABLE)) {
             accountId = req.getAccountId();
-            logger.info(LOGTAG + "newAccountId is null, getting the accountId from the requisition object: " + accountId);
             isExistingAccount = true;
-            addResultProperty("existingAccountId", accountId);
-        }
-        if (accountId == null || accountId.equalsIgnoreCase("not applicable")) {
-            String errMsg = "accountId is null. Can't continue.";
-            logger.error(LOGTAG + errMsg);
-            throw new StepException(errMsg);
-        } else {
-            addResultProperty("accountId", accountId);
+            if (accountId == null || accountId.equals("")) {
+                String errMsg = "No account number for the account move can be found. Can't continue.";
+                logger.error(LOGTAG + errMsg);
+                throw new StepException(errMsg);
+            }
         }
 
         // Determine the sourceParentId.
@@ -162,9 +151,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
         }
 
         // Move the account to the admin organizational unit.
-        logger.info(LOGTAG + "Moving the account " + accountId +
-                " from the " + getSourceParentId() + " to the admin org unit "
-                + getDestinationParentId());
+        logger.info(LOGTAG + "Moving the account " + accountId + " from the " + getSourceParentId() + " to the admin org unit " + getDestinationParentId());
 
         // Build the request.
         MoveAccountRequest request = new MoveAccountRequest();
@@ -176,7 +163,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
         try {
             logger.info(LOGTAG + "Sending the move account request...");
             long moveStartTime = System.currentTimeMillis();
-            MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
+            getAwsOrganizationsClient().moveAccount(request);
             long moveTime = System.currentTimeMillis() - moveStartTime;
             logger.info(LOGTAG + "received response to move account request in " + moveTime + " ms.");
             accountMoved = true;
@@ -190,20 +177,10 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
         addResultProperty("destinationParentId", getDestinationParentId());
         addResultProperty("movedAccount", Boolean.toString(accountMoved));
 
-        if (accountMoved) {
-            logger.info(LOGTAG + "Successfully moved account " + accountId + "to org unit " + getDestinationParentId());
-        } else {
-            logger.info(LOGTAG + "Account was not moved.");
-        }
-
-        // Update the step result.
-        String stepResult = FAILURE_RESULT;
-        if (accountMoved == true) {
-            stepResult = SUCCESS_RESULT;
-        }
+        logger.info(LOGTAG + "Successfully moved account " + accountId + "to org unit " + getDestinationParentId());
 
         // Update the step.
-        update(COMPLETED_STATUS, stepResult);
+        update(COMPLETED_STATUS, SUCCESS_RESULT);
 
         // Log completion time.
         long time = System.currentTimeMillis() - startTime;
@@ -252,10 +229,10 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
     }
 
     public void rollback() throws StepException {
+        long startTime = System.currentTimeMillis();
 
         super.rollback();
 
-        long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[MoveAccountToAdminOrg.rollback] ";
         logger.info(LOGTAG + "Rollback called, if movedAccount is true, move it back.");
 
@@ -298,7 +275,7 @@ public class MoveAccountToAdminOrg extends AbstractStep implements Step {
             try {
                 logger.info(LOGTAG + "Sending the move account request...");
                 long moveStartTime = System.currentTimeMillis();
-                MoveAccountResult result = getAwsOrganizationsClient().moveAccount(request);
+                getAwsOrganizationsClient().moveAccount(request);
                 long moveTime = System.currentTimeMillis() - moveStartTime;
                 logger.info(LOGTAG + "received response to move account request in " + moveTime + " ms.");
                 movedAccountBackToOrgRoot = true;
