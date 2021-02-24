@@ -1,74 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE com.amazon.aws.Provisioning.VirtualPrivateCloud.Update SYSTEM "../dtd/Update-Sync.dtd">
 <com.amazon.aws.Provisioning.VirtualPrivateCloud.Update>
-	<ControlAreaSync messageCategory="com.amazon.aws.Provisioning"
-		messageObject="VirtualPrivateCloud" messageAction="Update" messageRelease="1.0"
-		messagePriority="1" messageType="Sync">
-		<Sender>
-			<MessageId>
-				<SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
-				<ProducerId>9c6ce634-5a4b-4959-be67-52ef3e82847f </ProducerId>
-				<MessageSeq>324</MessageSeq>
-			</MessageId>
-			<Authentication>
-				<AuthUserId>paymaster</AuthUserId>
-			</Authentication>
-		</Sender>
-		<Datetime>
-			<Year>2001</Year>
-			<Month>3</Month>
-			<Day>23</Day>
-			<Hour>13</Hour>
-			<Minute>47</Minute>
-			<Second>30</Second>
-			<SubSecond/>
-			<Timezone>6:00-GMT</Timezone>
-		</Datetime>
-	</ControlAreaSync>
-	<DataArea>
-		<NewData>
-			<VirtualPrivateCloud>
-				<VpcId>vpc-e02be087</VpcId>
-				<AccountId>357163498835</AccountId>
-				<Cidr>10.65.0.0/23</Cidr>
-				<VpnConnectionProfileId>1</VpnConnectionProfileId>
-				<Region>us-east-1</Region>
-				<Type>1</Type>
-				<Purpose>First development environment VPC, updated</Purpose>
-				<CreateUser>swheat</CreateUser>
-				<CreateDatetime>
-					<Year>2016</Year>
-					<Month>2</Month>
-					<Day>3</Day>
-					<Hour>4</Hour>
-					<Minute>5</Minute>
-					<Second>6</Second>
-					<SubSecond>0</SubSecond>
-					<Timezone>America/New_York</Timezone>
-				</CreateDatetime>
-			</VirtualPrivateCloud>
-		</NewData>
-		<BaselineData>
-			<VirtualPrivateCloud>
-				<VpcId>vpc-e02be087</VpcId>
-				<AccountId>357163498835</AccountId>
-				<Cidr>10.65.0.0/23</Cidr>
-				<VpnConnectionProfileId>1</VpnConnectionProfileId>
-				<Region>us-east-1</Region>
-				<Type>1</Type>
-				<Purpose>First development environment VPC</Purpose>
-				<CreateUser>swheat</CreateUser>
-				<CreateDatetime>
-					<Year>2016</Year>
-					<Month>2</Month>
-					<Day>3</Day>
-					<Hour>4</Hour>
-					<Minute>5</Minute>
-					<Second>6</Second>
-					<SubSecond>0</SubSecond>
-					<Timezone>America/New_York</Timezone>
-				</CreateDatetime>
-			</VirtualPrivateCloud>
-		</BaselineData>
-	</DataArea>
+    <ControlAreaSync messageCategory="com.amazon.aws.Provisioning"
+        messageObject="VirtualPrivateCloud" messageAction="Update" messageRelease="1.0"
+        messagePriority="1" messageType="Sync">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.uillinois.aits.Paymaster</SenderAppId>
+                <ProducerId>9c6ce634-5a4b-4959-be67-52ef3e82847f </ProducerId>
+                <MessageSeq>324</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>paymaster</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2001</Year>
+            <Month>3</Month>
+            <Day>23</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond/>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+    </ControlAreaSync>
+    <DataArea>
+        <NewData>
+            <VirtualPrivateCloud>
+                <VpcId>vpc-e02be087</VpcId>
+                <AccountId>357163498835</AccountId>
+                <Cidr>10.65.0.0/23</Cidr>
+                <VpcConnectionMethod>TGW</VpcConnectionMethod>
+                <ReferenceId>tgw-0a1b2c3d4e5f6f789</ReferenceId>
+                <Region>us-east-1</Region>
+                <Type>1</Type>
+                <Purpose>First development environment VPC, updated</Purpose>
+                <CreateUser>swheat</CreateUser>
+                <CreateDatetime>
+                    <Year>2016</Year>
+                    <Month>2</Month>
+                    <Day>3</Day>
+                    <Hour>4</Hour>
+                    <Minute>5</Minute>
+                    <Second>6</Second>
+                    <SubSecond>0</SubSecond>
+                    <Timezone>America/New_York</Timezone>
+                </CreateDatetime>
+            </VirtualPrivateCloud>
+        </NewData>
+        <BaselineData>
+            <VirtualPrivateCloud>
+                <VpcId>vpc-e02be087</VpcId>
+                <AccountId>357163498835</AccountId>
+                <Cidr>10.65.0.0/23</Cidr>
+                <VpcConnectionMethod>TGW</VpcConnectionMethod>
+                <ReferenceId>tgw-0a1b2c3d4e5f6f789</ReferenceId>
+                <Region>us-east-1</Region>
+                <Type>1</Type>
+                <Purpose>First development environment VPC</Purpose>
+                <CreateUser>swheat</CreateUser>
+                <CreateDatetime>
+                    <Year>2016</Year>
+                    <Month>2</Month>
+                    <Day>3</Day>
+                    <Hour>4</Hour>
+                    <Minute>5</Minute>
+                    <Second>6</Second>
+                    <SubSecond>0</SubSecond>
+                    <Timezone>America/New_York</Timezone>
+                </CreateDatetime>
+            </VirtualPrivateCloud>
+        </BaselineData>
+    </DataArea>
 </com.amazon.aws.Provisioning.VirtualPrivateCloud.Update>

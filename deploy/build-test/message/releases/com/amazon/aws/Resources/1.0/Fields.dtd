@@ -81,7 +81,7 @@
 <!ELEMENT InvoiceDatetime %DATETIME;>
 <!ELEMENT InvoiceId %STRDOM;>
 <!ELEMENT IsAuthorized %STRDOM;>
-<!ELEMENT ItemDescription %STRDOM;> 
+<!ELEMENT ItemDescription %STRDOM;>
 <!ELEMENT Key %STRDOM;>
 <!ELEMENT LastLoginDatetime %DATETIME;>
 <!ELEMENT LastUpdateDatetime %DATETIME;>
@@ -186,10 +186,9 @@
 <!ELEMENT UserId %STRDOM;>
 <!ELEMENT UserNotificationId %STRDOM;>
 <!ELEMENT Value %STRDOM;>
-<!ELEMENT VpcId %STRDOM;> 
-<!ELEMENT VpnConnectionProfileId %STRDOM;>
+<!ELEMENT VpcId %STRDOM;>
 <!ELEMENT ScheduleInterval %STRDOM;>
-<!ELEMENT DetectionPerMinute %STRDOM;> 
-<!ELEMENT DegradedBoundary %STRDOM;> 
-<!ELEMENT UnacceptableBoundary %STRDOM;> 
-<!ELEMENT Assessment %STRDOM;> 
+<!ELEMENT DetectionPerMinute %STRDOM;>
+<!ELEMENT DegradedBoundary %STRDOM;>
+<!ELEMENT UnacceptableBoundary %STRDOM;>
+<!ELEMENT Assessment %STRDOM;>

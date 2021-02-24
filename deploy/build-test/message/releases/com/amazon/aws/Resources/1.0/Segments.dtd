@@ -4,27 +4,27 @@
 -->
 <!--	Segments.dtd is a a file where definitions of all elements with
 		children appear.
-		
+
 		The OpenEAI Deployment Patterns suggest that, when using DTDs,
 		an enterprise should separate its definitions into four slices
 		to improve the management of definitions and to promote the use
 		of common object definitions.  The four slices are:
-		
+
 		Resources - 	a file for including definitions from enternal
 							organizations.  For examaple, in their own
 							Resources.dtd, an enterprise will reference
 							the OpenEAI definitions, which give them the
 							ControlArea* definitions required by the OpenEAI
-							Message Protocol. 
-							
+							Message Protocol.
+
 		Segments - 	a file where definitions of all elements with
 							children appear
-							
+
 		Fields - 		a file where all elements without children appear
-		
+
 		Domains - 	a file in which any custom datatypes are defined
-		
-		This approach was learned by observing contraint practices of the 
+
+		This approach was learned by observing contraint practices of the
 		Open Application Group, and these same practices have served the
 		practitioners of OpenEAI well.
  -->
@@ -35,7 +35,7 @@
 <!-- ====================================================================== -->
 <!-- Elements - Segments
 -->
-<!-- 
+<!--
 MessageId was defined as an Element in openeai/segments.dtd
 -->
 <!ELEMENT Account (AccountId, AccountName, AlternateName?, ComplianceClass, PasswordLocation, EmailAddress+, Property*, AccountOwnerId, FinancialAccountNumber?, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
@@ -86,7 +86,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT SecurityRiskDetectionRequisition (AccountId, SecurityRiskDetector, SecurityRiskRemediator?, SecurityRiskResourceTaggingProfile?)>
 <!ELEMENT SecurityRiskDetectionMetric (DetectorAccount*)>
 <!ELEMENT DetectorAccount (DetectorName, AccountId)>
-<!ATTLIST SecurityRiskDetectionMetric 
+<!ATTLIST SecurityRiskDetectionMetric
     name CDATA #REQUIRED
     value CDATA #REQUIRED
 >
@@ -123,7 +123,7 @@ MessageId was defined as an Element in openeai/segments.dtd
 <!ELEMENT UserNotificationQuerySpecification (Comparison*, QueryLanguage?, UserNotificationId?, AccountNotificationId?, AccountId?, UserId?, Type?, Priority?, Read?)>
 <!ELEMENT UserProfile (UserId, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?, LastLoginDatetime)>
 <!ELEMENT UserProfileQuerySpecification (UserId?, Property*)>
-<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnConnectionProfileId, Region, Type, Purpose, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpcConnectionMethod, ReferenceId, Region, Type, Purpose, Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioning (ProvisioningId, VirtualPrivateCloudRequisition, Status, ProvisioningResult?, ActualTime?, AnticipatedTime?, ProvisioningStep*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 <!ELEMENT VirtualPrivateCloudProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
 <!ELEMENT VirtualPrivateCloudQuerySpecification (Comparison*, QueryLanguage?, VpcId?, AccountId?, Type?, CustomerAdminUserId?, CreateUser?, LastUpdateUser?)>

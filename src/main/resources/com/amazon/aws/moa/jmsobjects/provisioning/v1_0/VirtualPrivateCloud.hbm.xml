@@ -7,7 +7,8 @@
 </id>
 <property name="AccountId" column="ACCOUNT_ID"/>
 <property name="Cidr" column="CIDR"/>
-<property name="VpnConnectionProfileId" column="VPN_CONNECTION_PROFILE_ID"/>
+<property name="VpcConnectionMethod" column="VPC_CONNECTION_METHOD"/>
+<property name="ReferenceId" column="REFERENCE_ID"/>
 <property name="Region" column="REGION"/>
 <property name="Type" column="TYPE_"/>
 <property name="Purpose" column="PURPOSE"/>

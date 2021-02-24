@@ -96,17 +96,14 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
             String region = req.getRegion();
             String vpcType = req.getType();
             String vpcCidr;
-            String vpnConnectionProfileId;
-            String transitGatewayConnectionProfileId;
+            String referenceId;
 
             if (vpcConnectionMethod.equals("VPN")) {
                 vpcCidr = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpcNetwork");
-                vpnConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpnConnectionProfileId");
-                transitGatewayConnectionProfileId = null;
+                referenceId = getStepPropertyValue("DETERMINE_VPC_CIDR", "vpnConnectionProfileId");
             } else if (vpcConnectionMethod.equals("TGW")) {
                 vpcCidr = getStepPropertyValue("DETERMINE_VPC_TGW_CIDR", "vpcNetwork");
-                transitGatewayConnectionProfileId = getStepPropertyValue("DETERMINE_VPC_TGW_CIDR", "transitGatewayConnectionProfileId");
-                vpnConnectionProfileId = null;
+                referenceId = getStepPropertyValue("DETERMINE_VPC_CONNECTION_METHOD", "transitGatewayId");
             } else {
                 String errMsg = "Error during VPC metadata creation due to unknown VPC connection method: " + vpcConnectionMethod;
                 logger.error(LOGTAG + errMsg);
@@ -131,13 +128,8 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                 vpc.setRegion(region);
                 vpc.setType(vpcType);
                 vpc.setCidr(vpcCidr);
-                if (vpcConnectionMethod.equals("VPN")) {
-                    vpc.setVpnConnectionProfileId(vpnConnectionProfileId);
-                } else {
-                    vpc.setVpnConnectionProfileId(transitGatewayConnectionProfileId);
-//                    vpc.setTransitGatewayProfileId(transitGatewayProfileId);
-//                    vpc.setTransitGatewayConnectionProfileId(transitGatewayConnectionProfileId);
-                }
+                vpc.setVpcConnectionMethod(vpcConnectionMethod);
+                vpc.setReferenceId(referenceId);
                 vpc.setPurpose(req.getPurpose());
                 vpc.setCreateUser(req.getAuthenticatedRequestorUserId());
                 vpc.setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
@@ -176,15 +168,11 @@ public class CreateVpcMetadata extends AbstractStep implements Step {
                 addResultProperty("region", region);
                 addResultProperty("vpcType", vpcType);
                 addResultProperty("vpcCidr", vpcCidr);
-                if (vpcConnectionMethod.equals("VPN")) {
-                    addResultProperty("vpnConnectionProfileId", vpnConnectionProfileId);
-                } else {
-                    addResultProperty("transitGatewayConnectionProfileId", transitGatewayConnectionProfileId);
-                }
-            } catch (EnterpriseObjectCreateException eoce) {
-                String errMsg = "An error occurred creating the object. The exception is: " + eoce.getMessage();
+                addResultProperty("referenceId", vpc.getReferenceId());
+            } catch (EnterpriseObjectCreateException e) {
+                String errMsg = "An error occurred creating the object. The exception is: " + e.getMessage();
                 logger.error(LOGTAG + errMsg);
-                throw new StepException(errMsg, eoce);
+                throw new StepException(errMsg, e);
             } finally {
                 getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
             }
