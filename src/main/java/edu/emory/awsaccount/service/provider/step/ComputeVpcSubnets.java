@@ -58,7 +58,7 @@ public class ComputeVpcSubnets extends AbstractStep implements Step {
             throw new StepException(errMsg);
         }
 
-        if (applicableVpcNetwork.equals("not available")) {
+        if (applicableVpcNetwork.equals(PROPERTY_VALUE_NOT_AVAILABLE)) {
             // when getStepPropertyValue() gets a null or empty value
             String errMsg = "Error during VPC subnet determination due to unknown VPC network";
             logger.error(LOGTAG + errMsg);
