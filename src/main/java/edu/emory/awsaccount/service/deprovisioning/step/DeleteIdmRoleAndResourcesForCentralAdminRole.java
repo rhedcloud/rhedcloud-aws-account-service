@@ -24,7 +24,7 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
     private String roleNameTemplate;
     private ProducerPool idmServiceProducerPool;
     private String identityDnTemplate;
-	private int m_requestTimeoutIntervalInMillis = 600000;
+    private int m_requestTimeoutIntervalInMillis = 600000;
 
     @Override
     public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
@@ -50,14 +50,14 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         setRoleNameTemplate(roleNameTemplate);
         logger.info(LOGTAG + "roleNameTemplate is: " + roleNameTemplate);
 
-		String requestTimeoutInterval = getProperties()
-				.getProperty("requestTimeoutIntervalInMillis", "600000");
-			int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
-			setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-			logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
-				getRequestTimeoutIntervalInMillis());
-			
-		logger.info(LOGTAG + "Initialization complete.");
+        String requestTimeoutInterval = getProperties()
+                .getProperty("requestTimeoutIntervalInMillis", "600000");
+            int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+            setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+            logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
+                getRequestTimeoutIntervalInMillis());
+
+        logger.info(LOGTAG + "Initialization complete.");
     }
 
     private void setIdentityDnTemplate(String template) throws StepException {
@@ -153,11 +153,11 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
 
         try {
             logger.info(LOGTAG + "Getting request service");
-			PointToPointProducer p2p = 
-				(PointToPointProducer)this.idmServiceProducerPool
-				.getExclusiveProducer();
-			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-			requestService = (RequestService)p2p;
+            PointToPointProducer p2p =
+                (PointToPointProducer)this.idmServiceProducerPool
+                .getExclusiveProducer();
+            p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+            requestService = (RequestService)p2p;
 
             logger.info(LOGTAG + "Deleting IDM role");
             role.delete("Delete", requestService);
@@ -283,12 +283,12 @@ public class DeleteIdmRoleAndResourcesForCentralAdminRole extends AbstractStep i
         return getStepTag() + "[" + LOGTAG_NAME + "." + method + "] ";
     }
 
-	private void setRequestTimeoutIntervalInMillis(int time) {
-		m_requestTimeoutIntervalInMillis = time;
-	}
-	
-	private int getRequestTimeoutIntervalInMillis() {
-		return m_requestTimeoutIntervalInMillis;
-	}
-	
+    private void setRequestTimeoutIntervalInMillis(int time) {
+        m_requestTimeoutIntervalInMillis = time;
+    }
+
+    private int getRequestTimeoutIntervalInMillis() {
+        return m_requestTimeoutIntervalInMillis;
+    }
+
 }

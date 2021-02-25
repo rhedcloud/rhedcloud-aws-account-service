@@ -3,15 +3,12 @@ package edu.emory.awsaccount.service.deprovisioning.step;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
-import edu.emory.moa.objects.resources.v1_0.RoleQuerySpecification;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
 import org.openeai.moa.EnterpriseObjectDeleteException;
-import org.openeai.moa.EnterpriseObjectQueryException;
-import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.transport.RequestService;
 
 import javax.jms.JMSException;
@@ -20,13 +17,13 @@ import java.util.Properties;
 
 /**
  * Delete the grouper group the step is configured to delete.
- * e.g., 123456789:admin deletes the admin group in account 123456789 
+ * e.g., 123456789:admin deletes the admin group in account 123456789
  * (this will also remove the role assignments that are in the account level group)
- * 
- * e.g., 123456789 deletes the account level leaf in Grouper 
+ *
+ * e.g., 123456789 deletes the account level leaf in Grouper
  * (after all account level groups have been deleted)
  * <P>
- * 
+ *
  * @author Tod Jackson (jtjacks@emory.edu)
  * @version 1.0 - 11 November 2020
  **/
@@ -34,11 +31,11 @@ import java.util.Properties;
 public class DeleteGrouperIdmGroup extends AbstractStep implements Step {
     private static final String LOGTAG_NAME = "DeleteGrouperIdmGroup";
     private ProducerPool idmServiceProducerPool;
-	private int m_requestTimeoutIntervalInMillis = 600000;
-	
-	private String roleTemplate;
-	private String cloudPlatform;
-	private String siteName;
+    private int m_requestTimeoutIntervalInMillis = 600000;
+
+    private String roleTemplate;
+    private String cloudPlatform;
+    private String siteName;
 
     @Override
     public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
@@ -66,14 +63,14 @@ public class DeleteGrouperIdmGroup extends AbstractStep implements Step {
         }
         logger.info(LOGTAG + "roleTemplate is: " + roleTemplate);
 
-		String requestTimeoutInterval = getProperties()
-				.getProperty("requestTimeoutIntervalInMillis", "600000");
-		int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
-		setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
-		logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " + 
-			getRequestTimeoutIntervalInMillis());
-			
-		logger.info(LOGTAG + "Initialization complete.");
+        String requestTimeoutInterval = getProperties()
+                .getProperty("requestTimeoutIntervalInMillis", "600000");
+        int requestTimeoutIntervalInMillis = Integer.parseInt(requestTimeoutInterval);
+        setRequestTimeoutIntervalInMillis(requestTimeoutIntervalInMillis);
+        logger.info(LOGTAG + "requestTimeoutIntervalInMillis is: " +
+            getRequestTimeoutIntervalInMillis());
+
+        logger.info(LOGTAG + "Initialization complete.");
     }
 
     private void setIdmServiceProducerPool(ProducerPool idmServiceProducerPool) {
@@ -118,20 +115,20 @@ public class DeleteGrouperIdmGroup extends AbstractStep implements Step {
         /* begin business logic */
 
         Role role=null;
-		try {
-			role = (Role) getAppConfig().getObjectByType(Role.class.getName());
-	        role.setRoleDN(roleName);
-	        role.setRoleName("Not Applicable");
-	        role.setRoleDescription(roleName + " Grouper Group for " + siteName);
-	        role.setRoleCategoryKey(cloudPlatform);
-		} catch (EnterpriseConfigurationObjectException e) {
-			e.printStackTrace();
+        try {
+            role = (Role) getAppConfig().getObjectByType(Role.class.getName());
+            role.setRoleDN(roleName);
+            role.setRoleName("Not Applicable");
+            role.setRoleDescription(roleName + " Grouper Group for " + siteName);
+            role.setRoleCategoryKey(cloudPlatform);
+        } catch (EnterpriseConfigurationObjectException e) {
+            e.printStackTrace();
             throw new StepException(e.getMessage(), e);
-		} catch (EnterpriseFieldException e) {
-			e.printStackTrace();
+        } catch (EnterpriseFieldException e) {
+            e.printStackTrace();
             throw new StepException(e.getMessage(), e);
-		}
-        
+        }
+
         this.deleteRole(role, roleName);
         addResultProperty("deletedUserAdminIdentityDnCount", "0");
         addResultProperty("deletedUserAuditorIdentityDnCount", "0");
@@ -158,11 +155,11 @@ public class DeleteGrouperIdmGroup extends AbstractStep implements Step {
 
         try {
             logger.info(LOGTAG + "Getting request service");
-			PointToPointProducer p2p = 
-				(PointToPointProducer)this.idmServiceProducerPool
-				.getExclusiveProducer();
-			p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
-			requestService = (RequestService)p2p;
+            PointToPointProducer p2p =
+                (PointToPointProducer)this.idmServiceProducerPool
+                .getExclusiveProducer();
+            p2p.setRequestTimeoutInterval(getRequestTimeoutIntervalInMillis());
+            requestService = (RequestService)p2p;
 
             logger.info(LOGTAG + "Deleting IDM role");
             role.delete("Delete", requestService);
@@ -218,11 +215,11 @@ public class DeleteGrouperIdmGroup extends AbstractStep implements Step {
         return getStepTag() + "[" + LOGTAG_NAME + "." + method + "] ";
     }
 
-	private void setRequestTimeoutIntervalInMillis(int time) {
-		m_requestTimeoutIntervalInMillis = time;
-	}
-	
-	private int getRequestTimeoutIntervalInMillis() {
-		return m_requestTimeoutIntervalInMillis;
-	}
+    private void setRequestTimeoutIntervalInMillis(int time) {
+        m_requestTimeoutIntervalInMillis = time;
+    }
+
+    private int getRequestTimeoutIntervalInMillis() {
+        return m_requestTimeoutIntervalInMillis;
+    }
 }

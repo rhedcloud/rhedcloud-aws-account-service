@@ -6,52 +6,46 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2017 Emory University. All rights reserved. 
+ Copyright (C) 2017 Emory University. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service.deprovisioning.step;
 
-// Core Java
-import java.util.List;
-import java.util.Properties;
-
-// OpenEAI Core
+import com.amazon.aws.moa.objects.resources.v1_0.Property;
+import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import org.openeai.config.AppConfig;
 
-// AWS MOA 
-import com.amazon.aws.moa.objects.resources.v1_0.Property;
-
-// Step foundation
-import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Interface for all provisioning steps.
  * <P>
- * 
+ *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 11 May 2020
  */
 public interface Step {
-	/**
+    /**
      * @param AppConfig, an AppConfig object with all this step needs.
      *            <P>
      * @throws StepException with details of the initialization error.
      */
-    public void init(String provisioningId, Properties props, 
-			AppConfig aConfig, 
-			AccountDeprovisioningProvider vpcpp) 
-			throws StepException;   
+    public void init(String provisioningId, Properties props,
+            AppConfig aConfig,
+            AccountDeprovisioningProvider vpcpp)
+            throws StepException;
     /**
-     * 
+     *
      * <P>
-     * 
+     *
      * @return List, a list of execution result properties.
      *         <P>
      * @throws StepException, with details of the error executing the step.
      */
-    public List<Property> execute() throws StepException;  
+    public List<Property> execute() throws StepException;
     /**
-     * 
+     *
      * <P>
      *
      * @throws StepException, with details of the error rolling back the step.
@@ -62,7 +56,7 @@ public interface Step {
      */
     public String getStepId();
     /**
-     * 
+     *
      * @return String, the step type
      */
     public String getType();
@@ -84,11 +78,11 @@ public interface Step {
      * @param List, step properties
      * <P>
      * @return String, the step result
-     * @throws StepException 
+     * @throws StepException
      */
-    public void update(String status, String result) 
-    	throws StepException;
-    
+    public void update(String status, String result)
+        throws StepException;
+
     public void addResultProperty(String key, String value)
-    	throws StepException;
+        throws StepException;
 }

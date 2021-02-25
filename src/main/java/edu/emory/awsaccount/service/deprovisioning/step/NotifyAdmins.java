@@ -1,12 +1,10 @@
 package edu.emory.awsaccount.service.deprovisioning.step;
 
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
-import com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.Datetime;
 import com.amazon.aws.moa.objects.resources.v1_0.Property;
 import edu.emory.awsaccount.service.provider.AccountDeprovisioningProvider;
 import edu.emory.awsaccount.service.provider.ProviderException;
-
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -120,16 +118,16 @@ public class NotifyAdmins extends AbstractStep implements Step {
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         /* begin business logic */
-        
+
         // Get the accountId and accountName from a previous step.
         String accountId = getStepPropertyValue("DELETE_ACCOUNT_METADATA", "accountId");
         String accountName = getStepPropertyValue("DELETE_ACCOUNT_METADATA", "accountName");
-        
+
         if (accountId == null) {
-        	accountId = "not available";
+            accountId = "not available";
         }
         if (accountName == null) {
-        	accountName = "not available";
+            accountName = "not available";
         }
 
         List<String> publicIdsToNotify = new ArrayList<>();
@@ -140,8 +138,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
         // Get all the deleted user admins.
         countStr = getStepPropertyValue("DELETE_ADMINS_FROM_ADMIN_ROLE", "deletedUserAdminIdentityDnCount");
         if (countStr == null || countStr.equalsIgnoreCase("not available")) {
-        	logger.info("deletedUserAdminIdentityDnCount is 'not available' or null, setting its value to 0.");
-        	countStr = "0";
+            logger.info("deletedUserAdminIdentityDnCount is 'not available' or null, setting its value to 0.");
+            countStr = "0";
         }
         logger.info(LOGTAG + "countStr is: " + countStr);
         count = Integer.valueOf(countStr);
@@ -155,8 +153,8 @@ public class NotifyAdmins extends AbstractStep implements Step {
         // Get all the deleted auditors
         countStr = getStepPropertyValue("DELETE_AUDITORS_FROM_AUDITOR_ROLE", "deletedUserAuditorIdentityDnCount");
         if (countStr == null || countStr.equalsIgnoreCase("not available")) {
-        	logger.info("deletedUserAuditorIdentityDnCount is 'not available' or null, setting its value to 0.");
-        	countStr = "0";
+            logger.info("deletedUserAuditorIdentityDnCount is 'not available' or null, setting its value to 0.");
+            countStr = "0";
         }
         logger.info(LOGTAG + "countStr is: " + countStr);
         count = Integer.valueOf(countStr);
@@ -169,23 +167,23 @@ public class NotifyAdmins extends AbstractStep implements Step {
 
         // Get a list of central administrators
         try {
-        	List<String> centralAdministratorList = getAccountDeprovisioningProvider()
-        		.getCentralAdministrators();
-        	addResultProperty("centralAdministratorCount", 
-        		Integer.toString(centralAdministratorList.size()));
-        	ListIterator<String> li = centralAdministratorList.listIterator();
-        	while (li.hasNext()) {
-        		String id = (String)li.next();
-        		publicIdsToNotify.add(id);
-        	}
+            List<String> centralAdministratorList = getAccountDeprovisioningProvider()
+                .getCentralAdministrators();
+            addResultProperty("centralAdministratorCount",
+                Integer.toString(centralAdministratorList.size()));
+            ListIterator<String> li = centralAdministratorList.listIterator();
+            while (li.hasNext()) {
+                String id = (String)li.next();
+                publicIdsToNotify.add(id);
+            }
         }
         catch (ProviderException pe) {
-        	String errMsg = "An error occurred retrieving a list of central administrators. The exception " +
-        		"is: " + pe.getMessage();
-        	logger.error(LOGTAG + errMsg);
-        	throw new StepException(errMsg, pe);
+            String errMsg = "An error occurred retrieving a list of central administrators. The exception " +
+                "is: " + pe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, pe);
         }
-        
+
         logger.info(LOGTAG + "Sending notifications to " + publicIdsToNotify.size() + " public ids.");
         addResultProperty("totalUsersToNotify", Integer.toString(publicIdsToNotify.size()));
 
@@ -246,11 +244,11 @@ public class NotifyAdmins extends AbstractStep implements Step {
         }
 
         try {
-        	long startTime = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
             notification.create(requestService);
             long time = System.currentTimeMillis() - startTime;
             this.logger.info(LOGTAG + "Sent notification to user " + userId +
-            	" in " + time + " ms.");
+                " in " + time + " ms.");
         } catch (EnterpriseObjectCreateException error) {
             String message = error.getMessage();
             logger.error(LOGTAG + message);
@@ -305,14 +303,14 @@ public class NotifyAdmins extends AbstractStep implements Step {
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
-    
+
     String parseDnForUserId(String dn) {
-    	String LOGTAG = "[NotifyAdmins.parseDnForUserId] ";
-    	logger.info(LOGTAG + "User dn is: " + dn);
-    	String[] elements = dn.split(",");
-    	String userId = elements[0];
-    	logger.info(LOGTAG + "UserId is: " + userId);
-    	return userId;
+        String LOGTAG = "[NotifyAdmins.parseDnForUserId] ";
+        logger.info(LOGTAG + "User dn is: " + dn);
+        String[] elements = dn.split(",");
+        String userId = elements[0];
+        logger.info(LOGTAG + "UserId is: " + userId);
+        return userId;
     }
-    
+
 }

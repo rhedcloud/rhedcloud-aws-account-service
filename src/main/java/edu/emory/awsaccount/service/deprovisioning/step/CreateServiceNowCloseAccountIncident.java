@@ -90,24 +90,24 @@ public class CreateServiceNowCloseAccountIncident extends AbstractStep implement
         String assignmentGroup = getProperties().getProperty("assignmentGroup", null);
         logger.info(LOGTAG + "assignmentGroup is: " + assignmentGroup);
         setAssignmentGroup(assignmentGroup);
-        
+
         // This step needs to send messages to the AWS account service
- 		// to create account metadata.
- 		ProducerPool p2p1 = null;
- 		try {
- 			p2p1 = (ProducerPool)getAppConfig()
- 				.getObject("AwsAccountServiceProducerPool");
- 			setAwsAccountServiceProducerPool(p2p1);
- 		}
- 		catch (EnterpriseConfigurationObjectException ecoe) {
- 			// An error occurred retrieving an object from AppConfig. Log it and
- 			// throw an exception.
- 			String errMsg = "An error occurred retrieving an object from " +
- 					"AppConfig. The exception is: " + ecoe.getMessage();
- 			logger.fatal(LOGTAG + errMsg);
- 			throw new StepException(errMsg);
- 		}
-        
+         // to create account metadata.
+         ProducerPool p2p1 = null;
+         try {
+             p2p1 = (ProducerPool)getAppConfig()
+                 .getObject("AwsAccountServiceProducerPool");
+             setAwsAccountServiceProducerPool(p2p1);
+         }
+         catch (EnterpriseConfigurationObjectException ecoe) {
+             // An error occurred retrieving an object from AppConfig. Log it and
+             // throw an exception.
+             String errMsg = "An error occurred retrieving an object from " +
+                     "AppConfig. The exception is: " + ecoe.getMessage();
+             logger.fatal(LOGTAG + errMsg);
+             throw new StepException(errMsg);
+         }
+
     }
 
     private void setAssignmentGroup(String assignmentGroup) throws StepException {
@@ -200,12 +200,12 @@ public class CreateServiceNowCloseAccountIncident extends AbstractStep implement
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         /* begin business logic */
-        
+
         // Get the AccountName
         Account account = accountQuery(accountId);
         String accountName = "NOT AVAILABLE";
         if (account != null) {
-        	accountName = account.getAccountName();
+            accountName = account.getAccountName();
         }
 
         logger.info(LOGTAG + "Preparing to send incident request");
@@ -257,17 +257,17 @@ public class CreateServiceNowCloseAccountIncident extends AbstractStep implement
     }
 
     private String getLongDescription(String accountId, String accountName) {
-    	String lDesc = null;
+        String lDesc = null;
         lDesc = this.longDescription.replace("ACCOUNT_ID", accountId);
         lDesc = lDesc.replace("ACCOUNT_NAME", accountName);
         return lDesc;
     }
 
     private String getShortDescription(String accountId, String accountName) {
-    	String sDesc = null;
-    	sDesc = this.shortDescription.replace("ACCOUNT_ID", accountId);
-    	sDesc = sDesc.replace("ACCOUNT_NAME", accountName);
-    	return sDesc;
+        String sDesc = null;
+        sDesc = this.shortDescription.replace("ACCOUNT_ID", accountId);
+        sDesc = sDesc.replace("ACCOUNT_NAME", accountName);
+        return sDesc;
     }
 
     @Override
@@ -302,88 +302,88 @@ public class CreateServiceNowCloseAccountIncident extends AbstractStep implement
     private String createLogTag(String method) {
         return getStepTag() + "[" + LOGTAG_NAME + "." + method + "] ";
     }
-    
+
     private Account accountQuery(String accountId) throws StepException {
-    	
-    	String LOGTAG = "[CreateServiceNowCloseAccountIncident.accountQuery] ";
-    	
-    	// Query for the account
-		// Get a configured account object and account query spec
-		// from AppConfig.
-		Account account = new Account();
-		AccountQuerySpecification querySpec = new AccountQuerySpecification();
-	    try {
-	    	account = (Account)getAppConfig()
-		    	.getObjectByType(account.getClass().getName());
-	    	querySpec = (AccountQuerySpecification)getAppConfig()
-			    	.getObjectByType(querySpec.getClass().getName());
-	    }
-	    catch (EnterpriseConfigurationObjectException ecoe) {
-	    	String errMsg = "An error occurred retrieving an object from " +
-	    	  "AppConfig. The exception is: " + ecoe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, ecoe);
-	    }
-	    
-	    // Set the values of the query spec
-	    try {
-	    	querySpec.setAccountId(accountId);
-	    }
-	    catch (EnterpriseFieldException efe) {
-	    	String errMsg = "An error occurred setting a field value. " +
-	    		"The exception is: " + efe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException();
-	    }
-	    
-	    // Get a producer from the pool
-		RequestService rs = null;
-		try {
-			rs = (RequestService)getAwsAccountServiceProducerPool()
-				.getExclusiveProducer();
-		}
-		catch (JMSException jmse) {
-			String errMsg = "An error occurred getting a producer " +
-				"from the pool. The exception is: " + jmse.getMessage();
-			logger.error(LOGTAG + errMsg);
-			throw new StepException(errMsg, jmse);
-		}
-		    
-		// Query for the account metadata
-		List results = null;
-		try { 
-			long queryStartTime = System.currentTimeMillis();
-			results = account.query(querySpec, rs);
-			long createTime = System.currentTimeMillis() - queryStartTime;
-			logger.info(LOGTAG + "Queried for Account in " + createTime +
-				" ms. Got " + results.size() + " result(s).");
-		}
-		catch (EnterpriseObjectQueryException eoqe) {
-			String errMsg = "An error occurred querying for the object. " +
-	    	  "The exception is: " + eoqe.getMessage();
-	    	logger.error(LOGTAG + errMsg);
-	    	throw new StepException(errMsg, eoqe);
-		}
-		finally {
-			// Release the producer back to the pool
-			getAwsAccountServiceProducerPool()
-				.releaseProducer((MessageProducer)rs);
-		}
-		
-		if (results.size() == 1) {
-			Account acc = (Account)results.get(0);
-			return acc;
-		}
-		else return null;
-    	
+
+        String LOGTAG = "[CreateServiceNowCloseAccountIncident.accountQuery] ";
+
+        // Query for the account
+        // Get a configured account object and account query spec
+        // from AppConfig.
+        Account account = new Account();
+        AccountQuerySpecification querySpec = new AccountQuerySpecification();
+        try {
+            account = (Account)getAppConfig()
+                .getObjectByType(account.getClass().getName());
+            querySpec = (AccountQuerySpecification)getAppConfig()
+                    .getObjectByType(querySpec.getClass().getName());
+        }
+        catch (EnterpriseConfigurationObjectException ecoe) {
+            String errMsg = "An error occurred retrieving an object from " +
+              "AppConfig. The exception is: " + ecoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, ecoe);
+        }
+
+        // Set the values of the query spec
+        try {
+            querySpec.setAccountId(accountId);
+        }
+        catch (EnterpriseFieldException efe) {
+            String errMsg = "An error occurred setting a field value. " +
+                "The exception is: " + efe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException();
+        }
+
+        // Get a producer from the pool
+        RequestService rs = null;
+        try {
+            rs = (RequestService)getAwsAccountServiceProducerPool()
+                .getExclusiveProducer();
+        }
+        catch (JMSException jmse) {
+            String errMsg = "An error occurred getting a producer " +
+                "from the pool. The exception is: " + jmse.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, jmse);
+        }
+
+        // Query for the account metadata
+        List results = null;
+        try {
+            long queryStartTime = System.currentTimeMillis();
+            results = account.query(querySpec, rs);
+            long createTime = System.currentTimeMillis() - queryStartTime;
+            logger.info(LOGTAG + "Queried for Account in " + createTime +
+                " ms. Got " + results.size() + " result(s).");
+        }
+        catch (EnterpriseObjectQueryException eoqe) {
+            String errMsg = "An error occurred querying for the object. " +
+              "The exception is: " + eoqe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, eoqe);
+        }
+        finally {
+            // Release the producer back to the pool
+            getAwsAccountServiceProducerPool()
+                .releaseProducer((MessageProducer)rs);
+        }
+
+        if (results.size() == 1) {
+            Account acc = (Account)results.get(0);
+            return acc;
+        }
+        else return null;
+
     }
-    
-	private void setAwsAccountServiceProducerPool(ProducerPool pool) {
-		m_awsAccountServiceProducerPool = pool;
-	}
-	
-	private ProducerPool getAwsAccountServiceProducerPool() {
-		return m_awsAccountServiceProducerPool;
-	}
-    
+
+    private void setAwsAccountServiceProducerPool(ProducerPool pool) {
+        m_awsAccountServiceProducerPool = pool;
+    }
+
+    private ProducerPool getAwsAccountServiceProducerPool() {
+        return m_awsAccountServiceProducerPool;
+    }
+
 }
