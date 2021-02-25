@@ -20,69 +20,21 @@ import java.util.Properties;
 
 /**
  * Interface for all provisioning steps.
- * <P>
+ * <p>
  *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 11 May 2020
  */
 public interface Step {
-    /**
-     * @param AppConfig, an AppConfig object with all this step needs.
-     *            <P>
-     * @throws StepException with details of the initialization error.
-     */
-    public void init(String provisioningId, Properties props,
-            AppConfig aConfig,
-            AccountDeprovisioningProvider vpcpp)
-            throws StepException;
-    /**
-     *
-     * <P>
-     *
-     * @return List, a list of execution result properties.
-     *         <P>
-     * @throws StepException, with details of the error executing the step.
-     */
-    public List<Property> execute() throws StepException;
-    /**
-     *
-     * <P>
-     *
-     * @throws StepException, with details of the error rolling back the step.
-     */
-    public void rollback() throws StepException;
-    /**
-     * @return String, the step ID.
-     */
-    public String getStepId();
-    /**
-     *
-     * @return String, the step type
-     */
-    public String getType();
-    /**
-     * @return String, the step description
-     */
-    public String getDescription();
-    /**
-     * @return String, the step result
-     */
-    public String getResult();
-    /**
-     * @return List<Property>, the step result properties
-     */
-    public List<Property> getResultProperties();
-    /**
-     * @param String, step status
-     * @param String, step result
-     * @param List, step properties
-     * <P>
-     * @return String, the step result
-     * @throws StepException
-     */
-    public void update(String status, String result)
-        throws StepException;
+    void init(String provisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider vpcpp) throws StepException;
 
-    public void addResultProperty(String key, String value)
-        throws StepException;
+    List<Property> execute() throws StepException;
+    void rollback() throws StepException;
+    String getStepId();
+    String getType();
+    String getDescription();
+    String getResult();
+    List<Property> getResultProperties();
+    void update(String status, String result) throws StepException;
+    void addResultProperty(String key, String value) throws StepException;
 }

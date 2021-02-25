@@ -123,16 +123,31 @@ public class ListVpcIds extends AbstractStep implements Step {
 
         // If there are results, log them and add them to the result properties.
         if (results.size() > 0) {
-            List<String> vpcIds = new ArrayList<>();
+            List<String> vpnVpcIds = new ArrayList<>();
+            List<String> tgwVpcIds = new ArrayList<>();
             for (VirtualPrivateCloud vpcResult : results) {
-                vpcIds.add(vpcResult.getVpcId());
+                if (vpcResult.getVpcConnectionMethod().equals("VPN")) {
+                    vpnVpcIds.add(vpcResult.getVpcId());
+                }
+                else if (vpcResult.getVpcConnectionMethod().equals("TGW")) {
+                    tgwVpcIds.add(vpcResult.getVpcId());
+                }
+                else {
+                    String errMsg = "Error listing VPCs due to unknown VPC connection method: " + vpcResult.getVpcConnectionMethod();
+                    logger.error(LOGTAG + errMsg);
+                    throw new StepException(errMsg);
+                }
             }
-            String vpcIdsCommaSeparated = String.join(",", vpcIds);
-            addResultProperty("vpcIds", vpcIdsCommaSeparated);
-            logger.info(LOGTAG + "The VpcId(s) are: " + vpcIdsCommaSeparated);
+            String vpnVpcIdsCommaSeparated = String.join(",", vpnVpcIds);
+            String tgwVpcIdsCommaSeparated = String.join(",", tgwVpcIds);
+            addResultProperty("vpnVpcIds", vpnVpcIdsCommaSeparated);
+            addResultProperty("tgwVpcIds", tgwVpcIdsCommaSeparated);
+            logger.info(LOGTAG + "The VPN VpcId(s) are: " + vpnVpcIdsCommaSeparated);
+            logger.info(LOGTAG + "The TGW VpcId(s) are: " + tgwVpcIdsCommaSeparated);
         } else {
             logger.info(LOGTAG + "No VPCs found for accountId: " + accountId);
-            addResultProperty("vpcIds", "none");
+            addResultProperty("vpnVpcIds", "none");
+            addResultProperty("tgwVpcIds", "none");
         }
 
         // Update the step.
@@ -153,7 +168,8 @@ public class ListVpcIds extends AbstractStep implements Step {
 
         // Set return properties.
         addResultProperty("stepExecutionMethod", SIMULATED_EXEC_TYPE);
-        addResultProperty("vpcIds", "none");
+        addResultProperty("vpnVpcIds", "none");
+        addResultProperty("tgwVpcIds", "none");
 
         // Update the step.
         update(COMPLETED_STATUS, SUCCESS_RESULT);

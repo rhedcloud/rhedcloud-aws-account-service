@@ -24,30 +24,28 @@ import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.moa.XmlEnterpriseObjectException;
-import org.openeai.transport.RequestService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Properties;
 import java.util.TimeZone;
 
 /**
- *  An abstract class from which all provisioning steps inherit. This class
- *  implements common behaviors, such as required instance variable
- *  initialization, querying the AWS account service for its state and the
- *  ability to update the step in the AWS account service.
- *
- *  Step-specific behaviors are implemented in implementations that extend this
- *  class and implement the Step interface.
+ * An abstract class from which all deprovisioning steps inherit. This class
+ * implements common behaviors, such as required instance variable
+ * initialization, querying the AWS account service for its state and the
+ * ability to update the step in the AWS account service.
+ * <p>
+ * Step-specific behaviors are implemented in implementations that extend this
+ * class and implement the Step interface.
  *
  * @author Steve Wheat (swheat@emory.edu)
  * @version 1.0 - 11 May 2020
- *
  */
 public abstract class AbstractStep {
+    private static final String LOGTAG = "[AbstractStep] ";
 
     protected Category logger = OpenEaiObject.logger;
     private String m_deprovisioningId = null;
@@ -56,41 +54,39 @@ public abstract class AbstractStep {
     private String m_description = null;
     private String m_status = null;
     private String m_result = null;
-    private String m_executionType = null;
-    private List<Property> m_resultProperties = new ArrayList<Property>();
+    private List<Property> m_resultProperties = new ArrayList<>();
     private String m_createUser = null;
     private Datetime m_createDatetime = null;
     private String m_lastUpdateUser = null;
     private Datetime m_lastUpdateDatetime = null;
-    private RequestService m_awsAccountService = null;
-    private String LOGTAG = "[AbstractStep] ";
-    private String CREATE_USER = "AwsAccountService";
     private boolean m_skipStep = false;
     private boolean m_simulateStep = false;
     private boolean m_failStep = false;
     private AccountDeprovisioning m_ad = null;
     private AccountDeprovisioningProvider m_adp = null;
     private AppConfig m_appConfig = null;
-    protected final String IN_PROGRESS_STATUS = "in progress";
-    protected final String COMPLETED_STATUS = "completed";
-    protected final String PENDING_STATUS = "pending";
-    protected final String ROLLBACK_STATUS = "rolled back";
-    protected final String NO_RESULT = null;
-    protected final String SUCCESS_RESULT = "success";
-    protected final String FAILURE_RESULT = "failure";
-    protected final String RUN_EXEC_TYPE = "executed";
-    protected final String SIMULATED_EXEC_TYPE = "simulated";
-    protected final String SKIPPED_EXEC_TYPE = "skipped";
-    protected final String FAILURE_EXEC_TYPE = "failure";
+
+    protected static final String IN_PROGRESS_STATUS = "in progress";
+    protected static final String COMPLETED_STATUS = "completed";
+    protected static final String PENDING_STATUS = "pending";
+    protected static final String ROLLBACK_STATUS = "rolled back";
+    protected static final String NO_RESULT = null;
+    protected static final String SUCCESS_RESULT = "success";
+    protected static final String FAILURE_RESULT = "failure";
+    protected static final String RUN_EXEC_TYPE = "executed";
+    protected static final String SIMULATED_EXEC_TYPE = "simulated";
+    protected static final String SKIPPED_EXEC_TYPE = "skipped";
+    protected static final String FAILURE_EXEC_TYPE = "failure";
+
     protected String m_stepTag = null;
     protected long m_executionStartTime = 0;
     protected long m_executionTime = 0;
     protected long m_executionEndTime = 0;
     protected Properties m_props = null;
 
-    public void init (String deprovisioningId, Properties props,
-        AppConfig aConfig, AccountDeprovisioningProvider adp)
-        throws StepException {
+    protected final String PROPERTY_VALUE_NOT_AVAILABLE = "not available";
+
+    public void init(String deprovisioningId, Properties props, AppConfig aConfig, AccountDeprovisioningProvider adp) throws StepException {
 
         String LOGTAG = "[AbstractStep.init] ";
         logger.info(LOGTAG + "Initializing...");
@@ -111,7 +107,7 @@ public abstract class AbstractStep {
         queryForAccountDeprovisioningBaseline();
 
         // If the AccountDeprovisioning object is not null, look for the step.
-        DeprovisioningStep step = null;
+        DeprovisioningStep step;
         if (getAccountDeprovisioning() != null) {
             step = getDeprovisioningStepById(getStepId());
 
@@ -135,22 +131,17 @@ public abstract class AbstractStep {
                 setType(props.getProperty("type"));
                 setDescription(props.getProperty("description"));
                 setStatus(PENDING_STATUS);
-                setCreateUser(CREATE_USER);
+                setCreateUser("AwsAccountService");
                 setCreateDatetime(new Datetime("Create", System.currentTimeMillis()));
             }
         }
-        // The deprovisioning object for the specified id does not exist. This
-        // is a fatal step error.
         else {
-            String errMsg = "No AccountDeprovisioning object " +
-                "found for DeprovisioningId " + deprovisioningId + ". Can't "+
-                "continue.";
+            String errMsg = "No AccountDeprovisioning object found for DeprovisioningId " + deprovisioningId + ". Can't continue.";
             throw new StepException(errMsg);
         }
 
         // Set the step tag value.
-        String stepTag = "[DeprovisioningId " + getDeprovisioningId() + "][Step-"
-                + getStepId() + "] ";
+        String stepTag = "[DeprovisioningId " + getDeprovisioningId() + "][Step-" + getStepId() + "] ";
         setStepTag(stepTag);
 
         logger.info(LOGTAG + "Initialization complete #######################");
@@ -162,9 +153,7 @@ public abstract class AbstractStep {
         // Update the step to indicate it is in progress.
         update(IN_PROGRESS_STATUS, NO_RESULT);
 
-        String LOGTAG = getStepTag() +
-            "[AbstractStep.execute] ";
-        logger.info(LOGTAG + "Determining execution method.");
+        String LOGTAG = getStepTag() + "[AbstractStep.execute] ";
 
         // Determine if the step should be skipped, simulated, or failed.
         // If skipStep is true, log it skip it and return a property indicating
@@ -207,51 +196,26 @@ public abstract class AbstractStep {
 
     protected abstract List<Property> fail() throws StepException;
 
-    /**
-     * @param AppConfig, the AppConfig
-     * <P>
-     * This method sets the AppConfig
-     */
-    private void setAppConfig(AppConfig appConfig)
-        throws StepException {
-
+    private void setAppConfig(AppConfig appConfig) throws StepException {
         if (appConfig == null) {
-            String errMsg = "AppConfig is null. AppConfig is required.";
+            String errMsg = "AppConfig is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
         m_appConfig = appConfig;
     }
 
-    /**
-     * @return AppConfig, the AppConfig
-     * <P>
-     * This method returns the value of the AppConfig
-     */
     protected AppConfig getAppConfig() {
         return m_appConfig;
     }
 
-    /**
-     * @return String, the DeprovisioningId
-     * <P>
-     * This method returns the value of the DeprovisioningId
-     */
     private String getDeprovisioningId() {
         return m_deprovisioningId;
     }
 
-    /**
-     * @param String, the DeprovisioningId
-     * <P>
-     * This method sets the DeprovisioningId
-     */
-    private void setDeprovisioningId(String deprovisioningId)
-        throws StepException {
-
+    private void setDeprovisioningId(String deprovisioningId) throws StepException {
         if (deprovisioningId == null) {
-            String errMsg = "DeprovisioiningId is null. StepId is a required " +
-                "property.";
+            String errMsg = "DeprovisioningId is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
@@ -259,169 +223,74 @@ public abstract class AbstractStep {
         m_deprovisioningId = deprovisioningId;
     }
 
-    /**
-     * @return String, the StepId
-     * <P>
-     * This method returns the value of the StepId
-     */
     public String getStepId() {
         return m_stepId;
     }
 
-    /**
-     * @param String, the StepId
-     * <P>
-     * This method sets the StepId
-     */
     private void setStepId(String stepId) throws StepException {
         if (stepId == null) {
-            String errMsg = "StepId is null. StepId is a required property.";
+            String errMsg = "StepId is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
         m_stepId = stepId;
     }
 
-    /**
-     * @return String, the StepTag
-     * <P>
-     * This method returns the value of the StepTag
-     */
     public String getStepTag() {
         return m_stepTag;
     }
 
-    /**
-     * @param String, the StepTag
-     * <P>
-     * This method sets the StepTag
-     */
-    private void setStepTag(String stepTag) throws StepException {
+    private void setStepTag(String stepTag) {
         m_stepTag = stepTag;
     }
 
-    /**
-     * @param boolean, the skipStep property
-     * <P>
-     * This method sets the skipStep property
-     */
     private void setSkipStep(boolean skipStep) {
         m_skipStep = skipStep;
     }
 
-    /**
-     * @return boolean, the skipStep property
-     * <P>
-     * This method returns the value of the skipStep property
-     */
     protected boolean getSkipStep() {
         return m_skipStep;
     }
 
-    /**
-     * @param boolean, the simluateStep property
-     * <P>
-     * This method sets the simulateStep property
-     */
     private void setSimulateStep(boolean simulateStep) {
         m_simulateStep = simulateStep;
     }
 
-    /**
-     * @return boolean, the simulateStep property
-     * <P>
-     * This method returns the value of the simulateStep property
-     */
     protected boolean getSimulateStep() {
         return m_simulateStep;
     }
 
-    /**
-     * @param boolean, the failStep property
-     * <P>
-     * This method sets the failStep property
-     */
     private void setFailStep(boolean failStep) {
         m_failStep = failStep;
     }
 
-    /**
-     * @return boolean, the failStep property
-     * <P>
-     * This method returns the value of the failStep property
-     */
     private boolean getFailStep() {
         return m_failStep;
     }
 
-    /**
-     * @param AccountDeprovisioningProvider,
-     * the AccountDeprovisioningProvider
-     * <P>
-     * This method sets the AccountDeprovisioningProvider
-     */
-    private void setAccountDeprovisioningProvider
-        (AccountDeprovisioningProvider adp) {
-
+    private void setAccountDeprovisioningProvider(AccountDeprovisioningProvider adp) {
         m_adp = adp;
     }
 
-    /**
-     * @return AccountDeprovisioningProvider,
-     * the AccountDeprovisioningProvider
-     * <P>
-     * This method returns the AccountDeprovisioningProvider
-     */
-    protected AccountDeprovisioningProvider
-        getAccountDeprovisioningProvider() {
-
+    protected AccountDeprovisioningProvider getAccountDeprovisioningProvider() {
         return m_adp;
     }
 
-    /**
-     * @param AccountDeprovisioning,
-     * the AccountDeprovisioning object containing state
-     * for this step
-     * <P>
-     * This method sets the AccountDeprovisioning object
-     */
-    private void setAccountDeprovisioning
-        (AccountDeprovisioning ad) {
-
+    private void setAccountDeprovisioning(AccountDeprovisioning ad) {
         m_ad = ad;
     }
 
-    /**
-     * @return AccountDeprovisioning,
-     * the AccountDeprovisioning object containing state
-     * for this step.
-     * <P>
-     * This method returns the AccountDeprovisioning object
-     */
-    protected AccountDeprovisioning
-        getAccountDeprovisioning() {
-
+    protected AccountDeprovisioning getAccountDeprovisioning() {
         return m_ad;
     }
 
-    /**
-     * @return String, the Type
-     * <P>
-     * This method returns the value of the step Type
-     */
     public String getType() {
         return m_type;
     }
 
-    /**
-     * @param String, the Type
-     * <P>
-     * This method sets the step Type
-     */
     private void setType(String type) throws StepException {
-
         if (type == null) {
-            String errMsg = "Type is null. Type is a required property.";
+            String errMsg = "Type is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
@@ -429,22 +298,11 @@ public abstract class AbstractStep {
         m_type = type;
     }
 
-    /**
-     * @return String, the Description
-     * <P>
-     * This method returns the value of the step Description
-     */
     public String getDescription() {
         return m_description;
     }
 
-    /**
-     * @param String, the Description
-     * <P>
-     * This method sets the step Description
-     */
     private void setDescription(String description) throws StepException {
-
         if (description == null) {
             String errMsg = "Description is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -454,22 +312,11 @@ public abstract class AbstractStep {
         m_description = description;
     }
 
-    /**
-     * @return String, the Status
-     * <P>
-     * This method returns the value of the status Description
-     */
     public String getStatus() {
         return m_status;
     }
 
-    /**
-     * @param String, the Status
-     * <P>
-     * This method sets the step Status
-     */
     private void setStatus(String status) throws StepException {
-
         if (status == null) {
             String errMsg = "Status is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -479,58 +326,27 @@ public abstract class AbstractStep {
         m_status = status;
     }
 
-    /**
-     * @return Properties, the step properties
-     * <P>
-     * This method returns the value of the step properties
-     */
     public Properties getProperties() {
         return m_props;
     }
 
-    /**
-     * @param Properties, the step properties
-     * <P>
-     * This method sets the step properties
-     */
-    private void setProperties(Properties props)  {
+    private void setProperties(Properties props) {
         m_props = props;
     }
 
-    /**
-     * @return String, the Result
-     * <P>
-     * This method returns the value of the result
-     */
     public String getResult() {
         return m_result;
     }
 
-    /**
-     * @param String, the result
-     * <P>
-     * This method sets the step result
-     */
-    private void setResult(String result)  {
+    private void setResult(String result) {
         m_result = result;
     }
 
-    /**
-     * @return String, the CreateUser
-     * <P>
-     * This method returns the value of the CreateUser
-     */
     private String getCreateUser() {
         return m_createUser;
     }
 
-    /**
-     * @param String, the CreateUser
-     * <P>
-     * This method sets the step CreateUser
-     */
     private void setCreateUser(String createUser) throws StepException {
-
         if (createUser == null) {
             String errMsg = "CreateUser is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -540,22 +356,11 @@ public abstract class AbstractStep {
         m_createUser = createUser;
     }
 
-    /**
-     * @return Datetime, the CreateDatetime
-     * <P>
-     * This method returns the value of the CreateDatetime
-     */
     private Datetime getCreateDatetime() {
         return m_createDatetime;
     }
 
-    /**
-     * @param Datetime, the CreateDatetime
-     * <P>
-     * This method sets the step CreateDatetime
-     */
     private void setCreateDatetime(Datetime createDatetime) throws StepException {
-
         if (createDatetime == null) {
             String errMsg = "CreateDatetime is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -565,22 +370,11 @@ public abstract class AbstractStep {
         m_createDatetime = createDatetime;
     }
 
-    /**
-     * @return String, the LastUpdateUser
-     * <P>
-     * This method returns the value of the LastUpdateUser
-     */
     private String getLastUpdateUser() {
         return m_lastUpdateUser;
     }
 
-    /**
-     * @param String, the LastUpdateUser
-     * <P>
-     * This method sets the step LastUpdateUser
-     */
     private void setLastUpdateUser(String lastUpdateUser) throws StepException {
-
         if (lastUpdateUser == null) {
             String errMsg = "LastUpdateUser is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -590,22 +384,11 @@ public abstract class AbstractStep {
         m_lastUpdateUser = lastUpdateUser;
     }
 
-    /**
-     * @return Datetime, the LastUpdateDatetime
-     * <P>
-     * This method returns the value of the LastUpdateDatetime
-     */
     private Datetime getLastUpdateDatetime() {
         return m_lastUpdateDatetime;
     }
 
-    /**
-     * @param Datetime, the LastUpdateDatetime
-     * <P>
-     * This method sets the step LastUpdateDatetime
-     */
     private void setLastUpdateDatetime(Datetime lastUpdateDatetime) throws StepException {
-
         if (lastUpdateDatetime == null) {
             String errMsg = "LastUpdateDatetime is null. It is a required property.";
             logger.error(LOGTAG + errMsg);
@@ -615,74 +398,38 @@ public abstract class AbstractStep {
         m_lastUpdateDatetime = lastUpdateDatetime;
     }
 
-
     protected DeprovisioningStep getDeprovisioningStepById(String stepId) {
-
-        DeprovisioningStep dStep = null;
-        AccountDeprovisioning ad =
-            getAccountDeprovisioning();
-        List steps = ad.getDeprovisioningStep();
-        ListIterator li = steps.listIterator();
-        while (li.hasNext()) {
-            DeprovisioningStep step = (DeprovisioningStep)li.next();
+        @SuppressWarnings("unchecked")
+        List<DeprovisioningStep> steps = getAccountDeprovisioning().getDeprovisioningStep();
+        for (DeprovisioningStep step : steps) {
             if (step.getStepId().equals(stepId)) {
-                dStep = step;
+                return step;
             }
         }
-        return dStep;
+        return null;
     }
 
     protected DeprovisioningStep getDeprovisioningStepByType(String stepType) {
-
-        DeprovisioningStep dStep = null;
-        AccountDeprovisioning ad =
-            getAccountDeprovisioning();
-        List steps = ad.getDeprovisioningStep();
-        ListIterator li = steps.listIterator();
-        while (li.hasNext()) {
-            DeprovisioningStep step = (DeprovisioningStep)li.next();
+        @SuppressWarnings("unchecked")
+        List<DeprovisioningStep> steps = getAccountDeprovisioning().getDeprovisioningStep();
+        for (DeprovisioningStep step : steps) {
             if (step.getType().equalsIgnoreCase(stepType)) {
-                dStep = step;
+                return step;
             }
         }
-        return dStep;
+        return null;
     }
-
-/**
-    protected Property buildProperty(String key, String value) {
-        Property prop = m_vpcp.newProvisioningStep().newProperty();
-        try {
-            prop.setKey(key);
-            prop.setValue(value);
-        }
-        catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the field values " +
-                "of a property object. The exception is: " +
-                efe.getMessage();
-            logger.error(LOGTAG + errMsg);
-        }
-        return prop;
-    }
-**/
-
 
     protected void setResultProperties(List<Property> resultProps) {
         m_resultProperties = resultProps;
     }
 
-    private void addResultProperty(Property prop) {
-        m_resultProperties.add(prop);
-    }
-
-    public void addResultProperty(String key, String value)
-        throws StepException {
-
+    public void addResultProperty(String key, String value) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.addResultProperty] ";
         logger.debug(LOGTAG + "Adding result property " + key + ": " + value);
 
         if (getResultProperties() == null) {
-            List<Property> resultProperties = new ArrayList<Property>();
-            setResultProperties(resultProperties);
+            setResultProperties(new ArrayList<>());
         }
 
         Property newProp = m_ad.newDeprovisioningStep().newProperty();
@@ -691,30 +438,22 @@ public abstract class AbstractStep {
             newProp.setValue(value);
         }
         catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the field values " +
-                "of a property object. The exception is: " +
-                efe.getMessage();
+            String errMsg = "An error occurred setting the field values of a property object. The exception is: " + efe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
 
-        // If the list already contains a Property
-        // with this key value, update its value.
+        // If the list already contains a Property with this key value, update its value.
         boolean replacedValue = false;
         List<Property> properties = getResultProperties();
-        ListIterator li = properties.listIterator();
-        while (li.hasNext()) {
-            Property oldProp = (Property)li.next();
+        for (Property oldProp : properties) {
             if (oldProp.getKey().equalsIgnoreCase(key)) {
                 try {
                     oldProp.setValue(value);
-                    logger.debug(LOGTAG + "Found an existing property with " +
-                        "key " + key + ". Replaced its value with: " + value);
+                    logger.debug(LOGTAG + "Found an existing property with key " + key + ". Replaced its value with: " + value);
                 }
                 catch (EnterpriseFieldException efe) {
-                    String errMsg = "An error occurred setting the field values " +
-                        "of a property object. The exception is: " +
-                        efe.getMessage();
+                    String errMsg = "An error occurred setting the field values of a property object. The exception is: " + efe.getMessage();
                     logger.error(LOGTAG + errMsg);
                     throw new StepException(errMsg, efe);
                 }
@@ -724,11 +463,8 @@ public abstract class AbstractStep {
         // Otherwise, add the new property.
         if (replacedValue == false) {
             properties.add(newProp);
-            logger.debug(LOGTAG + "No existing property with " +
-                "key " + key + ". Added property with value: " +
-                value);
+            logger.debug(LOGTAG + "No existing property with key " + key + ". Added property with value: " + value);
         }
-
     }
 
     public List<Property> getResultProperties() {
@@ -736,34 +472,27 @@ public abstract class AbstractStep {
     }
 
     protected String getResultProperty(String key) {
-        String value = null;
-        ListIterator li = m_resultProperties.listIterator();
-        while (li.hasNext()) {
-            Property prop = (Property)li.next();
+        for (Property prop : m_resultProperties) {
             if (prop.getKey().equalsIgnoreCase(key)) {
-                value = prop.getValue();
+                return prop.getValue();
             }
         }
-        return value;
+        return null;
     }
 
     protected String getResultProperty(DeprovisioningStep step, String key) {
-        String value = null;
+        @SuppressWarnings("unchecked")
         List<Property> resultProperties = step.getProperty();
-        ListIterator li = resultProperties.listIterator();
-        while (li.hasNext()) {
-            Property prop = (Property)li.next();
+        for (Property prop : resultProperties) {
             if (prop.getKey().equalsIgnoreCase(key)) {
-                value = prop.getValue();
+                return prop.getValue();
             }
         }
-        return value;
+        return null;
     }
 
     protected void setExecutionStartTime() throws StepException {
-
-        String LOGTAG = getStepTag() +
-            "[AbstractStep.setExecutionStartTime] ";
+        String LOGTAG = getStepTag() + "[AbstractStep.setExecutionStartTime] ";
 
         m_executionStartTime = System.currentTimeMillis();
 
@@ -776,9 +505,7 @@ public abstract class AbstractStep {
 
         addResultProperty("startTimeFormatted", formattedDate);
 
-        logger.info(LOGTAG + "Set step startTime to "
-            + getExecutionStartTime() +
-            " or: " + formattedDate);
+        logger.info(LOGTAG + "Set step startTime to " + getExecutionStartTime() + " or: " + formattedDate);
     }
 
     protected long getExecutionStartTime() {
@@ -788,13 +515,11 @@ public abstract class AbstractStep {
     protected void setExecutionTime() throws StepException {
         long currentTime = System.currentTimeMillis();
         m_executionTime = currentTime - getExecutionStartTime();
-        logger.info(LOGTAG + "Setting execution time: " + m_executionTime +
-            " = " + currentTime + " - " + m_executionStartTime);
+        logger.info(LOGTAG + "Setting execution time: " + m_executionTime + " = " + currentTime + " - " + m_executionStartTime);
 
         addResultProperty("executionTime", Long.toString(getExecutionTime()));
 
-        logger.info(LOGTAG + "Set step executionTime to "
-            + Long.toString(m_executionTime));
+        logger.info(LOGTAG + "Set step executionTime to " + m_executionTime);
     }
 
     protected long getExecutionTime() {
@@ -814,8 +539,7 @@ public abstract class AbstractStep {
 
         addResultProperty("executionEndTimeFormatted", formattedDate);
 
-        logger.info(LOGTAG + "Set step executionEndTime to "
-            + getExecutionEndTime() + "or: " + formattedDate);
+        logger.info(LOGTAG + "Set step executionEndTime to " + getExecutionEndTime() + "or: " + formattedDate);
     }
 
     protected long getExecutionEndTime() {
@@ -824,31 +548,18 @@ public abstract class AbstractStep {
 
     public void update(String status, String result) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.update] ";
-        logger.info(LOGTAG + "Updating step with status " + status +
-            " and result " + result);
+        logger.info(LOGTAG + "Updating step with status " + status + " and result " + result);
 
         // Update the baseline state of the VPCP
         queryForAccountDeprovisioningBaseline();
 
-        // If the current status is in progress, update the
-        // execution time. Note that we don't want to
-        // update the execution on update for steps that
-        // have already completed or are in any other status
-        // that in progress.
-        if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS)) {
-
-//            setExecutionTime();
-        }
-
         // If the status is changing from in progress to anything else,
         // set the executionEndTime.
         if (getStatus().equalsIgnoreCase(IN_PROGRESS_STATUS) == true &&
-            status.equalsIgnoreCase(IN_PROGRESS_STATUS) == false) {
-
+                status.equalsIgnoreCase(IN_PROGRESS_STATUS) == false) {
             setExecutionTime();
             setEndTime();
         }
-
 
         // Update the fields of this step.
         setStatus(status);
@@ -867,9 +578,7 @@ public abstract class AbstractStep {
             dStep.setActualTime(Long.toString(getExecutionTime()));
         }
         catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the field values " +
-                "of the ProvisioningStep. The exception is: " +
-                efe.getMessage();
+            String errMsg = "An error occurred setting the field values of the ProvisioningStep. The exception is: " + efe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, efe);
         }
@@ -878,15 +587,12 @@ public abstract class AbstractStep {
         try {
             long updateStartTime = System.currentTimeMillis();
             logger.info(LOGTAG + "Updating the AccountDeprovisioning with new step information...");
-            getAccountDeprovisioningProvider()
-                .update(getAccountDeprovisioning());
+            getAccountDeprovisioningProvider().update(getAccountDeprovisioning());
             long time = System.currentTimeMillis() - updateStartTime;
             logger.info(LOGTAG = "Updated AccountDeprovisioning with new step state in " + time + " ms.");
         }
         catch (ProviderException pe) {
-            String errMsg = "An error occurred updating the AccountDeprovisioning object " +
-                "with an updated DeprovisioningStep. The exception is: " +
-                pe.getMessage();
+            String errMsg = "An error occurred updating the AccountDeprovisioning object with an updated DeprovisioningStep. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
         }
@@ -902,15 +608,12 @@ public abstract class AbstractStep {
     private void queryForAccountDeprovisioningBaseline() throws StepException {
         // Query for the AccountDeprovisioning object in the AWS Account Service.
         // Get a configured query spec from AppConfig
-        AccountDeprovisioningQuerySpecification querySpec = new
-            AccountDeprovisioningQuerySpecification();
+        AccountDeprovisioningQuerySpecification querySpec = new AccountDeprovisioningQuerySpecification();
         try {
-            querySpec = (AccountDeprovisioningQuerySpecification)getAppConfig()
-                    .getObjectByType(querySpec.getClass().getName());
+            querySpec = (AccountDeprovisioningQuerySpecification) getAppConfig().getObjectByType(querySpec.getClass().getName());
         }
         catch (EnterpriseConfigurationObjectException ecoe) {
-            String errMsg = "An error occurred retrieving an object from " +
-              "AppConfig. The exception is: " + ecoe.getMessage();
+            String errMsg = "An error occurred retrieving an object from AppConfig. The exception is: " + ecoe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, ecoe);
         }
@@ -920,10 +623,9 @@ public abstract class AbstractStep {
             querySpec.setDeprovisioningId(getDeprovisioningId());
         }
         catch (EnterpriseFieldException efe) {
-            String errMsg = "An error occurred setting the values of the " +
-                    "AccountDeprovisioning query spec. The exception is: " + efe.getMessage();
-              logger.error(LOGTAG + errMsg);
-              throw new StepException(errMsg, efe);
+            String errMsg = "An error occurred setting the values of the AccountDeprovisioning query spec. The exception is: " + efe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, efe);
         }
 
         // Log the state of the query spec.
@@ -931,53 +633,41 @@ public abstract class AbstractStep {
             logger.info(LOGTAG + "Query spec is: " + querySpec.toXmlString());
         }
         catch (XmlEnterpriseObjectException xeoe) {
-            String errMsg = "An error occurred serializing the query spec " +
-                    "to XML. The exception is: " + xeoe.getMessage();
-              logger.error(LOGTAG + errMsg);
-              throw new StepException(errMsg, xeoe);
+            String errMsg = "An error occurred serializing the query spec to XML. The exception is: " + xeoe.getMessage();
+            logger.error(LOGTAG + errMsg);
+            throw new StepException(errMsg, xeoe);
         }
 
-        List results = null;
         try {
-            results = getAccountDeprovisioningProvider()
-                .query(querySpec);
+            List<AccountDeprovisioning> results = getAccountDeprovisioningProvider().query(querySpec);
+            setAccountDeprovisioning(results.get(0));
         }
         catch (ProviderException pe) {
-            String errMsg = "An error occurred querying for the  " +
-              "current state of a AccountDeprovisioning object. " +
-              "The exception is: " + pe.getMessage();
+            String errMsg = "An error occurred querying for the  current state of a AccountDeprovisioning object. The exception is: " + pe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, pe);
         }
-        AccountDeprovisioning ad =
-            (AccountDeprovisioning)results.get(0);
-
-        setAccountDeprovisioning(ad);
     }
 
-    protected String getStepPropertyValue(String stepType, String key)
-        throws StepException {
+    protected String getStepPropertyValue(String stepType, String key) throws StepException {
         String LOGTAG = getStepTag() + "[AbstractStep.getStepPropertyValue] ";
 
         // Get the property value with the named step and key.
-        logger.info(LOGTAG + "Getting " + key + " property from "
-            + "preceding step " + stepType);
+        logger.info(LOGTAG + "Getting " + key + " property from preceding step " + stepType);
         DeprovisioningStep step = getDeprovisioningStepByType(stepType);
-        String value = null;
         if (step != null) {
-            value = getResultProperty(step, key);
-            if (value == null || value.equals("")) value = "not available";
+            String value = getResultProperty(step, key);
+            if (value == null || value.equals(""))
+                value = PROPERTY_VALUE_NOT_AVAILABLE;
             addResultProperty(key, value);
-            logger.info(LOGTAG + "Property " + key + " from preceding " +
-                "step " + stepType  + " is: " + value);
+            logger.info(LOGTAG + "Property " + key + " from preceding step " + stepType + " is: " + value);
+
+            return value;
         }
         else {
-            String errMsg = "Step " + stepType + " not found. " +
-                "Can't continue.";
+            String errMsg = "Step " + stepType + " not found. Can't continue.";
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg);
         }
-
-        return value;
     }
 }
