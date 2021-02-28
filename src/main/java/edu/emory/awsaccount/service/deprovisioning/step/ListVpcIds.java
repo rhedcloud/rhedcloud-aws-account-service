@@ -64,6 +64,8 @@ public class ListVpcIds extends AbstractStep implements Step {
         String LOGTAG = getStepTag() + "[ListVpcIds.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
+
         // Get the AccountDeprovisioningRequisition
         AccountDeprovisioningRequisition req = getAccountDeprovisioning().getAccountDeprovisioningRequisition();
 
@@ -117,14 +119,12 @@ public class ListVpcIds extends AbstractStep implements Step {
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, eoqe);
         } finally {
-            // Release the producer back to the pool
             getAwsAccountServiceProducerPool().releaseProducer((MessageProducer) rs);
         }
 
-        // If there are results, log them and add them to the result properties.
+        List<String> vpnVpcIds = new ArrayList<>();
+        List<String> tgwVpcIds = new ArrayList<>();
         if (results.size() > 0) {
-            List<String> vpnVpcIds = new ArrayList<>();
-            List<String> tgwVpcIds = new ArrayList<>();
             for (VirtualPrivateCloud vpcResult : results) {
                 if (vpcResult.getVpcConnectionMethod().equals("VPN")) {
                     vpnVpcIds.add(vpcResult.getVpcId());
@@ -138,17 +138,9 @@ public class ListVpcIds extends AbstractStep implements Step {
                     throw new StepException(errMsg);
                 }
             }
-            String vpnVpcIdsCommaSeparated = String.join(",", vpnVpcIds);
-            String tgwVpcIdsCommaSeparated = String.join(",", tgwVpcIds);
-            addResultProperty("vpnVpcIds", vpnVpcIdsCommaSeparated);
-            addResultProperty("tgwVpcIds", tgwVpcIdsCommaSeparated);
-            logger.info(LOGTAG + "The VPN VpcId(s) are: " + vpnVpcIdsCommaSeparated);
-            logger.info(LOGTAG + "The TGW VpcId(s) are: " + tgwVpcIdsCommaSeparated);
-        } else {
-            logger.info(LOGTAG + "No VPCs found for accountId: " + accountId);
-            addResultProperty("vpnVpcIds", "none");
-            addResultProperty("tgwVpcIds", "none");
         }
+        addResultProperty("vpnVpcIds", (vpnVpcIds.size() == 0) ? "none" : String.join(",", vpnVpcIds));
+        addResultProperty("tgwVpcIds", (tgwVpcIds.size() == 0) ? "none" : String.join(",", tgwVpcIds));
 
         // Update the step.
         update(COMPLETED_STATUS, SUCCESS_RESULT);
