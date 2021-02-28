@@ -91,6 +91,7 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
         String LOGTAG = getStepTag() + "[DeleteVpnConnectionProfileAssignments.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         // Get the list of VPCs from a previous step.
         String vpcIds = getStepPropertyValue("LIST_VPC_IDS", "vpnVpcIds");

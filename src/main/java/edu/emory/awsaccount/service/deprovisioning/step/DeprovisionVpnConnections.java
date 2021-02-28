@@ -95,6 +95,7 @@ public class DeprovisionVpnConnections extends AbstractStep implements Step {
         String LOGTAG = getStepTag() + "[DeprovisionVpnConnections.run] ";
         logger.info(LOGTAG + "Begin running the step.");
 
+        addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
 
         // Get the list of VPCs from a previous step.
         String vpcIds = getStepPropertyValue("LIST_VPC_IDS", "vpnVpcIds");
