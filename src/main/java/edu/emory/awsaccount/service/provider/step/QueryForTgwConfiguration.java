@@ -80,7 +80,8 @@ public class QueryForTgwConfiguration extends AbstractStep implements Step {
                 DescribeTransitGatewayAttachmentsRequest describeTransitGatewayAttachmentsRequest
                         = new DescribeTransitGatewayAttachmentsRequest()
                             .withFilters(new Filter("transit-gateway-id").withValues(transitGatewayId),
-                                new Filter("resource-id").withValues(vpcId));
+                                    new Filter("resource-type").withValues("vpc"),
+                                    new Filter("resource-id").withValues(vpcId));
                 DescribeTransitGatewayAttachmentsResult describeTransitGatewayAttachmentsResult;
                 do {
                     describeTransitGatewayAttachmentsResult = ec2Client.describeTransitGatewayAttachments(describeTransitGatewayAttachmentsRequest);
