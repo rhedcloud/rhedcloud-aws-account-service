@@ -41,8 +41,6 @@ import java.util.Properties;
  *
  **/
 public class DeleteLdsGroup extends AbstractStep implements Step {
-
-    int m_sleepTimeInMillis = 5000;
     private final String LOGTAG="DeleteLdsGroup says ";
 
     private ProducerPool m_ldsServiceProducerPool;
@@ -242,8 +240,6 @@ public class DeleteLdsGroup extends AbstractStep implements Step {
 
         // Set return properties.
         addResultProperty("stepExecutionMethod", RUN_EXEC_TYPE);
-        addResultProperty("sleepTimeInMillis",
-                Integer.toString(getSleepTimeInMillis()));
 
         // Update the step.
         update(COMPLETED_STATUS, SUCCESS_RESULT);
@@ -311,15 +307,6 @@ public class DeleteLdsGroup extends AbstractStep implements Step {
         long time = System.currentTimeMillis() - startTime;
         logger.info(LOGTAG + "Rollback completed in " + time + "ms.");
     }
-
-    //    private void setSleepTimeInMillis(int time) {
-    //        m_sleepTimeInMillis = time;
-    //    }
-
-    private int getSleepTimeInMillis() {
-        return m_sleepTimeInMillis;
-    }
-
 
     private void setLdsServiceProducerPool(ProducerPool pool) {
         m_ldsServiceProducerPool = pool;
