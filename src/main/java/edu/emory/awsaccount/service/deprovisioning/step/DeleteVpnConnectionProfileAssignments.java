@@ -97,7 +97,7 @@ public class DeleteVpnConnectionProfileAssignments extends AbstractStep implemen
         String vpcIds = getStepPropertyValue("LIST_VPC_IDS", "vpnVpcIds");
 
         // If there are no VPCs there is nothing to do and the step is complete.
-        if (vpcIds == null || vpcIds.equalsIgnoreCase("none")) {
+        if (vpcIds.equals(PROPERTY_VALUE_NOT_AVAILABLE) || vpcIds.equals("none")) {
             logger.info(LOGTAG + "There are no VPN VPCs.");
             // Update the step.
             update(COMPLETED_STATUS, SUCCESS_RESULT);
