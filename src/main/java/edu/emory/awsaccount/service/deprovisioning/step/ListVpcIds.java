@@ -199,7 +199,7 @@ public class ListVpcIds extends AbstractStep implements Step {
         super.rollback();
 
         String LOGTAG = getStepTag() + "[ListVpcIds.rollback] ";
-        logger.info(LOGTAG + "Rollback called, nothing to roll back.");
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         update(ROLLBACK_STATUS, SUCCESS_RESULT);
 

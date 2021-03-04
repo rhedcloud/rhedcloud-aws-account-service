@@ -291,10 +291,8 @@ public class DeleteLdsOrganizationalUnit extends AbstractStep implements Step {
 
     public void rollback() throws StepException {
         long startTime = System.currentTimeMillis();
-        String LOGTAG = getStepTag() +
-                "[DeleteLdsOrganizationalUnit.rollback] ";
-        logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
-                "roll back.");
+        String LOGTAG = getStepTag() + "[DeleteLdsOrganizationalUnit.rollback] ";
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
         update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
         // Log completion time.

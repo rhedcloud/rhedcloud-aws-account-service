@@ -70,8 +70,7 @@ public class AuthorizeRequestor extends AbstractStep implements Step {
         long startTime = System.currentTimeMillis();
         String LOGTAG = createLogTag("rollback");
 
-        logger.info(LOGTAG + "Rollback called, but this step has nothing to " +
-                "roll back.");
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
         update(ROLLBACK_STATUS, SUCCESS_RESULT);
 
         long time = System.currentTimeMillis() - startTime;

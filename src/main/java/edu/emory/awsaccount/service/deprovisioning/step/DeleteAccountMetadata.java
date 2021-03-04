@@ -253,7 +253,7 @@ public class DeleteAccountMetadata extends AbstractStep implements Step {
 
         long startTime = System.currentTimeMillis();
         String LOGTAG = getStepTag() + "[DeleteAccountMetadata.rollback] ";
-        logger.info(LOGTAG + "Rollback called, nothing to roll back.");
+        logger.info(LOGTAG + "Rollback called, but this step has nothing to roll back.");
 
         // Get the result props
         List<Property> props = getResultProperties();
