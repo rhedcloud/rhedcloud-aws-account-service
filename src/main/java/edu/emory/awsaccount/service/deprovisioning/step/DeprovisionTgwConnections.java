@@ -142,16 +142,20 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                 /*
                  * figure out what region the VPC is in by looking for the TGW attachment
                  */
+                logger.info(LOGTAG + "Finding the region for VPC " + vpcId);
                 foundRegion:
                 for (String region : regions) {
+                    logger.info(LOGTAG + "Building EC2 client for account " + accountId + " in region " + region);
                     memberEc2Client = buildAmazonEC2Client(accountId, region);
 
                     DescribeTransitGatewayAttachmentsRequest describeTransitGatewayAttachmentsRequest
                             = new DescribeTransitGatewayAttachmentsRequest()
                                     .withFilters(new Filter("resource-type").withValues("vpc"),
-                                                new Filter("resource-id").withValues(vpcId));
+                                                 new Filter("resource-id").withValues(vpcId));
                     DescribeTransitGatewayAttachmentsResult describeTransitGatewayAttachmentsResult;
                     do {
+                        logger.info(LOGTAG + "Describe Transit Gateway Attachments for " + vpcId + " in region " + region);
+
                         describeTransitGatewayAttachmentsResult = memberEc2Client.describeTransitGatewayAttachments(describeTransitGatewayAttachmentsRequest);
                         // there should only be one VPC attachment that was created by the CFN template
                         if (describeTransitGatewayAttachmentsResult.getTransitGatewayAttachments().size() > 0) {
@@ -178,10 +182,13 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                     return getResultProperties();
                 }
 
+                logger.info(LOGTAG + "VPC " + vpcId + " is in region " + vpcRegion + " with Transit Gateway Attachment " + tgwAttachment);
+
                 /*
                  * next step is to undo the attachment route table propagations,
                  * by using the EC2 client for the owner of the TGW
                  */
+                logger.info(LOGTAG + "Building EC2 client for account " + tgwAttachment.getTransitGatewayOwnerId() + " in region " + vpcRegion);
                 tgwEc2Client = buildAmazonEC2Client(tgwAttachment.getTransitGatewayOwnerId(), vpcRegion);
 
                 try {
@@ -190,8 +197,13 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                                     .withTransitGatewayAttachmentId(tgwAttachment.getTransitGatewayAttachmentId());
                     GetTransitGatewayAttachmentPropagationsResult propagationsResult;
                     do {
+                        logger.info(LOGTAG + "Get Transit Gateway Attachment Propagations for " + tgwAttachment.getTransitGatewayAttachmentId());
+
                         propagationsResult = tgwEc2Client.getTransitGatewayAttachmentPropagations(propagationsRequest);
                         for (TransitGatewayAttachmentPropagation p : propagationsResult.getTransitGatewayAttachmentPropagations()) {
+                            logger.info(LOGTAG + "Disable Transit Gateway Route Table Propagations for "
+                                    + tgwAttachment.getTransitGatewayAttachmentId() + " and " + p.getTransitGatewayRouteTableId());
+
                             DisableTransitGatewayRouteTablePropagationRequest disableTgwRouteTablePropagationRequest
                                     = new DisableTransitGatewayRouteTablePropagationRequest()
                                             .withTransitGatewayAttachmentId(tgwAttachment.getTransitGatewayAttachmentId())
@@ -206,6 +218,7 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                     if (!e.getErrorCode().equals("IncorrectState")) {
                         throw e;
                     }
+                    logger.info(LOGTAG + "Ignoring IncorrectState exception while doing propagations");
                 }
 
 
@@ -215,6 +228,10 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                  */
                 if (tgwAttachment.getAssociation() != null && tgwAttachment.getAssociation().getTransitGatewayRouteTableId() != null) {
                     try {
+                        logger.info(LOGTAG + "Disassociate Transit Gateway Route Table for "
+                                + tgwAttachment.getTransitGatewayAttachmentId()
+                                + " and " + tgwAttachment.getAssociation().getTransitGatewayRouteTableId());
+
                         DisassociateTransitGatewayRouteTableRequest disassociateTgwRouteTableRequest
                                 = new DisassociateTransitGatewayRouteTableRequest()
                                         .withTransitGatewayAttachmentId(tgwAttachment.getTransitGatewayAttachmentId())
@@ -226,6 +243,7 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                         if (!e.getErrorCode().equals("IncorrectState")) {
                             throw e;
                         }
+                        logger.info(LOGTAG + "Ignoring IncorrectState exception while doing disassociation");
                     }
                 }
 
@@ -233,6 +251,9 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                  * final step is to delete the VPC attachment from the TGW.
                  */
                 try {
+                    logger.info(LOGTAG + "Delete Transit Gateway VPC Attachment for "
+                            + tgwAttachment.getTransitGatewayAttachmentId());
+
                     DeleteTransitGatewayVpcAttachmentRequest deleteTransitGatewayVpcAttachmentRequest = new DeleteTransitGatewayVpcAttachmentRequest()
                             .withTransitGatewayAttachmentId(tgwAttachment.getTransitGatewayAttachmentId());
                     memberEc2Client.deleteTransitGatewayVpcAttachment(deleteTransitGatewayVpcAttachmentRequest);
@@ -242,6 +263,7 @@ public class DeprovisionTgwConnections extends AbstractStep implements Step {
                     if (!e.getErrorCode().equals("IncorrectState")) {
                         throw e;
                     }
+                    logger.info(LOGTAG + "Ignoring IncorrectState exception while deleting TGW VPC attachment");
                 }
             }
         }
