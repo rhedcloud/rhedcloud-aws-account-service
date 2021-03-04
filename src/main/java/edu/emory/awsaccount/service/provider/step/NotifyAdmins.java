@@ -42,6 +42,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
     private ProducerPool m_awsAccountServiceProducerPool = null;
     private String m_notificationTemplateVpn;
     private String m_notificationTemplateTgw;
+    private String m_notificationTemplateDefault;
 
     public void init(String provisioningId, Properties props, AppConfig aConfig, VirtualPrivateCloudProvisioningProvider vpcpp) throws StepException {
         super.init(provisioningId, props, aConfig, vpcpp);
@@ -59,8 +60,10 @@ public class NotifyAdmins extends AbstractStep implements Step {
 
         setNotificationTemplateVpn(getProperties().getProperty("notificationTemplateVpn"));
         setNotificationTemplateTgw(getProperties().getProperty("notificationTemplateTgw"));
+        setNotificationTemplateDefault(getProperties().getProperty("notificationTemplateDefault"));
         logger.info(LOGTAG + "notificationTemplateVpn is: " + getNotificationTemplateVpn());
         logger.info(LOGTAG + "notificationTemplateTgw is: " + getNotificationTemplateTgw());
+        logger.info(LOGTAG + "notificationTemplateDefault is: " + getNotificationTemplateDefault());
 
         logger.info(LOGTAG + "Initialization complete.");
     }
@@ -259,6 +262,19 @@ public class NotifyAdmins extends AbstractStep implements Step {
         return m_notificationTemplateTgw;
     }
 
+    private void setNotificationTemplateDefault(String template) throws StepException {
+        if (template == null) {
+            String errMsg = "notificationTemplateDefault property is null. Can't continue.";
+            throw new StepException(errMsg);
+        }
+
+        m_notificationTemplateDefault = template;
+    }
+
+    private String getNotificationTemplateDefault() {
+        return m_notificationTemplateDefault;
+    }
+
     private String getNotificationText(VirtualPrivateCloudRequisition req, String vpcConnectionMethod) throws StepException {
         String text;
         if (vpcConnectionMethod.equals("VPN")) {
@@ -266,7 +282,7 @@ public class NotifyAdmins extends AbstractStep implements Step {
         } else if (vpcConnectionMethod.equals("TGW")) {
             text = getNotificationTemplateTgw();
         } else {
-            text = "";
+            text = getNotificationTemplateDefault();
         }
         text = text.replaceAll("\\s+", " ");
 
