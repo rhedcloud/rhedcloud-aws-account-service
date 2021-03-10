@@ -2,10 +2,9 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.amazon.aws.moa.jmsobjects.services.v1_0">
 <class name="Service" table="SERVICE">
-<id name="ServiceId" column="SERVICE_ID">
+<id name="ServiceId" column="SERVICE_ID"> <!-- not type="OpenEaiLong" because SERVICE_ID is a text field -->
 <generator class="OpenEaiSequence">
-<param name="H_SERVICE_SEQ"></param>
-<param name="parameters">INCREMENT BY 1 START WITH 100 </param>
+<param name="sequence">H_SERVICE_SEQ</param>
 </generator>
 </id>
 <property name="AwsServiceCode" column="AWS_SERVICE_CODE"/>
