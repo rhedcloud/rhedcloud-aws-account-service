@@ -4,7 +4,8 @@
 <class name="Service" table="SERVICE">
 <id name="ServiceId" column="SERVICE_ID">
 <generator class="OpenEaiSequence">
-<param name="sequence">H_SERVICE_SEQ</param>
+<param name="H_SERVICE_SEQ"></param>
+<param name="parameters">INCREMENT BY 1 START WITH 100 </param>
 </generator>
 </id>
 <property name="AwsServiceCode" column="AWS_SERVICE_CODE"/>
