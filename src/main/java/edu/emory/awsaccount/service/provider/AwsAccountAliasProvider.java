@@ -6,7 +6,7 @@
 /******************************************************************************
  This file is part of the Emory AWS Account Service.
 
- Copyright (C) 2018 Emory University. All rights reserved. 
+ Copyright (C) 2018 Emory University. All rights reserved.
  ******************************************************************************/
 
 package edu.emory.awsaccount.service.provider;
@@ -95,7 +95,7 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
         setAccessKeyId(accessKeyId);
 
         String secretKey = getProperties().getProperty("secretKey");
-        if (accessKeyId == null || accessKeyId.equals("")) {
+        if (secretKey == null || secretKey.equals("")) {
             String errMsg = "No base secretKey property specified. Can't continue.";
             throw new ProviderException(errMsg);
         }
@@ -151,7 +151,7 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
 
     /**
      * @see AccountAliasProvider.java
-     * 
+     *
      *      Note: this implementation queries by AccountId only.
      */
     @Override
@@ -268,110 +268,110 @@ public class AwsAccountAliasProvider extends OpenEaiObject implements AccountAli
     }
 
     /**
-     * 
+     *
      * @param AppConfig,
      *            the AppConfig for the provider
-     * 
+     *
      */
     private void setAppConfig(AppConfig aConfig) {
         m_appConfig = aConfig;
     }
 
     /**
-     * 
+     *
      * @return AppConfig, the AppConfig for the provider
-     * 
+     *
      */
     private AppConfig getAppConfig() {
         return m_appConfig;
     }
 
     /**
-     * 
+     *
      * @param String,
      *            the AWS access key ID to use in client connections
-     * 
+     *
      */
     private void setAccessKeyId(String accessKeyId) {
         m_accessKeyId = accessKeyId;
     }
 
     /**
-     * 
+     *
      * @return String, the AWS access key ID to use in client connections
-     * 
+     *
      */
     private String getAccessKeyId() {
         return m_accessKeyId;
     }
 
     /**
-     * 
+     *
      * @param String,
      *            the AWS secret key to use in client connections
-     * 
+     *
      */
     private void setSecretKey(String secretKey) {
         m_secretKey = secretKey;
     }
 
     /**
-     * 
+     *
      * @return String, the AWS secret to use in client connections
-     * 
+     *
      */
     private String getSecretKey() {
         return m_secretKey;
     }
 
     /**
-     * 
+     *
      * @param String,
      *            a template or pattern for building the precise role to assume
      *            for cross-account access
-     * 
+     *
      */
     private void setRoleArnPattern(String pattern) {
         m_roleArnPattern = pattern;
     }
 
     /**
-     * 
+     *
      * @return String, a template or pattern for building the precise role to
      *         assume for cross-account access
-     * 
+     *
      */
     private String getRoleArnPattern() {
         return m_roleArnPattern;
     }
 
     /**
-     * 
+     *
      * @param int,
      *            role assumption duration in seconds
-     * 
+     *
      */
     private void setRoleAssumptionDuration(int seconds) {
         m_roleAssumptionDurationSeconds = seconds;
     }
 
     /**
-     * 
+     *
      * @return int, role assumption duration in seconds
-     * 
+     *
      */
     private int getRoleAssumptionDuration() {
         return m_roleAssumptionDurationSeconds;
     }
 
     /**
-     * 
+     *
      * @param String,
      *            accountId
      *            <P>
      *            @return, AmazonIdentityManagement client connected to the
      *            correct account with the correct role
-     * 
+     *
      */
     private AmazonIdentityManagement buildIamClient(String accountId) {
         // Build the roleArn of the role to assume from the base ARN and
