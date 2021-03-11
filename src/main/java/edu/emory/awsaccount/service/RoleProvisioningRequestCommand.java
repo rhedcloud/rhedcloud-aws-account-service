@@ -559,6 +559,10 @@ public class RoleProvisioningRequestCommand extends AwsAccountRequestCommand imp
             }
             String replyContents = buildReplyDocument(eControlArea, localProvideDoc);
 
+            // Log execution time.
+            long executionTime = System.currentTimeMillis() - startTime;
+            logger.info(LOGTAG + "Query-Request command execution complete in " + executionTime + " ms.");
+
             // Return the response with status success.
             return getMessage(msg, replyContents);
         }
