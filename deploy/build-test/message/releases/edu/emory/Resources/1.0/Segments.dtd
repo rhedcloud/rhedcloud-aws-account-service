@@ -561,6 +561,9 @@ Commented out 2/21/2012 due to being invalid and therefore also not implemented
 <!ELEMENT TransitGatewayConnectionProfileAssignmentQuerySpecification (Comparison*, QueryLanguage?, TransitGatewayConnectionProfileAssignmentId?, TransitGatewayConnectionProfileId?, OwnerId?)>
 <!ELEMENT TransitGatewayConnectionProfileAssignmentRequisition (Region, TransitGatewayId, OwnerId)>
 
+<!ELEMENT TransitGatewayStatus (AccountId, Region, TransitGatewayId, TgwStatus, TgwAttachmentStatus)>
+<!ELEMENT TransitGatewayStatusQuerySpecification (AccountId?, VpcId?)>
+
 <!-- SecurityAssertion added 4/19/2018 for the TKI Service -->
 <!ELEMENT SecurityAssertion (SecurityAssertionId?, Type, Principal, Device*, RoleDetail*, SamlAssertion?, CreateDatetime)>
 <!ELEMENT SecurityAssertionQuerySpecification (SecurityAssertionId?, Type?, Principal?)>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE edu.emory.Network.TransitGatewayStatus.Provide SYSTEM "../dtd/Provide-Reply.dtd">
+<edu.emory.Network.TransitGatewayStatus.Provide>
+    <ControlAreaReply messageCategory="edu.emory.Network" messageObject="TransitGatewayStatus"
+        messageAction="Provide" messageRelease="1.0" messagePriority="9" messageType="Reply">
+        <Sender>
+            <MessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </MessageId>
+            <Authentication>
+                <AuthUserId>testsuiteapp</AuthUserId>
+            </Authentication>
+        </Sender>
+        <Datetime>
+            <Year>2018</Year>
+            <Month>5</Month>
+            <Day>17</Day>
+            <Hour>13</Hour>
+            <Minute>47</Minute>
+            <Second>30</Second>
+            <SubSecond>842</SubSecond>
+            <Timezone>6:00-GMT</Timezone>
+        </Datetime>
+        <Result action="Query" status="success">
+            <ProcessedMessageId>
+                <SenderAppId>edu.emory.TestSuiteApplication</SenderAppId>
+                <ProducerId>4860446b-1e16-4bc0-8d0a-af7675956591</ProducerId>
+                <MessageSeq>1024</MessageSeq>
+            </ProcessedMessageId>
+        </Result>
+    </ControlAreaReply>
+    <DataArea>
+        <TransitGatewayStatus>
+            <AccountId>123456789012</AccountId>
+            <Region>us-east-1</Region>
+            <TransitGatewayId>tgw-04153a75d2fa64437</TransitGatewayId>
+            <TgwStatus>available</TgwStatus>
+            <TgwAttachmentStatus>available</TgwAttachmentStatus>
+        </TransitGatewayStatus>
+        <TransitGatewayStatus>
+            <AccountId>123456789012</AccountId>
+            <Region>us-east-2</Region>
+            <TransitGatewayId>tgw-09bb7e6d7ac7ecfd3</TransitGatewayId>
+            <TgwStatus>pending</TgwStatus>
+            <TgwAttachmentStatus>pending</TgwAttachmentStatus>
+        </TransitGatewayStatus>
+    </DataArea>
+</edu.emory.Network.TransitGatewayStatus.Provide>

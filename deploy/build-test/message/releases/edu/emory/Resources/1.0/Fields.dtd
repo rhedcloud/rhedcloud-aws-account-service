@@ -581,6 +581,8 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT TransitGatewayConnectionProfileId %STRDOM;>
 <!ELEMENT TransitGatewayId %STRDOM;>
 <!ELEMENT TransitGatewayProfileId %STRDOM;>
+<!ELEMENT TgwStatus %STRDOM;>
+<!ELEMENT TgwAttachmentStatus %STRDOM;>
 <!-- TunnelInterface1 added 4/5/2018 for Network/VpnConnection -->
 <!ELEMENT TunnelInterface1 %STRDOM;>
 <!-- TunnelInterface2 added 4/5/2018 for Network/VpnConnection -->
