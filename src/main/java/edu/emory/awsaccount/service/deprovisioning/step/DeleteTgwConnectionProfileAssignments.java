@@ -100,7 +100,7 @@ public class DeleteTgwConnectionProfileAssignments extends AbstractStep implemen
             return getResultProperties();
         }
 
-        // For each VPC, query for a VPN connection profile assignment.
+        // For each VPC, query for a TGW connection profile assignment.
         List<TransitGatewayConnectionProfileAssignment> tgwConnectionProfileAssignments = new ArrayList<>();
         for (String vpcId : vpcList) {
             TransitGatewayConnectionProfileAssignment pa = queryForTgwConnectionProfileAssignment(vpcId);
@@ -288,7 +288,7 @@ public class DeleteTgwConnectionProfileAssignments extends AbstractStep implemen
             }
         }
         catch (EnterpriseObjectQueryException e) {
-            String errMsg = "An error occurred querying for the VpnConnectionProfileAssignment object. The exception is: " + e.getMessage();
+            String errMsg = "An error occurred querying for the TransitGatewayConnectionProfileAssignment object. The exception is: " + e.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, e);
         }
