@@ -115,7 +115,7 @@ public class ListVpcIds extends AbstractStep implements Step {
             logger.info(LOGTAG + "Queried for VPC metadata in " + queryTime + " ms. Found " + vpcCount + " VPC(s).");
             addResultProperty("vpcCount", Integer.toString(vpcCount));
         } catch (EnterpriseObjectQueryException eoqe) {
-            String errMsg = "An error occurred creating the object. The exception is: " + eoqe.getMessage();
+            String errMsg = "An error occurred querying for VPC metadata. The exception is: " + eoqe.getMessage();
             logger.error(LOGTAG + errMsg);
             throw new StepException(errMsg, eoqe);
         } finally {
