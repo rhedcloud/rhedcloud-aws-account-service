@@ -152,7 +152,8 @@ public class DetermineVpcConnectionMethod extends AbstractStep implements Step {
                 else {
                     // TGWs support multiple associations but we do not have logic to select between them yet.
                     // in the future, they might be classified by some type information and selected as part of provisioning.
-                    // but for now, if there isn't exactly one it will be flagged as an error and stop provisioning
+                    // but for now, if there isn't exactly one it will be flagged as an error and stop provisioning.
+                    // A similar check is done in AccountTransitGatewayStatusProvider.
                     if (tgw.getTransitGatewayProfile().size() > 1) {
                         String errMsg = "The TransitGateway has too many profiles with " + tgw.getTransitGatewayProfile().size();
                         logger.error(LOGTAG + errMsg);
