@@ -35,6 +35,7 @@
         <TransitGatewayStatus>
             <AccountId>123456789012</AccountId>
             <Region>us-east-1</Region>
+            <VpcId>vpc-aaaaaaaa</VpcId>
             <TransitGatewayId>tgw-04153a75d2fa64437</TransitGatewayId>
             <TgwStatus>available</TgwStatus>
             <TgwAttachmentStatus>available</TgwAttachmentStatus>
@@ -42,6 +43,7 @@
         <TransitGatewayStatus>
             <AccountId>123456789012</AccountId>
             <Region>us-east-2</Region>
+            <VpcId>vpc-bbbbbbbb</VpcId>
             <TransitGatewayId>tgw-09bb7e6d7ac7ecfd3</TransitGatewayId>
             <TgwStatus>pending</TgwStatus>
             <TgwAttachmentStatus>pending</TgwAttachmentStatus>
