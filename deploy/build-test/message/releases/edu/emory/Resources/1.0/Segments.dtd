@@ -561,7 +561,7 @@ Commented out 2/21/2012 due to being invalid and therefore also not implemented
 <!ELEMENT TransitGatewayConnectionProfileAssignmentQuerySpecification (Comparison*, QueryLanguage?, TransitGatewayConnectionProfileAssignmentId?, TransitGatewayConnectionProfileId?, OwnerId?)>
 <!ELEMENT TransitGatewayConnectionProfileAssignmentRequisition (Region, TransitGatewayId, OwnerId)>
 
-<!ELEMENT TransitGatewayStatus (AccountId, Region, VpcId, TransitGatewayId?, TgwStatus?, TgwAttachmentStatus?, MissingConnectionProfileAssignment?, MissingConnectionProfile?, WrongTransitGateway?, InvalidTransitGatewayProfile?, MissingTransitGateway?, MissingTransitGatewayAttachment?, WrongTransitGatewayAttachment?)>
+<!ELEMENT TransitGatewayStatus (AccountId, Region, VpcId, TransitGatewayId?, TgwStatus?, TgwAttachmentId?, TgwAttachmentStatus?, TgwAttachmentAssociationStatus?, TgwAttachmentAssociationCorrect?, TgwAttachmentPropagationCorrect?, MissingConnectionProfileAssignment?, MissingConnectionProfile?, WrongTransitGateway?, InvalidTransitGatewayProfile?, MissingTransitGateway?, MissingTransitGatewayAttachment?, WrongTransitGatewayAttachment?, MissingTgwAttachmentAssociation?)>
 <!ELEMENT TransitGatewayStatusQuerySpecification (AccountId?, VpcId?)>
 
 <!-- SecurityAssertion added 4/19/2018 for the TKI Service -->

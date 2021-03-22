@@ -582,7 +582,12 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT TransitGatewayId %STRDOM;>
 <!ELEMENT TransitGatewayProfileId %STRDOM;>
 <!ELEMENT TgwStatus %STRDOM;>
+<!ELEMENT TgwAttachmentId %STRDOM;>
 <!ELEMENT TgwAttachmentStatus %STRDOM;>
+<!ELEMENT TgwAttachmentAssociationStatus %STRDOM;>
+<!ELEMENT TgwAttachmentAssociationCorrect %STRDOM;>
+<!ELEMENT TgwAttachmentPropagationCorrect %STRDOM;>
+
 <!ELEMENT MissingConnectionProfileAssignment %STRDOM;>
 <!ELEMENT MissingConnectionProfile %STRDOM;>
 <!ELEMENT WrongTransitGateway %STRDOM;>
@@ -590,6 +595,7 @@ moved to Segments on 2/16/2012 in order to include description
 <!ELEMENT MissingTransitGateway %STRDOM;>
 <!ELEMENT MissingTransitGatewayAttachment %STRDOM;>
 <!ELEMENT WrongTransitGatewayAttachment %STRDOM;>
+<!ELEMENT MissingTgwAttachmentAssociation %STRDOM;>
 
 <!-- TunnelInterface1 added 4/5/2018 for Network/VpnConnection -->
 <!ELEMENT TunnelInterface1 %STRDOM;>
