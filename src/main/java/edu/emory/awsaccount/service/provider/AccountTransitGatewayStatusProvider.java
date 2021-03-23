@@ -3,15 +3,16 @@ package edu.emory.awsaccount.service.provider;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.AmazonEC2Exception;
 import com.amazonaws.services.ec2.model.DescribeTransitGatewayAttachmentsRequest;
 import com.amazonaws.services.ec2.model.DescribeTransitGatewayAttachmentsResult;
 import com.amazonaws.services.ec2.model.DescribeTransitGatewaysRequest;
 import com.amazonaws.services.ec2.model.DescribeTransitGatewaysResult;
 import com.amazonaws.services.ec2.model.Filter;
-import com.amazonaws.services.ec2.model.GetTransitGatewayAttachmentPropagationsRequest;
-import com.amazonaws.services.ec2.model.GetTransitGatewayAttachmentPropagationsResult;
+import com.amazonaws.services.ec2.model.SearchTransitGatewayRoutesRequest;
+import com.amazonaws.services.ec2.model.SearchTransitGatewayRoutesResult;
 import com.amazonaws.services.ec2.model.TransitGatewayAttachment;
-import com.amazonaws.services.ec2.model.TransitGatewayAttachmentPropagation;
+import com.amazonaws.services.ec2.model.TransitGatewayRoute;
 import edu.emory.awsaccount.service.AwsClientBuilderHelper;
 import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayConnectionProfileAssignment;
@@ -124,6 +125,39 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
         logger.info(LOGTAG + "Initialization complete.");
     }
 
+    /*
+     * Certain status fields can be set if unexpected data is found while collecting TGW information:
+     *   MissingConnectionProfileAssignment - found a registered TGW VPC but no TransitGatewayConnectionProfileAssignment
+     *   MissingConnectionProfile - found a registered TGW VPC and an assignment but no TransitGatewayConnectionProfile
+     *   InvalidTransitGatewayProfile - a TransitGateway records returned by NetworkOps has an invalid number of profiles
+     *   MissingTransitGateway - found a registered TGW VPC but can not find the Transit Gateway in AWS
+     *   MissingTransitGatewayAttachment - found a registered TGW VPC but can not find a Transit Gateway Attachment in AWS
+     *   WrongTransitGatewayAttachment - found a registered TGW VPC but the Transit Gateway Attachment in AWS
+     *                                   has a different TransitGatewayId from the TransitGatewayConnectionProfile
+     *
+     * From the VPC account, check to see if the TGW it is supposed to be attached to is available
+     *       Green if return value is available and Red if return value is not available
+     *   WrongTransitGateway - the TransitGatewayConnectionProfileAssignment and TransitGatewayConnectionProfile
+     *                         indicate a specific TransitGatewayId but it can not be found in the list of
+     *                         configured TransitGateway records returned by NetworkOps
+     *   TgwStatus - the status (or state) of the Transit Gateway as returned by AWS
+     *
+     * From the VPC account, check to see if the Attachment state is available
+     *   TgwAttachmentId - the identifier of the Transit Gateway Attachment as returned by AWS
+     *   TgwAttachmentStatus - the status (or state) of the Transit Gateway Attachment as returned by AWS
+     *
+     * From the VPC account, check to see if the Association Status is associated
+     *   MissingTgwAttachmentAssociation - the Transit Gateway Attachment returned by AWS is missing the association
+     *   TgwAttachmentAssociationStatus - the status of the Transit Gateway Attachment association as returned by AWS
+     *
+     * From the TGW account, check to see if the VPC TGW attachment ID is present in the association route Table
+     *   TgwAttachmentAssociationCorrect - the route table ID of the association matches the ID in the TransitGatewayConnectionProfile
+     *                                     if it doesn't match, the reason for the mismatch
+     *
+     * From the TGW account, check to see if the VPC TGW attachment ID is present in the correct propagation route tables
+     *   TgwAttachmentPropagationCorrect - the route table ID of the propagations matches the ID in the TransitGatewayConnectionProfile
+     *                                     if it doesn't match, the reason for the mismatch
+     */
     @Override
     public List<TransitGatewayStatus> query(TransitGatewayStatusQuerySpecification tgwQuerySpec) throws ProviderException {
         final String LOGTAG = "[AccountTransitGatewayStatusProvider.query] ";
@@ -241,45 +275,75 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
                 // From the VPC account, check to see if the TGW it is supposed to be attached to is available
                 transitGatewayStatus.setTgwStatus(awsTransitGateway.getState());
                 // From the VPC account, check to see if the Attachment state is available
+                transitGatewayStatus.setTgwAttachmentId(transitGatewayAttachment.getTransitGatewayAttachmentId());
                 transitGatewayStatus.setTgwAttachmentStatus(transitGatewayAttachment.getState());
 
                 // From the VPC account, check to see if the Association Status is associated
                 if (transitGatewayAttachment.getAssociation() == null) {
-//                    transitGatewayStatus.setMissingTgwAssociation("true");
-                    continue;
-                }
-                else if (tgwProfile.getAssociationRouteTableId() == null) {
-//                    transitGatewayStatus.setMissingTgwProfileAssociation("true");
-                    continue;
-                }
-                else if (!tgwProfile.getAssociationRouteTableId().equals(transitGatewayAttachment.getAssociation().getTransitGatewayRouteTableId())) {
-//                    transitGatewayStatus.setWrongTgwAssociation("true");
-                    continue;
+                    transitGatewayStatus.setMissingTgwAttachmentAssociation("true");
                 }
                 else {
-//                    transitGatewayStatus.setTgwAssociationStatus(transitGatewayAttachment.getAssociation().getState());
+                    transitGatewayStatus.setTgwAttachmentAssociationStatus(transitGatewayAttachment.getAssociation().getState());
                 }
-                // TODO - is the association correct?
-                // From the TGW account, check to see if the VPC TGW attachment ID is present in the association route Table
 
-                // From the TGW account, check to see if the VPC TGW attachment ID is present in the association route Table
-                // From the TGW account, check to see if the VPC TGW attachment ID is present in the correct propagation route tables
+                // From the TGW account, check to see if the VPC TGW attachment ID is present in the association route Table.
+                // Green if returned TransitGatewayRouteTableId matches the ID from the profile.
+                // Otherwise, give the reason it is not correct.
+                if (tgwProfile.getAssociationRouteTableId() == null) {
+                    transitGatewayStatus.setTgwAttachmentAssociationCorrect("Missing attachment association route table ID in profile");
+                }
+                else if (transitGatewayAttachment.getAssociation().getTransitGatewayRouteTableId() == null) {
+                    transitGatewayStatus.setTgwAttachmentAssociationCorrect("Missing attachment association route table ID");
+                }
+                else if (!tgwProfile.getAssociationRouteTableId().equals(transitGatewayAttachment.getAssociation().getTransitGatewayRouteTableId())) {
+                    transitGatewayStatus.setTgwAttachmentAssociationCorrect("Attachment association route table ID does not match profile");
+                }
+                else {
+                    transitGatewayStatus.setTgwAttachmentAssociationCorrect("correct");
+                }
+
 
                 AmazonEC2Client tgwEc2Client = AwsClientBuilderHelper.buildAmazonEC2Client(transitGatewayAttachment.getTransitGatewayOwnerId(), vpc.getRegion(),
                         getAccessKeyId(), getSecretKey(), getRoleArnPattern(), getRoleAssumptionDurationSeconds());
 
-                GetTransitGatewayAttachmentPropagationsRequest propagationsRequest
-                        = new GetTransitGatewayAttachmentPropagationsRequest()
-                                .withTransitGatewayAttachmentId(transitGatewayAttachment.getTransitGatewayAttachmentId());
-                GetTransitGatewayAttachmentPropagationsResult propagationsResult;
-                do {
-                    propagationsResult = tgwEc2Client.getTransitGatewayAttachmentPropagations(propagationsRequest);
-                    for (TransitGatewayAttachmentPropagation p : propagationsResult.getTransitGatewayAttachmentPropagations()) {
-                    }
-                    propagationsRequest.setNextToken(propagationsResult.getNextToken());
-                } while (propagationsResult.getNextToken() != null);
+                // From the TGW account, check to see if the VPC TGW attachment ID is present in the correct propagation route tables
 
-                // TODO - what else
+                @SuppressWarnings("unchecked")
+                List<String> propagationRouteTableIds = tgwProfile.getPropagationRouteTableId();
+                String propagationCorrect = null;
+                if (propagationRouteTableIds.size() == 0) {
+                    propagationCorrect = "Missing attachment propagation route table IDs in profile";
+                }
+                else {
+                    SearchTransitGatewayRoutesRequest searchTransitGatewayRoutesRequest = new SearchTransitGatewayRoutesRequest()
+                            .withFilters(new Filter("attachment.transit-gateway-attachment-id").withValues(transitGatewayAttachment.getTransitGatewayAttachmentId()));
+                    SearchTransitGatewayRoutesResult searchTransitGatewayRoutesResult;
+                    for (String routeTableId : propagationRouteTableIds) {
+                        searchTransitGatewayRoutesRequest.setTransitGatewayRouteTableId(routeTableId);
+                        try {
+                            searchTransitGatewayRoutesResult = tgwEc2Client.searchTransitGatewayRoutes(searchTransitGatewayRoutesRequest);
+                            if (searchTransitGatewayRoutesResult.getRoutes().size() == 0) {
+                                propagationCorrect = "Missing attachment propagation routes for route table ID " + routeTableId;
+                            }
+                            else {
+                                for (TransitGatewayRoute route : searchTransitGatewayRoutesResult.getRoutes()) {
+                                    if (!route.getState().equals("active")) {
+                                        propagationCorrect = "Attachment propagation route is not active for route table ID " + routeTableId;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        catch (AmazonEC2Exception e) {
+                            propagationCorrect = "Missing attachment propagation route table ID for route " + routeTableId;
+                        }
+                        if (propagationCorrect != null)
+                            break;  // we're done as soon as a propagation route has an error
+                    }
+                }
+                if (propagationCorrect == null)
+                    propagationCorrect = "correct";
+                transitGatewayStatus.setTgwAttachmentPropagationCorrect(propagationCorrect);
             }
         }
         catch (EnterpriseConfigurationObjectException e) {
@@ -388,7 +452,6 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
         try {
             List<TransitGatewayConnectionProfileAssignment> tgwConnectionProfileAssignments = new ArrayList<>();
 
-            // TODO - why not just use an empty querySpec and get them all at once?
             for (VirtualPrivateCloud vpc : virtualPrivateClouds) {
                 try {
                     querySpec.setOwnerId(vpc.getVpcId());
