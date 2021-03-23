@@ -280,7 +280,7 @@ public class TransitGatewayStatusRequestCommand extends AwsAccountRequestCommand
 
             // Log execution time.
             long executionTime = System.currentTimeMillis() - startTime;
-            logger.info(LOGTAG + "Query-Request command execution complete in " + executionTime + " ms.");
+            logger.info(LOGTAG + "Query-Request command execution complete in " + executionTime + " ms. with reply " + replyContents);
 
             // Return the response with status success.
             return getMessage(msg, replyContents);
