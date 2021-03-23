@@ -43,6 +43,7 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
     private ProducerPool networkOpsServiceProducerPool;
 
     private boolean verbose;
+    private String environment;
 
     private String accessKeyId = null;
     private String secretKey = null;
@@ -92,6 +93,9 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
             logger.fatal(LOGTAG + errMsg);
             throw new ProviderException(errMsg);
         }
+
+        // environment is used for transit gateway determination
+        environment = getProperties().getProperty("environment");
 
         // Get the AWS credentials the provider will use
         String accessKeyId = getProperties().getProperty("accessKeyId");
@@ -547,7 +551,7 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
         }
 
         try {
-            tgwQuerySpec.setEnvironment("DEV");  // TODO - from app config
+            tgwQuerySpec.setEnvironment(environment);
         }
         catch (EnterpriseFieldException e) {
             String errMsg = "An error occurred setting the values of the TGW query spec. The exception is: " + e.getMessage();
@@ -571,7 +575,7 @@ public class AccountTransitGatewayStatusProvider extends OpenEaiObject implement
             @SuppressWarnings("unchecked")
             List<edu.emory.moa.jmsobjects.network.v1_0.TransitGateway> transitGateways = moaTransitGateway.query(tgwQuerySpec, p2p);
             long elapsedTime = System.currentTimeMillis() - elapsedStartTime;
-            logger.info(LOGTAG + "TransitGatewayConnectionProfile.Query took " + elapsedTime + " ms. Returned " + transitGateways.size() + " results.");
+            logger.info(LOGTAG + "TransitGateway.Query took " + elapsedTime + " ms. Returned " + transitGateways.size() + " results.");
 
             return transitGateways;
         }
