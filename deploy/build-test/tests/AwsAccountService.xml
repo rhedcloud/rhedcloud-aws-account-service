@@ -307,7 +307,7 @@
 <ThreadPoolConfig name="ConsumerThreadPool" minThreads="0" maxThreads="30" maxIdleTime="1" checkBeforeProcessing="true">
 <ConfigClass>org.openeai.config.ThreadPoolConfig</ConfigClass>
 <ObjectClass>org.openeai.threadpool.ThreadPoolImpl</ObjectClass>
-</ThreadPoolConfig><DbConnectionPoolConfig dbConnectPassword="***REMOVED***" dbConnectString="jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/SHRDBDEV,cn=OracleContext,dc=emory,dc=edu" dbConnectUserId="awsaccount" dbDriverName="oracle.jdbc.driver.OracleDriver" dbPoolSize="1" name="MessageBalancer"/>
+</ThreadPoolConfig><DbConnectionPoolConfig dbConnectPassword="g30r9eW86g" dbConnectString="jdbc:oracle:thin:@ldap://oranamesrvr2.cc.emory.edu/SHRDBDEV,cn=OracleContext,dc=emory,dc=edu" dbConnectUserId="awsaccount" dbDriverName="oracle.jdbc.driver.OracleDriver" dbPoolSize="1" name="MessageBalancer"/>
 </ConsumerConfig>
 
         <ConsumerConfig name="P2PConsumer1" startOnInitialization="true" transacted="false">
