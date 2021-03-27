@@ -282,10 +282,10 @@
 <PropertyValue>edu.emory.awsbilling.accountmetadata</PropertyValue>
 </Property><Property>
 <PropertyName>accessKeyId</PropertyName>
-<PropertyValue>***REMOVED***</PropertyValue>
+<PropertyValue></PropertyValue>
 </Property><Property>
 <PropertyName>secretKey</PropertyName>
-<PropertyValue>***REMOVED***</PropertyValue>
+<PropertyValue></PropertyValue>
 </Property>
 </PropertyConfig>
 
