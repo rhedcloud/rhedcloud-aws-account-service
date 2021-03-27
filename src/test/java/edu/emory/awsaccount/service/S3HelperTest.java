@@ -16,7 +16,7 @@ public class S3HelperTest {
     @Before
     public void setUp() throws Exception {
         deployEnv="STAGE";
-        properties.setProperty("accessKeyId","***REMOVED***");
+        properties.setProperty("accessKeyId","");
         properties.setProperty("secretKey","");
         bucketName=bucketName.replace("<env>",deployEnv.toLowerCase());
         LOG.info("bucketName="+bucketName);
