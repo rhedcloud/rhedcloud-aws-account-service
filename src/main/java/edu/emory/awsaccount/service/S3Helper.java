@@ -35,7 +35,7 @@ public class S3Helper {
     String LOGTAG = "[S3Helper] ";
     final static Logger LOG = Logger.getLogger(S3Helper.class);
     private String bucketName = "emory-rhedcloud-aws-<env>-accountmetadata";
-    private String accessKeyId = "***REMOVED***";
+    private String accessKeyId = "";
     private String secretKey = "";
     private File tempDir = new File("temp");
 
